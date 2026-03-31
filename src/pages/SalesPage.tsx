@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
-import { salesStats } from "@/data/page-content";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
 import { fetchSalesPrompts, querySales, type SalesQueryResponse } from "@/lib/api";
@@ -81,6 +80,23 @@ export function SalesPage() {
 
   const suggestedPrompts = promptsQuery.data ?? [];
 
+  const salesStats = useMemo(() => {
+    const assistantMsgs = messages.filter((m) => m.role === "assistant");
+    const blockedCount = assistantMsgs.filter((m) => m.blocked).length;
+    const withEvidence = assistantMsgs.filter((m) => m.evidence && m.evidence.length > 0).length;
+    const evidencePct = assistantMsgs.length > 0 ? Math.round((withEvidence / assistantMsgs.length) * 100) : 0;
+    return [
+      { label: "응답 유형", value: "SQL/API 우선", tone: "primary" as const },
+      { label: "추천 질문", value: `${suggestedPrompts.length}개`, tone: "success" as const },
+      { label: "출처 포함", value: `${evidencePct}%`, tone: "default" as const },
+      { label: "차단 건수", value: `${blockedCount}건`, tone: blockedCount > 0 ? ("danger" as const) : ("default" as const) },
+    ];
+  }, [messages, suggestedPrompts.length]);
+  const latestAssistantMessage = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "assistant"),
+    [messages],
+  );
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -134,7 +150,11 @@ export function SalesPage() {
     <div className="space-y-6">
       <PageHero
         title="매출 현황"
-        description="궁금한 것을 물어보시면 분석해 드려요."
+        description={
+          latestAssistantMessage?.queryType
+            ? `최근 ${QUERY_TYPE_LABEL[latestAssistantMessage.queryType] ?? latestAssistantMessage.queryType} 응답까지 반영해 보여드려요.`
+            : "궁금한 것을 물어보시면 분석해 드려요."
+        }
       />
       <StatsGrid stats={salesStats} />
 
@@ -144,7 +164,11 @@ export function SalesPage() {
           <div className="flex items-center justify-between gap-3 border-b border-border/60 px-6 py-4">
             <div>
               <p className="text-sm font-bold text-slate-800">매출 분석</p>
-              <p className="text-xs text-slate-400 mt-0.5">아래에 궁금한 내용을 입력하거나 오른쪽 버튼을 눌러보세요</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {latestAssistantMessage
+                  ? `최근 응답 경로는 ${ROUTE_LABEL[latestAssistantMessage.processingRoute ?? ""] ?? "분석"} 기준입니다`
+                  : "아래에 궁금한 내용을 입력하거나 오른쪽 버튼을 눌러보세요"}
+              </p>
             </div>
             <SectionHint questions={[
               { q: "어떻게 물어보면 되나요?", a: "평소 말하듯이 입력하시면 돼요. 예를 들어 '이번 주 배달이 왜 줄었나요?' 처럼 입력하면 분석해 드려요." },
@@ -284,7 +308,7 @@ export function SalesPage() {
         {/* Suggested prompts */}
         <div className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
           <p className="text-sm font-bold text-slate-800 mb-1">자주 묻는 질문</p>
-          <p className="text-xs text-slate-400 mb-4">버튼을 누르면 바로 분석해요</p>
+          <p className="text-xs text-slate-400 mb-4">현재 {suggestedPrompts.length}개 질문을 바로 실행할 수 있어요</p>
           <div className="space-y-2">
             {promptsQuery.isLoading ? (
               <p className="text-xs text-slate-400 px-1">불러오는 중...</p>

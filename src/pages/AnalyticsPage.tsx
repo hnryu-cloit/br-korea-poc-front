@@ -3,24 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BarChart3, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 import { PageHero } from "@/pages/shared";
-import { fetchAuditLogs } from "@/lib/api";
-
-type Metric = {
-  label: string;
-  value: string;
-  change: string;
-  trend: "up" | "down" | "flat";
-  detail: string;
-};
-
-const metrics: Metric[] = [
-  { label: "이번 주 총 매출", value: "₩4,382,000", change: "+6.2%", trend: "up", detail: "지난주 대비" },
-  { label: "배달 건수", value: "312건", change: "-14.3%", trend: "down", detail: "지난주 대비" },
-  { label: "홀 방문 고객", value: "487명", change: "+3.1%", trend: "up", detail: "지난주 대비" },
-  { label: "앱 주문 비중", value: "28%", change: "+0%", trend: "flat", detail: "지난주 대비" },
-  { label: "커피 동반 구매율", value: "62%", change: "+8.4%", trend: "up", detail: "지난주 대비" },
-  { label: "평균 객단가", value: "₩8,940", change: "+2.7%", trend: "up", detail: "지난주 대비" },
-];
+import { fetchAuditLogs, fetchAnalyticsMetrics, type AnalyticsMetric } from "@/lib/api";
 
 type QueryCategory = "전체" | "FAQ" | "데이터 조회" | "분석" | "민감정보";
 
@@ -43,13 +26,13 @@ const ROUTE_STYLE: Record<string, string> = {
   policy_block: "bg-red-50 text-red-600",
 };
 
-const trendIcon = (trend: Metric["trend"]) => {
+const trendIcon = (trend: AnalyticsMetric["trend"]) => {
   if (trend === "up") return <TrendingUp className="h-3.5 w-3.5" />;
   if (trend === "down") return <TrendingDown className="h-3.5 w-3.5" />;
   return <Minus className="h-3.5 w-3.5" />;
 };
 
-const trendColor = (trend: Metric["trend"]) => {
+const trendColor = (trend: AnalyticsMetric["trend"]) => {
   if (trend === "up") return "text-green-600 bg-green-50";
   if (trend === "down") return "text-red-600 bg-red-50";
   return "text-slate-500 bg-slate-50";
@@ -58,6 +41,14 @@ const trendColor = (trend: Metric["trend"]) => {
 export function AnalyticsPage() {
   const [activeCategory, setActiveCategory] = useState<QueryCategory>("전체");
   const categories: QueryCategory[] = ["전체", "FAQ", "데이터 조회", "분석", "민감정보"];
+
+  const metricsQuery = useQuery({
+    queryKey: ["analytics-metrics"],
+    queryFn: fetchAnalyticsMetrics,
+    refetchInterval: 15_000,
+  });
+
+  const metrics = metricsQuery.data?.items ?? [];
 
   const logsQuery = useQuery({
     queryKey: ["audit-logs-sales"],
@@ -76,12 +67,13 @@ export function AnalyticsPage() {
 
   const sqlCount = allLogs.filter((l) => l.route === "stub_repository").length;
   const sqlPct = allLogs.length > 0 ? Math.round(sqlCount / allLogs.length * 100) : 0;
+  const blockedCount = allLogs.filter((l) => l.route === "policy_block").length;
 
   return (
     <div className="space-y-6">
       <PageHero
         title="매출 데이터를 한눈에 파악합니다."
-        description="주요 지표 변화와 질의 처리 이력을 확인합니다."
+        description={`주요 지표 ${metrics.length}개와 질의 처리 로그 ${allLogs.length}건을 확인합니다.`}
       />
 
       {/* Metric grid */}
@@ -106,7 +98,7 @@ export function AnalyticsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-6 py-5">
           <div>
             <p className="text-base font-semibold text-slate-900">질의 처리 로그</p>
-            <p className="text-xs text-slate-400 mt-0.5">매출 도메인 · SQL/API 우선 처리 적용</p>
+            <p className="text-xs text-slate-400 mt-0.5">매출 도메인 · SQL/API 우선 처리율 {sqlPct}% · 차단 {blockedCount}건</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (

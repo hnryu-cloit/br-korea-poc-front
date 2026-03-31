@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle, Clock, TrendingDown } from "lucide-react";
 
-import { productionStats } from "@/data/page-content";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
 import { useDemoSession } from "@/contexts/useDemoSession";
 import {
   fetchProductionRegistrationHistory,
+  fetchProductionRegistrationSummary,
   fetchProductionOverview,
   saveProductionRegistration,
   type ProductionItem,
@@ -29,6 +29,14 @@ type RegisteredItem = {
   feedbackMessage: string;
 };
 
+function getTodayString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function formatRegisteredAt(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -43,16 +51,23 @@ function formatRegisteredAt(value: string) {
 
 export function ProductionPage() {
   const { user } = useDemoSession();
+  const storeId = user.storeId;
   const [registered, setRegistered] = useState<RegisteredItem[]>([]);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [qty, setQty] = useState<string>("40");
+  const [dateFrom, setDateFrom] = useState(getTodayString);
+  const [dateTo, setDateTo] = useState(getTodayString);
   const productionQuery = useQuery({
     queryKey: ["production-overview"],
     queryFn: fetchProductionOverview,
   });
   const registrationHistoryQuery = useQuery({
-    queryKey: ["production-registration-history"],
-    queryFn: () => fetchProductionRegistrationHistory(20),
+    queryKey: ["production-registration-history", storeId, dateFrom, dateTo],
+    queryFn: () => fetchProductionRegistrationHistory(20, { storeId, dateFrom, dateTo }),
+  });
+  const registrationSummaryQuery = useQuery({
+    queryKey: ["production-registration-summary", storeId, dateFrom, dateTo],
+    queryFn: () => fetchProductionRegistrationSummary({ storeId, dateFrom, dateTo }),
   });
 
   const registrationMutation = useMutation({
@@ -97,6 +112,25 @@ export function ProductionPage() {
   const isRegistered = (id: string) => registered.some((entry) => entry.skuId === id);
 
   const dangerCount = items.filter((item) => item.status === "danger" && !isRegistered(item.sku_id)).length;
+  const productionStats = useMemo(() => {
+    const summary = registrationSummaryQuery.data;
+    const currentInventory = items.reduce((sum, item) => sum + item.current, 0);
+    const forecastInventory = items.reduce((sum, item) => sum + item.forecast, 0);
+    return [
+      { label: "현재 재고", value: `${currentInventory}개`, tone: "default" as const },
+      { label: "1시간 후 예측", value: `${forecastInventory}개`, tone: forecastInventory <= 50 ? ("danger" as const) : ("default" as const) },
+      {
+        label: "최근 7일 등록",
+        value: `${summary?.recent_registration_count_7d ?? 0}건`,
+        tone: (summary?.recent_registration_count_7d ?? 0) > 0 ? ("primary" as const) : ("default" as const),
+      },
+      {
+        label: "등록 수량",
+        value: `${summary?.recent_registered_qty_7d ?? 0}개`,
+        tone: (summary?.recent_registered_qty_7d ?? 0) > 0 ? ("success" as const) : ("default" as const),
+      },
+    ];
+  }, [items, registrationSummaryQuery.data]);
 
   const handleRegister = () => {
     if (!activeModal || registrationMutation.isPending) {
@@ -110,6 +144,7 @@ export function ProductionPage() {
       sku_id: activeModal,
       qty: parsedQty,
       registered_by: user.role,
+      store_id: storeId,
     });
   };
 
@@ -166,6 +201,37 @@ export function ProductionPage() {
       </PageHero>
 
       <StatsGrid stats={productionStats} />
+
+      <section className="rounded-[24px] border border-[#dce4f3] bg-white px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-bold text-slate-800">조회 기간</p>
+            <p className="mt-1 text-xs text-slate-500">{user.storeName} 생산 등록 이력을 기준으로 화면을 복원합니다.</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+              시작일
+              <input
+                type="date"
+                value={dateFrom}
+                max={dateTo}
+                onChange={(event) => setDateFrom(event.target.value)}
+                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+              종료일
+              <input
+                type="date"
+                value={dateTo}
+                min={dateFrom}
+                onChange={(event) => setDateTo(event.target.value)}
+                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
+              />
+            </label>
+          </div>
+        </div>
+      </section>
 
       <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="flex items-center justify-between gap-3 border-b border-border/60 px-6 py-5">
@@ -266,7 +332,11 @@ export function ProductionPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-base font-bold text-slate-900">최근 4주 생산 패턴</p>
-              <p className="mt-1 text-sm text-slate-400">오늘 판매 속도가 평소보다 12% 빠릅니다</p>
+              <p className="mt-1 text-sm text-slate-400">
+                {dangerCount > 0
+                  ? `현재 위험 품목 ${dangerCount}개를 기준으로 생산 우선순위를 보여드려요`
+                  : "현재 기준으로 급한 생산 우선순위는 없어요"}
+              </p>
             </div>
             <SectionHint questions={[
               { q: "1차, 2차 생산이 뭔가요?", a: "하루에 보통 두 번 도넛을 만들어요. 오전에 한 번(1차), 오후에 한 번(2차)이에요. 시간과 수량은 지난 4주 평균이에요." },
@@ -296,7 +366,9 @@ export function ProductionPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-base font-bold text-slate-900">생산 등록 결과</p>
-              <p className="mt-1 text-sm text-slate-400">재고가 떨어지기 전에 등록하면 매출 손실을 줄일 수 있어요</p>
+              <p className="mt-1 text-sm text-slate-400">
+                조회 기간 내 생산 등록 {registrationSummaryQuery.data?.recent_registration_count_7d ?? 0}건 · 등록 수량 {registrationSummaryQuery.data?.recent_registered_qty_7d ?? 0}개
+              </p>
             </div>
             <SectionHint questions={[
               { q: "매출 손실이 뭔가요?", a: "도넛이 다 떨어졌을 때 사러 오신 손님이 그냥 가시면 그만큼 못 번 돈이에요. 제때 만들면 이 손실을 줄일 수 있어요." },
@@ -319,7 +391,11 @@ export function ProductionPage() {
                         <CheckCircle className="h-4 w-4 text-green-500" />
                         <span className="text-sm font-bold text-green-800">{sku?.name}</span>
                       </div>
-                      <span className="text-sm font-bold text-green-600">매출 손실 10% 감소</span>
+                      <span className="text-sm font-bold text-green-600">
+                        {registrationSummaryQuery.data?.affected_sku_count
+                          ? `영향 SKU ${registrationSummaryQuery.data.affected_sku_count}개`
+                          : "등록 완료"}
+                      </span>
                     </div>
                     <p className="mt-1 text-xs text-green-600">{entry.registeredAt} 등록 · {entry.qty}개 · {entry.feedbackMessage}</p>
                   </div>

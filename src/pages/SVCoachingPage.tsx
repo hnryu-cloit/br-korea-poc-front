@@ -1,22 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+
 import { PageHero } from "@/pages/shared";
-
-type StoreOrder = {
-  store: string;
-  region: string;
-  option: string;
-  basis: string;
-  reason: string;
-  submittedAt: string;
-  status: "normal" | "review" | "risk";
-};
-
-const storeOrders: StoreOrder[] = [
-  { store: "강남 1호점", region: "강남구", option: "옵션 A", basis: "전주 동요일", reason: "캠페인 영향 감안", submittedAt: "13:42", status: "normal" },
-  { store: "서초 2호점", region: "서초구", option: "옵션 C", basis: "전월 동요일", reason: "시즌 수요 반영", submittedAt: "13:55", status: "review" },
-  { store: "마포 3호점", region: "마포구", option: "옵션 B", basis: "전전주 동요일", reason: "과주문 방지", submittedAt: "14:01", status: "normal" },
-  { store: "송파 4호점", region: "송파구", option: "-", basis: "-", reason: "-", submittedAt: "-", status: "risk" },
-  { store: "용산 5호점", region: "용산구", option: "옵션 A", basis: "전주 동요일", reason: "무난한 선택", submittedAt: "13:38", status: "normal" },
-];
+import { fetchSVCoaching } from "@/lib/api";
 
 const statusConfig = {
   normal: { label: "정상", className: "bg-green-50 text-green-600 border border-green-100" },
@@ -24,12 +9,16 @@ const statusConfig = {
   risk: { label: "미완료", className: "bg-red-50 text-red-600 border border-red-100" },
 };
 
-const coachingTips = [
-  { store: "서초 2호점", tip: "전월 동요일 선택 시 배달 회복분 보정 필요. 실제 주문은 -12% 적게 반영됩니다." },
-  { store: "송파 4호점", tip: "주문 마감까지 5분 남음. 점주에게 긴급 알림 발송 필요." },
-];
-
 export function SVCoachingPage() {
+  const coachingQuery = useQuery({
+    queryKey: ["sv-coaching"],
+    queryFn: fetchSVCoaching,
+    refetchInterval: 30_000,
+  });
+
+  const storeOrders = coachingQuery.data?.store_orders ?? [];
+  const coachingTips = coachingQuery.data?.coaching_tips ?? [];
+
   const normalCount = storeOrders.filter((s) => s.status === "normal").length;
   const reviewCount = storeOrders.filter((s) => s.status === "review").length;
   const riskCount = storeOrders.filter((s) => s.status === "risk").length;
@@ -74,26 +63,36 @@ export function SVCoachingPage() {
               </tr>
             </thead>
             <tbody>
-              {storeOrders.map((store) => {
-                const cfg = statusConfig[store.status];
-                return (
-                  <tr key={store.store} className={`border-b border-border/30 last:border-0 ${store.status === "risk" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-800">{store.store}</p>
-                      <p className="text-xs text-slate-400">{store.region}</p>
-                    </td>
-                    <td className="px-4 py-4 font-medium text-slate-700">{store.option}</td>
-                    <td className="px-4 py-4 text-slate-500">{store.basis}</td>
-                    <td className="px-4 py-4 text-slate-500">{store.reason}</td>
-                    <td className="px-4 py-4 text-center text-slate-500">{store.submittedAt}</td>
-                    <td className="px-4 py-4 text-center">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${cfg.className}`}>
-                        {cfg.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {coachingQuery.isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">불러오는 중...</td>
+                </tr>
+              ) : storeOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">데이터가 없어요.</td>
+                </tr>
+              ) : (
+                storeOrders.map((store) => {
+                  const cfg = statusConfig[store.status];
+                  return (
+                    <tr key={store.store} className={`border-b border-border/30 last:border-0 ${store.status === "risk" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-slate-800">{store.store}</p>
+                        <p className="text-xs text-slate-400">{store.region}</p>
+                      </td>
+                      <td className="px-4 py-4 font-medium text-slate-700">{store.option}</td>
+                      <td className="px-4 py-4 text-slate-500">{store.basis}</td>
+                      <td className="px-4 py-4 text-slate-500">{store.reason}</td>
+                      <td className="px-4 py-4 text-center text-slate-500">{store.submitted_at}</td>
+                      <td className="px-4 py-4 text-center">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${cfg.className}`}>
+                          {cfg.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -104,18 +103,22 @@ export function SVCoachingPage() {
         <p className="text-base font-semibold text-slate-900">SV 코칭 포인트</p>
         <p className="mt-1 text-sm text-slate-400">AI가 감지한 주의 매장 · 오늘 기준</p>
         <div className="mt-5 space-y-3">
-          {coachingTips.map((tip) => (
-            <div key={tip.store} className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
-              <p className="text-sm font-semibold text-orange-800">{tip.store}</p>
-              <p className="mt-1 text-sm text-orange-700 leading-6">{tip.tip}</p>
-              <button
-                type="button"
-                className="mt-2 rounded-xl bg-orange-100 px-3 py-1.5 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-200"
-              >
-                알림 발송
-              </button>
-            </div>
-          ))}
+          {coachingTips.length === 0 ? (
+            <p className="text-sm text-slate-400">코칭 포인트가 없어요.</p>
+          ) : (
+            coachingTips.map((tip) => (
+              <div key={tip.store} className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
+                <p className="text-sm font-semibold text-orange-800">{tip.store}</p>
+                <p className="mt-1 text-sm text-orange-700 leading-6">{tip.tip}</p>
+                <button
+                  type="button"
+                  className="mt-2 rounded-xl bg-orange-100 px-3 py-1.5 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-200"
+                >
+                  알림 발송
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </section>
     </div>

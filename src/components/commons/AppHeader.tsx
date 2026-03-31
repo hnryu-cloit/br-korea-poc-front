@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Bell, Menu, X } from "lucide-react";
 
-import { notifications } from "@/data/notifications";
+import { fetchNotifications } from "@/lib/api";
 import { useDemoSession } from "@/contexts/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
@@ -27,31 +28,21 @@ export function AppHeader({ onMenuToggle }: Props) {
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const { user } = useDemoSession();
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
-  const unreadCount = notifications.filter((item) => item.unread).length;
+
+  const notificationsQuery = useQuery({
+    queryKey: ["notifications"],
+    queryFn: fetchNotifications,
+    refetchInterval: 30_000,
+  });
+
+  const notifications = notificationsQuery.data?.items ?? [];
+  const unreadCount = notificationsQuery.data?.unread_count ?? 0;
 
   const handleNotificationClick = (id: number) => {
     setIsInboxOpen(false);
-
-    if (id === 2) {
-      navigate("/ordering", {
-        state: {
-          source: "notification",
-          notificationId: id,
-          focusOptionId: "opt-a",
-        },
-      });
-      return;
-    }
-
-    if (id === 3) {
-      navigate("/sales", {
-        state: {
-          source: "notification",
-          notificationId: id,
-          prompt: "이번 주 배달 건수가 지난주보다 줄어든 원인을 알려줘",
-        },
-      });
-    }
+    const item = notifications.find((n) => n.id === id);
+    if (!item?.link_to) return;
+    navigate(item.link_to, { state: item.link_state ?? undefined });
   };
 
   return (
@@ -116,25 +107,29 @@ export function AppHeader({ onMenuToggle }: Props) {
                     </button>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleNotificationClick(item.id)}
-                        className={`flex w-full items-start gap-3 border-b border-border/40 px-4 py-3 text-left last:border-0 ${item.unread ? "bg-[#F7FAFF]" : "bg-white"} ${item.id === 2 || item.id === 3 ? "hover:bg-[#eef4ff]" : ""}`}
-                      >
-                        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${item.category === "alert" ? "bg-red-50" : "bg-[#EEF4FF]"}`}>
-                          <span className={`material-symbols-outlined text-[14px] ${item.category === "alert" ? "text-red-500" : "text-primary"}`}>
-                            {item.category === "alert" ? "notification_important" : item.category === "workflow" ? "account_tree" : "analytics"}
-                          </span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className={`text-xs font-semibold ${item.unread ? "text-slate-900" : "text-slate-600"}`}>{item.title}</p>
-                          <p className="text-xs text-slate-400">{item.description}</p>
-                        </div>
-                        <span className="shrink-0 text-[10px] text-slate-400">{item.time}</span>
-                      </button>
-                    ))}
+                    {notifications.length === 0 ? (
+                      <p className="px-4 py-6 text-center text-sm text-slate-400">새 알림이 없어요.</p>
+                    ) : (
+                      notifications.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleNotificationClick(item.id)}
+                          className={`flex w-full items-start gap-3 border-b border-border/40 px-4 py-3 text-left last:border-0 ${item.unread ? "bg-[#F7FAFF]" : "bg-white"} ${item.link_to ? "hover:bg-[#eef4ff]" : ""}`}
+                        >
+                          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${item.category === "alert" ? "bg-red-50" : "bg-[#EEF4FF]"}`}>
+                            <span className={`material-symbols-outlined text-[14px] ${item.category === "alert" ? "text-red-500" : "text-primary"}`}>
+                              {item.category === "alert" ? "notification_important" : item.category === "workflow" ? "account_tree" : "analytics"}
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className={`text-xs font-semibold ${item.unread ? "text-slate-900" : "text-slate-600"}`}>{item.title}</p>
+                            <p className="text-xs text-slate-400">{item.description}</p>
+                          </div>
+                          <span className="shrink-0 text-[10px] text-slate-400">{item.created_at}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               </>

@@ -21,6 +21,24 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+function appendOperationalFilters(
+  params: URLSearchParams,
+  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
+) {
+  if (!filters) {
+    return;
+  }
+  if (filters.storeId) {
+    params.set("store_id", filters.storeId);
+  }
+  if (filters.dateFrom) {
+    params.set("date_from", filters.dateFrom);
+  }
+  if (filters.dateTo) {
+    params.set("date_to", filters.dateTo);
+  }
+}
+
 export type BootstrapResponse = {
   product: string;
   summary: string;
@@ -58,6 +76,7 @@ export type OrderSelectionRequest = {
   option_id: string;
   reason?: string;
   actor: string;
+  store_id?: string;
 };
 
 export type OrderSelectionResponse = {
@@ -65,6 +84,7 @@ export type OrderSelectionResponse = {
   reason?: string | null;
   actor: string;
   saved: boolean;
+  store_id?: string | null;
 };
 
 export type OrderSelectionHistoryItem = {
@@ -73,11 +93,28 @@ export type OrderSelectionHistoryItem = {
   actor: string;
   saved: boolean;
   selected_at: string;
+  store_id?: string | null;
 };
 
 export type OrderSelectionHistoryResponse = {
   items: OrderSelectionHistoryItem[];
   total: number;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+};
+
+export type OrderSelectionSummaryResponse = {
+  total: number;
+  latest?: OrderSelectionHistoryItem | null;
+  recommended_selected: boolean;
+  recent_actor_roles: string[];
+  recent_selection_count_7d: number;
+  option_counts: Record<string, number>;
+  summary_status: string;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
 };
 
 export type ProductionItem = {
@@ -104,6 +141,7 @@ export type ProductionRegistrationRequest = {
   sku_id: string;
   qty: number;
   registered_by: string;
+  store_id?: string;
 };
 
 export type ProductionRegistrationResponse = {
@@ -112,6 +150,7 @@ export type ProductionRegistrationResponse = {
   registered_by: string;
   feedback_type: string;
   feedback_message: string;
+  store_id?: string | null;
 };
 
 export type ProductionRegistrationHistoryItem = {
@@ -121,11 +160,29 @@ export type ProductionRegistrationHistoryItem = {
   feedback_type: string;
   feedback_message: string;
   registered_at: string;
+  store_id?: string | null;
 };
 
 export type ProductionRegistrationHistoryResponse = {
   items: ProductionRegistrationHistoryItem[];
   total: number;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+};
+
+export type ProductionRegistrationSummaryResponse = {
+  total: number;
+  latest?: ProductionRegistrationHistoryItem | null;
+  total_registered_qty: number;
+  recent_registered_by: string[];
+  recent_registration_count_7d: number;
+  recent_registered_qty_7d: number;
+  affected_sku_count: number;
+  summary_status: string;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
 };
 
 export async function fetchBootstrap() {
@@ -146,11 +203,21 @@ export async function saveOrderSelection(payload: OrderSelectionRequest) {
   });
 }
 
-export async function fetchOrderSelectionHistory(limit = 20) {
+export async function fetchOrderSelectionHistory(
+  limit = 20,
+  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
+) {
   const query = new URLSearchParams({
     limit: String(limit),
   });
+  appendOperationalFilters(query, filters);
   return request<OrderSelectionHistoryResponse>(`/api/ordering/selections/history?${query.toString()}`);
+}
+
+export async function fetchOrderSelectionSummary(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  return request<OrderSelectionSummaryResponse>(`/api/ordering/selections/summary?${query.toString()}`);
 }
 
 export async function fetchProductionOverview() {
@@ -164,11 +231,21 @@ export async function saveProductionRegistration(payload: ProductionRegistration
   });
 }
 
-export async function fetchProductionRegistrationHistory(limit = 20) {
+export async function fetchProductionRegistrationHistory(
+  limit = 20,
+  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
+) {
   const query = new URLSearchParams({
     limit: String(limit),
   });
+  appendOperationalFilters(query, filters);
   return request<ProductionRegistrationHistoryResponse>(`/api/production/registrations/history?${query.toString()}`);
+}
+
+export async function fetchProductionRegistrationSummary(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  return request<ProductionRegistrationSummaryResponse>(`/api/production/registrations/summary?${query.toString()}`);
 }
 
 // ── Sales ──────────────────────────────────────────────────────────────────
@@ -201,6 +278,11 @@ export type SalesQueryResponse = {
   processing_route?: string | null;
   blocked: boolean;
   masked_fields: string[];
+  // AI 고도화 필드 추가
+  confidence_score?: number;
+  semantic_logic?: string;
+  sources?: string[];
+  visual_data?: any;
 };
 
 export async function fetchSalesPrompts() {
@@ -238,4 +320,111 @@ export async function fetchAuditLogs(domain?: string, limit = 50) {
   const params = new URLSearchParams({ limit: String(limit) });
   if (domain) params.set("domain", domain);
   return request<AuditLogListResponse>(`/api/audit/logs?${params.toString()}`);
+}
+
+// ── Notifications ──────────────────────────────────────────────────────────
+
+export type ApiNotification = {
+  id: number;
+  category: "alert" | "workflow" | "analysis";
+  title: string;
+  description: string;
+  created_at: string;
+  unread: boolean;
+  link_to?: string | null;
+  link_state?: Record<string, unknown> | null;
+};
+
+export type NotificationListResponse = {
+  items: ApiNotification[];
+  unread_count: number;
+};
+
+export async function fetchNotifications() {
+  return request<NotificationListResponse>("/api/notifications");
+}
+
+// ── Analytics ──────────────────────────────────────────────────────────────
+
+export type AnalyticsMetric = {
+  label: string;
+  value: string;
+  change: string;
+  trend: "up" | "down" | "flat";
+  detail: string;
+};
+
+export type AnalyticsMetricsResponse = {
+  items: AnalyticsMetric[];
+};
+
+export async function fetchAnalyticsMetrics() {
+  return request<AnalyticsMetricsResponse>("/api/analytics/metrics");
+}
+
+// ── SV ─────────────────────────────────────────────────────────────────────
+
+export type StoreOrderItem = {
+  store: string;
+  region: string;
+  option: string;
+  basis: string;
+  reason: string;
+  submitted_at: string;
+  status: "normal" | "review" | "risk";
+};
+
+export type CoachingTip = {
+  store: string;
+  tip: string;
+};
+
+export type SvCoachingResponse = {
+  store_orders: StoreOrderItem[];
+  coaching_tips: CoachingTip[];
+};
+
+export type StoreInspectionItem = {
+  store: string;
+  region: string;
+  alert_response_rate: number;
+  production_registered: number;
+  production_total: number;
+  chance_loss_change: string;
+  status: "compliant" | "partial" | "noncompliant";
+};
+
+export type SvInspectionResponse = {
+  items: StoreInspectionItem[];
+};
+
+export async function fetchSVCoaching() {
+  return request<SvCoachingResponse>("/api/sv/coaching");
+}
+
+export async function fetchSVInspection() {
+  return request<SvInspectionResponse>("/api/sv/inspection");
+}
+
+// ── Signals ────────────────────────────────────────────────────────────────
+
+export type SalesSignal = {
+  id: string;
+  title: string;
+  metric: string;
+  value: string;
+  change: string;
+  trend: "up" | "down" | "flat";
+  priority: "high" | "medium" | "low";
+  region: string;
+  insight: string;
+};
+
+export type SignalsResponse = {
+  items: SalesSignal[];
+  high_count: number;
+};
+
+export async function fetchSignals() {
+  return request<SignalsResponse>("/api/signals");
 }

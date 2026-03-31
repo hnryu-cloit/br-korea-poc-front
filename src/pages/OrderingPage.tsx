@@ -3,11 +3,10 @@ import { useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CheckCircle, Clock, ShoppingCart } from "lucide-react";
 
-import { orderingStats } from "@/data/page-content";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
 import { useDemoSession } from "@/contexts/useDemoSession";
-import { fetchOrderSelectionHistory, fetchOrderingOptions, saveOrderSelection } from "@/lib/api";
+import { fetchOrderSelectionHistory, fetchOrderSelectionSummary, fetchOrderingOptions, saveOrderSelection } from "@/lib/api";
 
 type NotificationState = {
   source?: string;
@@ -15,9 +14,18 @@ type NotificationState = {
   focusOptionId?: string;
 } | null;
 
+function getTodayString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function OrderingPage() {
   const location = useLocation();
   const { user } = useDemoSession();
+  const storeId = user.storeId;
   const notificationState = location.state as NotificationState;
   const isNotificationEntry = notificationState?.source === "notification" && notificationState?.notificationId === 2;
   const [seconds, setSeconds] = useState(20 * 60);
@@ -25,14 +33,20 @@ export function OrderingPage() {
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [savedSelection, setSavedSelection] = useState<{ optionId: string; reason?: string | null } | null>(null);
   const [reason, setReason] = useState("");
+  const [dateFrom, setDateFrom] = useState(getTodayString);
+  const [dateTo, setDateTo] = useState(getTodayString);
 
   const orderingQuery = useQuery({
     queryKey: ["ordering-options", isNotificationEntry],
     queryFn: () => fetchOrderingOptions(isNotificationEntry),
   });
   const selectionHistoryQuery = useQuery({
-    queryKey: ["ordering-selection-history"],
-    queryFn: () => fetchOrderSelectionHistory(1),
+    queryKey: ["ordering-selection-history", storeId, dateFrom, dateTo],
+    queryFn: () => fetchOrderSelectionHistory(1, { storeId, dateFrom, dateTo }),
+  });
+  const selectionSummaryQuery = useQuery({
+    queryKey: ["ordering-selection-summary", storeId, dateFrom, dateTo],
+    queryFn: () => fetchOrderSelectionSummary({ storeId, dateFrom, dateTo }),
   });
 
   const selectionMutation = useMutation({
@@ -80,6 +94,23 @@ export function OrderingPage() {
     () => options.find((option) => option.id === savedSelection?.optionId),
     [options, savedSelection],
   );
+  const orderingStats = useMemo(() => {
+    const summary = selectionSummaryQuery.data;
+    return [
+      { label: "마감까지", value: `${orderingQuery.data?.deadline_minutes ?? 20}분`, tone: "danger" as const },
+      { label: "추천 옵션", value: `${options.length}개`, tone: "primary" as const },
+      {
+        label: "점주 선택",
+        value: summary?.latest ? (summary.recommended_selected ? "추천안 선택" : "수동 선택") : "대기",
+        tone: summary?.latest ? ("success" as const) : ("default" as const),
+      },
+      {
+        label: "최근 7일 저장",
+        value: `${summary?.recent_selection_count_7d ?? 0}건`,
+        tone: (summary?.recent_selection_count_7d ?? 0) > 0 ? ("success" as const) : ("default" as const),
+      },
+    ];
+  }, [options.length, orderingQuery.data?.deadline_minutes, selectionSummaryQuery.data]);
 
   const handleSelect = (id: string) => {
     setPendingId(id);
@@ -95,6 +126,7 @@ export function OrderingPage() {
       option_id: pendingId,
       reason: reason.trim() || undefined,
       actor: user.role,
+      store_id: storeId,
     });
   };
 
@@ -177,24 +209,59 @@ export function OrderingPage() {
 
       <StatsGrid stats={orderingStats} />
 
+      <section className="rounded-[24px] border border-[#dce4f3] bg-white px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-bold text-slate-800">조회 기간</p>
+            <p className="mt-1 text-xs text-slate-500">{user.storeName} 주문 이력을 기준으로 최근 선택을 복원합니다.</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+              시작일
+              <input
+                type="date"
+                value={dateFrom}
+                max={dateTo}
+                onChange={(event) => setDateFrom(event.target.value)}
+                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+              종료일
+              <input
+                type="date"
+                value={dateTo}
+                min={dateFrom}
+                onChange={(event) => setDateTo(event.target.value)}
+                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
+              />
+            </label>
+          </div>
+        </div>
+      </section>
+
       {isNotificationEntry ? (
         <section className="rounded-[24px] border border-[#cfe0ff] bg-[#f3f7ff] px-5 py-4 shadow-[0_10px_24px_rgba(36,84,200,0.08)]">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-sm font-bold text-[#2454C8]">알림에서 바로 들어왔어요</p>
               <p className="mt-1 text-sm text-slate-600">
-                주문 추천 3개 옵션이 준비되었습니다. 추천 옵션부터 확인하고 바로 선택하실 수 있습니다.
+                주문 추천 {options.length}개 옵션이 준비되었습니다. 추천 옵션부터 확인하고 바로 선택하실 수 있습니다.
               </p>
             </div>
             <div className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500">
-              추천 기준: 지난주 같은 요일
+              추천 기준: {options.find((option) => option.recommended)?.label ?? "추천 옵션"}
             </div>
           </div>
         </section>
       ) : null}
 
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-slate-500">아래 3가지 중 하나를 선택해 주세요</p>
+        <p className="text-sm font-semibold text-slate-500">
+          {selectionSummaryQuery.data?.latest
+            ? `조회 기간 내 최근 선택은 ${selectionSummaryQuery.data.latest.option_id}입니다`
+            : `아래 ${options.length}가지 중 하나를 선택해 주세요`}
+        </p>
         <SectionHint questions={[
           { q: "왜 3가지를 보여주나요?", a: "비교할 수 있도록 지난주, 2주 전, 지난달 같은 요일 주문 기록을 보여드려요. 그날 날씨나 행사 영향도 함께 알려드려요." },
           { q: "꼭 선택해야 하나요?", a: "네, 주문 마감 전에 꼭 선택하셔야 해요. 안 하시면 주문이 누락될 수 있어요." },
