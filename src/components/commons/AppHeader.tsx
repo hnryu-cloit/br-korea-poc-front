@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Bell, Menu, X } from "lucide-react";
 
 import { notifications } from "@/data/notifications";
@@ -23,10 +23,36 @@ type Props = {
 
 export function AppHeader({ onMenuToggle }: Props) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const { user } = useDemoSession();
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
   const unreadCount = notifications.filter((item) => item.unread).length;
+
+  const handleNotificationClick = (id: number) => {
+    setIsInboxOpen(false);
+
+    if (id === 2) {
+      navigate("/ordering", {
+        state: {
+          source: "notification",
+          notificationId: id,
+          focusOptionId: "opt-a",
+        },
+      });
+      return;
+    }
+
+    if (id === 3) {
+      navigate("/sales", {
+        state: {
+          source: "notification",
+          notificationId: id,
+          prompt: "이번 주 배달 건수가 지난주보다 줄어든 원인을 알려줘",
+        },
+      });
+    }
+  };
 
   return (
     <header className="fixed left-0 right-0 top-0 z-30 h-[68px] border-b border-border bg-white/90 backdrop-blur-sm lg:left-64">
@@ -91,9 +117,11 @@ export function AppHeader({ onMenuToggle }: Props) {
                   </div>
                   <div className="max-h-96 overflow-y-auto">
                     {notifications.map((item) => (
-                      <div
+                      <button
                         key={item.id}
-                        className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 ${item.unread ? "bg-[#F7FAFF]" : "bg-white"}`}
+                        type="button"
+                        onClick={() => handleNotificationClick(item.id)}
+                        className={`flex w-full items-start gap-3 border-b border-border/40 px-4 py-3 text-left last:border-0 ${item.unread ? "bg-[#F7FAFF]" : "bg-white"} ${item.id === 2 || item.id === 3 ? "hover:bg-[#eef4ff]" : ""}`}
                       >
                         <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${item.category === "alert" ? "bg-red-50" : "bg-[#EEF4FF]"}`}>
                           <span className={`material-symbols-outlined text-[14px] ${item.category === "alert" ? "text-red-500" : "text-primary"}`}>
@@ -105,7 +133,7 @@ export function AppHeader({ onMenuToggle }: Props) {
                           <p className="text-xs text-slate-400">{item.description}</p>
                         </div>
                         <span className="shrink-0 text-[10px] text-slate-400">{item.time}</span>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>

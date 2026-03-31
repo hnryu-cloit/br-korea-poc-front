@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { Send, BarChart3 } from "lucide-react";
 
 import { salesStats } from "@/data/page-content";
@@ -11,6 +12,12 @@ type ChatMessage = {
   text: string;
   evidence?: string[];
   actions?: string[];
+  comparison?: {
+    store: string;
+    peerGroup: string;
+    summary: string;
+    metrics: { label: string; storeValue: string; peerValue: string }[];
+  };
 };
 
 type SuggestedPrompt = {
@@ -59,9 +66,32 @@ function getResponse(prompt: string): Pick<ChatMessage, "text" | "evidence" | "a
   };
 }
 
+function getComparison(prompt: string): ChatMessage["comparison"] | undefined {
+  if (
+    prompt.includes("배달") ||
+    prompt.includes("전년 동월") ||
+    prompt.includes("매출") ||
+    prompt.includes("채널")
+  ) {
+    return {
+      store: "강남역점",
+      peerGroup: "유사 상권 10개 점포 평균",
+      summary: "강남역점은 배달 비중과 앱 전환율이 비교군보다 낮고, 오전 매장 방문 매출은 더 높습니다.",
+      metrics: [
+        { label: "배달 매출 비중", storeValue: "22%", peerValue: "29%" },
+        { label: "앱 쿠폰 사용률", storeValue: "22%", peerValue: "31%" },
+        { label: "오전 매장 방문 매출", storeValue: "58%", peerValue: "49%" },
+      ],
+    };
+  }
+
+  return undefined;
+}
+
 let msgId = 1;
 
 export function SalesPage() {
+  const location = useLocation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,7 +101,7 @@ export function SalesPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = useCallback((text: string) => {
     if (!text.trim() || loading) return;
     const userMsg: ChatMessage = { id: msgId++, role: "user", text };
     setMessages((prev) => [...prev, userMsg]);
@@ -79,10 +109,21 @@ export function SalesPage() {
     setLoading(true);
     setTimeout(() => {
       const reply = getResponse(text);
-      setMessages((prev) => [...prev, { id: msgId++, role: "assistant", ...reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { id: msgId++, role: "assistant", ...reply, comparison: getComparison(text) },
+      ]);
       setLoading(false);
     }, 900);
-  };
+  }, [loading]);
+
+  useEffect(() => {
+    const state = location.state as { source?: string; notificationId?: number; prompt?: string } | null;
+    if (state?.source === "notification" && state.prompt && messages.length === 0) {
+      sendMessage(state.prompt);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, messages.length, sendMessage]);
 
   return (
     <div className="space-y-6">
@@ -144,6 +185,32 @@ export function SalesPage() {
                               {a}
                             </div>
                           ))}
+                        </div>
+                      ) : null}
+
+                      {msg.comparison ? (
+                        <div className="mt-3 rounded-2xl border border-[#dbe6fb] bg-white px-4 py-4 shadow-sm">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-[11px] font-bold text-slate-400">매장 맞춤 비교</p>
+                              <p className="mt-1 text-sm font-semibold text-slate-800">
+                                {msg.comparison.store} vs {msg.comparison.peerGroup}
+                              </p>
+                              <p className="mt-1 text-xs leading-5 text-slate-500">{msg.comparison.summary}</p>
+                            </div>
+                            <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 text-[10px] font-bold text-[#2454C8]">
+                              맞춤형
+                            </span>
+                          </div>
+                          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                            {msg.comparison.metrics.map((metric) => (
+                              <div key={metric.label} className="rounded-xl bg-[#f8fbff] px-3 py-3">
+                                <p className="text-[11px] font-semibold text-slate-400">{metric.label}</p>
+                                <p className="mt-1 text-sm font-bold text-slate-800">{metric.storeValue}</p>
+                                <p className="mt-1 text-[11px] text-slate-500">비교군 {metric.peerValue}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ) : null}
                     </div>

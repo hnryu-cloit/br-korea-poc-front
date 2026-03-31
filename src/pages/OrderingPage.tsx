@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { CheckCircle, Clock, ShoppingCart } from "lucide-react";
 
 import { orderingStats } from "@/data/page-content";
@@ -63,12 +64,14 @@ const orderOptions: OrderOption[] = [
 const INITIAL_SECONDS = 20 * 60;
 
 export function OrderingPage() {
+  const location = useLocation();
   const [seconds, setSeconds] = useState(INITIAL_SECONDS);
   const [submitted, setSubmitted] = useState(false);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const notificationState = location.state as { source?: string; notificationId?: number; focusOptionId?: string } | null;
 
   useEffect(() => {
     if (submitted) return;
@@ -81,6 +84,7 @@ export function OrderingPage() {
   const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
   const secs = (seconds % 60).toString().padStart(2, "0");
   const isUrgent = seconds < 5 * 60;
+  const isNotificationEntry = notificationState?.source === "notification" && notificationState?.notificationId === 2;
 
   const handleSelect = (id: string) => {
     setPendingId(id);
@@ -147,6 +151,22 @@ export function OrderingPage() {
 
       <StatsGrid stats={orderingStats} />
 
+      {isNotificationEntry ? (
+        <section className="rounded-[24px] border border-[#cfe0ff] bg-[#f3f7ff] px-5 py-4 shadow-[0_10px_24px_rgba(36,84,200,0.08)]">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-bold text-[#2454C8]">알림에서 바로 들어왔어요</p>
+              <p className="mt-1 text-sm text-slate-600">
+                주문 추천 3개 옵션이 준비되었습니다. 추천 옵션부터 확인하고 바로 선택하실 수 있습니다.
+              </p>
+            </div>
+            <div className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500">
+              추천 기준: 지난주 같은 요일
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-slate-500">아래 3가지 중 하나를 선택해 주세요</p>
         <SectionHint questions={[
@@ -162,7 +182,7 @@ export function OrderingPage() {
             key={option.id}
             className={`relative rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] transition-all ${
               option.recommended ? "border-[#2454C8] ring-1 ring-[#2454C8]/20" : "border-border"
-            }`}
+            } ${notificationState?.focusOptionId === option.id ? "shadow-[0_20px_40px_rgba(36,84,200,0.18)]" : ""}`}
           >
             {option.recommended ? (
               <div className="absolute -top-3 left-6">
