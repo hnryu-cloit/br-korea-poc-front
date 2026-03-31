@@ -1,4 +1,4 @@
-import type { PromptCard } from "../../data/page-content";
+import type { PromptCard } from "@/data/page-content";
 
 export function PromptList({ prompts }: { prompts: PromptCard[] }) {
   return (

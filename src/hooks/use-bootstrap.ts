@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchBootstrap } from "../lib/api";
+import { fetchBootstrap } from "@/lib/api";
 
 export function useBootstrap() {
   return useQuery({

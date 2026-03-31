@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Bell, Menu, X } from "lucide-react";
 
-import { notifications } from "../../data/notifications";
-import { useDemoSession } from "../../contexts/DemoSessionContext";
+import { notifications } from "@/data/notifications";
+import { useDemoSession } from "@/contexts/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
   "/": ["홈"],

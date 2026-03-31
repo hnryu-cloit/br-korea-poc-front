@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown, Minus, Bell } from "lucide-react";
-import { PageHero } from "./shared";
+import { PageHero } from "@/pages/shared";
 
 type Signal = {
   id: string;

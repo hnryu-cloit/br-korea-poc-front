@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
-import { PageHero } from "./shared";
+import { PageHero } from "@/pages/shared";
 
 type Metric = {
   label: string;

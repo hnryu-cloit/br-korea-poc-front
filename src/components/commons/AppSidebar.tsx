@@ -1,9 +1,9 @@
 import { NavLink, useLocation } from "react-router-dom";
 
 import Logo from "../../assets/logo.svg";
-import { useDemoSession } from "../../contexts/DemoSessionContext";
-import { cn } from "../../lib/utils";
-import { menuSections } from "../../data/navigation";
+import { useDemoSession } from "@/contexts/useDemoSession";
+import { cn } from "@/lib/utils";
+import { menuSections } from "@/data/navigation";
 
 type Props = {
   isOpen: boolean;

@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, BarChart3 } from "lucide-react";
 
-import { salesStats } from "../data/page-content";
-import { SectionHint } from "../components/ui/SectionHint";
-import { PageHero, StatsGrid } from "./shared";
+import { salesStats } from "@/data/page-content";
+import { SectionHint } from "@/components/ui/SectionHint";
+import { PageHero, StatsGrid } from "@/pages/shared";
 
 type ChatMessage = {
   id: number;

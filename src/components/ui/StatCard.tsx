@@ -1,5 +1,5 @@
-import { cn } from "../../lib/utils";
-import type { HighlightStat } from "../../data/page-content";
+import { cn } from "@/lib/utils";
+import type { HighlightStat } from "@/data/page-content";
 
 const toneClassMap: Record<NonNullable<HighlightStat["tone"]>, string> = {
   default: "bg-white text-slate-800",

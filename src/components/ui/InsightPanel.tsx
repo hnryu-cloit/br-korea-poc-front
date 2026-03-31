@@ -1,4 +1,4 @@
-import type { InsightCard } from "../../data/page-content";
+import type { InsightCard } from "@/data/page-content";
 
 export function InsightPanel({ title, description, items }: InsightCard) {
   return (

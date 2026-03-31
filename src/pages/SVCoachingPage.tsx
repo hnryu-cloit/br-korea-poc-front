@@ -1,4 +1,4 @@
-import { PageHero } from "./shared";
+import { PageHero } from "@/pages/shared";
 
 type StoreOrder = {
   store: string;

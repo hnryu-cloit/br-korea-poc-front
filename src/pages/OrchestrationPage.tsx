@@ -1,6 +1,6 @@
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
-import { orchestrationStats } from "../data/page-content";
-import { PageHero, StatsGrid } from "./shared";
+import { orchestrationStats } from "@/data/page-content";
+import { PageHero, StatsGrid } from "@/pages/shared";
 
 type LogEntry = {
   id: number;

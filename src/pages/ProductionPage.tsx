@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AlertTriangle, CheckCircle, Clock, TrendingDown } from "lucide-react";
 
-import { productionStats } from "../data/page-content";
-import { SectionHint } from "../components/ui/SectionHint";
-import { PageHero, StatsGrid } from "./shared";
+import { productionStats } from "@/data/page-content";
+import { SectionHint } from "@/components/ui/SectionHint";
+import { PageHero, StatsGrid } from "@/pages/shared";
 
 type StockStatus = "danger" | "warning" | "safe";
 

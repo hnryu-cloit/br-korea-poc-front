@@ -1,9 +1,9 @@
 import { AlertTriangle, Clock, BarChart3, Shield, ArrowRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-import { dashboardStats } from "../data/page-content";
-import { PageHero, StatsGrid } from "./shared";
-import { useDemoSession } from "../contexts/DemoSessionContext";
+import { dashboardStats } from "@/data/page-content";
+import { PageHero, StatsGrid } from "@/pages/shared";
+import { useDemoSession } from "@/contexts/useDemoSession";
 
 const agentCards = [
   {

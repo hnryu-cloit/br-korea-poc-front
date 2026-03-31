@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { CheckCircle, Clock, ShoppingCart } from "lucide-react";
 
-import { orderingStats } from "../data/page-content";
-import { SectionHint } from "../components/ui/SectionHint";
-import { PageHero, StatsGrid } from "./shared";
+import { orderingStats } from "@/data/page-content";
+import { SectionHint } from "@/components/ui/SectionHint";
+import { PageHero, StatsGrid } from "@/pages/shared";
 
 type OrderOption = {
   id: string;

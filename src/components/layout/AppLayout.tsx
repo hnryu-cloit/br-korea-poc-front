@@ -1,7 +1,7 @@
 import { useState, type PropsWithChildren } from "react";
 
-import { AppHeader } from "../commons/AppHeader";
-import { AppSidebar } from "../commons/AppSidebar";
+import { AppHeader } from "@/components/commons/AppHeader";
+import { AppSidebar } from "@/components/commons/AppSidebar";
 
 export function AppLayout({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

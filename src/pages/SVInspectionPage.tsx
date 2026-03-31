@@ -1,5 +1,5 @@
 import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
-import { PageHero } from "./shared";
+import { PageHero } from "@/pages/shared";
 
 type ComplianceStatus = "compliant" | "partial" | "noncompliant";
 

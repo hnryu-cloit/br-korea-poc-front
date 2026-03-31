@@ -1,4 +1,4 @@
-import type { DemoRole } from "./navigation";
+import type { DemoRole } from "@/data/navigation";
 
 export interface SessionUser {
   id: string;
