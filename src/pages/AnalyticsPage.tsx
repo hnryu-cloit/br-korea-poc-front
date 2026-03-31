@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { BarChart3, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 import { PageHero } from "@/pages/shared";
+import { fetchAuditLogs } from "@/lib/api";
 
 type Metric = {
   label: string;
@@ -20,15 +22,26 @@ const metrics: Metric[] = [
   { label: "평균 객단가", value: "₩8,940", change: "+2.7%", trend: "up", detail: "지난주 대비" },
 ];
 
-type QueryCategory = "전체" | "매출" | "배달" | "상품" | "고객";
+type QueryCategory = "전체" | "FAQ" | "데이터 조회" | "분석" | "민감정보";
 
-const queryLogs = [
-  { id: 1, time: "14:02", query: "이번 주 배달 감소 원인", route: "SQL", tokens: 0, category: "배달" },
-  { id: 2, time: "13:48", query: "T-day 이후 재방문율 변화", route: "SQL+RAG", tokens: 312, category: "고객" },
-  { id: 3, time: "13:21", query: "오전 채널별 매출 비교", route: "SQL", tokens: 0, category: "매출" },
-  { id: 4, time: "12:55", query: "커피 세트 전환율 분석", route: "SQL+LLM", tokens: 428, category: "상품" },
-  { id: 5, time: "11:30", query: "전년 동월 대비 차이", route: "SQL", tokens: 0, category: "매출" },
-];
+const QUERY_TYPE_LABEL: Record<string, QueryCategory> = {
+  faq: "FAQ",
+  data_lookup: "데이터 조회",
+  analysis: "분석",
+  sensitive_request: "민감정보",
+};
+
+const ROUTE_LABEL: Record<string, string> = {
+  stub_repository: "SQL/API",
+  ai_proxy: "AI",
+  policy_block: "차단",
+};
+
+const ROUTE_STYLE: Record<string, string> = {
+  stub_repository: "bg-[#eef4ff] text-[#2454C8]",
+  ai_proxy: "bg-orange-50 text-orange-600",
+  policy_block: "bg-red-50 text-red-600",
+};
 
 const trendIcon = (trend: Metric["trend"]) => {
   if (trend === "up") return <TrendingUp className="h-3.5 w-3.5" />;
@@ -44,8 +57,25 @@ const trendColor = (trend: Metric["trend"]) => {
 
 export function AnalyticsPage() {
   const [activeCategory, setActiveCategory] = useState<QueryCategory>("전체");
-  const categories: QueryCategory[] = ["전체", "매출", "배달", "상품", "고객"];
-  const filteredLogs = activeCategory === "전체" ? queryLogs : queryLogs.filter((l) => l.category === activeCategory);
+  const categories: QueryCategory[] = ["전체", "FAQ", "데이터 조회", "분석", "민감정보"];
+
+  const logsQuery = useQuery({
+    queryKey: ["audit-logs-sales"],
+    queryFn: () => fetchAuditLogs("sales", 20),
+    refetchInterval: 15_000,
+  });
+
+  const allLogs = logsQuery.data?.items ?? [];
+  const filteredLogs = activeCategory === "전체"
+    ? allLogs
+    : allLogs.filter((l) => {
+        const meta = l.metadata as Record<string, unknown>;
+        const qt = typeof meta?.query_type === "string" ? QUERY_TYPE_LABEL[meta.query_type] : null;
+        return qt === activeCategory;
+      });
+
+  const sqlCount = allLogs.filter((l) => l.route === "stub_repository").length;
+  const sqlPct = allLogs.length > 0 ? Math.round(sqlCount / allLogs.length * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -76,9 +106,9 @@ export function AnalyticsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-6 py-5">
           <div>
             <p className="text-base font-semibold text-slate-900">질의 처리 로그</p>
-            <p className="text-xs text-slate-400 mt-0.5">오늘 · SQL/API 우선 처리 적용</p>
+            <p className="text-xs text-slate-400 mt-0.5">매출 도메인 · SQL/API 우선 처리 적용</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -101,44 +131,53 @@ export function AnalyticsPage() {
                 <th className="px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">시각</th>
                 <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">질의</th>
                 <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">처리 경로</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">LLM 토큰</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">분류</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">유형</th>
               </tr>
             </thead>
             <tbody>
-              {filteredLogs.map((log) => (
-                <tr key={log.id} className="border-b border-border/30 last:border-0 hover:bg-[#f8fbff]">
-                  <td className="px-6 py-4 text-slate-500">{log.time}</td>
-                  <td className="px-4 py-4 font-medium text-slate-800">{log.query}</td>
-                  <td className="px-4 py-4 text-center">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      log.route === "SQL" ? "bg-[#eef4ff] text-[#2454C8]" : log.route === "SQL+LLM" ? "bg-orange-50 text-orange-600" : "bg-purple-50 text-purple-600"
-                    }`}>
-                      {log.route}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    {log.tokens > 0 ? (
-                      <span className="text-sm font-medium text-slate-700">{log.tokens.toLocaleString()}</span>
-                    ) : (
-                      <span className="text-slate-300">-</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{log.category}</span>
-                  </td>
+              {logsQuery.isLoading ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-10 text-center text-sm text-slate-400">로그를 불러오는 중입니다...</td>
                 </tr>
-              ))}
+              ) : filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-10 text-center text-sm text-slate-400">아직 기록된 로그가 없어요.</td>
+                </tr>
+              ) : (
+                filteredLogs.map((log) => {
+                  const meta = log.metadata as Record<string, unknown>;
+                  const queryText = typeof meta?.prompt === "string" ? meta.prompt : log.message;
+                  const queryType = typeof meta?.query_type === "string" ? QUERY_TYPE_LABEL[meta.query_type] : null;
+                  return (
+                    <tr key={log.id} className="border-b border-border/30 last:border-0 hover:bg-[#f8fbff]">
+                      <td className="px-6 py-4 font-mono text-xs text-slate-500">{log.timestamp.slice(11, 19)}</td>
+                      <td className="px-4 py-4 font-medium text-slate-800 max-w-[260px] truncate">{queryText}</td>
+                      <td className="px-4 py-4 text-center">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${ROUTE_STYLE[log.route] ?? "bg-slate-100 text-slate-600"}`}>
+                          {ROUTE_LABEL[log.route] ?? log.route}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        {queryType ? (
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{queryType}</span>
+                        ) : (
+                          <span className="text-slate-300">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
 
         <div className="border-t border-border/40 px-6 py-4">
           <div className="flex items-center justify-between text-xs text-slate-400">
-            <span>오늘 총 {queryLogs.length}건 처리 · SQL/API 우선 처리율 60%</span>
+            <span>매출 도메인 총 {allLogs.length}건 처리 · SQL/API 우선 처리율 {sqlPct}%</span>
             <div className="flex items-center gap-2">
               <BarChart3 className="h-3.5 w-3.5" />
-              평균 LLM 토큰 148개 / 질의
+              감사 로그 기준
             </div>
           </div>
         </div>
