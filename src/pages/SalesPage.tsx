@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { Send, BarChart3 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
 import { salesStats } from "@/data/page-content";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
+import { fetchSalesPrompts, querySales, type SalesQueryResponse } from "@/lib/api";
 
 type ChatMessage = {
   id: number;
@@ -18,74 +20,49 @@ type ChatMessage = {
     summary: string;
     metrics: { label: string; storeValue: string; peerValue: string }[];
   };
+  queryType?: string | null;
+  processingRoute?: string | null;
+  blocked?: boolean;
 };
 
-type SuggestedPrompt = {
-  label: string;
-  category: string;
-  prompt: string;
+const ROUTE_STYLE: Record<string, string> = {
+  ai_proxy: "bg-orange-50 text-orange-600",
+  stub_repository: "bg-[#eef4ff] text-[#2454C8]",
+  policy_block: "bg-red-50 text-red-600",
 };
 
-const suggestedPrompts: SuggestedPrompt[] = [
-  { label: "배달 주문이 줄었어요", category: "배달", prompt: "이번 주 배달 건수가 지난주보다 줄어든 원인을 알려줘" },
-  { label: "행사 효과가 궁금해요", category: "캠페인", prompt: "T-day 행사 이후 매출과 재방문 영향이 어땠는지 분석해줘" },
-  { label: "오전 시간대 매출 비교", category: "시간대", prompt: "오전 10시부터 12시까지 채널별 매출 차이를 비교해줘" },
-  { label: "도넛+커피 묶음 늘리는 방법", category: "상품", prompt: "도넛과 커피 묶음 판매를 늘리기 위한 액션을 제안해줘" },
-  { label: "작년 같은 달과 비교", category: "매출", prompt: "전년 동월 대비 이번 달 매출 차이를 분석해줘" },
-  { label: "쿠폰 효과가 없어진 것 같아요", category: "마케팅", prompt: "앱 쿠폰 사용률 하락 원인과 개선 방법을 알려줘" },
-  { label: "점심 배달이 안 들어와요", category: "운영", prompt: "점심 시간대 배달 전환율이 낮은 이유를 분석해줘" },
-  { label: "단골 손님이 줄었나요?", category: "고객", prompt: "최근 2주간 재방문 고객 비율 변화와 액션을 알려줘" },
-  { label: "배달앱 vs 홀 수익 비교", category: "수익", prompt: "배달앱과 홀 채널의 이익률 차이를 비교해줘" },
-  { label: "다음 달 잘 팔릴 상품은?", category: "상품", prompt: "다음 달 시즌 수요를 반영한 상품 믹스를 추천해줘" },
-];
-
-const mockResponses: Record<string, Pick<ChatMessage, "text" | "evidence" | "actions">> = {
-  "이번 주 배달 건수가 지난주보다 줄어든 원인을 알려줘": {
-    text: "이번 주 배달 주문이 지난주보다 14.3% 줄었어요. 가장 큰 이유는 점심 시간(11~13시)에 앱 주문이 덜 들어온 것과, 쿠폰이 소진된 영향이에요. 배달앱에서 우리 매장 노출 순위도 3위에서 5위로 내려갔어요.",
-    evidence: ["점심 시간대 배달 주문 21건 감소", "앱 쿠폰 사용률 38% → 22%로 하락", "배달앱 노출 순위 3위 → 5위"],
-    actions: ["점심 시간대 배달 전용 쿠폰 다시 발급하기", "배달앱 광고비 조정 검토하기", "도넛+음료 묶음 배달 특가 만들기"],
-  },
-  "T-day 행사 이후 매출과 재방문 영향이 어땠는지 분석해줘": {
-    text: "T-day 행사(3월 21일) 이후 3일 동안 재방문 손님이 12.4% 늘었어요. 행사에 참여한 손님 중 34%가 일주일 안에 다시 오셨어요. 특히 커피와 도넛 세트를 함께 사신 분이 많았어요.",
-    evidence: ["행사 후 3일간 재방문율 +12.4%", "커피+도넛 세트 구매 +28%", "신규 앱 설치 전날 대비 41건 증가"],
-    actions: ["커피+도넛 세트 상시 메뉴로 만들기", "행사 참여 손님에게 7일 후 쿠폰 보내기"],
-  },
-  "오전 10시부터 12시까지 채널별 매출 차이를 비교해줘": {
-    text: "오전 10~12시에는 매장 방문 손님이 전체 매출의 58%를 차지하고, 배달은 28%, 앱 주문은 14% 정도예요. 근처 비슷한 매장들보다 배달 비중이 낮아서, 오전 배달을 늘릴 여지가 있어요.",
-    evidence: ["매장 방문 58% · 배달 28% · 앱 14%", "비슷한 매장 평균 매장 방문 49%", "오전 10~11시에 아메리카노 단품 주문 집중"],
-    actions: ["오전 배달 전용 할인 테스트해보기", "앱 오전 알림 시간대 조정하기"],
-  },
+const ROUTE_LABEL: Record<string, string> = {
+  ai_proxy: "AI",
+  stub_repository: "SQL/API",
+  policy_block: "차단",
 };
 
-function getResponse(prompt: string): Pick<ChatMessage, "text" | "evidence" | "actions"> {
-  if (mockResponses[prompt]) return mockResponses[prompt];
+const QUERY_TYPE_STYLE: Record<string, string> = {
+  analysis: "bg-orange-50 text-orange-600",
+  data_lookup: "bg-[#eef4ff] text-[#2454C8]",
+  faq: "bg-slate-100 text-slate-600",
+  sensitive_request: "bg-red-50 text-red-600",
+};
+
+const QUERY_TYPE_LABEL: Record<string, string> = {
+  analysis: "분석",
+  data_lookup: "데이터 조회",
+  faq: "FAQ",
+  sensitive_request: "민감정보",
+};
+
+function toComparison(raw: SalesQueryResponse["comparison"]): ChatMessage["comparison"] | undefined {
+  if (!raw) return undefined;
   return {
-    text: `말씀하신 내용을 분석했어요. 데이터를 살펴보니 유의미한 패턴이 확인됩니다. 아래에서 확인하신 데이터와 할 수 있는 것들을 정리해 드렸어요.`,
-    evidence: ["데이터 분석 완료", "관련 기간 데이터 비교 완료", "매장 맞춤 분석 적용"],
-    actions: ["데이터 기반 실행 방안 검토 권고", "상세 내용은 담당자에게 문의하세요"],
+    store: raw.store,
+    peerGroup: raw.peer_group,
+    summary: raw.summary,
+    metrics: raw.metrics.map((m) => ({
+      label: m.label,
+      storeValue: m.store_value,
+      peerValue: m.peer_value,
+    })),
   };
-}
-
-function getComparison(prompt: string): ChatMessage["comparison"] | undefined {
-  if (
-    prompt.includes("배달") ||
-    prompt.includes("전년 동월") ||
-    prompt.includes("매출") ||
-    prompt.includes("채널")
-  ) {
-    return {
-      store: "강남역점",
-      peerGroup: "유사 상권 10개 점포 평균",
-      summary: "강남역점은 배달 비중과 앱 전환율이 비교군보다 낮고, 오전 매장 방문 매출은 더 높습니다.",
-      metrics: [
-        { label: "배달 매출 비중", storeValue: "22%", peerValue: "29%" },
-        { label: "앱 쿠폰 사용률", storeValue: "22%", peerValue: "31%" },
-        { label: "오전 매장 방문 매출", storeValue: "58%", peerValue: "49%" },
-      ],
-    };
-  }
-
-  return undefined;
 }
 
 let msgId = 1;
@@ -97,24 +74,52 @@ export function SalesPage() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const promptsQuery = useQuery({
+    queryKey: ["sales-prompts"],
+    queryFn: fetchSalesPrompts,
+  });
+
+  const suggestedPrompts = promptsQuery.data ?? [];
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = useCallback((text: string) => {
+  const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
     const userMsg: ChatMessage = { id: msgId++, role: "user", text };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-    setTimeout(() => {
-      const reply = getResponse(text);
+    try {
+      const res = await querySales(text);
       setMessages((prev) => [
         ...prev,
-        { id: msgId++, role: "assistant", ...reply, comparison: getComparison(text) },
+        {
+          id: msgId++,
+          role: "assistant",
+          text: res.text,
+          evidence: res.evidence,
+          actions: res.actions,
+          comparison: toComparison(res.comparison),
+          queryType: res.query_type,
+          processingRoute: res.processing_route,
+          blocked: res.blocked,
+        },
       ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: msgId++,
+          role: "assistant",
+          text: "분석 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.",
+          blocked: false,
+        },
+      ]);
+    } finally {
       setLoading(false);
-    }, 900);
+    }
   }, [loading]);
 
   useEffect(() => {
@@ -164,10 +169,17 @@ export function SalesPage() {
                   </div>
                 ) : (
                   <div className="max-w-[90%] space-y-3">
-                    <div className="rounded-[20px] rounded-bl-sm border border-border bg-[#f8fbff] px-5 py-4">
-                      <p className="text-sm leading-6 text-slate-700">{msg.text}</p>
+                    <div className={`rounded-[20px] rounded-bl-sm border px-5 py-4 ${msg.blocked ? "border-red-200 bg-red-50" : "border-border bg-[#f8fbff]"}`}>
+                      {msg.blocked ? (
+                        <div className="flex items-start gap-2">
+                          <ShieldAlert className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+                          <p className="text-sm leading-6 text-red-700">{msg.text}</p>
+                        </div>
+                      ) : (
+                        <p className="text-sm leading-6 text-slate-700">{msg.text}</p>
+                      )}
 
-                      {msg.evidence ? (
+                      {msg.evidence && !msg.blocked ? (
                         <div className="mt-3 space-y-1.5">
                           <p className="text-[11px] font-bold text-slate-400">확인한 데이터</p>
                           {msg.evidence.map((e) => (
@@ -176,7 +188,7 @@ export function SalesPage() {
                         </div>
                       ) : null}
 
-                      {msg.actions ? (
+                      {msg.actions && !msg.blocked ? (
                         <div className="mt-3 space-y-1.5">
                           <p className="text-[11px] font-bold text-slate-400">할 수 있는 것</p>
                           {msg.actions.map((a) => (
@@ -211,6 +223,21 @@ export function SalesPage() {
                               </div>
                             ))}
                           </div>
+                        </div>
+                      ) : null}
+
+                      {(msg.queryType || msg.processingRoute) ? (
+                        <div className="mt-3 flex items-center gap-1.5">
+                          {msg.queryType ? (
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${QUERY_TYPE_STYLE[msg.queryType] ?? "bg-slate-100 text-slate-600"}`}>
+                              {QUERY_TYPE_LABEL[msg.queryType] ?? msg.queryType}
+                            </span>
+                          ) : null}
+                          {msg.processingRoute ? (
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${ROUTE_STYLE[msg.processingRoute] ?? "bg-slate-100 text-slate-600"}`}>
+                              {ROUTE_LABEL[msg.processingRoute] ?? msg.processingRoute}
+                            </span>
+                          ) : null}
                         </div>
                       ) : null}
                     </div>
@@ -259,16 +286,21 @@ export function SalesPage() {
           <p className="text-sm font-bold text-slate-800 mb-1">자주 묻는 질문</p>
           <p className="text-xs text-slate-400 mb-4">버튼을 누르면 바로 분석해요</p>
           <div className="space-y-2">
-            {suggestedPrompts.map((p) => (
-              <button
-                key={p.prompt}
-                type="button"
-                onClick={() => sendMessage(p.prompt)}
-                className="w-full text-left rounded-2xl border border-border bg-[#f8fbff] px-4 py-3 text-sm transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff]"
-              >
-                <p className="text-sm font-semibold text-slate-700">{p.label}</p>
-              </button>
-            ))}
+            {promptsQuery.isLoading ? (
+              <p className="text-xs text-slate-400 px-1">불러오는 중...</p>
+            ) : (
+              suggestedPrompts.map((p) => (
+                <button
+                  key={p.prompt}
+                  type="button"
+                  onClick={() => sendMessage(p.prompt)}
+                  className="w-full text-left rounded-2xl border border-border bg-[#f8fbff] px-4 py-3 text-sm transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff]"
+                >
+                  <p className="text-sm font-semibold text-slate-700">{p.label}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{p.category}</p>
+                </button>
+              ))
+            )}
           </div>
         </div>
       </section>
