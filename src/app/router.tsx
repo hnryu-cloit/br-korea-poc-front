@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { AppLayout } from "../components/layout/AppLayout";
-import { AnalyticsPage } from "../pages/AnalyticsPage";
-import { DashboardPage } from "../pages/DashboardPage";
-import { OrchestrationPage } from "../pages/OrchestrationPage";
-import { OrderingPage } from "../pages/OrderingPage";
-import { ProductionPage } from "../pages/ProductionPage";
-import { SalesPage } from "../pages/SalesPage";
-import { SVCoachingPage } from "../pages/SVCoachingPage";
-import { SVInspectionPage } from "../pages/SVInspectionPage";
-import { SignalsPage } from "../pages/SignalsPage";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { AnalyticsPage } from "@/pages/AnalyticsPage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { OrchestrationPage } from "@/pages/OrchestrationPage";
+import { OrderingPage } from "@/pages/OrderingPage";
+import { ProductionPage } from "@/pages/ProductionPage";
+import { SalesPage } from "@/pages/SalesPage";
+import { SVCoachingPage } from "@/pages/SVCoachingPage";
+import { SVInspectionPage } from "@/pages/SVInspectionPage";
+import { SignalsPage } from "@/pages/SignalsPage";
 
 export const router = createBrowserRouter([
   {
