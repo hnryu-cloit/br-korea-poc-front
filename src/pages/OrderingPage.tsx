@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle, Clock, ShoppingCart } from "lucide-react";
+import { CheckCircle, Clock, ShoppingCart } from "lucide-react";
 
 import { orderingStats } from "@/data/page-content";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
 import { useDemoSession } from "@/contexts/useDemoSession";
-import { fetchOrderingOptions, saveOrderSelection } from "@/lib/api";
+import { fetchOrderSelectionHistory, fetchOrderingOptions, saveOrderSelection } from "@/lib/api";
 
 type NotificationState = {
   source?: string;
@@ -23,38 +23,53 @@ export function OrderingPage() {
   const [seconds, setSeconds] = useState(20 * 60);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [savedSelection, setSavedSelection] = useState<{ optionId: string; reason?: string | null } | null>(null);
   const [reason, setReason] = useState("");
 
   const orderingQuery = useQuery({
     queryKey: ["ordering-options", isNotificationEntry],
     queryFn: () => fetchOrderingOptions(isNotificationEntry),
   });
+  const selectionHistoryQuery = useQuery({
+    queryKey: ["ordering-selection-history"],
+    queryFn: () => fetchOrderSelectionHistory(1),
+  });
 
   const selectionMutation = useMutation({
     mutationFn: saveOrderSelection,
     onSuccess: (data) => {
-      setSelectedId(data.option_id);
+      setSavedSelection({ optionId: data.option_id, reason: data.reason });
       setShowReasonModal(false);
     },
   });
 
   useEffect(() => {
-    if (!orderingQuery.data || selectedId) {
+    if (!orderingQuery.data || savedSelection) {
       return;
     }
     setSeconds(orderingQuery.data.deadline_minutes * 60);
-  }, [orderingQuery.data, selectedId]);
+  }, [orderingQuery.data, savedSelection]);
 
   useEffect(() => {
-    if (selectedId) {
+    const latestSelection = selectionHistoryQuery.data?.items[0];
+    if (!latestSelection || savedSelection) {
+      return;
+    }
+    setSavedSelection({
+      optionId: latestSelection.option_id,
+      reason: latestSelection.reason,
+    });
+  }, [savedSelection, selectionHistoryQuery.data]);
+
+  useEffect(() => {
+    if (savedSelection) {
       return;
     }
     const interval = window.setInterval(() => {
       setSeconds((current) => Math.max(0, current - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [selectedId]);
+  }, [savedSelection]);
 
   const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
   const secs = (seconds % 60).toString().padStart(2, "0");
@@ -62,8 +77,8 @@ export function OrderingPage() {
   const options = orderingQuery.data?.options ?? [];
   const focusOptionId = notificationState?.focusOptionId ?? orderingQuery.data?.focus_option_id ?? null;
   const chosen = useMemo(
-    () => options.find((option) => option.id === selectedId),
-    [options, selectedId],
+    () => options.find((option) => option.id === savedSelection?.optionId),
+    [options, savedSelection],
   );
 
   const handleSelect = (id: string) => {
@@ -132,10 +147,10 @@ export function OrderingPage() {
                   </div>
                 ))}
               </div>
-              {selectionMutation.data?.reason ? (
+              {savedSelection?.reason ? (
                 <div className="mt-4 rounded-xl bg-white px-4 py-3">
                   <p className="text-xs font-semibold text-slate-400">선택 이유</p>
-                  <p className="mt-1 text-sm text-slate-700">"{selectionMutation.data.reason}"</p>
+                  <p className="mt-1 text-sm text-slate-700">"{savedSelection.reason}"</p>
                 </div>
               ) : null}
               <p className="mt-4 text-xs text-green-500">
@@ -210,6 +225,13 @@ export function OrderingPage() {
             </div>
 
             <p className="mt-3 text-sm leading-6 text-slate-500">{option.description}</p>
+
+            {option.reasoning ? (
+              <div className="mt-3 rounded-2xl bg-[#f3f7ff] px-4 py-3">
+                <p className="text-[11px] font-bold text-[#2454C8] mb-1">AI 추천 근거</p>
+                <p className="text-xs leading-5 text-slate-600">{option.reasoning}</p>
+              </div>
+            ) : null}
 
             <div className="mt-4 space-y-2">
               {option.items.map((item) => (
