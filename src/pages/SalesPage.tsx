@@ -4,8 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
 import { SectionHint } from "@/components/ui/SectionHint";
+import { sessionUser } from "@/data/session-user";
 import { PageHero, StatsGrid } from "@/pages/shared";
-import { fetchSalesPrompts, querySales, type SalesQueryResponse } from "@/lib/api";
+import {
+  fetchSalesInsights,
+  fetchSalesPrompts,
+  querySales,
+  type SalesInsightSection,
+  type SalesQueryResponse,
+} from "@/lib/api";
 
 type ChatMessage = {
   id: number;
@@ -77,8 +84,17 @@ export function SalesPage() {
     queryKey: ["sales-prompts"],
     queryFn: fetchSalesPrompts,
   });
+  const salesInsightsQuery = useQuery({
+    queryKey: ["sales-insights", sessionUser.storeId],
+    queryFn: () => fetchSalesInsights({ storeId: sessionUser.storeId }),
+  });
 
   const suggestedPrompts = promptsQuery.data ?? [];
+  const insightSections = useMemo<SalesInsightSection[]>(() => {
+    const data = salesInsightsQuery.data;
+    if (!data) return [];
+    return [data.peak_hours, data.channel_mix, data.payment_mix, data.menu_mix];
+  }, [salesInsightsQuery.data]);
 
   const salesStats = useMemo(() => {
     const assistantMsgs = messages.filter((m) => m.role === "assistant");
@@ -157,6 +173,51 @@ export function SalesPage() {
         }
       />
       <StatsGrid stats={salesStats} />
+
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-4">
+        {insightSections.map((section) => (
+          <article
+            key={section.title}
+            className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-slate-800">{section.title}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-400">{section.summary}</p>
+              </div>
+              <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${section.status === "active" ? "bg-[#eef4ff] text-[#2454C8]" : "bg-slate-100 text-slate-500"}`}>
+                {section.status === "active" ? "실데이터" : "점검"}
+              </span>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {section.metrics.map((metric) => (
+                <div key={`${section.title}-${metric.label}`} className="rounded-2xl bg-[#f8fbff] px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[11px] font-semibold text-slate-400">{metric.label}</p>
+                    <p className="text-sm font-bold text-slate-800">{metric.value}</p>
+                  </div>
+                  {metric.detail ? <p className="mt-1 text-[11px] text-slate-500">{metric.detail}</p> : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 space-y-1.5">
+              {section.actions.slice(0, 2).map((action) => (
+                <div key={action} className="flex items-start gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
+                  <span className="material-symbols-outlined text-[14px] shrink-0 mt-0.5">task_alt</span>
+                  {action}
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+        {salesInsightsQuery.isLoading ? (
+          <div className="rounded-[28px] border border-border bg-white px-5 py-5 text-sm text-slate-400 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+            인사이트를 불러오는 중...
+          </div>
+        ) : null}
+      </section>
 
       <section className="grid gap-5 xl:grid-cols-[1fr_300px]">
         {/* Chat area */}

@@ -285,6 +285,30 @@ export type SalesQueryResponse = {
   visual_data?: any;
 };
 
+export type SalesInsightMetric = {
+  label: string;
+  value: string;
+  detail?: string | null;
+};
+
+export type SalesInsightSection = {
+  title: string;
+  summary: string;
+  metrics: SalesInsightMetric[];
+  actions: string[];
+  status: string;
+};
+
+export type SalesInsightsResponse = {
+  peak_hours: SalesInsightSection;
+  channel_mix: SalesInsightSection;
+  payment_mix: SalesInsightSection;
+  menu_mix: SalesInsightSection;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+};
+
 export async function fetchSalesPrompts() {
   return request<SalesPrompt[]>("/api/sales/prompts");
 }
@@ -294,6 +318,12 @@ export async function querySales(prompt: string) {
     method: "POST",
     body: JSON.stringify({ prompt }),
   });
+}
+
+export async function fetchSalesInsights(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  return request<SalesInsightsResponse>(`/api/sales/insights?${query.toString()}`);
 }
 
 // ── Audit ──────────────────────────────────────────────────────────────────
@@ -362,7 +392,7 @@ export async function fetchAnalyticsMetrics() {
   return request<AnalyticsMetricsResponse>("/api/analytics/metrics");
 }
 
-// ── SV ─────────────────────────────────────────────────────────────────────
+// ── HQ ─────────────────────────────────────────────────────────────────────
 
 export type StoreOrderItem = {
   store: string;
@@ -379,7 +409,7 @@ export type CoachingTip = {
   tip: string;
 };
 
-export type SvCoachingResponse = {
+export type HQCoachingResponse = {
   store_orders: StoreOrderItem[];
   coaching_tips: CoachingTip[];
 };
@@ -394,16 +424,16 @@ export type StoreInspectionItem = {
   status: "compliant" | "partial" | "noncompliant";
 };
 
-export type SvInspectionResponse = {
+export type HQInspectionResponse = {
   items: StoreInspectionItem[];
 };
 
-export async function fetchSVCoaching() {
-  return request<SvCoachingResponse>("/api/sv/coaching");
+export async function fetchHQCoaching() {
+  return request<HQCoachingResponse>("/api/hq/coaching");
 }
 
-export async function fetchSVInspection() {
-  return request<SvInspectionResponse>("/api/sv/inspection");
+export async function fetchHQInspection() {
+  return request<HQInspectionResponse>("/api/hq/inspection");
 }
 
 // ── Signals ────────────────────────────────────────────────────────────────
