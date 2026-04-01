@@ -8,13 +8,13 @@ import { useDemoSession } from "@/contexts/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
   "/": ["홈"],
-  "/production": ["생산 현황"],
-  "/ordering": ["주문 관리"],
-  "/sales": ["매출 현황"],
-  "/analytics": ["매출 조회"],
-  "/sv/coaching": ["수퍼바이저", "주문 코칭"],
-  "/sv/inspection": ["수퍼바이저", "생산 점검"],
-  "/orchestration": ["시스템 현황"],
+  "/production": ["매장 운영", "생산 현황"],
+  "/ordering": ["매장 운영", "주문 관리"],
+  "/sales": ["매장 운영", "매출 현황"],
+  "/analytics": ["매장 운영", "매출 조회"],
+  "/hq/coaching": ["본사", "주문 코칭"],
+  "/hq/inspection": ["본사", "생산 점검"],
+  "/orchestration": ["본사", "시스템 현황"],
   "/signals": ["본사", "매출 시그널"],
 };
 
@@ -60,10 +60,9 @@ export function AppHeader({ onMenuToggle }: Props) {
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="hidden text-sm font-medium text-slate-400 sm:block">AgentGo Biz</span>
             {crumbs.map((crumb, index) => (
               <span key={crumb} className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-slate-300">chevron_right</span>
+                {index > 0 && <span className="material-symbols-outlined text-[16px] text-slate-300">chevron_right</span>}
                 <span className={index === crumbs.length - 1 ? "text-base font-semibold text-slate-800" : "text-sm font-medium text-slate-400"}>
                   {crumb}
                 </span>

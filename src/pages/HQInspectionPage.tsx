@@ -2,7 +2,7 @@ import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/pages/shared";
-import { fetchSVInspection, type StoreInspectionItem } from "@/lib/api";
+import { fetchHQInspection, type StoreInspectionItem } from "@/lib/api";
 
 type ComplianceStatus = StoreInspectionItem["status"];
 
@@ -36,10 +36,10 @@ function ProgressBar({ value, max, color }: { value: number; max: number; color:
   );
 }
 
-export function SVInspectionPage() {
+export function HQInspectionPage() {
   const inspectionQuery = useQuery({
-    queryKey: ["sv-inspection"],
-    queryFn: fetchSVInspection,
+    queryKey: ["hq-inspection"],
+    queryFn: fetchHQInspection,
     refetchInterval: 30_000,
   });
 

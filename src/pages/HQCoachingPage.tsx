@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/pages/shared";
-import { fetchSVCoaching } from "@/lib/api";
+import { fetchHQCoaching } from "@/lib/api";
 
 const statusConfig = {
   normal: { label: "정상", className: "bg-green-50 text-green-600 border border-green-100" },
@@ -9,10 +9,10 @@ const statusConfig = {
   risk: { label: "미완료", className: "bg-red-50 text-red-600 border border-red-100" },
 };
 
-export function SVCoachingPage() {
+export function HQCoachingPage() {
   const coachingQuery = useQuery({
-    queryKey: ["sv-coaching"],
-    queryFn: fetchSVCoaching,
+    queryKey: ["hq-coaching"],
+    queryFn: fetchHQCoaching,
     refetchInterval: 30_000,
   });
 
@@ -100,7 +100,7 @@ export function SVCoachingPage() {
 
       {/* Coaching tips */}
       <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-        <p className="text-base font-semibold text-slate-900">SV 코칭 포인트</p>
+        <p className="text-base font-semibold text-slate-900">본사 코칭 포인트</p>
         <p className="mt-1 text-sm text-slate-400">AI가 감지한 주의 매장 · 오늘 기준</p>
         <div className="mt-5 space-y-3">
           {coachingTips.length === 0 ? (

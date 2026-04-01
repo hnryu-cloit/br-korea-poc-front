@@ -6,7 +6,6 @@ import { DemoSessionContext } from "@/contexts/demo-session-context";
 
 const roleLabelMap: Record<DemoRole, string> = {
   hq_admin: "본사 관리자",
-  supervisor: "수퍼바이저",
   store_owner: "가맹점주",
 };
 
