@@ -1,0 +1,2077 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRKorea Web POS — DUNKIN</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+    /* ═══════════════════════════════════════════════════
+   RESET & GLOBAL
+═══════════════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+      font-size: 13px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   ROOT LAYOUT
+═══════════════════════════════════════════════════ */
+    .pos-root {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #0f0f1e;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   TOP SYSTEM BAR
+═══════════════════════════════════════════════════ */
+    .sys-bar {
+      height: 40px;
+      background: #0f0f1e;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      z-index: 200;
+    }
+
+    .sys-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: white;
+      flex-shrink: 0;
+      letter-spacing: -1px;
+    }
+
+    .sys-brand {
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+      flex-shrink: 0;
+    }
+
+    .sys-brand span {
+      color: #FF6E00;
+    }
+
+    .sys-divider {
+      width: 1px;
+      height: 18px;
+      background: rgba(255, 255, 255, .1);
+      flex-shrink: 0;
+    }
+
+    .sys-search {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 6px;
+      padding: 4px 10px;
+      width: 190px;
+    }
+
+    .sys-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: rgba(255, 255, 255, .75);
+      font-size: 12px;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .sys-search input::placeholder {
+      color: rgba(255, 255, 255, .3);
+    }
+
+    .sys-search i {
+      color: rgba(255, 255, 255, .3);
+      font-size: 11px;
+    }
+
+    .sys-store {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .65);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .sys-store strong {
+      color: #FF8C33;
+      font-weight: 800;
+    }
+
+    .sys-store .store-tag {
+      background: rgba(255, 110, 0, .15);
+      color: rgba(255, 140, 51, .9);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* KPI row in sys-bar */
+    .sys-kpi-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 6px;
+    }
+
+    .sys-kpi {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .sys-kpi-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .sys-kpi-lbl {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .45);
+    }
+
+    .sys-kpi-chg {
+      font-size: 10px;
+      font-weight: 700;
+      color: #22c55e;
+    }
+
+    .sys-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sys-emp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .65);
+      font-size: 12px;
+    }
+
+    .sys-emp .emp-tag {
+      background: rgba(255, 110, 0, .2);
+      color: #FF8C33;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .sys-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, .55);
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      position: relative;
+    }
+
+    .sys-icon-btn:hover {
+      background: rgba(255, 255, 255, .14);
+      color: white;
+    }
+
+    .sys-icon-btn .notif-dot {
+      width: 7px;
+      height: 7px;
+      background: #E91E8C;
+      border-radius: 50%;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      border: 1.5px solid #0f0f1e;
+    }
+
+    .sys-lang {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 5px;
+      padding: 4px 9px;
+      color: rgba(255, 255, 255, .65);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   BODY ROW
+═══════════════════════════════════════════════════ */
+    .pos-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   LEFT SIDEBAR
+═══════════════════════════════════════════════════ */
+    .sidebar {
+      width: 54px;
+      background: #131325;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      gap: 2px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+      border-right: 1px solid rgba(255, 255, 255, .05);
+    }
+
+    .sidebar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sb-item {
+      width: 46px;
+      border-radius: 8px;
+      padding: 7px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      background: none;
+      flex-shrink: 0;
+      position: relative;
+      font-family: inherit;
+    }
+
+    .sb-item:hover {
+      background: rgba(255, 255, 255, .07);
+    }
+
+    .sb-item.active {
+      background: rgba(255, 110, 0, .18);
+    }
+
+    .sb-item.active .sb-icon {
+      color: #FF6E00;
+    }
+
+    .sb-item.active .sb-lbl {
+      color: #FF8C33;
+    }
+
+    .sb-icon {
+      font-size: 16px;
+      color: rgba(255, 255, 255, .45);
+      line-height: 1;
+    }
+
+    .sb-lbl {
+      font-size: 9px;
+      color: rgba(255, 255, 255, .38);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+      word-break: keep-all;
+    }
+
+    .sb-badge {
+      min-width: 14px;
+      height: 14px;
+      background: #E91E8C;
+      border-radius: 7px;
+      font-size: 9px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+    }
+
+    .sb-badge.amber {
+      background: #F59E0B;
+    }
+
+    .sb-divider {
+      width: 28px;
+      height: 1px;
+      background: rgba(255, 255, 255, .07);
+      margin: 4px 0;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════════════════════ */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #f4f5f7;
+    }
+
+    /* ── TAB BAR ─────────────────────────── */
+    .tab-bar {
+      height: 38px;
+      background: #ffffff;
+      border-bottom: 2px solid #e8e8e8;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 0 0 8px;
+      gap: 1px;
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      z-index: 10;
+    }
+
+    .tab-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      height: 33px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0f0f0;
+      border: 1px solid #e0e0e0;
+      border-bottom: none;
+      border-radius: 7px 7px 0 0;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #777;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+
+    .tab-btn:hover {
+      background: #fff;
+      color: #444;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      border-color: #d0d0d0;
+      border-bottom: 2px solid #ffffff;
+      margin-bottom: -2px;
+      z-index: 2;
+    }
+
+    .tab-btn.ai-tab.active {
+      color: #FF6E00;
+      border-top: 2px solid #FF6E00;
+    }
+
+    .tab-btn i {
+      font-size: 11px;
+    }
+
+    .tab-close {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #aaa;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .tab-close:hover {
+      background: rgba(0, 0, 0, .1);
+      color: #444;
+    }
+
+    /* ── CONTENT FRAME ──────────────────── */
+    .content-frame {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-page {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+      overflow: hidden;
+    }
+
+    .content-page.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    iframe.pos-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── PLACEHOLDER PAGE ───────────────── */
+    .placeholder-page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #bbb;
+      background: #f8f9fa;
+    }
+
+    .placeholder-page i {
+      font-size: 40px;
+      color: #ddd;
+    }
+
+    .placeholder-page h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #aaa;
+    }
+
+    .placeholder-page p {
+      font-size: 12px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   MAIN POS PAGE LAYOUT
+═══════════════════════════════════════════════════ */
+    .main-page {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr minmax(200px, 260px);
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      overflow: hidden;
+      background: #f4f5f7;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   공지 게시판 (MAIN PAGE)
+═══════════════════════════════════════════════════ */
+    .notice-main-page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #f0f1f3;
+    }
+
+    .nm-banner {
+      background: linear-gradient(135deg, #1a1a2e, #2d1444);
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .nm-banner-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .nm-banner-text {
+      flex: 1;
+    }
+
+    .nm-banner-label {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 700;
+      margin-bottom: 1px;
+    }
+
+    .nm-banner-content {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.45;
+    }
+
+    .nm-banner-content strong {
+      color: #FFB380;
+    }
+
+    .nm-banner-stats {
+      display: flex;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .nm-stat {
+      text-align: center;
+    }
+
+    .nm-stat .nv {
+      font-size: 15px;
+      font-weight: 800;
+      color: #FF8C33;
+    }
+
+    .nm-stat .nl {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .nm-body {
+      flex: 1;
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .nm-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .nm-tab-bar {
+      display: flex;
+      align-items: center;
+      background: #f8f9fa;
+      border-bottom: 2px solid #e8e8e8;
+      padding: 0 12px;
+      flex-shrink: 0;
+    }
+
+    .nm-tab {
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #999;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .14s;
+      white-space: nowrap;
+      margin-bottom: -2px;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+
+    .nm-tab.active {
+      color: #FF6E00;
+      border-bottom: 2px solid #FF6E00;
+      margin-bottom: -2px;
+    }
+
+    .nm-tab:hover:not(.active) {
+      color: #555;
+    }
+
+    .nm-tab-extra {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nm-unread {
+      background: #FF6E00;
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+
+    .nm-reg-btn {
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #f0f0f0;
+      border: none;
+      font-size: 10px;
+      font-weight: 700;
+      color: #666;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .14s;
+    }
+
+    .nm-reg-btn:hover {
+      background: #FF6E00;
+      color: white;
+    }
+
+    .nm-list {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #e0e0e0 transparent;
+    }
+
+    .nm-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .nm-list::-webkit-scrollbar-thumb {
+      background: #e0e0e0;
+      border-radius: 2px;
+    }
+
+    .nm-row {
+      display: flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-bottom: 1px solid #f2f2f2;
+      cursor: pointer;
+      transition: background .1s;
+      gap: 6px;
+      min-height: 28px;
+    }
+
+    .nm-row:hover {
+      background: #fff8f4;
+    }
+
+    .nm-row.unread .nm-row-title {
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .nm-row.pinned {
+      background: #fffcf0;
+    }
+
+    .nm-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid transparent;
+    }
+
+    .nt-notice {
+      background: #fff0e0;
+      color: #d46b08;
+      border-color: #ffd591;
+    }
+
+    .nt-guide {
+      background: #e6f4ff;
+      color: #1677ff;
+      border-color: #91caff;
+    }
+
+    .nt-promo {
+      background: #fff0f6;
+      color: #c41d7f;
+      border-color: #ffadd2;
+    }
+
+    .nt-edu {
+      background: #f6ffed;
+      color: #389e0d;
+      border-color: #b7eb8f;
+    }
+
+    .nt-urgent {
+      background: #fff1f0;
+      color: #cf1322;
+      border-color: #ffa39e;
+    }
+
+    .nt-normal {
+      background: #fafafa;
+      color: #888;
+      border-color: #e0e0e0;
+    }
+
+    .nm-row-title {
+      flex: 1;
+      font-size: 12px;
+      color: #444;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .nm-row-date {
+      font-size: 11px;
+      color: #bbb;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .nm-new-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #E91E8C;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   RIGHT QUICK PANEL
+═══════════════════════════════════════════════════ */
+    /* ── Right Quick Panel ── */
+    .right-panel {
+      width: 105px;
+      background: #eef2f7;
+      border-left: 1px solid #d1d9e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 6px;
+      padding-bottom: 120px;
+      /* FAB 공간 확보 */
+      gap: 5px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .rp-btn {
+      width: 100%;
+      min-height: 60px;
+      background: white;
+      border: 1px solid #c8d1e0;
+      border-radius: 4px;
+      display: flex;
+      padding: 6px 8px;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .rp-btn:hover {
+      background: #fdfdfd;
+      border-color: #FF6E00;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rp-text {
+      flex: 1;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 800;
+      color: #333;
+      line-height: 1.25;
+      word-break: keep-all;
+    }
+
+    .rp-text strong {
+      display: block;
+      font-size: 11px;
+      color: #000;
+      margin-top: 1px;
+    }
+
+    .rp-icon-box {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rp-icon-box i {
+      font-size: 22px;
+      color: #555;
+    }
+
+    .rp-div {
+      width: 30px;
+      height: 1px;
+      background: #eee;
+      margin: 10px 0;
+    }
+
+    /* ── Custom Chat Icon in FAB ── */
+    .chat-custom-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      /* 흰색 계통으로 변경하여 시인성 확보 */
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .chat-custom-icon i {
+      font-size: 38px;
+      /* 크기 소폭 확대 */
+    }
+
+    .chat-custom-icon span {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 9px;
+      color: #E91E8C;
+      /* 말풍선 안의 점은 핑크색으로 유지하여 포인트 */
+      letter-spacing: -1px;
+      font-weight: 900;
+      margin-top: -2px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   AI FLOATING BUTTON (AI 아이콘)
+ ═══════════════════════════════════════════════════ */
+    .ai-fab-wrap {
+      position: fixed;
+      bottom: 25px;
+      right: 16px;
+      /* 우측 패널(105px) 내에서 중앙 정렬을 위해 조정 */
+      z-index: 1200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-fab {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      border: 3px solid #FF6E00;
+    }
+
+    .ai-fab:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 12px 35px rgba(233, 30, 140, 0.6);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .ai-fab::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      opacity: 0.3;
+      filter: blur(8px);
+      z-index: -1;
+      animation: fabPulse 2s infinite;
+    }
+
+    @keyframes fabPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.3;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.15;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 0.3;
+      }
+    }
+
+    .ai-fab-icon {
+      font-size: 30px;
+      color: #FF6E00;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+    }
+
+
+    .ai-fab-tip {
+      background: rgba(15, 15, 30, 0.9);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: all 0.3s;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ai-fab-wrap.show-tip .ai-fab-tip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+   AI MINI CHAT PANEL
+═══════════════════════════════════════════════════ */
+    .ai-mini {
+      position: fixed;
+      bottom: 110px;
+      right: 30px;
+      width: 360px;
+      height: 650px;
+      max-height: 80vh;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, .25);
+      z-index: 1100;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform-origin: bottom right;
+      transform: scale(.8) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .ai-mini.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .ai-mini-head {
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .ai-mini-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .ai-mini-info {
+      flex: 1;
+    }
+
+    .ai-mini-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .ai-mini-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .75);
+      margin-top: 1px;
+    }
+
+    .ai-mini-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .ai-mini-goto {
+      background: rgba(255, 255, 255, .2);
+      border: 1px solid rgba(255, 255, 255, .35);
+      color: white;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .ai-mini-goto:hover {
+      background: rgba(255, 255, 255, .32);
+    }
+
+    .ai-mini-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .2);
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+    }
+
+    .ai-mini-close:hover {
+      background: rgba(255, 255, 255, .32);
+    }
+
+    .ai-mini-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: #f0f0f0 transparent;
+    }
+
+    .m-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .m-row.user {
+      flex-direction: row-reverse;
+    }
+
+    .m-av {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .m-bubble {
+      max-width: 230px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #333;
+    }
+
+    .m-row.ai .m-bubble {
+      background: linear-gradient(135deg, #fff8f4, #fff);
+      border: 1px solid #ffe5cc;
+      border-radius: 4px 12px 12px 12px;
+    }
+
+    .m-row.user .m-bubble {
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      color: white;
+      border-radius: 12px 4px 12px 12px;
+    }
+
+    .ai-mini-quickrow {
+      padding: 0 12px 8px;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .mq {
+      padding: 5px 11px;
+      border-radius: 14px;
+      border: 1.5px solid #ffd4b0;
+      background: #fff4ec;
+      font-size: 11px;
+      font-weight: 700;
+      color: #FF6E00;
+      cursor: pointer;
+      transition: all .15s;
+      font-family: inherit;
+    }
+
+    .mq:hover {
+      background: #FF6E00;
+      color: white;
+      border-color: #FF6E00;
+    }
+
+    .ai-mini-input-row {
+      padding: 10px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .mini-inp {
+      flex: 1;
+      padding: 7px 12px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 20px;
+      outline: none;
+      font-size: 12px;
+      font-family: inherit;
+      transition: border-color .15s;
+    }
+
+    .mini-inp:focus {
+      border-color: #FF6E00;
+    }
+
+    .mini-send {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6E00, #E91E8C);
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity .15s;
+    }
+
+    .mini-send:hover {
+      opacity: .85;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   NOTIFICATION PANEL
+═══════════════════════════════════════════════════ */
+    .notif-panel {
+      position: fixed;
+      top: 46px;
+      right: 14px;
+      width: 320px;
+      max-height: 400px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+      z-index: 700;
+      overflow: hidden;
+      transform: scale(.9) translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .2s ease;
+    }
+
+    .notif-panel.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .notif-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .notif-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #222;
+    }
+
+    .notif-mark-all {
+      font-size: 11px;
+      color: #FF6E00;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .notif-list {
+      overflow-y: auto;
+      max-height: 350px;
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 14px;
+      border-bottom: 1px solid #f8f8f8;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .notif-item.unread {
+      background: #fffaf7;
+    }
+
+    .notif-item:hover {
+      background: #f8f8f8;
+    }
+
+    .notif-ico {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .notif-body {
+      flex: 1;
+    }
+
+    .notif-item-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .notif-item-sub {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .notif-unread-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #FF6E00;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+    .toast-container {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      align-items: center;
+      width: 500px;
+      max-width: 90vw;
+    }
+
+    .toast {
+      background: #1a1a2e;
+      color: white;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      animation: toastIn .3s ease;
+      pointer-events: all;
+      border-left: 3px solid #FF6E00;
+    }
+
+    .toast.success {
+      border-color: #22c55e;
+    }
+
+    .toast.warn {
+      border-color: #f59e0b;
+    }
+
+    .toast.err {
+      border-color: #ef4444;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ── Scrollbar ─────────────────────── */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d0d0d0;
+      border-radius: 2px;
+    }
+
+    /* 로봇 아이콘용 스타일 */
+    .fa-robot {
+      font-size: 30px;
+    }
+
+    /* 말풍선 아이콘용 스타일 */
+    .fa-comment-dots {
+      font-size: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pos-root">
+
+    <!-- ══ SYSTEM TOP BAR ═════════════════════════════ -->
+    <header class="sys-bar">
+      <div class="sys-logo">D</div>
+      <div class="sys-brand">BR<span>Korea</span> POS</div>
+      <div class="sys-divider"></div>
+      <div class="sys-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="메뉴 검색...">
+      </div>
+      <div class="sys-divider"></div>
+      <!-- Live KPI in bar removed as it can be seen in real-time store view -->
+
+      <div class="sys-right">
+        <div class="sys-account"
+          style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.06); padding:4px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
+          <div class="sys-store" style="display:flex; align-items:center; gap:5px; font-size:12px;">
+            <i class="fas fa-store" style="color:#FF6E00"></i>
+            <strong style="color:white;">던킨 SPC2023점</strong>
+            <span class="store-tag" style="padding:1px 5px; font-size:9px;">#3412</span>
+          </div>
+          <div style="width:1px; height:12px; background:rgba(255,255,255,0.2);"></div>
+          <div class="sys-emp" style="display:flex; align-items:center; gap:5px; font-size:12px;">
+            <span class="emp-tag"
+              style="background:rgba(233,30,140,0.2); color:#E91E8C; padding:1px 6px; font-size:10px;">점주</span>
+            <span style="color:rgba(255,255,255,0.9); font-weight:700;">홍길동</span>
+          </div>
+        </div>
+        <div class="sys-divider"></div>
+        <button class="sys-icon-btn" title="알림" onclick="toggleNotifPanel()">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="sys-icon-btn" title="달력"><i class="fas fa-calendar-alt"></i></button>
+        <button class="sys-icon-btn" title="설정"><i class="fas fa-cog"></i></button>
+        <div class="sys-lang">
+          <i class="fas fa-globe"></i> 한국어 <i class="fas fa-chevron-down" style="font-size:8px"></i>
+        </div>
+        <button class="sys-icon-btn" title="종료" style="background:rgba(239,68,68,.15);color:#f87171">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ══ BODY ═══════════════════════════════════════ -->
+    <div class="pos-body">
+
+      <!-- LEFT SIDEBAR -->
+      <nav class="sidebar">
+        <button class="sb-item active" onclick="setActive(this,'main')">
+          <i class="fas fa-home sb-icon"></i>
+          <span class="sb-lbl">홈</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'order')">
+          <i class="fas fa-clipboard-list sb-icon"></i>
+          <span class="sb-lbl">주문현황</span>
+          <span class="sb-badge">3</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'table')">
+          <i class="fas fa-th-large sb-icon"></i>
+          <span class="sb-lbl">테이블</span>
+        </button>
+        <div class="sb-divider"></div>
+        <button class="sb-item" onclick="setActive(this,'sales')">
+          <i class="fas fa-chart-line sb-icon"></i>
+          <span class="sb-lbl">매출</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'stock')">
+          <i class="fas fa-boxes sb-icon"></i>
+          <span class="sb-lbl">재고</span>
+          <span class="sb-badge amber">1</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'hygiene')">
+          <i class="fas fa-clipboard-check sb-icon"></i>
+          <span class="sb-lbl">위생</span>
+        </button>
+        <div class="sb-divider"></div>
+        <button class="sb-item" onclick="setActive(this,'notice')">
+          <i class="fas fa-bullhorn sb-icon"></i>
+          <span class="sb-lbl">공지</span>
+          <span class="sb-badge">5</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'staff')">
+          <i class="fas fa-users sb-icon"></i>
+          <span class="sb-lbl">직원</span>
+        </button>
+        <button class="sb-item" onclick="setActive(this,'report')">
+          <i class="fas fa-file-alt sb-icon"></i>
+          <span class="sb-lbl">리포트</span>
+        </button>
+      </nav>
+
+      <!-- MAIN AREA -->
+      <div class="main-area">
+        <!-- TAB BAR -->
+        <div class="tab-bar" id="tabBar">
+          <button class="tab-btn active" id="tab-main" onclick="switchTab('main')">
+            <i class="fas fa-home"></i> MAIN
+          </button>
+          <!-- AI tab added dynamically -->
+        </div>
+
+        <!-- CONTENT FRAME -->
+        <div class="content-frame">
+
+          <!-- ── MAIN PAGE: 공지사항 게시판 ────── -->
+          <div class="content-page active" id="page-main">
+            <div class="notice-main-page">
+              <!-- AI 공지 요약 배너 -->
+              <div class="nm-banner">
+                <div class="nm-banner-icon">🤖</div>
+                <div class="nm-banner-text">
+                  <div class="nm-banner-label">🔔 AI 공지 요약</div>
+                  <div class="nm-banner-content">오늘 <strong>긴급 공지 2건</strong>이 있어요. 5월 1일 가격 인상 및 위생점검 관련 내용을 꼭 확인하세요.
+                  </div>
+                </div>
+                <div class="nm-banner-stats">
+                  <div class="nm-stat">
+                    <div class="nv">42</div>
+                    <div class="nl">전체공지</div>
+                  </div>
+                  <div class="nm-stat">
+                    <div class="nv" style="color:#ff6b6b">7</div>
+                    <div class="nl">미읽음</div>
+                  </div>
+                </div>
+              </div>
+              <!-- 본체: 좌우 2컬럼 -->
+              <div class="nm-body">
+                <!-- 좌: 공지 -->
+                <div class="nm-col">
+                  <div class="nm-tab-bar">
+                    <button class="nm-tab active" onclick="nmSwitchTab(this,'left','notice')">공지</button>
+                    <button class="nm-tab" onclick="nmSwitchTab(this,'left','basic')">기본공지</button>
+                    <div class="nm-tab-extra">
+                      <span class="nm-unread" id="nmLeftUnread">5</span>
+                      <button class="nm-reg-btn">+ 등록</button>
+                    </div>
+                  </div>
+                  <div class="nm-list" id="nmLeftList"></div>
+                </div>
+                <!-- 우: 공지 -->
+                <div class="nm-col">
+                  <div class="nm-tab-bar">
+                    <button class="nm-tab active" onclick="nmSwitchTab(this,'right','notice')">공지</button>
+                    <button class="nm-tab" onclick="nmSwitchTab(this,'right','basic')">기본공지</button>
+                    <div class="nm-tab-extra">
+                      <span class="nm-unread" id="nmRightUnread">2</span>
+                      <button class="nm-reg-btn">+ 등록</button>
+                    </div>
+                  </div>
+                  <div class="nm-list" id="nmRightList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Dashboard tab (iframe) -->
+          <div class="content-page" id="page-ai">
+            <iframe class="pos-iframe" id="aiFrame" src="pos-dashboard.html" title="던킨 AI 비서"></iframe>
+          </div>
+
+          <!-- Other tabs -->
+          <div class="content-page" id="page-order">
+            <div class="placeholder-page">
+              <i class="fas fa-clipboard-list"></i>
+              <h3>주문 현황</h3>
+              <p>실시간 주문 처리 현황</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-table">
+            <div class="placeholder-page">
+              <i class="fas fa-th-large"></i>
+              <h3>테이블 관리</h3>
+              <p>홀 테이블 현황</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-sales">
+            <div class="placeholder-page">
+              <i class="fas fa-chart-bar"></i>
+              <h3>매출 분석</h3>
+              <p>일별 · 월별 매출 리포트</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-stock">
+            <div class="placeholder-page">
+              <i class="fas fa-boxes"></i>
+              <h3>재고 관리</h3>
+              <p>식재료 및 포장재 재고</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-hygiene">
+            <div class="placeholder-page">
+              <i class="fas fa-clipboard-check"></i>
+              <h3>위생 점검</h3>
+              <p>일일 위생 체크리스트</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-notice">
+            <div class="placeholder-page">
+              <i class="fas fa-bullhorn"></i>
+              <h3>공지사항</h3>
+              <p>본사 공지 및 업무 지시</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-staff">
+            <div class="placeholder-page">
+              <i class="fas fa-users"></i>
+              <h3>직원 관리</h3>
+              <p>근태·교육 현황</p>
+            </div>
+          </div>
+          <div class="content-page" id="page-report">
+            <div class="placeholder-page">
+              <i class="fas fa-file-alt"></i>
+              <h3>리포트</h3>
+              <p>영업 보고서 및 통계</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT QUICK PANEL -->
+      <div class="right-panel">
+        <button class="rp-btn" onclick="showToast('IDEAR LAB 실행','info')">
+          <div class="rp-text">IDEAR<br><strong>LAB</strong></div>
+          <div class="rp-icon-box" style="color:#78C2C4"><i class="fas fa-bullhorn"></i></div>
+        </button>
+        <button class="rp-btn" onclick="showToast('HPC 분실카드 접수','info')">
+          <div class="rp-text">HPC<br>분실카드<br>접수</div>
+          <div class="rp-icon-box" style="color:#E84C3D"><i class="fas fa-credit-card"></i></div>
+        </button>
+        <button class="rp-btn" onclick="showToast('온습도 이상알림','info')">
+          <div class="rp-text"><strong>온습도</strong><br>이상알림</div>
+          <div class="rp-icon-box" style="color:#3498DB"><i class="fas fa-tint"></i></div>
+        </button>
+        <button class="rp-btn" onclick="showToast('인센티브 프로그램','info')">
+          <div class="rp-text">정보 찾아<br><strong>인센티브</strong><br>받자</div>
+          <div class="rp-icon-box" style="color:#F1C40F"><i class="fas fa-coins"></i></div>
+        </button>
+        <button class="rp-btn" onclick="showToast('해피스테이션 CMS','info')">
+          <div class="rp-text">해피<br>스테이션<br><strong>CMS</strong></div>
+          <div class="rp-icon-box" style="color:#34495E"><i class="fas fa-desktop"></i></div>
+        </button>
+        <button class="rp-btn" onclick="showToast('상생채널 실행','info')">
+          <div class="rp-text"><strong>상생<br>채널</strong></div>
+          <div class="rp-icon-box" style="color:#E91E63"><i class="fas fa-hands-helping"></i></div>
+        </button>
+      </div>
+
+    </div><!-- /pos-body -->
+
+
+  </div><!-- /pos-root -->
+
+  <!-- ══ AI FAB (AI 아이콘) ════════════════════════════ -->
+  <div class="ai-fab-wrap" id="aiFabWrap">
+    <div class="ai-fab-tip">🤖 던킨 AI 비서 실행</div>
+    <div class="ai-fab" id="aiFab" onclick="handleFabClick()">
+      <span class="ai-fab-icon"><i class="fas fa-robot"></i></span>
+    </div>
+  </div>
+
+  <!-- ══ AI MINI CHAT ══════════════════════════════════ -->
+  <div class="ai-mini" id="aiMini">
+    <div class="ai-mini-head">
+      <div class="ai-mini-av">🤖</div>
+      <div class="ai-mini-info">
+        <div class="ai-mini-title">AI 파트너 챗</div>
+        <div class="ai-mini-sub">던킨 SPC2023 / 점주</div>
+      </div>
+      <div class="ai-mini-actions">
+        <button class="ai-mini-goto"
+          onclick="window.open('pos-dashboard.html', 'DunkinAI', 'width=1400,height=900'); showToast('던킨 AI 비서를 새로운 창에서 실행합니다.', 'success');">
+          <i class="fas fa-th-large"></i> 던킨 AI 파트너로 이동
+        </button>
+        <button class="ai-mini-close" onclick="closeMini()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="ai-mini-msgs" id="miniMsgs">
+      <div class="m-row ai">
+        <div class="m-av">🤖</div>
+        <div class="m-bubble">안녕하세요! 무엇이든 물어보세요 😊<br>매출, 재고, 발주, 날씨 분석 가능합니다.</div>
+      </div>
+    </div>
+    <div class="ai-mini-quickrow">
+      <button class="mq" onclick="sendMiniQ(this)">오늘 매출은?</button>
+      <button class="mq" onclick="sendMiniQ(this)">재고 상태</button>
+      <button class="mq" onclick="sendMiniQ(this)">날씨 분석</button>
+      <button class="mq" onclick="sendMiniQ(this)">발주 추천</button>
+    </div>
+    <div class="ai-mini-input-row">
+      <input class="mini-inp" id="miniInp" type="text" placeholder="AI에게 질문하세요..."
+        onkeydown="if(event.key==='Enter')sendMiniMsg()">
+      <button class="mini-send" onclick="sendMiniMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- ══ NOTIFICATION PANEL ════════════════════════════ -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-head">
+      <div class="notif-title">알림</div>
+      <div class="notif-mark-all" onclick="markAllRead()">모두 읽음</div>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastWrap"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════ */
+    let currentTab = 'main';
+    let aiTabOpen = false;
+    let miniOpen = false;
+    let notifOpen = false;
+    /* ═══════════════════════════════════════════
+       MENU DATA
+    ═══════════════════════════════════════════ */
+    const NM_LEFT = [
+      { tag: 'urgent', cls: 'nt-urgent', title: '[긴급] 5월 1일부터 아메리카노·라떼 가격 200원 인상 예정 안내', date: '2026-03-12', unread: true, pinned: true },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] KT 싱킹기프트 신시제품 프로모션 운영 중단안내', date: '2026-03-12', unread: true },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 26년 2분기~27년(-6기) 오전 한 잔 할인쿠폰 프로모션 종이영수증 안내', date: '2026-03-12', unread: true },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 26년 2분기~27년(-6기) D-DAY 프로모션 및 챔피온/신생아/연중 이벤트 안내', date: '2026-03-12', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 긴 이 여름 제철 출판 반반 및 단기간 무료들의 오픈 안내', date: '2026-03-12', unread: false },
+      { tag: '프로모션', cls: 'nt-promo', title: '[프로모션] 두비이 앱 소프트웨어·달걀프러이션 매장 한눈 보기', date: '2026-03-12', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 렌트스 신제품 종류들 판매 기준일 변경 완료 안내', date: '2026-03-10', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 두비이 앱 소프트리산 앱 트리 적립 한중 이벤트 오픈 안내', date: '2026-03-10', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 3월 식품안전 점검 대비 마련 (3/10 확인일 10:21~21시)', date: '2026-03-10', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 두비이 좋은 음료 금속 이달의 시식점 일정 안내', date: '2026-03-08', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[필독] 브랜블록 커피·영 무쿄 서비스 신규 취임 일정 안내', date: '2026-03-08', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 26년 반기 점포 분기별 재무/선별 일정에 대한 안내사항', date: '2026-03-06', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 3월 봄 세상맞이 세트 프로모션 안내', date: '2026-03-05', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 26년 7분기 단말기 신규DDL pay 세부 프로판 독립 건의 안내', date: '2026-03-05', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 3월 6-7 시소콜 수준 기준 공지 안내', date: '2026-03-05', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: "[긴급] '26년 상하반기 판매 매장: 시즌 디자인 어려울 경우 변경 안내", date: '2026-03-04', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 이미지한다 아리이, 어로 마케팅 온로 상이', date: '2026-03-04', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 이달 신규 가격 정책 변경 안내 (2026-02-27부터)', date: '2026-02-27', unread: false },
+    ];
+
+    const NM_RIGHT = [
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 7식목고·냉온음다기 기기 커뮤니티·리뷰어 (휴가+26-17기)', date: '2026-03-12', unread: true, pinned: true },
+      { tag: '안내', cls: 'nt-guide', title: '[기본공지] 3번 DD Barista 3급 주코주점의 탈취나타민 들어 다 (-3/18)', date: '2026-03-12', unread: true },
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 26년 1분기로 안단기 블링/프로폭(26-17기) 가구수과 공지', date: '2026-03-12', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 26년 상단기 직원경력 직업성과(담보) 시사 인원 관리', date: '2026-03-11', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: "[안내] '26년 지역 파트이부(포트) 사원인 관리기기지선 고교", date: '2026-03-11', unread: false },
+      { tag: '프로모션', cls: 'nt-promo', title: '[공지] BRK/모험연합활동들 관건 소·경기 이벤트', date: '2026-03-09', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 2026년 판매장관조 정사/신사 안내', date: '2026-03-09', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: "[공지] '26년 BRK 고객보드구성 신청 인재 및 홈원 참면 공지", date: '2026-03-09', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: 'BRK바대리영 2부기 리프 소개 소책 및 1교 교육 추장 집어 안내', date: '2026-03-08', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[공지] 2안 DD스캐빌 시행 및 +교 경기/특기 공지 경증', date: '2026-03-06', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 26년/네비스·내서비스 화능(26-17기) 신가입안내(-3/10 마감)', date: '2026-03-06', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[공지] 26년 임차원 신서의 프로그램 BRK 서울분들의 마들나이', date: '2026-03-05', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 26년 상반기 점포 원하장 관련 점포 실건 일등 설명', date: '2026-03-05', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육공지] 카라비라 (블럼블/블레) 교육신청안내!', date: '2026-03-05', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[대리판인증리] 시즌 나건 다가인 이 발 가능 일정 안내', date: '2026-03-04', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육공지] 1월 Dunkin Barista 5급 경기/평과 참여 공지', date: '2026-03-04', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[계리판증] 1월 기사처/파커이다 카드 사용 공지 일정', date: '2026-03-03', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육공지] 1월 DD Barista 실습과정 이용안내', date: '2026-03-02', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육공지] 1월 Dunkin Barista 온라인과정 합격인증 공지', date: '2026-03-01', unread: false },
+    ];
+
+    const NM_BASIC_LEFT = [
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 매장 위생관리 기준 및 체크리스트', date: '2026-01-01', unread: false, pinned: true },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 본사 연락처 및 긴급 지원 안내', date: '2026-01-01', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 직원 채용 기준 및 교육 일정 안내', date: '2025-12-01', unread: false },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 발주 시스템 이용 방법 가이드', date: '2025-12-01', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육] 바리스타 자격 취득 관련 안내', date: '2025-11-01', unread: false },
+    ];
+
+    const NM_BASIC_RIGHT = [
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 카드단말기 사용 가이드', date: '2026-01-01', unread: false, pinned: true },
+      { tag: '안내', cls: 'nt-guide', title: '[안내] 식품위생법 관련 필수 체크 사항', date: '2026-01-01', unread: false },
+      { tag: '공지', cls: 'nt-notice', title: '[기본공지] 화재 대피 및 안전 매뉴얼', date: '2025-12-01', unread: false },
+      { tag: '교육', cls: 'nt-edu', title: '[교육] 고객응대 서비스 표준 안내', date: '2025-11-01', unread: false },
+    ];
+
+    function nmRenderAll() {
+      nmRenderList('nmLeftList', NM_LEFT);
+      nmRenderList('nmRightList', NM_RIGHT);
+    }
+
+    function nmRenderList(containerId, data) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = data.map(n => `
+    <div class="nm-row ${n.unread ? 'unread' : ''} ${n.pinned ? 'pinned' : ''}" onclick="nmOpenRow(this)">
+      <span class="nm-tag ${n.cls}">${n.tag}</span>
+      <span class="nm-row-title">${n.title}</span>
+      ${n.unread ? '<span class="nm-new-dot"></span>' : ''}
+      <span class="nm-row-date">${n.date}</span>
+    </div>
+  `).join('');
+    }
+
+    function nmSwitchTab(tabEl, side, type) {
+      const bar = tabEl.closest('.nm-tab-bar');
+      bar.querySelectorAll('.nm-tab').forEach(t => t.classList.remove('active'));
+      tabEl.classList.add('active');
+      const listId = side === 'left' ? 'nmLeftList' : 'nmRightList';
+      let data;
+      if (side === 'left') data = type === 'notice' ? NM_LEFT : NM_BASIC_LEFT;
+      else data = type === 'notice' ? NM_RIGHT : NM_BASIC_RIGHT;
+      nmRenderList(listId, data);
+    }
+
+    function nmOpenRow(row) {
+      row.classList.remove('unread');
+      const dot = row.querySelector('.nm-new-dot');
+      if (dot) dot.remove();
+    }
+
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    (function init() {
+      nmRenderAll();
+      renderMenu('all');
+      renderRecents();
+      renderNotifs();
+      switchTab('main');
+      tick(); setInterval(tick, 1000);
+      // Show FAB tip
+      const fab = document.getElementById('aiFabWrap');
+      if (fab) {
+        fab.classList.add('show-tip');
+        setTimeout(() => fab.classList.remove('show-tip'), 4000);
+      }
+    })();
+
+    /* ═══════════════════════════════════════════
+       CLOCK
+    ═══════════════════════════════════════════ */
+    function tick() {
+      const el = document.getElementById('posTime');
+      if (el) el.textContent = new Date().toLocaleTimeString('ko-KR');
+    }
+
+    /* ═══════════════════════════════════════════
+       SIDEBAR / TAB
+    ═══════════════════════════════════════════ */
+    function setActive(btn, key) {
+      document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (key === 'main') { switchTab('main'); return; }
+      if (aiTabOpen) { switchTab('ai'); return; }
+      switchTab(key);
+    }
+
+    function switchTab(key) {
+      currentTab = key;
+
+      // 1. 기존 탭 및 페이지 활성화
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active'));
+
+      const tb = document.getElementById('tab-' + key);
+      const pg = document.getElementById('page-' + key);
+      if (tb) tb.classList.add('active');
+      if (pg) pg.classList.add('active');
+
+      // 2. ★ 아이콘 변경 로직 (안전한 버전) ★
+      // 브라우저가 화면을 그릴 시간을 잠깐 준 뒤에 아이콘을 바꿉니다.
+      setTimeout(() => {
+        const fabIcon = document.querySelector('.ai-fab-icon i');
+        if (fabIcon) {
+          if (key === 'main') {
+            fabIcon.className = 'fas fa-robot';
+          } else {
+            fabIcon.className = 'fas fa-comment-dots';
+          }
+        }
+      }, 10); // 0.01초 뒤에 실행
+
+      if (typeof closeNotifPanel === 'function') closeNotifPanel();
+    }
+
+    function openAIDashboard() {
+      // 대시보드는 항상 새창으로 띄움 (유저 요청)
+      window.open('pos-dashboard.html', 'DunkinAI', 'width=1400,height=900');
+      showToast('던킨 AI 비서를 새로운 창에서 실행합니다.', 'success');
+      closeMini();
+    }
+
+    function closeAITab() {
+      const btn = document.getElementById('tab-ai');
+      if (btn) btn.remove();
+      aiTabOpen = false;
+      switchTab('main');
+      const sbItem = document.querySelector('.sb-item');
+      if (sbItem) sbItem.classList.add('active');
+      document.getElementById('aiFabWrap').classList.remove('open');
+    }
+
+    /* ═══════════════════════════════════════════
+       FAB CLICK / FAN MENU
+    ═══════════════════════════════════════════ */
+    function navToIF(pageId) {
+      document.getElementById('aiFabWrap').classList.remove('open');
+
+      function postGo() {
+        const iframe = document.getElementById('aiFrame');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({ type: 'gotoPage', pageId: pageId }, '*');
+        }
+      }
+
+      if (aiTabOpen) {
+        // 이미 열려 있으면 탭 활성 + 즉시 페이지 이동
+        switchTab('ai');
+        postGo();
+      } else if (pageId === 'page-dashboard') {
+        // 대시보드 첫 진입 → 온보딩 정상 진행
+        openAIDashboard();
+      } else {
+        // 다른 페이지 첫 진입 → 온보딩 건너뛰고 바로 이동
+        openAIDashboard();
+        setTimeout(postGo, 120);
+      }
+    }
+
+    function handleFabClick() {
+      if (currentTab === 'main') {
+        // 메인 페이지에서는 던킨 AI 비서로 이동 (새창)
+        window.open('pos-dashboard.html', 'DunkinAI', 'width=1400,height=900');
+        showToast('던킨 AI 비서를 새로운 창에서 실행합니다.', 'success');
+      } else {
+        // 그 외 페이지에서는 AI 미니챗 오픈
+        toggleMini();
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       AI MINI PANEL
+    ═══════════════════════════════════════════ */
+    function toggleMini() {
+      miniOpen = !miniOpen;
+      document.getElementById('aiMini').classList.toggle('open', miniOpen);
+    }
+    function closeMini() {
+      miniOpen = false;
+      document.getElementById('aiMini').classList.remove('open');
+    }
+    function sendMiniMsg() {
+      const inp = document.getElementById('miniInp');
+      const text = inp.value.trim();
+      if (!text) return;
+      appendMiniMsg('user', text);
+      inp.value = '';
+      showMiniTyping();
+      setTimeout(() => {
+        removeMiniTyping();
+        const reply = MINI_REPLIES[text] || '🤔 분석 중이에요! 대시보드에서 더 자세한 인사이트를 확인하세요.';
+        appendMiniMsg('ai', reply);
+      }, 800);
+    }
+    function sendMiniQ(btn) {
+      const text = btn.textContent;
+      appendMiniMsg('user', text);
+      showMiniTyping();
+      setTimeout(() => {
+        removeMiniTyping();
+        const reply = MINI_REPLIES[text] || '분석 중입니다 😊';
+        appendMiniMsg('ai', reply);
+      }, 700);
+    }
+
+    let miniTypingEl = null;
+    function showMiniTyping() {
+      const c = document.getElementById('miniMsgs');
+      miniTypingEl = document.createElement('div');
+      miniTypingEl.className = 'm-row ai typing-indicator';
+      miniTypingEl.innerHTML = `
+    <div class="m-av">🤖</div>
+    <div class="m-bubble" style="padding:10px 14px;display:flex;gap:3px;align-items:center">
+      <span style="width:6px;height:6px;border-radius:50%;background:#aaa;animation:typeBounce .6s ease infinite alternate"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#aaa;animation:typeBounce .6s .2s ease infinite alternate"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#aaa;animation:typeBounce .6s .4s ease infinite alternate"></span>
+    </div>`;
+      c.appendChild(miniTypingEl);
+      c.scrollTop = c.scrollHeight;
+    }
+    function removeMiniTyping() {
+      if (miniTypingEl) { miniTypingEl.remove(); miniTypingEl = null; }
+    }
+    function appendMiniMsg(role, text) {
+      const c = document.getElementById('miniMsgs');
+      const d = document.createElement('div');
+      d.className = 'm-row ' + role;
+      if (role === 'ai') {
+        d.innerHTML = `<div class="m-av">🤖</div><div class="m-bubble">${text}</div>`;
+      } else {
+        d.innerHTML = `<div class="m-bubble">${esc(text)}</div>`;
+      }
+      c.appendChild(d);
+      c.scrollTop = c.scrollHeight;
+    }
+
+    /* ═══════════════════════════════════════════
+       NOTIFICATION PANEL
+    ═══════════════════════════════════════════ */
+    function toggleNotifPanel() {
+      notifOpen = !notifOpen;
+      document.getElementById('notifPanel').classList.toggle('open', notifOpen);
+    }
+    function closeNotifPanel() {
+      notifOpen = false;
+      document.getElementById('notifPanel').classList.remove('open');
+    }
+    function markAllRead() {
+      NOTIFS.forEach(n => n.unread = false);
+      renderNotifs();
+      document.querySelector('.sys-icon-btn .notif-dot').style.display = 'none';
+      showToast('모든 알림을 읽음 처리했습니다', 'success');
+    }
+    function renderNotifs() {
+      const el = document.getElementById('notifList');
+      if (!el) return;
+      el.innerHTML = NOTIFS.map(n => `
+    <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="readNotif(${n.id})">
+      <div class="notif-ico">${n.ico}</div>
+      <div class="notif-body">
+        <div class="notif-item-title">${n.title}</div>
+        <div class="notif-item-sub">${n.sub}</div>
+      </div>
+      ${n.unread ? '<div class="notif-unread-dot"></div>' : ''}
+    </div>`).join('');
+    }
+    function readNotif(id) {
+      const n = NOTIFS.find(x => x.id === id);
+      if (n) { n.unread = false; renderNotifs(); }
+    }
+
+    /* ═══════════════════════════════════════════
+       MENU
+    ═══════════════════════════════════════════ */
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastWrap');
+      const icons = { info: 'ℹ️', success: '✅', warn: '⚠️', err: '❌' };
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span>${esc(msg)}`;
+      c.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0'; t.style.transform = 'translateY(6px)';
+        t.style.transition = '.3s ease';
+        setTimeout(() => t.remove(), 300);
+      }, 2800);
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    /* Close panels on outside click */
+    document.addEventListener('click', (e) => {
+      if (notifOpen && !e.target.closest('.notif-panel') && !e.target.closest('.sys-icon-btn')) {
+        closeNotifPanel();
+      }
+      const fabWrap = document.getElementById('aiFabWrap');
+      if (fabWrap && fabWrap.classList.contains('open') && !e.target.closest('.ai-fab-wrap')) {
+        fabWrap.classList.remove('open');
+      }
+    });
+
+    /* CSS animation for mini typing */
+    const style = document.createElement('style');
+    style.textContent = `
+  @keyframes typeBounce {
+    from { transform: translateY(0); opacity: .4; }
+    to { transform: translateY(-4px); opacity: 1; }
+  }
+`;
+    document.head.appendChild(style);
+  </script>
+</body>
+
+</html>
