@@ -20,9 +20,9 @@ export const menuSections: MenuSection[] = [
     section: "매장 운영",
     roles: ["store_owner", "hq_admin"],
     items: [
-      { to: "/production", label: "생산 현황", icon: "bakery_dining" },
+      { to: "/production", label: "생산관리", icon: "bakery_dining" },
       { to: "/ordering", label: "주문 관리", icon: "shopping_cart" },
-      { to: "/sales", label: "매출 현황", icon: "query_stats" },
+      { to: "/sales", label: "손익분석", icon: "query_stats" },
     ],
   },
   {
@@ -50,9 +50,9 @@ export const menuSections: MenuSection[] = [
 
 export const routeDescriptions: Record<string, string> = {
   "/": "오늘 매장 운영 현황을 한눈에 확인합니다.",
-  "/production": "지금 만들어야 할 품목을 확인합니다.",
-  "/ordering": "오늘 주문할 수량을 선택합니다.",
-  "/sales": "매출 현황과 분석 결과를 확인합니다.",
+  "/production": "지금 생산해야 할 품목과 재고 예측을 확인합니다.",
+  "/ordering": "주문 누락 방지를 위한 주문 추천안을 비교합니다.",
+  "/sales": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
   "/analytics": "매출 데이터를 조회합니다.",
   "/hq/coaching": "담당 매장 주문 현황을 확인합니다.",
   "/hq/inspection": "매장별 생산 준수 현황을 점검합니다.",

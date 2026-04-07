@@ -1,494 +1,347 @@
-import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle, Clock, TrendingDown } from "lucide-react";
-
-import { SectionHint } from "@/components/ui/SectionHint";
-import { PageHero, StatsGrid } from "@/pages/shared";
-import { useDemoSession } from "@/contexts/useDemoSession";
+import { useMemo, useState } from "react";
 import {
-  fetchProductionRegistrationHistory,
-  fetchProductionRegistrationSummary,
-  fetchProductionOverview,
-  saveProductionRegistration,
-  type ProductionItem,
-  type ProductionRegistrationResponse,
-} from "@/lib/api";
+  Clock,
+  MessageCircle,
+  Wrench,
+  Zap,
+} from "lucide-react";
 
-type StockStatus = "danger" | "warning" | "safe";
+import { PageHero, StatsGrid } from "@/pages/shared";
 
-const statusConfig: Record<StockStatus, { label: string; className: string }> = {
-  danger: { label: "지금 만들어야 해요", className: "bg-red-50 text-red-600 border border-red-100" },
-  warning: { label: "곧 필요해요", className: "bg-orange-50 text-orange-600 border border-orange-100" },
-  safe: { label: "충분해요", className: "bg-green-50 text-green-600 border border-green-100" },
+type ProductionSku = {
+  id: string;
+  name: string;
+  current: number;
+  forecast: number;
+  avgFirstQty: number;
+  avgSecondQty: number;
+  avgFirstTime: string;
+  avgSecondTime: string;
+  status: "danger" | "warning" | "safe";
+  chanceLossSaving: number;
+  speedAlert?: boolean;
+  materialAlert?: boolean;
 };
 
-type RegisteredItem = {
-  skuId: string;
-  qty: number;
-  registeredAt: string;
-  feedbackMessage: string;
-};
+const skus: ProductionSku[] = [
+  {
+    id: "choco",
+    name: "초코 도넛",
+    current: 12,
+    forecast: 2,
+    avgFirstQty: 48,
+    avgSecondQty: 24,
+    avgFirstTime: "08:30",
+    avgSecondTime: "13:00",
+    status: "danger",
+    chanceLossSaving: 18,
+    speedAlert: true,
+    materialAlert: true,
+  },
+  {
+    id: "strawberry",
+    name: "딸기 도넛",
+    current: 28,
+    forecast: 18,
+    avgFirstQty: 36,
+    avgSecondQty: 24,
+    avgFirstTime: "08:45",
+    avgSecondTime: "13:15",
+    status: "warning",
+    chanceLossSaving: 8,
+  },
+  {
+    id: "glazed",
+    name: "글레이즈드 도넛",
+    current: 45,
+    forecast: 38,
+    avgFirstQty: 60,
+    avgSecondQty: 30,
+    avgFirstTime: "08:15",
+    avgSecondTime: "12:45",
+    status: "safe",
+    chanceLossSaving: 2,
+  },
+  {
+    id: "cream",
+    name: "크림 도넛",
+    current: 31,
+    forecast: 24,
+    avgFirstQty: 42,
+    avgSecondQty: 24,
+    avgFirstTime: "08:30",
+    avgSecondTime: "13:00",
+    status: "safe",
+    chanceLossSaving: 3,
+  },
+  {
+    id: "matcha",
+    name: "말차 도넛",
+    current: 15,
+    forecast: 8,
+    avgFirstQty: 30,
+    avgSecondQty: 18,
+    avgFirstTime: "09:00",
+    avgSecondTime: "13:30",
+    status: "warning",
+    chanceLossSaving: 12,
+    speedAlert: true,
+  },
+];
 
-function getTodayString() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+function StatusBadge({ status }: { status: ProductionSku["status"] }) {
+  const map = {
+    danger: "border border-red-200 bg-red-50 text-red-600",
+    warning: "border border-orange-200 bg-orange-50 text-orange-600",
+    safe: "border border-green-200 bg-green-50 text-green-600",
+  };
+  const label = {
+    danger: "위험",
+    warning: "주의",
+    safe: "안전",
+  };
 
-function formatRegisteredAt(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return date.toLocaleTimeString("ko-KR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${map[status]}`}>{label[status]}</span>;
 }
 
 export function ProductionPage() {
-  const { user } = useDemoSession();
-  const storeId = user.storeId;
-  const [registered, setRegistered] = useState<RegisteredItem[]>([]);
-  const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [qty, setQty] = useState<string>("40");
-  const [dateFrom, setDateFrom] = useState(getTodayString);
-  const [dateTo, setDateTo] = useState(getTodayString);
-  const productionQuery = useQuery({
-    queryKey: ["production-overview"],
-    queryFn: fetchProductionOverview,
-  });
-  const registrationHistoryQuery = useQuery({
-    queryKey: ["production-registration-history", storeId, dateFrom, dateTo],
-    queryFn: () => fetchProductionRegistrationHistory(20, { storeId, dateFrom, dateTo }),
-  });
-  const registrationSummaryQuery = useQuery({
-    queryKey: ["production-registration-summary", storeId, dateFrom, dateTo],
-    queryFn: () => fetchProductionRegistrationSummary({ storeId, dateFrom, dateTo }),
-  });
+  const [activeSku, setActiveSku] = useState<ProductionSku | null>(null);
+  const [qty, setQty] = useState("48");
+  const [showChat, setShowChat] = useState(false);
 
-  const registrationMutation = useMutation({
-    mutationFn: saveProductionRegistration,
-    onSuccess: (data: ProductionRegistrationResponse) => {
-      const now = new Date();
-      const registeredAt = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-      setRegistered((current) => [
-        ...current.filter((item) => item.skuId !== data.sku_id),
-        {
-          skuId: data.sku_id,
-          qty: data.qty,
-          registeredAt,
-          feedbackMessage: data.feedback_message,
-        },
-      ]);
-      setActiveModal(null);
-    },
-  });
-
-  useEffect(() => {
-    if (registered.length > 0 || !registrationHistoryQuery.data) {
-      return;
-    }
-
-    setRegistered(
-      registrationHistoryQuery.data.items.map((entry) => ({
-        skuId: entry.sku_id,
-        qty: entry.qty,
-        registeredAt: formatRegisteredAt(entry.registered_at),
-        feedbackMessage: entry.feedback_message,
-      })),
-    );
-  }, [registered.length, registrationHistoryQuery.data]);
-
-  const items = productionQuery.data?.items ?? [];
-  const activeSku = useMemo(
-    () => items.find((item) => item.sku_id === activeModal),
-    [activeModal, items],
-  );
-
-  const isRegistered = (id: string) => registered.some((entry) => entry.skuId === id);
-
-  const dangerCount = items.filter((item) => item.status === "danger" && !isRegistered(item.sku_id)).length;
-  const productionStats = useMemo(() => {
-    const summary = registrationSummaryQuery.data;
-    const currentInventory = items.reduce((sum, item) => sum + item.current, 0);
-    const forecastInventory = items.reduce((sum, item) => sum + item.forecast, 0);
+  const stats = useMemo(() => {
+    const danger = skus.filter((sku) => sku.status === "danger").length;
+    const warning = skus.filter((sku) => sku.status === "warning").length;
+    const safe = skus.filter((sku) => sku.status === "safe").length;
     return [
-      { label: "현재 재고", value: `${currentInventory}개`, tone: "default" as const },
-      { label: "1시간 후 예측", value: `${forecastInventory}개`, tone: forecastInventory <= 50 ? ("danger" as const) : ("default" as const) },
-      {
-        label: "최근 7일 등록",
-        value: `${summary?.recent_registration_count_7d ?? 0}건`,
-        tone: (summary?.recent_registration_count_7d ?? 0) > 0 ? ("primary" as const) : ("default" as const),
-      },
-      {
-        label: "등록 수량",
-        value: `${summary?.recent_registered_qty_7d ?? 0}개`,
-        tone: (summary?.recent_registered_qty_7d ?? 0) > 0 ? ("success" as const) : ("default" as const),
-      },
+      { label: "품절 위험", value: `${danger}개`, tone: "danger" as const },
+      { label: "주의 필요", value: `${warning}개`, tone: "primary" as const },
+      { label: "안전 재고", value: `${safe}개`, tone: "success" as const },
+      { label: "찬스 로스 절감", value: "23%", tone: "default" as const },
     ];
-  }, [items, registrationSummaryQuery.data]);
+  }, []);
 
-  const handleRegister = () => {
-    if (!activeModal || registrationMutation.isPending) {
-      return;
-    }
-    const parsedQty = Number(qty);
-    if (!Number.isFinite(parsedQty) || parsedQty < 1) {
-      return;
-    }
-    registrationMutation.mutate({
-      sku_id: activeModal,
-      qty: parsedQty,
-      registered_by: user.role,
-      store_id: storeId,
-    });
+  const openRegister = (sku: ProductionSku) => {
+    setActiveSku(sku);
+    setQty(String(sku.avgFirstQty));
   };
-
-  const openModal = (sku: ProductionItem) => {
-    setQty(String(sku.recommended));
-    setActiveModal(sku.sku_id);
-  };
-
-  if (productionQuery.isLoading) {
-    return (
-      <div className="space-y-6">
-        <PageHero
-          title="생산 현황을 불러오고 있습니다."
-          description="백엔드에서 재고와 생산 추천 데이터를 조회 중입니다."
-        />
-        <section className="rounded-[28px] border border-border bg-white px-8 py-10 text-sm text-slate-500 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          생산 데이터를 가져오는 중입니다...
-        </section>
-      </div>
-    );
-  }
-
-  if (productionQuery.isError) {
-    return (
-      <div className="space-y-6">
-        <PageHero
-          title="생산 현황을 불러오지 못했습니다."
-          description="백엔드 연결 상태를 확인한 뒤 다시 시도해 주세요."
-        />
-        <section className="rounded-[28px] border border-red-200 bg-red-50 px-8 py-8 text-sm text-red-600 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          {(productionQuery.error as Error).message}
-        </section>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
       <PageHero
-        title="생산 현황"
-        description="지금 만들어야 할 도넛을 한눈에 확인하세요."
+        title="생산관리"
+        description="5분 단위 자동 갱신 재고와 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 생산 필요 시점을 자동 감지합니다."
       >
-        {dangerCount > 0 ? (
-          <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-600">
-            <AlertTriangle className="h-4 w-4" />
-            지금 바로 만들어야 할 품목이 {dangerCount}개 있어요
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
+            <Clock className="h-4 w-4" />
+            마지막 갱신 2026-04-06 14:23 · 5분 단위 자동 갱신
           </div>
-        ) : (
-          <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-semibold text-green-600">
-            <CheckCircle className="h-4 w-4" />
-            모든 품목 재고가 충분해요
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={() => setShowChat((value) => !value)}
+            className="inline-flex items-center gap-2 rounded-full border border-[#dce4f3] bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
+          >
+            <MessageCircle className="h-4 w-4" />
+            AI 질문하기
+          </button>
+        </div>
       </PageHero>
 
-      <StatsGrid stats={productionStats} />
+      {showChat ? (
+        <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+          <p className="text-sm font-bold text-slate-900">생산 관련 빠른 질문</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {["지금 생산해야 할 품목은?", "찬스 로스를 어떻게 줄이나요?", "1시간 후 재고 예측 기준은?", "4주 평균 패턴은 어떻게 계산하나요?"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
-      <section className="rounded-[24px] border border-[#dce4f3] bg-white px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm font-bold text-slate-800">조회 기간</p>
-            <p className="mt-1 text-xs text-slate-500">{user.storeName} 생산 등록 이력을 기준으로 화면을 복원합니다.</p>
+      <section className="space-y-3">
+        <article className="rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-base font-bold text-red-700">긴급: 초코 도넛 재고 소진 1시간 전</p>
+              <p className="mt-1 text-sm text-red-600">현재 12개, 1시간 후 2개 예상. 지금 생산하면 찬스 로스 18% 감소 가능</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => openRegister(skus[0])}
+              className="rounded-2xl bg-[#2454C8] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
+            >
+              생산하기
+            </button>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
-              시작일
-              <input
-                type="date"
-                value={dateFrom}
-                max={dateTo}
-                onChange={(event) => setDateFrom(event.target.value)}
-                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
-              종료일
-              <input
-                type="date"
-                value={dateTo}
-                min={dateFrom}
-                onChange={(event) => setDateTo(event.target.value)}
-                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
-              />
-            </label>
+        </article>
+
+        <article className="rounded-[24px] border border-orange-200 bg-orange-50 px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-start gap-3">
+            <Zap className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />
+            <div>
+              <p className="text-base font-bold text-orange-700">오늘 말차 도넛 소진 속도가 평소보다 빠릅니다</p>
+              <p className="mt-1 text-sm text-orange-600">평소 대비 30% 빠른 판매 속도 감지. 추가 생산 검토를 권장합니다.</p>
+            </div>
           </div>
-        </div>
+        </article>
+
+        <article className="rounded-[24px] border border-yellow-200 bg-yellow-50 px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-start gap-3">
+            <Wrench className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600" />
+            <div>
+              <p className="text-base font-bold text-yellow-700">초콜릿 재료 소진 1시간 전</p>
+              <p className="mt-1 text-sm text-yellow-700">초코 도넛 생산 제한이 예상됩니다. 재료 주문 상태를 함께 확인하세요.</p>
+            </div>
+          </div>
+        </article>
       </section>
 
-      <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-        <div className="flex items-center justify-between gap-3 border-b border-border/60 px-6 py-5">
-          <p className="text-base font-bold text-slate-900">품목별 재고 현황</p>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1.5 text-xs font-medium text-slate-500">
-              <Clock className="h-3.5 w-3.5" />
-              {productionQuery.data?.production_lead_time_minutes}분 단위 판단 · {productionQuery.data?.updated_at} 기준
-            </div>
-            <SectionHint questions={[
-              { q: "왜 빨간색으로 표시되나요?", a: "1시간 뒤에 재고가 거의 다 떨어질 것 같은 품목이에요. 지금 만들기 시작해야 제 시간에 진열할 수 있어요.", data: ["생산하는 데 보통 약 1시간이 걸려요", "재고가 0이 되면 손님이 못 사가요"] },
-              { q: "1시간 뒤 예상은 어떻게 계산하나요?", a: "오늘 판매 속도를 보고 앞으로 1시간 동안 얼마나 팔릴지 계산해요. 날씨나 요일 패턴도 반영돼요.", data: ["오늘 판매 속도 기반", "최근 4주 같은 요일 평균 참고"] },
-              { q: "생산 등록은 어떻게 하나요?", a: "빨간색 품목 오른쪽에 있는 '생산 등록' 버튼을 누르시면 돼요. 수량은 자동으로 추천해 드려요." },
-            ]} />
-          </div>
-        </div>
+      <StatsGrid stats={stats} />
 
+      <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <div className="border-b border-border/60 px-6 py-5">
+          <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
+          <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[1080px] text-sm">
             <thead>
-              <tr className="border-b border-border/40 bg-[#f8fbff]">
-                <th className="px-6 py-3 text-left text-[12px] font-semibold text-slate-500">품목</th>
-                <th className="px-4 py-3 text-right text-[12px] font-semibold text-slate-500">지금 재고</th>
-                <th className="px-4 py-3 text-right text-[12px] font-semibold text-slate-500">1시간 뒤 예상</th>
-                <th className="px-4 py-3 text-center text-[12px] font-semibold text-slate-500">소진 예상 시각</th>
-                <th className="px-4 py-3 text-center text-[12px] font-semibold text-slate-500">상태</th>
-                <th className="px-4 py-3 text-center text-[12px] font-semibold text-slate-500"></th>
+              <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
+                <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">품목명</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">현재 재고</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">1시간 후 예측</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 1차</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 2차</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">찬스 로스 절감</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500">알림</th>
+                <th className="px-4 py-3 text-xs font-bold text-slate-500"></th>
               </tr>
             </thead>
             <tbody>
-              {items.map((sku) => {
-                const reg = registered.find((entry) => entry.skuId === sku.sku_id);
-                const cfg = statusConfig[sku.status];
-                return (
-                  <tr key={sku.sku_id} className={`border-b border-border/30 transition-colors last:border-0 ${sku.status === "danger" && !reg ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2.5">
-                        {sku.status === "danger" && !reg ? (
-                          <AlertTriangle className="h-4 w-4 shrink-0 text-red-400" />
-                        ) : reg ? (
-                          <CheckCircle className="h-4 w-4 shrink-0 text-green-500" />
-                        ) : (
-                          <div className="h-4 w-4" />
-                        )}
-                        <div>
-                          <span className="font-semibold text-slate-800">{sku.name}</span>
-                          {sku.status === "danger" && !reg && sku.alert_message ? (
-                            <p className="mt-0.5 text-xs text-red-500">{sku.alert_message}</p>
-                          ) : null}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-lg font-bold text-slate-800">{sku.current}개</span>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className={`text-lg font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-500" : "text-slate-700"}`}>
-                        {sku.forecast}개
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      {sku.depletion_time !== "-" ? (
-                        <span className="font-semibold text-red-500">{sku.depletion_time}</span>
-                      ) : (
-                        <span className="text-slate-300">-</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${reg ? "border border-green-100 bg-green-50 text-green-600" : cfg.className}`}>
-                        {reg ? "등록 완료" : cfg.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      {sku.status !== "safe" && !reg ? (
-                        <button
-                          type="button"
-                          onClick={() => openModal(sku)}
-                          className="rounded-xl bg-[#2454C8] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
-                        >
-                          생산 등록
-                        </button>
-                      ) : reg ? (
-                        <div className="text-sm font-medium text-green-600">{reg.qty}개 · {reg.registeredAt}</div>
-                      ) : (
-                        <span className="text-xs text-slate-300">-</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {skus.map((sku) => (
+                <tr key={sku.id} className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
+                  <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
+                  <td className="px-4 py-4 font-semibold text-slate-800">{sku.name}</td>
+                  <td className="px-4 py-4">
+                    <div className="font-bold text-slate-900">{sku.current}개</div>
+                    <div className="mt-2 h-2 rounded-full bg-slate-100">
+                      <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${Math.min((sku.current / 60) * 100, 100)}%` }} />
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className={`font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-600" : "text-green-600"}`}>
+                      {sku.forecast}개
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="font-semibold text-slate-800">{sku.avgFirstQty}개</div>
+                    <div className="text-xs text-slate-400">{sku.avgFirstTime}</div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="font-semibold text-slate-800">{sku.avgSecondQty}개</div>
+                    <div className="text-xs text-slate-400">{sku.avgSecondTime}</div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="font-bold text-[#2454C8]">-{sku.chanceLossSaving}%</div>
+                    <div className="mt-1 text-[11px] text-slate-400">1시간 후 재고 예측 및 4주 평균 손실률 기준</div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {sku.speedAlert ? <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] font-bold text-orange-600">속도↑</span> : null}
+                      {sku.materialAlert ? <span className="rounded-full border border-yellow-200 bg-yellow-50 px-2 py-1 text-[11px] font-bold text-yellow-700">재료</span> : null}
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <button
+                      type="button"
+                      onClick={() => openRegister(sku)}
+                      className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
+                        sku.status === "danger"
+                          ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
+                          : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
+                      }`}
+                    >
+                      생산
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        <article className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          <div className="flex items-start justify-between gap-3">
+      {activeSku ? (
+        <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-6 shadow-[0_18px_36px_rgba(16,32,51,0.08)]">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-base font-bold text-slate-900">최근 4주 생산 패턴</p>
-              <p className="mt-1 text-sm text-slate-400">
-                {dangerCount > 0
-                  ? `현재 위험 품목 ${dangerCount}개를 기준으로 생산 우선순위를 보여드려요`
-                  : "현재 기준으로 급한 생산 우선순위는 없어요"}
-              </p>
+              <p className="text-lg font-bold text-slate-900">생산 등록</p>
+              <p className="mt-1 text-sm text-slate-500">추천 수량은 4주 평균 생산 패턴을 기준으로 계산했습니다.</p>
             </div>
-            <SectionHint questions={[
-              { q: "1차, 2차 생산이 뭔가요?", a: "하루에 보통 두 번 도넛을 만들어요. 오전에 한 번(1차), 오후에 한 번(2차)이에요. 시간과 수량은 지난 4주 평균이에요." },
-              { q: "오늘 왜 더 빨리 팔리나요?", a: "오늘 판매 속도가 평소 같은 요일보다 12% 빠르게 팔리고 있어요. 날씨나 근처 행사 영향일 수 있어요." },
-            ]} />
+            <button
+              type="button"
+              onClick={() => setActiveSku(null)}
+              className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-semibold text-slate-600"
+            >
+              닫기
+            </button>
           </div>
-          <div className="mt-5 space-y-3">
-            {items.filter((item) => item.status !== "safe").map((sku) => (
-              <div key={sku.sku_id} className="rounded-2xl bg-[#f8fbff] px-4 py-3">
-                <p className="text-sm font-bold text-slate-800">{sku.name}</p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500">
-                  <div className="rounded-xl bg-white px-3 py-2">
-                    <span className="text-slate-400">1차 생산</span>
-                    <p className="mt-0.5 font-semibold text-slate-700">{sku.prod1}</p>
-                  </div>
-                  <div className="rounded-xl bg-white px-3 py-2">
-                    <span className="text-slate-400">2차 생산</span>
-                    <p className="mt-0.5 font-semibold text-slate-700">{sku.prod2}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
 
-        <article className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-base font-bold text-slate-900">생산 등록 결과</p>
-              <p className="mt-1 text-sm text-slate-400">
-                조회 기간 내 생산 등록 {registrationSummaryQuery.data?.recent_registration_count_7d ?? 0}건 · 등록 수량 {registrationSummaryQuery.data?.recent_registered_qty_7d ?? 0}개
-              </p>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
+              <p className="text-xs font-bold text-slate-400">품목</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{activeSku.name}</p>
             </div>
-            <SectionHint questions={[
-              { q: "매출 손실이 뭔가요?", a: "도넛이 다 떨어졌을 때 사러 오신 손님이 그냥 가시면 그만큼 못 번 돈이에요. 제때 만들면 이 손실을 줄일 수 있어요." },
-              { q: "10%는 어떻게 계산되나요?", a: "재고가 없어서 못 판 수량을 기준으로 계산해요. 시간에 맞게 생산 등록하시면 이 숫자가 줄어들어요." },
-            ]} />
+            <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
+              <p className="text-xs font-bold text-slate-400">생산 수량</p>
+              <input
+                type="number"
+                value={qty}
+                onChange={(event) => setQty(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-[#dce4f3] bg-white px-4 py-3 text-base font-semibold text-slate-800 outline-none focus:border-[#2454C8]"
+              />
+              <p className="mt-2 text-xs text-slate-500">추천 수량 {activeSku.avgFirstQty}개 · 4주 평균 1차 생산 기준</p>
+            </div>
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-4">
+              <p className="text-xs font-bold text-red-500">현재 재고 / 1시간 후 예측</p>
+              <p className="mt-1 text-sm text-red-700">{activeSku.current}개 → {activeSku.forecast}개 예상</p>
+            </div>
+            <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-4">
+              <p className="text-xs font-bold text-[#2454C8]">찬스 로스 감소 효과</p>
+              <p className="mt-1 text-sm text-slate-700">지금 생산 시 {activeSku.chanceLossSaving}% 감소 예상</p>
+              <p className="mt-2 text-xs text-slate-500">산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교</p>
+            </div>
           </div>
-          <div className="mt-5 space-y-3">
-            {registered.length === 0 ? (
-              <div className="rounded-2xl bg-[#f8fbff] px-4 py-8 text-center">
-                <TrendingDown className="mx-auto h-8 w-8 text-slate-300" />
-                <p className="mt-2 text-sm text-slate-400">생산 등록 후 결과가 여기에 표시돼요</p>
-              </div>
-            ) : (
-              registered.map((entry) => {
-                const sku = items.find((item) => item.sku_id === entry.skuId);
-                return (
-                  <div key={entry.skuId} className="rounded-2xl border border-green-100 bg-green-50 px-4 py-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span className="text-sm font-bold text-green-800">{sku?.name}</span>
-                      </div>
-                      <span className="text-sm font-bold text-green-600">
-                        {registrationSummaryQuery.data?.affected_sku_count
-                          ? `영향 SKU ${registrationSummaryQuery.data.affected_sku_count}개`
-                          : "등록 완료"}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-green-600">{entry.registeredAt} 등록 · {entry.qty}개 · {entry.feedbackMessage}</p>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </article>
-      </section>
 
-      {activeModal && activeSku ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
-            onClick={() => setActiveModal(null)}
-            aria-label="닫기"
-          />
-          <div className="fixed left-1/2 top-1/2 z-50 w-[380px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_32px_80px_rgba(16,32,51,0.18)]">
-            <div className="bg-[linear-gradient(135deg,#1f4dbb_0%,#55a0ff_100%)] px-6 py-5 text-white">
-              <p className="text-sm font-semibold text-white/70">{activeSku.name} 생산 등록</p>
-              <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                <div className="rounded-xl bg-white/10 px-3 py-2.5">
-                  <p className="text-xs text-white/60">지금 재고</p>
-                  <p className="text-lg font-bold">{activeSku.current}개</p>
-                </div>
-                <div className="rounded-xl bg-white/10 px-3 py-2.5">
-                  <p className="text-xs text-white/60">1시간 뒤 예상</p>
-                  <p className="text-lg font-bold text-red-200">{activeSku.forecast}개</p>
-                </div>
-              </div>
+          {activeSku.materialAlert ? (
+            <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
+              재료 부족 경고가 있습니다. 생산 등록 전에 재료 주문 상태를 함께 확인하세요.
             </div>
-            <div className="space-y-4 px-6 py-5">
-              {activeSku.alert_message ? (
-                <div className="flex items-start gap-2 rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
-                  <AlertTriangle className="h-4 w-4 shrink-0 text-orange-500 mt-0.5" />
-                  <p className="text-xs leading-5 text-orange-700">{activeSku.alert_message}</p>
-                </div>
-              ) : null}
-              <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">
-                  몇 개 만들까요?
-                </label>
-                <p className="mb-3 text-xs text-slate-400">AI가 추천한 수량이에요. 바꾸셔도 됩니다.</p>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setQty((current) => String(Math.max(1, Number(current) - 4)))}
-                    className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#dce4f3] bg-[#f7faff] text-xl font-bold text-slate-600 hover:bg-[#eef4ff]"
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    value={qty}
-                    onChange={(event) => setQty(event.target.value)}
-                    className="flex-1 rounded-xl border border-[#dce4f3] bg-[#f7faff] px-4 py-3 text-center text-xl font-bold text-slate-800 focus:border-primary focus:outline-none"
-                    min="1"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setQty((current) => String(Number(current) + 4))}
-                    className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#dce4f3] bg-[#f7faff] text-xl font-bold text-slate-600 hover:bg-[#eef4ff]"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              {registrationMutation.isError ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                  {(registrationMutation.error as Error).message}
-                </div>
-              ) : null}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActiveModal(null)}
-                  className="flex-1 rounded-xl border border-[#dce4f3] bg-[#f7faff] py-3.5 text-sm font-semibold text-slate-600 hover:bg-[#eef4ff]"
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRegister}
-                  disabled={registrationMutation.isPending}
-                  className="flex-1 rounded-xl bg-[#2454C8] py-3.5 text-sm font-bold text-white hover:bg-[#1d44a8] disabled:opacity-50"
-                >
-                  {registrationMutation.isPending ? "등록 중..." : "등록 완료"}
-                </button>
-              </div>
-            </div>
+          ) : null}
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              type="button"
+              className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              className="rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
+            >
+              생산 등록
+            </button>
           </div>
-        </>
+        </section>
       ) : null}
     </div>
   );

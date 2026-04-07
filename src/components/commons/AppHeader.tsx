@@ -8,9 +8,9 @@ import { useDemoSession } from "@/contexts/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
   "/": ["홈"],
-  "/production": ["매장 운영", "생산 현황"],
+  "/production": ["매장 운영", "생산관리"],
   "/ordering": ["매장 운영", "주문 관리"],
-  "/sales": ["매장 운영", "매출 현황"],
+  "/sales": ["매장 운영", "손익분석"],
   "/analytics": ["매장 운영", "매출 조회"],
   "/hq/coaching": ["본사", "주문 코칭"],
   "/hq/inspection": ["본사", "생산 점검"],

@@ -1,193 +1,148 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { CheckCircle, Clock, ShoppingCart } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  CloudRain,
+  Clock,
+  Info,
+  MessageCircle,
+  TrendingUp,
+} from "lucide-react";
 
-import { SectionHint } from "@/components/ui/SectionHint";
 import { PageHero, StatsGrid } from "@/pages/shared";
-import { useDemoSession } from "@/contexts/useDemoSession";
-import { fetchOrderSelectionHistory, fetchOrderSelectionSummary, fetchOrderingOptions, saveOrderSelection } from "@/lib/api";
 
-type NotificationState = {
-  source?: string;
-  notificationId?: number;
-  focusOptionId?: string;
-} | null;
+type OrderItem = { name: string; quantity: number };
+type OrderOption = {
+  id: string;
+  title: string;
+  basis: string;
+  description: string;
+  items: OrderItem[];
+  reasoning: string;
+  metrics: { key: string; value: string }[];
+  specialFactors?: string[];
+  recommended?: boolean;
+};
 
-function getTodayString() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+const options: OrderOption[] = [
+  {
+    id: "yesterday",
+    title: "전일 기준",
+    basis: "어제 판매량 기반",
+    description: "어제와 동일한 수량으로 주문합니다.",
+    items: [
+      { name: "초코 도넛", quantity: 120 },
+      { name: "딸기 도넛", quantity: 90 },
+      { name: "글레이즈드 도넛", quantity: 150 },
+      { name: "크림 도넛", quantity: 100 },
+      { name: "말차 도넛", quantity: 70 },
+    ],
+    reasoning: "어제 월요일 판매량과 잔여 재고를 기준으로 산정했습니다.",
+    metrics: [
+      { key: "재고 소진율", value: "95%" },
+      { key: "품절 품목", value: "0개" },
+      { key: "잔여 재고", value: "5%" },
+    ],
+  },
+  {
+    id: "lastweek",
+    title: "전주 동요일 기준",
+    basis: "지난주 월요일 판매량 기반",
+    description: "지난주 같은 요일 판매량과 최근 증가 추세를 반영합니다.",
+    items: [
+      { name: "초코 도넛", quantity: 135 },
+      { name: "딸기 도넛", quantity: 95 },
+      { name: "글레이즈드 도넛", quantity: 160 },
+      { name: "크림 도넛", quantity: 110 },
+      { name: "말차 도넛", quantity: 80 },
+    ],
+    reasoning: "지난주 월요일 대비 최근 3주 평균 증가 추세와 날씨 유사도를 반영했습니다.",
+    metrics: [
+      { key: "3주 평균 증가율", value: "+12%" },
+      { key: "날씨 유사도", value: "90%" },
+      { key: "재고 회전율", value: "98%" },
+    ],
+    specialFactors: ["날씨: 맑음, 22°C", "조기 품절: 말차 도넛 +5개 보정"],
+    recommended: true,
+  },
+  {
+    id: "pattern",
+    title: "점주 반복 패턴",
+    basis: "최근 4주 점주 선택 패턴",
+    description: "점주가 자주 수정하는 수량과 최근 월요일 패턴을 반영합니다.",
+    items: [
+      { name: "초코 도넛", quantity: 130 },
+      { name: "딸기 도넛", quantity: 100 },
+      { name: "글레이즈드 도넛", quantity: 155 },
+      { name: "크림 도넛", quantity: 105 },
+      { name: "말차 도넛", quantity: 75 },
+    ],
+    reasoning: "점주님의 최근 4주 월요일 선택 패턴과 수정 빈도를 개인화 기본값으로 반영했습니다.",
+    metrics: [
+      { key: "4주 평균 선택", value: "100%" },
+      { key: "수정 빈도", value: "낮음" },
+      { key: "패턴 신뢰도", value: "85%" },
+    ],
+    specialFactors: ["개인화 기본값 적용"],
+  },
+];
 
 export function OrderingPage() {
-  const location = useLocation();
-  const { user } = useDemoSession();
-  const storeId = user.storeId;
-  const notificationState = location.state as NotificationState;
-  const isNotificationEntry = notificationState?.source === "notification" && notificationState?.notificationId === 2;
-  const [seconds, setSeconds] = useState(20 * 60);
-  const [showReasonModal, setShowReasonModal] = useState(false);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [savedSelection, setSavedSelection] = useState<{ optionId: string; reason?: string | null } | null>(null);
+  const [seconds, setSeconds] = useState(17 * 60);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
-  const [dateFrom, setDateFrom] = useState(getTodayString);
-  const [dateTo, setDateTo] = useState(getTodayString);
-
-  const orderingQuery = useQuery({
-    queryKey: ["ordering-options", isNotificationEntry],
-    queryFn: () => fetchOrderingOptions(isNotificationEntry),
-  });
-  const selectionHistoryQuery = useQuery({
-    queryKey: ["ordering-selection-history", storeId, dateFrom, dateTo],
-    queryFn: () => fetchOrderSelectionHistory(1, { storeId, dateFrom, dateTo }),
-  });
-  const selectionSummaryQuery = useQuery({
-    queryKey: ["ordering-selection-summary", storeId, dateFrom, dateTo],
-    queryFn: () => fetchOrderSelectionSummary({ storeId, dateFrom, dateTo }),
-  });
-
-  const selectionMutation = useMutation({
-    mutationFn: saveOrderSelection,
-    onSuccess: (data) => {
-      setSavedSelection({ optionId: data.option_id, reason: data.reason });
-      setShowReasonModal(false);
-    },
-  });
+  const [confirmed, setConfirmed] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
-    if (!orderingQuery.data || savedSelection) {
-      return;
-    }
-    setSeconds(orderingQuery.data.deadline_minutes * 60);
-  }, [orderingQuery.data, savedSelection]);
-
-  useEffect(() => {
-    const latestSelection = selectionHistoryQuery.data?.items[0];
-    if (!latestSelection || savedSelection) {
-      return;
-    }
-    setSavedSelection({
-      optionId: latestSelection.option_id,
-      reason: latestSelection.reason,
-    });
-  }, [savedSelection, selectionHistoryQuery.data]);
-
-  useEffect(() => {
-    if (savedSelection) {
-      return;
-    }
-    const interval = window.setInterval(() => {
+    if (confirmed) return;
+    const timer = window.setInterval(() => {
       setSeconds((current) => Math.max(0, current - 1));
     }, 1000);
-    return () => window.clearInterval(interval);
-  }, [savedSelection]);
+    return () => window.clearInterval(timer);
+  }, [confirmed]);
 
-  const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
-  const secs = (seconds % 60).toString().padStart(2, "0");
-  const isUrgent = seconds < 5 * 60;
-  const options = orderingQuery.data?.options ?? [];
-  const focusOptionId = notificationState?.focusOptionId ?? orderingQuery.data?.focus_option_id ?? null;
-  const chosen = useMemo(
-    () => options.find((option) => option.id === savedSelection?.optionId),
-    [options, savedSelection],
-  );
-  const orderingStats = useMemo(() => {
-    const summary = selectionSummaryQuery.data;
-    return [
-      { label: "마감까지", value: `${orderingQuery.data?.deadline_minutes ?? 20}분`, tone: "danger" as const },
-      { label: "추천 옵션", value: `${options.length}개`, tone: "primary" as const },
-      {
-        label: "점주 선택",
-        value: summary?.latest ? (summary.recommended_selected ? "추천안 선택" : "수동 선택") : "대기",
-        tone: summary?.latest ? ("success" as const) : ("default" as const),
-      },
-      {
-        label: "최근 7일 저장",
-        value: `${summary?.recent_selection_count_7d ?? 0}건`,
-        tone: (summary?.recent_selection_count_7d ?? 0) > 0 ? ("success" as const) : ("default" as const),
-      },
-    ];
-  }, [options.length, orderingQuery.data?.deadline_minutes, selectionSummaryQuery.data]);
+  const stats = useMemo(() => [
+    { label: "주문 마감까지", value: "17분", tone: "danger" as const },
+    { label: "추천 옵션", value: "3개", tone: "primary" as const },
+    { label: "주문 목적", value: "누락 방지", tone: "default" as const },
+    { label: "최종 의사결정", value: "점주 직접", tone: "success" as const },
+  ], []);
 
-  const handleSelect = (id: string) => {
-    setPendingId(id);
-    setReason("");
-    setShowReasonModal(true);
-  };
+  const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const secs = String(seconds % 60).padStart(2, "0");
+  const selectedOption = options.find((option) => option.id === selectedOptionId) ?? null;
 
-  const handleSubmit = () => {
-    if (!pendingId || selectionMutation.isPending) {
-      return;
-    }
-    selectionMutation.mutate({
-      option_id: pendingId,
-      reason: reason.trim() || undefined,
-      actor: user.role,
-      store_id: storeId,
-    });
-  };
-
-  if (orderingQuery.isLoading) {
+  if (confirmed && selectedOption) {
     return (
       <div className="space-y-6">
         <PageHero
-          title="오늘 주문할 수량을 불러오고 있습니다."
-          description="백엔드에서 추천 옵션과 마감 시간을 조회 중입니다."
+          title="주문이 완료되었습니다."
+          description="점주가 직접 확정한 주문안이 저장되었습니다."
         />
-        <section className="rounded-[28px] border border-border bg-white px-8 py-10 text-sm text-slate-500 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          주문 추천 데이터를 가져오는 중입니다...
-        </section>
-      </div>
-    );
-  }
-
-  if (orderingQuery.isError) {
-    return (
-      <div className="space-y-6">
-        <PageHero
-          title="주문 추천을 불러오지 못했습니다."
-          description="백엔드 연결 상태를 확인한 뒤 다시 시도해 주세요."
-        />
-        <section className="rounded-[28px] border border-red-200 bg-red-50 px-8 py-8 text-sm text-red-600 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          {(orderingQuery.error as Error).message}
-        </section>
-      </div>
-    );
-  }
-
-  if (chosen) {
-    return (
-      <div className="space-y-6">
-        <PageHero
-          title="주문 등록이 완료되었습니다."
-          description="선택하신 수량으로 주문이 접수되었습니다."
-        />
-        <section className="rounded-[28px] border border-green-200 bg-green-50 px-8 py-8 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <section className="rounded-[28px] border border-green-200 bg-green-50 px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
           <div className="flex items-start gap-4">
-            <CheckCircle className="mt-0.5 h-8 w-8 shrink-0 text-green-500" />
-            <div>
-              <p className="text-lg font-bold text-green-800">주문 완료</p>
-              <p className="mt-1 text-sm text-green-600">{chosen.label} 기준으로 주문했어요</p>
-              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {chosen.items.map((item) => (
-                  <div key={item.name} className="rounded-xl bg-white px-3 py-2.5 shadow-sm">
-                    <p className="text-xs text-slate-500">{item.name}</p>
-                    <p className="mt-0.5 text-lg font-bold text-slate-800">{item.qty}개</p>
+            <div className="rounded-2xl bg-white p-3 text-green-600">
+              <CheckCircle className="h-6 w-6" />
+            </div>
+            <div className="flex-1">
+              <p className="text-lg font-bold text-green-800">주문 내역</p>
+              <p className="mt-1 text-sm text-green-700">{selectedOption.title} 기준으로 주문을 확정했습니다.</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {selectedOption.items.map((item) => (
+                  <div key={item.name} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
+                    <p className="text-xs font-semibold text-slate-400">{item.name}</p>
+                    <p className="mt-1 text-lg font-bold text-slate-900">{item.quantity}개</p>
                   </div>
                 ))}
               </div>
-              {savedSelection?.reason ? (
-                <div className="mt-4 rounded-xl bg-white px-4 py-3">
-                  <p className="text-xs font-semibold text-slate-400">선택 이유</p>
-                  <p className="mt-1 text-sm text-slate-700">"{savedSelection.reason}"</p>
+              {reason ? (
+                <div className="mt-4 rounded-2xl bg-white px-4 py-4 text-sm text-slate-600">
+                  <p className="text-xs font-bold text-slate-400">선택 사유</p>
+                  <p className="mt-1">{reason}</p>
                 </div>
               ) : null}
-              <p className="mt-4 text-xs text-green-500">
-                {new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 저장 완료
-              </p>
             </div>
           </div>
         </section>
@@ -198,198 +153,200 @@ export function OrderingPage() {
   return (
     <div className="space-y-6">
       <PageHero
-        title="오늘 주문할 수량을 선택해 주세요."
-        description="과거 데이터를 바탕으로 3가지 기준을 제안해 드려요. 최종 결정은 사장님이 하세요."
+        title="주문관리"
+        description="주문 누락 방지를 목적으로 추천 3안을 비교합니다. 예측과 권고는 최소 범위로 제공하며 최종 의사결정은 점주가 수행합니다."
       >
-        <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${isUrgent ? "bg-red-50 text-red-600" : "bg-[#fff4e5] text-[#b76d10]"}`}>
-          <Clock className="h-4 w-4" />
-          주문 마감까지 {mins}:{secs} 남았어요
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
+            <Clock className="h-4 w-4" />
+            주문 마감까지 {mins}:{secs}
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowChat((value) => !value)}
+            className="inline-flex items-center gap-2 rounded-full border border-[#dce4f3] bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
+          >
+            <MessageCircle className="h-4 w-4" />
+            AI 질문하기
+          </button>
         </div>
       </PageHero>
 
-      <StatsGrid stats={orderingStats} />
-
-      <section className="rounded-[24px] border border-[#dce4f3] bg-white px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm font-bold text-slate-800">조회 기간</p>
-            <p className="mt-1 text-xs text-slate-500">{user.storeName} 주문 이력을 기준으로 최근 선택을 복원합니다.</p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
-              시작일
-              <input
-                type="date"
-                value={dateFrom}
-                max={dateTo}
-                onChange={(event) => setDateFrom(event.target.value)}
-                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
-              종료일
-              <input
-                type="date"
-                value={dateTo}
-                min={dateFrom}
-                onChange={(event) => setDateTo(event.target.value)}
-                className="rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none"
-              />
-            </label>
-          </div>
-        </div>
-      </section>
-
-      {isNotificationEntry ? (
-        <section className="rounded-[24px] border border-[#cfe0ff] bg-[#f3f7ff] px-5 py-4 shadow-[0_10px_24px_rgba(36,84,200,0.08)]">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-bold text-[#2454C8]">알림에서 바로 들어왔어요</p>
-              <p className="mt-1 text-sm text-slate-600">
-                주문 추천 {options.length}개 옵션이 준비되었습니다. 추천 옵션부터 확인하고 바로 선택하실 수 있습니다.
-              </p>
-            </div>
-            <div className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500">
-              추천 기준: {options.find((option) => option.recommended)?.label ?? "추천 옵션"}
-            </div>
+      {showChat ? (
+        <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+          <p className="text-sm font-bold text-slate-900">주문 관련 빠른 질문</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {["추천 주문량 근거는?", "어제와 얼마나 다른가요?", "날씨가 주문에 영향을 주나요?", "조기 품절은 어떻게 반영되나요?"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+              >
+                {item}
+              </button>
+            ))}
           </div>
         </section>
       ) : null}
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-slate-500">
-          {selectionSummaryQuery.data?.latest
-            ? `조회 기간 내 최근 선택은 ${selectionSummaryQuery.data.latest.option_id}입니다`
-            : `아래 ${options.length}가지 중 하나를 선택해 주세요`}
-        </p>
-        <SectionHint questions={[
-          { q: "왜 3가지를 보여주나요?", a: "비교할 수 있도록 지난주, 2주 전, 지난달 같은 요일 주문 기록을 보여드려요. 그날 날씨나 행사 영향도 함께 알려드려요." },
-          { q: "꼭 선택해야 하나요?", a: "네, 주문 마감 전에 꼭 선택하셔야 해요. 안 하시면 주문이 누락될 수 있어요." },
-          { q: "어떤 걸 선택하면 좋을까요?", a: "오늘 날씨와 비슷한 날 기준을 고르시면 좋아요. 특별한 이유가 없다면 '추천' 표시가 있는 것을 선택하세요." },
-        ]} />
-      </div>
+      <StatsGrid stats={stats} />
 
-      <section className="grid gap-5 xl:grid-cols-3">
-        {options.map((option) => (
-          <article
-            key={option.id}
-            className={`relative rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] transition-all ${
-              option.recommended ? "border-[#2454C8] ring-1 ring-[#2454C8]/20" : "border-border"
-            } ${focusOptionId === option.id ? "shadow-[0_20px_40px_rgba(36,84,200,0.18)]" : ""}`}
-          >
-            {option.recommended ? (
-              <div className="absolute -top-3 left-6">
-                <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">추천</span>
-              </div>
-            ) : null}
-
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-lg font-bold text-slate-900">{option.label}</p>
-                <p className="mt-0.5 text-xs text-slate-400">{option.basis}</p>
-              </div>
-              <ShoppingCart className={`h-5 w-5 ${option.recommended ? "text-[#2454C8]" : "text-slate-300"}`} />
-            </div>
-
-            <p className="mt-3 text-sm leading-6 text-slate-500">{option.description}</p>
-
-            {option.reasoning ? (
-              <div className="mt-3 rounded-2xl bg-[#f3f7ff] px-4 py-3">
-                <p className="text-[11px] font-bold text-[#2454C8] mb-1">AI 추천 근거</p>
-                <p className="text-xs leading-5 text-slate-600">{option.reasoning}</p>
-              </div>
-            ) : null}
-
-            <div className="mt-4 space-y-2">
-              {option.items.map((item) => (
-                <div key={item.name} className="flex items-center justify-between rounded-xl bg-[#f8fbff] px-3 py-2.5">
-                  <span className="text-sm text-slate-700">{item.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-base font-bold text-slate-800">{item.qty}개</span>
-                    {item.note ? (
-                      <span className="rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-semibold text-orange-600">{item.note}</span>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 space-y-1.5">
-              {option.notes.map((note) => (
-                <div key={note} className="flex items-start gap-2 text-xs text-slate-500">
-                  <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
-                  {note}
-                </div>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handleSelect(option.id)}
-              className={`mt-5 w-full rounded-xl py-3.5 text-sm font-bold transition-colors ${
-                option.recommended
-                  ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
-                  : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff]"
-              }`}
-            >
-              이 수량으로 주문하기
-            </button>
-          </article>
-        ))}
+      <section className="rounded-[24px] border border-[#dbe6fb] bg-[#edf4ff] px-5 py-4 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+        <div className="flex items-start gap-3">
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#2454C8]" />
+          <div>
+            <p className="text-base font-bold text-[#2454C8]">주문 누락 방지 원칙</p>
+            <p className="mt-1 text-sm text-slate-600">AI 추천은 참고 자료입니다. 최종 주문 결정은 점주님께서 직접 하십니다.</p>
+          </div>
+        </div>
       </section>
 
-      {showReasonModal ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
-            onClick={() => setShowReasonModal(false)}
-            aria-label="닫기"
-          />
-          <div className="fixed left-1/2 top-1/2 z-50 w-[420px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_32px_80px_rgba(16,32,51,0.18)]">
-            <div className="bg-[linear-gradient(135deg,#1f4dbb_0%,#55a0ff_100%)] px-6 py-5 text-white">
-              <p className="text-sm font-semibold text-white/70">최종 확인</p>
-              <p className="mt-1 text-lg font-bold">{options.find((option) => option.id === pendingId)?.label}</p>
-              <p className="text-sm text-white/70">{options.find((option) => option.id === pendingId)?.basis}</p>
-            </div>
-            <div className="space-y-4 px-6 py-5">
-              <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">
-                  선택 이유를 간단히 적어주세요 <span className="font-normal text-slate-400">(안 적으셔도 돼요)</span>
-                </label>
-                <textarea
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  placeholder="예: 오늘 날씨 좋아서 손님이 많을 것 같아서"
-                  rows={3}
-                  className="w-full resize-none rounded-xl border border-[#dce4f3] bg-[#f7faff] px-4 py-3 text-sm text-slate-800 placeholder:text-slate-300 focus:border-primary focus:outline-none"
-                />
-              </div>
-              {selectionMutation.isError ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                  {(selectionMutation.error as Error).message}
-                </div>
-              ) : null}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowReasonModal(false)}
-                  className="flex-1 rounded-xl border border-[#dce4f3] bg-[#f7faff] py-3.5 text-sm font-semibold text-slate-600 hover:bg-[#eef4ff]"
-                >
-                  다시 선택
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={selectionMutation.isPending}
-                  className="flex-1 rounded-xl bg-[#2454C8] py-3.5 text-sm font-bold text-white hover:bg-[#1d44a8] disabled:opacity-50"
-                >
-                  {selectionMutation.isPending ? "저장 중..." : "주문 완료"}
-                </button>
-              </div>
+      <section className="rounded-[28px] border border-orange-200 bg-orange-50 px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Clock className="h-8 w-8 text-orange-500" />
+            <div>
+              <p className="text-base font-bold text-orange-900">주문 마감 20분 전 알림</p>
+              <p className="mt-1 text-3xl font-bold text-orange-700">{mins}:{secs}</p>
             </div>
           </div>
-        </>
+          <div className="h-3 w-48 rounded-full bg-white/70">
+            <div className="h-3 rounded-full bg-[#2454C8]" style={{ width: `${Math.max((seconds / (20 * 60)) * 100, 3)}%` }} />
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-center gap-3">
+            <Calendar className="h-7 w-7 text-[#2454C8]" />
+            <div>
+              <p className="text-sm text-slate-500">오늘</p>
+              <p className="font-bold text-slate-900">2026년 4월 6일 월요일</p>
+            </div>
+          </div>
+        </article>
+        <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-center gap-3">
+            <CloudRain className="h-7 w-7 text-slate-500" />
+            <div>
+              <p className="text-sm text-slate-500">날씨 예보</p>
+              <p className="font-bold text-slate-900">맑음, 22°C</p>
+            </div>
+          </div>
+        </article>
+        <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
+          <div className="flex items-center gap-3">
+            <TrendingUp className="h-7 w-7 text-green-600" />
+            <div>
+              <p className="text-sm text-slate-500">최근 트렌드</p>
+              <p className="font-bold text-green-600">+12% 증가세</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-lg font-bold text-slate-900">주문 추천안 비교</p>
+            <p className="mt-1 text-sm text-slate-500">전일, 전주 동요일, 점주 반복 패턴 3축으로 고정해 비교합니다.</p>
+          </div>
+          <p className="text-sm font-medium text-slate-500">예측 및 권고는 최소 범위로 제공됩니다.</p>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-3">
+          {options.map((option) => (
+            <article
+              key={option.id}
+              className={`rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] transition-all ${
+                selectedOptionId === option.id ? "border-[#2454C8] ring-1 ring-[#2454C8]/20" : "border-border hover:border-[#bfd1ed]"
+              }`}
+            >
+              <button type="button" className="w-full text-left" onClick={() => setSelectedOptionId(option.id)}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-lg font-bold text-slate-900">{option.title}</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-400">{option.basis}</p>
+                  </div>
+                  {option.recommended ? (
+                    <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">AI 추천</span>
+                  ) : null}
+                </div>
+
+                <p className="mt-3 text-sm leading-6 text-slate-500">{option.description}</p>
+
+                <div className="mt-4 space-y-2">
+                  {option.items.map((item) => (
+                    <div key={item.name} className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm">
+                      <span className="text-slate-600">{item.name}</span>
+                      <span className="font-bold text-slate-800">{item.quantity}개</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 rounded-2xl bg-[#edf4ff] px-4 py-4">
+                  <p className="text-xs font-bold text-[#2454C8]">추천 근거</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{option.reasoning}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {option.metrics.map((metric) => (
+                      <div key={metric.key} className="rounded-2xl bg-white px-3 py-3">
+                        <p className="text-[11px] font-semibold text-slate-400">{metric.key}</p>
+                        <p className="mt-1 text-sm font-bold text-slate-900">{metric.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {option.specialFactors?.length ? (
+                  <div className="mt-4">
+                    <p className="text-xs font-bold text-slate-500">예외 변수 반영</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {option.specialFactors.map((factor) => (
+                        <span key={factor} className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-[11px] font-semibold text-slate-600">
+                          {factor}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </button>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {selectedOption ? (
+        <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+          <p className="text-lg font-bold text-slate-900">점주 최종 확정</p>
+          <p className="mt-1 text-sm text-slate-500">추천안은 참고 자료입니다. 점주가 직접 검토하고 최종 확정합니다.</p>
+
+          <div className="mt-5">
+            <label className="text-sm font-semibold text-slate-700" htmlFor="order-reason">선택 사유</label>
+            <textarea
+              id="order-reason"
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              placeholder="이 주문안을 선택한 이유를 입력하세요..."
+              className="mt-2 min-h-28 w-full rounded-[24px] border border-[#dce4f3] bg-[#f8fbff] px-4 py-4 text-sm text-slate-700 outline-none focus:border-[#2454C8]"
+            />
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-border bg-[#f8fbff] px-4 py-4 text-sm text-slate-600">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+              주문 확정 후에는 수정할 수 없습니다. 점주가 직접 검토한 뒤 확정하세요.
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setConfirmed(true)}
+            className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
+          >
+            점주가 직접 확정하기
+          </button>
+        </section>
       ) : null}
     </div>
   );

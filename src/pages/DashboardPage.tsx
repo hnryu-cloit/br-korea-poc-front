@@ -1,235 +1,325 @@
-import { useMemo } from "react";
-import { AlertTriangle, Clock, BarChart3, Shield, ArrowRight } from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Clock,
+  DollarSign,
+  MessageCircle,
+  Package,
+  ShoppingCart,
+  Target,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { PageHero, StatsGrid } from "@/pages/shared";
-import { useDemoSession } from "@/contexts/useDemoSession";
-import {
-  fetchAnalyticsMetrics,
-  fetchAuditLogs,
-  fetchOrderSelectionSummary,
-  fetchProductionOverview,
-  fetchProductionRegistrationSummary,
-} from "@/lib/api";
 
-const urgencyConfig = {
-  danger: { badge: "bg-red-50 text-red-600", border: "border-red-200", header: "from-red-50 to-red-50/30" },
-  warning: { badge: "bg-orange-50 text-orange-600", border: "border-orange-200", header: "from-orange-50 to-orange-50/30" },
-  normal: { badge: "bg-[#eef4ff] text-[#2454C8]", border: "border-border", header: "from-[#edf4ff] to-[#f8fbff]" },
-};
+type ChatDomain = "production" | "ordering" | "sales";
 
-function getTodayString() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+function DomainChat({
+  title,
+  items,
+}: {
+  title: string;
+  items: string[];
+}) {
+  return (
+    <div className="absolute right-0 top-12 z-20 w-72 rounded-[24px] border border-[#dbe6fb] bg-white p-4 shadow-[0_20px_40px_rgba(16,32,51,0.14)]">
+      <p className="text-sm font-bold text-slate-900">{title}</p>
+      <p className="mt-1 text-xs leading-5 text-slate-500">현재 카드 문맥에 맞는 질문만 우선 제안합니다.</p>
+      <div className="mt-3 space-y-2">
+        {items.map((item) => (
+          <button
+            key={item}
+            type="button"
+            className="w-full rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-left text-xs font-medium text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SummaryCard({
+  icon,
+  title,
+  description,
+  chatItems,
+  activeChat,
+  onToggleChat,
+  children,
+  to,
+  cta,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  chatItems: string[];
+  activeChat: boolean;
+  onToggleChat: () => void;
+  children: React.ReactNode;
+  to: string;
+  cta: string;
+}) {
+  return (
+    <article className="relative rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2 text-lg font-bold text-slate-900">
+            {icon}
+            {title}
+          </div>
+          <p className="mt-1 text-sm text-slate-500">{description}</p>
+        </div>
+        <button
+          type="button"
+          onClick={onToggleChat}
+          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] p-2 text-slate-500 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
+          aria-label={`${title} 질문 열기`}
+        >
+          <MessageCircle className="h-4 w-4" />
+        </button>
+      </div>
+
+      {activeChat ? <DomainChat title={`${title} AI 질문`} items={chatItems} /> : null}
+
+      <div className="mt-5 space-y-4">{children}</div>
+
+      <Link
+        to={to}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff] hover:text-[#2454C8]"
+      >
+        {cta}
+        <ArrowRight className="h-4 w-4" />
+      </Link>
+    </article>
+  );
 }
 
 export function DashboardPage() {
-  const { user } = useDemoSession();
-  const today = getTodayString();
-  const productionOverviewQuery = useQuery({
-    queryKey: ["dashboard-production-overview"],
-    queryFn: fetchProductionOverview,
-  });
-  const productionSummaryQuery = useQuery({
-    queryKey: ["dashboard-production-summary", user.storeId, today, today],
-    queryFn: () => fetchProductionRegistrationSummary({ storeId: user.storeId, dateFrom: today, dateTo: today }),
-  });
-  const orderingSummaryQuery = useQuery({
-    queryKey: ["dashboard-ordering-summary", user.storeId, today, today],
-    queryFn: () => fetchOrderSelectionSummary({ storeId: user.storeId, dateFrom: today, dateTo: today }),
-  });
-  const analyticsMetricsQuery = useQuery({
-    queryKey: ["analytics-metrics"],
-    queryFn: fetchAnalyticsMetrics,
-  });
-  const auditLogsQuery = useQuery({
-    queryKey: ["audit-logs-sales"],
-    queryFn: () => fetchAuditLogs("sales", 20),
-  });
+  const [activeChat, setActiveChat] = useState<ChatDomain | null>(null);
 
-  const dashboardStats = useMemo(() => {
-    const dangerCount = productionOverviewQuery.data?.danger_count ?? 0;
-    const orderingSummary = orderingSummaryQuery.data;
-    const productionSummary = productionSummaryQuery.data;
-    return [
-      { label: "품절 위험 SKU", value: `${dangerCount}건`, tone: dangerCount > 0 ? ("danger" as const) : ("default" as const) },
-      {
-        label: "주문 검토 필요",
-        value: orderingSummary?.latest ? "처리됨" : "1건",
-        tone: orderingSummary?.latest ? ("success" as const) : ("primary" as const),
-      },
-      {
-        label: "오늘 생산 등록",
-        value: `${productionSummary?.recent_registration_count_7d ?? 0}건`,
-        tone: (productionSummary?.recent_registration_count_7d ?? 0) > 0 ? ("success" as const) : ("default" as const),
-      },
-      { label: "정책 로그 수집", value: "정상", tone: "default" as const },
-    ];
-  }, [orderingSummaryQuery.data, productionOverviewQuery.data?.danger_count, productionSummaryQuery.data]);
-
-  const heroBadges = useMemo(() => {
-    const dangerCount = productionOverviewQuery.data?.danger_count ?? 0;
-    const orderingSummary = orderingSummaryQuery.data;
-    return [
-      {
-        icon: AlertTriangle,
-        className: "bg-red-50 text-red-600",
-        text: `품절 위험 ${dangerCount}건`,
-      },
-      {
-        icon: Clock,
-        className: "bg-orange-50 text-orange-600",
-        text: orderingSummary?.latest ? "주문 선택 완료" : "주문 마감 20분",
-      },
-      {
-        icon: BarChart3,
-        className: "bg-[#eef4ff] text-[#2454C8]",
-        text: `오늘 생산 등록 ${productionSummaryQuery.data?.recent_registration_count_7d ?? 0}건`,
-      },
-      {
-        icon: Shield,
-        className: "bg-green-50 text-green-600",
-        text: "보안 정책 정상",
-      },
-    ];
-  }, [orderingSummaryQuery.data, productionOverviewQuery.data?.danger_count, productionSummaryQuery.data?.recent_registration_count_7d]);
-
-  const agentCards = useMemo(() => {
-    const productionItems = productionOverviewQuery.data?.items ?? [];
-    const riskyItems = productionItems.filter((item) => item.status === "danger").slice(0, 3);
-    const latestOrdering = orderingSummaryQuery.data?.latest;
-    const orderingOptionCount = Object.keys(orderingSummaryQuery.data?.option_counts ?? {}).length;
-
-    const salesMetrics = analyticsMetricsQuery.data?.items ?? [];
-    const salesDesc = salesMetrics.length >= 2
-      ? `${salesMetrics[0].label} ${salesMetrics[0].change} · ${salesMetrics[2]?.label ?? ""} ${salesMetrics[2]?.change ?? ""}`
-      : "매출 분석 결과를 확인하세요";
-    const salesItems = salesMetrics.slice(0, 3).map((m) => `${m.label} ${m.value} (${m.change})`);
-
-    const auditLogs = auditLogsQuery.data?.items ?? [];
-    const blockedCount = auditLogs.filter((l) => l.outcome === "blocked").length;
-    const orchestrationItems = [
-      "민감 정보 보호 정상",
-      `오늘 차단 ${blockedCount}건 처리`,
-      `운영 로그 ${auditLogs.length}건 수집`,
-    ];
-
-    return [
-      {
-        title: "생산 현황",
-        description:
-          (productionOverviewQuery.data?.danger_count ?? 0) > 0
-            ? `지금 만들어야 할 도넛이 ${(productionOverviewQuery.data?.danger_count ?? 0)}개 있어요`
-            : "지금 급한 생산 품목은 없어요",
-        icon: "bakery_dining",
-        to: "/production",
-        urgency: ((productionOverviewQuery.data?.danger_count ?? 0) > 0 ? "danger" : "normal") as "danger" | "normal",
-        items:
-          riskyItems.length > 0
-            ? riskyItems.map((item) =>
-                item.depletion_time !== "-"
-                  ? `${item.name} — ${item.depletion_time} 전 소진 가능성`
-                  : `${item.name} — 생산 상태 확인 필요`,
-              )
-            : ["모든 품목 재고가 안정적이에요", "추가 생산 등록 없이 운영 가능해요", "상세 현황은 생산 현황에서 확인하세요"],
-      },
-      {
-        title: "주문 관리",
-        description: latestOrdering ? "오늘 주문 선택이 저장되었어요" : "주문 마감까지 20분 남았어요",
-        icon: "shopping_cart",
-        to: "/ordering",
-        urgency: (latestOrdering ? "normal" : "warning") as "warning" | "normal",
-        items: latestOrdering
-          ? [
-              `최근 선택 옵션 — ${latestOrdering.option_id}`,
-              latestOrdering.reason ? `선택 사유 — ${latestOrdering.reason}` : "선택 사유 없이 저장되었어요",
-              `조회 기간 내 저장 ${orderingSummaryQuery.data?.recent_selection_count_7d ?? 0}건`,
-            ]
-          : [
-              `추천 옵션 ${orderingOptionCount || 3}개가 준비되어 있어요`,
-              "주문 이력과 추천 기준을 비교해 선택하세요",
-              "상세 옵션은 주문 관리에서 확인하세요",
-            ],
-      },
-      {
-        title: "매출 현황",
-        description: salesDesc,
-        icon: "query_stats",
-        to: "/sales",
-        urgency: "normal" as const,
-        items: salesItems.length > 0 ? salesItems : ["매출 분석 데이터를 불러오는 중이에요"],
-      },
-      {
-        title: "시스템 현황",
-        description: "보안 정책 정상 적용 중",
-        icon: "shield_lock",
-        to: "/orchestration",
-        urgency: "normal" as const,
-        items: orchestrationItems,
-      },
-    ];
-  }, [analyticsMetricsQuery.data, auditLogsQuery.data, orderingSummaryQuery.data, productionOverviewQuery.data]);
+  const stats = [
+    { label: "품절 위험 SKU", value: "3개", tone: "danger" as const },
+    { label: "주문 마감까지", value: "17분", tone: "primary" as const },
+    { label: "오늘 순이익 추정", value: "+342,000원", tone: "success" as const },
+    { label: "알림 상태", value: "긴급 2건", tone: "default" as const },
+  ];
 
   return (
     <div className="space-y-6">
       <PageHero
-        title={`${user.name}님, 오늘 매장은 어떤가요?`}
-        description="생산, 주문, 매출 현황을 한눈에 확인하세요. 카드를 누르면 자세히 볼 수 있어요."
+        title="오늘의 운영 현황"
+        description="5분 단위 재고 조회, 주문 마감 알림, 손익 인사이트를 한 화면에서 확인하고 바로 실행하세요."
       >
-        <div className="flex flex-wrap gap-2">
-          {heroBadges.map((badge) => {
-            const Icon = badge.icon;
-            return (
-              <div key={badge.text} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${badge.className}`}>
-                <Icon className="h-3.5 w-3.5" />
-                {badge.text}
-              </div>
-            );
-          })}
+        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
+          <Clock className="h-4 w-4" />
+          마지막 업데이트 2026-04-06 14:23 · 5분 단위 자동 갱신
         </div>
       </PageHero>
 
-      <StatsGrid stats={dashboardStats} />
+      <section className="rounded-[28px] border border-orange-200 bg-[linear-gradient(135deg,#fff8ef_0%,#ffffff_100%)] px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <div className="flex items-start gap-3">
+          <div className="rounded-2xl bg-orange-100 p-3 text-orange-600">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-lg font-bold text-slate-900">지금 해야 할 일</p>
+            <p className="mt-1 text-sm text-slate-500">즉시 액션이 필요한 항목 3개를 우선순위대로 보여줍니다.</p>
+          </div>
+        </div>
 
-      {/* Agent cards */}
+        <div className="mt-5 grid gap-4 xl:grid-cols-3">
+          <Link
+            to="/production"
+            className="rounded-[24px] border border-red-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600">긴급 · 재고 소진 1시간 전</div>
+                <p className="mt-3 text-lg font-bold text-slate-900">초코 도넛 생산 필요</p>
+                <p className="mt-1 text-sm text-slate-500">현재 12개 → 1시간 후 2개 예상 · 지금 생산 시 찬스 로스 18% 감소</p>
+              </div>
+              <Package className="h-6 w-6 text-red-400" />
+            </div>
+          </Link>
+
+          <Link
+            to="/ordering"
+            className="rounded-[24px] border border-orange-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="inline-flex rounded-full bg-orange-50 px-2.5 py-1 text-[11px] font-bold text-orange-600">중요 · 주문 마감 임박</div>
+                <p className="mt-3 text-lg font-bold text-slate-900">주문 마감 17분 남음</p>
+                <p className="mt-1 text-sm text-slate-500">오늘 주문 미완료 · AI 추천 3안 검토 후 점주가 직접 확정</p>
+              </div>
+              <ShoppingCart className="h-6 w-6 text-orange-400" />
+            </div>
+          </Link>
+
+          <Link
+            to="/sales"
+            className="rounded-[24px] border border-green-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="inline-flex rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-600">권장 · 손익 확인</div>
+                <p className="mt-3 text-lg font-bold text-slate-900">오늘 손익 확인 권장</p>
+                <p className="mt-1 text-sm text-slate-500">어제 대비 매출 15% 증가 · 손익분기점 초과 달성</p>
+              </div>
+              <TrendingUp className="h-6 w-6 text-green-500" />
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      <StatsGrid stats={stats} />
+
+      <section className="grid gap-5 xl:grid-cols-3">
+        <SummaryCard
+          icon={<Package className="h-5 w-5 text-[#2454C8]" />}
+          title="생산 현황"
+          description="실시간 재고 및 1시간 후 예측"
+          chatItems={["지금 생산해야 할 품목은?", "찬스 로스가 뭔가요?", "품절 처리 방법은?"]}
+          activeChat={activeChat === "production"}
+          onToggleChat={() => setActiveChat((current) => (current === "production" ? null : "production"))}
+          to="/production"
+          cta="생산관리 상세보기"
+        >
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-sm font-bold text-red-700">초코 도넛 재고 소진 1시간 전</p>
+            <p className="mt-1 text-sm text-red-600">현재 재고 12개 · 지금 생산 시 찬스 로스 18% 감소 가능</p>
+          </div>
+          <div className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3">
+            <p className="text-sm font-bold text-orange-700">말차 도넛 소진 속도 빠름</p>
+            <p className="mt-1 text-sm text-orange-600">평소 대비 30% 빠른 판매 속도 감지</p>
+          </div>
+          <div className="space-y-3 rounded-2xl bg-[#f8fbff] px-4 py-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">품절 위험</span>
+              <span className="font-bold text-red-600">3개</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">찬스 로스 절감</span>
+              <span className="font-bold text-[#2454C8]">23%</span>
+            </div>
+          </div>
+        </SummaryCard>
+
+        <SummaryCard
+          icon={<ShoppingCart className="h-5 w-5 text-[#2454C8]" />}
+          title="주문 관리"
+          description="주문 누락 방지 및 추천 검토"
+          chatItems={["추천 주문량은?", "어제와 비교하면?", "날씨 영향은?"]}
+          activeChat={activeChat === "ordering"}
+          onToggleChat={() => setActiveChat((current) => (current === "ordering" ? null : "ordering"))}
+          to="/ordering"
+          cta="주문 검토하기"
+        >
+          <div className="flex items-center justify-between rounded-2xl border border-orange-200 bg-orange-50 px-4 py-4">
+            <div>
+              <p className="font-bold text-orange-900">주문 마감 임박</p>
+              <p className="mt-1 text-2xl font-bold text-orange-700">17분 남음</p>
+            </div>
+            <Clock className="h-8 w-8 text-orange-500" />
+          </div>
+          <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-3">
+            <p className="text-sm font-bold text-[#2454C8]">주문 누락 방지가 목적입니다</p>
+            <p className="mt-1 text-sm text-slate-600">최종 결정은 점주님이 하십니다.</p>
+          </div>
+          <div className="space-y-2 rounded-2xl bg-[#f8fbff] px-4 py-4 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">주문 상태</span>
+              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-700">검토 필요</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">AI 추천안</span>
+              <span className="font-bold text-slate-800">3개 준비됨</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">추천 기준</span>
+              <span className="font-bold text-slate-800">전일 / 전주 / 패턴</span>
+            </div>
+          </div>
+        </SummaryCard>
+
+        <SummaryCard
+          icon={<TrendingUp className="h-5 w-5 text-[#2454C8]" />}
+          title="손익 분석"
+          description="순이익 및 손익분기점 분석"
+          chatItems={["오늘 순이익은?", "손익분기점은?", "어제와 비교하면?"]}
+          activeChat={activeChat === "sales"}
+          onToggleChat={() => setActiveChat((current) => (current === "sales" ? null : "sales"))}
+          to="/sales"
+          cta="손익분석 상세보기"
+        >
+          <div className="flex items-center justify-between rounded-2xl border border-green-200 bg-green-50 px-4 py-4">
+            <div>
+              <p className="text-sm font-medium text-green-700">오늘 순이익</p>
+              <p className="mt-1 text-2xl font-bold text-green-900">+342,000원</p>
+              <p className="mt-1 text-xs text-green-700">순이익률 18.5%</p>
+            </div>
+            <DollarSign className="h-8 w-8 text-green-500" />
+          </div>
+          <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-[#2454C8]" />
+              <p className="text-sm font-bold text-[#2454C8]">손익분기점 달성 · +230,000원 초과</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-[#eadfff] bg-[#faf6ff] px-4 py-3">
+            <p className="text-sm font-bold text-[#6d4db4]">강남점 맞춤 분석</p>
+            <p className="mt-1 text-sm text-slate-600">매장 운영 패턴과 최근 성과를 반영한 답변을 제공합니다.</p>
+          </div>
+          <div className="space-y-2 rounded-2xl bg-[#f8fbff] px-4 py-4 text-sm">
+            <div className="flex items-center justify-between"><span className="text-slate-500">매출</span><span className="font-bold text-slate-800">1,850,000원</span></div>
+            <div className="flex items-center justify-between"><span className="text-slate-500">원가</span><span className="font-bold text-red-600">-890,000원</span></div>
+            <div className="flex items-center justify-between"><span className="text-slate-500">인건비</span><span className="font-bold text-red-600">-520,000원</span></div>
+            <div className="flex items-center justify-between"><span className="text-slate-500">기타 비용</span><span className="font-bold text-red-600">-98,000원</span></div>
+          </div>
+        </SummaryCard>
+      </section>
+
       <section className="grid gap-5 xl:grid-cols-2">
-        {agentCards.map((card) => {
-          const uc = urgencyConfig[card.urgency as keyof typeof urgencyConfig];
-          return (
-            <NavLink
-              key={card.to}
-              to={card.to}
-              className={`group rounded-[28px] border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(16,32,51,0.10)] ${uc.border}`}
-            >
-              <div className={`bg-gradient-to-r ${uc.header} px-6 py-5`}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xl font-bold text-slate-900">{card.title}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-[28px] text-slate-300">{card.icon}</span>
-                    <ArrowRight className="h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </div>
-                <div className={`mt-3 inline-flex items-center rounded-full px-3 py-1.5 text-xs font-bold ${uc.badge}`}>
-                  {card.description}
-                </div>
+        <article className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+          <p className="text-lg font-bold text-slate-900">오늘의 주요 인사이트</p>
+          <div className="mt-4 space-y-3">
+            {[
+              "주말 매출이 평일 대비 40% 높습니다. 주말 생산량 선반영이 필요합니다.",
+              "초코 도넛 순이익률 18.9%로 최고 수익 품목입니다.",
+              "말차 도넛 원가율 개선 필요. 현재 순이익률 17.9%입니다.",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3 rounded-2xl bg-[#f8fbff] px-4 py-3 text-sm text-slate-600">
+                <Zap className="mt-0.5 h-4 w-4 shrink-0 text-[#2454C8]" />
+                {item}
               </div>
-              <div className="px-6 py-4 space-y-2">
-                {card.items.map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm text-slate-500">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-200" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </NavLink>
-          );
-        })}
+            ))}
+          </div>
+        </article>
+
+        <article className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+          <p className="text-lg font-bold text-slate-900">빠른 실행 가이드</p>
+          <div className="mt-4 space-y-3">
+            {[
+              { label: "생산 관리", to: "/production" },
+              { label: "주문 관리", to: "/ordering" },
+              { label: "손익 분석", to: "/sales" },
+            ].map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-4 py-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+              >
+                {item.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ))}
+          </div>
+        </article>
       </section>
     </div>
   );
