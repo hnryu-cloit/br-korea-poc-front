@@ -1,0 +1,9 @@
+export { AnalyticsPage } from "@/pages/AnalyticsPage";
+export { DashboardPage } from "@/pages/DashboardPage";
+export { HQCoachingPage } from "@/pages/HQCoachingPage";
+export { HQInspectionPage } from "@/pages/HQInspectionPage";
+export { OrchestrationPage } from "@/pages/OrchestrationPage";
+export { OrderingPage } from "@/pages/OrderingPage";
+export { ProductionPage } from "@/pages/ProductionPage";
+export { SalesPage } from "@/pages/SalesPage";
+export { SignalsPage } from "@/pages/SignalsPage";
