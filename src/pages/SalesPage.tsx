@@ -93,7 +93,7 @@ export function SalesPage() {
   const insightSections = useMemo<SalesInsightSection[]>(() => {
     const data = salesInsightsQuery.data;
     if (!data) return [];
-    return [data.peak_hours, data.channel_mix, data.payment_mix, data.menu_mix];
+    return [data.peak_hours, data.channel_mix, data.payment_mix, data.menu_mix, data.campaign_seasonality].filter(Boolean) as SalesInsightSection[];
   }, [salesInsightsQuery.data]);
 
   const salesStats = useMemo(() => {
