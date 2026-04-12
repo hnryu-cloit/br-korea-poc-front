@@ -304,6 +304,7 @@ export type SalesInsightsResponse = {
   channel_mix: SalesInsightSection;
   payment_mix: SalesInsightSection;
   menu_mix: SalesInsightSection;
+  campaign_seasonality?: SalesInsightSection | null;
   filtered_store_id?: string | null;
   filtered_date_from?: string | null;
   filtered_date_to?: string | null;
