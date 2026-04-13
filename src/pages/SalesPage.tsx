@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
 import { SectionHint } from "@/components/ui/SectionHint";
-import { sessionUser } from "@/data/session-user";
-import { PageHero, StatsGrid } from "@/pages/shared";
+import { sessionUser } from "@/features/session/constants/session-user";
+import { PageHero, StatsGrid } from "@/components/common/page";
 import {
   fetchSalesInsights,
   fetchSalesPrompts,
