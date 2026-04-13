@@ -330,9 +330,19 @@ export type SimulationSummaryMetrics = {
 export type ProductionSimulationResponse = {
   metadata: Record<string, unknown>;
   summary_metrics: SimulationSummaryMetrics;
-  time_series_data: SimulationChartPoint[];
-  actions_timeline: string[];
+  time_series_data?: SimulationChartPoint[];
+  chart_data?: SimulationChartPoint[];
+  actions_timeline?: string[];
+  action_timeline?: string[];
 };
+
+export function getProductionSimulationChartData(response?: ProductionSimulationResponse | null) {
+  return response?.time_series_data ?? response?.chart_data ?? [];
+}
+
+export function getProductionSimulationTimeline(response?: ProductionSimulationResponse | null) {
+  return response?.actions_timeline ?? response?.action_timeline ?? [];
+}
 
 export async function runProductionSimulation(payload: ProductionSimulationRequest) {
   return request<ProductionSimulationResponse>("/api/production/simulation", {
@@ -382,7 +392,7 @@ export type SalesQueryResponse = {
   confidence_score?: number;
   semantic_logic?: string;
   sources?: string[];
-  visual_data?: any;
+  visual_data?: Record<string, unknown> | unknown[];
 };
 
 export type SalesInsightMetric = {
@@ -558,4 +568,67 @@ export type SignalsResponse = {
 
 export async function fetchSignals() {
   return request<SignalsResponse>("/api/signals");
+}
+
+// ── 주문 마감 알림 ────────────────────────────────────────────────────────
+
+export type OrderingDeadlineInfo = {
+  store_id: string;
+  deadline: string;
+  minutes_remaining: number;
+  is_urgent: boolean;
+  is_passed: boolean;
+};
+
+export async function fetchOrderingDeadline(storeId: string): Promise<OrderingDeadlineInfo> {
+  return request<OrderingDeadlineInfo>(`/api/ordering/deadline?store_id=${encodeURIComponent(storeId)}`);
+}
+
+// ── 생산 PUSH 알림 ───────────────────────────────────────────────────────
+
+export type ProductionPushAlert = {
+  title: string;
+  body: string;
+  sku_id: string;
+  store_id: string;
+  severity: "high" | "medium" | "low";
+};
+
+export type ProductionPushAlertList = {
+  store_id: string;
+  alerts: ProductionPushAlert[];
+  alert_count: number;
+};
+
+export async function fetchProductionPushAlerts(storeId: string): Promise<ProductionPushAlertList> {
+  return request<ProductionPushAlertList>(`/api/production/alerts/push?store_id=${encodeURIComponent(storeId)}`);
+}
+
+// ── 수익성 시뮬레이션 ────────────────────────────────────────────────────
+
+export type ProfitabilitySimulationRequest = {
+  store_id: string;
+  item_id?: string | null;
+  date_from: string;
+  date_to: string;
+};
+
+export type ProfitabilitySimulationResponse = {
+  store_id: string;
+  date_from: string;
+  date_to: string;
+  total_revenue: number;
+  estimated_margin_rate: number;
+  estimated_profit: number;
+  top_items: Array<Record<string, unknown>>;
+  simulation_note: string;
+};
+
+export async function fetchProfitabilitySimulation(
+  payload: ProfitabilitySimulationRequest,
+): Promise<ProfitabilitySimulationResponse> {
+  return request<ProfitabilitySimulationResponse>("/api/sales/profitability", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
