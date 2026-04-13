@@ -7,10 +7,18 @@ import type {
   GetProductionOverviewResponse,
   GetProductionRegistrationFormRequest,
   GetProductionRegistrationFormResponse,
+  GetProductionSkuListRequest,
+  GetProductionSkuListResponse,
 } from "@/features/production/type/production";
 
 export function fetchProductionOverview(params: GetProductionOverviewRequest) {
   return axiosInstance.get<GetProductionOverviewResponse>("/api/production/overview", {
+    params: { ...params },
+  });
+}
+
+export function fetchProductionSkuList(params: GetProductionSkuListRequest) {
+  return axiosInstance.get<GetProductionSkuListResponse>("/api/production/skus", {
     params: { ...params },
   });
 }

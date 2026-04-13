@@ -15,7 +15,7 @@ export function ProductionTableSection({
         <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1080px] text-sm">
+        <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
           <thead>
             <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
               <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
@@ -58,22 +58,38 @@ export function ProductionTableSection({
                   <div className="mt-1 text-[11px] text-slate-400">{sku.chance_loss_basis_text ?? "1시간 후 재고 예측 및 4주 평균 손실률 기준"}</div>
                 </td>
                 <td className="px-4 py-4">
-                  <div className="flex flex-wrap gap-1.5">
-                    {sku.speed_alert ? <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] font-bold text-orange-600">속도↑</span> : null}
-                    {sku.material_alert ? <span className="rounded-full border border-yellow-200 bg-yellow-50 px-2 py-1 text-[11px] font-bold text-yellow-700">재료</span> : null}
+                  <div className="flex flex-nowrap gap-1.5 whitespace-nowrap">
+                    {sku.decision.tags.map((tag) => (
+                      <span
+                        key={`${sku.sku_id}-${tag}`}
+                        className={`whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-bold ${
+                          tag === "속도↑"
+                            ? "border border-orange-200 bg-orange-50 text-orange-600"
+                            : tag === "재료"
+                              ? "border border-yellow-200 bg-yellow-50 text-yellow-700"
+                              : "border border-[#dbe6fb] bg-[#edf4ff] text-[#2454C8]"
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
+                  <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">{sku.decision.alert_message}</p>
                 </td>
                 <td className="px-4 py-4">
                   <button
                     type="button"
                     onClick={() => onOpenRegister(sku)}
+                    disabled={!sku.decision.can_produce}
                     className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
-                      sku.status === "danger"
+                      !sku.decision.can_produce
+                        ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                        : sku.status === "danger"
                         ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
                         : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
                     }`}
                   >
-                    생산
+                    {sku.decision.can_produce ? "생산" : "생산 불가"}
                   </button>
                 </td>
               </tr>

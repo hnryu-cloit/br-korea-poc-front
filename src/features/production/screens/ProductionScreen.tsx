@@ -12,6 +12,7 @@ import {
 import {
   useProductionOverviewQuery,
   useProductionRegistrationFormQuery,
+  useProductionSkuListQuery,
 } from "@/features/production/queries";
 import type { ProductionSkuItem } from "@/features/production/type/production";
 import { sessionUser } from "@/features/session/constants/session-user";
@@ -29,6 +30,11 @@ export function ProductionPage() {
   );
 
   const overviewQuery = useProductionOverviewQuery(params);
+  const skuListQuery = useProductionSkuListQuery({
+    store_id: sessionUser.storeId,
+    page: 1,
+    page_size: 20,
+  });
   const registrationFormQuery = useProductionRegistrationFormQuery(
     activeSku
       ? {
@@ -40,7 +46,7 @@ export function ProductionPage() {
 
   const stats = overviewQuery.data?.summary_stats ?? [];
   const alerts = overviewQuery.data?.alerts ?? [];
-  const items = overviewQuery.data?.items ?? [];
+  const items = skuListQuery.data?.items ?? [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);

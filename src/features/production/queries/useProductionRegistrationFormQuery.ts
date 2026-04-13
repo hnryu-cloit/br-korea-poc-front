@@ -11,6 +11,6 @@ export function useProductionRegistrationFormQuery(params?: GetProductionRegistr
       ? productionQueryKeys.registrationForm(params)
       : [...productionQueryKeys.all, "registration-form", "idle"],
     queryFn: () => fetchProductionRegistrationForm(params as GetProductionRegistrationFormRequest),
-    select: () => (params ? productionRegistrationFormMock[params.sku_id] : undefined),
+    select: () => (params ? productionRegistrationFormMock.find((item) => item.sku_id === params.sku_id) : undefined),
   });
 }

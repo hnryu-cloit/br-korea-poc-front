@@ -24,6 +24,11 @@ export function ProductionRegistrationPanel({
     recommended_qty: activeSku.recommended_production_qty ?? activeSku.avg_first_production_qty_4w,
     chance_loss_saving_pct: activeSku.chance_loss_saving_pct,
     chance_loss_basis_text: activeSku.chance_loss_basis_text ?? "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+    predicted_stockout_time: activeSku.decision.predicted_stockout_time,
+    can_produce: activeSku.decision.can_produce,
+    sales_velocity: activeSku.decision.sales_velocity,
+    tags: activeSku.decision.tags,
+    alert_message: activeSku.decision.alert_message,
     material_alert: activeSku.material_alert,
     material_alert_message: activeSku.material_alert_message,
   };
@@ -48,6 +53,24 @@ export function ProductionRegistrationPanel({
         <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
           <p className="text-xs font-bold text-slate-400">품목</p>
           <p className="mt-1 text-lg font-bold text-slate-900">{detail.sku_name}</p>
+          {detail.tags?.length ? (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {detail.tags.map((tag) => (
+                <span
+                  key={`${detail.sku_id}-${tag}`}
+                  className={`rounded-full px-2 py-1 text-[11px] font-bold ${
+                    tag === "속도↑"
+                      ? "border border-orange-200 bg-orange-50 text-orange-600"
+                      : tag === "재료"
+                        ? "border border-yellow-200 bg-yellow-50 text-yellow-700"
+                        : "border border-[#dbe6fb] bg-[#edf4ff] text-[#2454C8]"
+                  }`}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
           <p className="text-xs font-bold text-slate-400">생산 수량</p>
@@ -62,13 +85,25 @@ export function ProductionRegistrationPanel({
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-4">
           <p className="text-xs font-bold text-red-500">현재 재고 / 1시간 후 예측</p>
           <p className="mt-1 text-sm text-red-700">{detail.current_stock}개 → {detail.forecast_stock_1h}개 예상</p>
+          {detail.predicted_stockout_time ? (
+            <p className="mt-2 text-xs text-red-500">예상 품절 시각 {detail.predicted_stockout_time}</p>
+          ) : null}
         </div>
         <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-4">
           <p className="text-xs font-bold text-[#2454C8]">찬스 로스 감소 효과</p>
           <p className="mt-1 text-sm text-slate-700">지금 생산 시 {detail.chance_loss_saving_pct}% 감소 예상</p>
           <p className="mt-2 text-xs text-slate-500">{detail.chance_loss_basis_text}</p>
+          {detail.sales_velocity ? (
+            <p className="mt-2 text-xs text-slate-500">현재 판매 속도 {detail.sales_velocity.toFixed(1)}배</p>
+          ) : null}
         </div>
       </div>
+
+      {detail.alert_message ? (
+        <div className="mt-4 rounded-2xl border border-[#dbe6fb] bg-[#f8fbff] px-4 py-4 text-sm text-slate-700">
+          {detail.alert_message}
+        </div>
+      ) : null}
 
       {detail.material_alert ? (
         <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
@@ -86,9 +121,10 @@ export function ProductionRegistrationPanel({
         </button>
         <button
           type="button"
+          disabled={detail.can_produce === false}
           className="rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
         >
-          생산 등록
+          {detail.can_produce === false ? "생산 불가" : "생산 등록"}
         </button>
       </div>
     </section>
