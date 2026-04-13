@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowRight,
@@ -9,13 +10,40 @@ import {
   ShoppingCart,
   Target,
   TrendingUp,
+  Truck,
   Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { PageHero, StatsGrid } from "@/components/common/page";
+import { fetchHomeOverview, type HomePriorityAction, type HomeSummaryCard } from "@/lib/api";
 
 type ChatDomain = "production" | "ordering" | "sales";
+type ActionType = "production" | "ordering" | "sales";
+
+const priorityIconMap: Record<ActionType, React.ReactNode> = {
+  production: <Package className="h-6 w-6 text-red-400" />,
+  ordering: <ShoppingCart className="h-6 w-6 text-orange-400" />,
+  sales: <TrendingUp className="h-6 w-6 text-green-500" />,
+};
+
+const summaryIconMap: Record<ActionType, React.ReactNode> = {
+  production: <Package className="h-5 w-5 text-[#2454C8]" />,
+  ordering: <ShoppingCart className="h-5 w-5 text-[#2454C8]" />,
+  sales: <TrendingUp className="h-5 w-5 text-[#2454C8]" />,
+};
+
+const priorityBorderMap: Record<ActionType, string> = {
+  production: "border-red-200",
+  ordering: "border-orange-200",
+  sales: "border-green-200",
+};
+
+const urgencyBadgeMap: Record<HomePriorityAction["urgency"], string> = {
+  urgent: "bg-red-50 text-red-600",
+  important: "bg-orange-50 text-orange-600",
+  recommended: "bg-green-50 text-green-600",
+};
 
 function DomainChat({
   title,
@@ -99,15 +127,39 @@ function SummaryCard({
   );
 }
 
+function formatConfidenceScore(score?: number | null) {
+  if (typeof score !== "number") {
+    return null;
+  }
+  return `AI 신뢰도 ${Math.round(score * 100)}%`;
+}
+
+function metricToneClass(tone: "danger" | "primary" | "success" | "default") {
+  if (tone === "danger") return "text-red-600";
+  if (tone === "primary") return "text-[#2454C8]";
+  if (tone === "success") return "text-green-600";
+  return "text-slate-800";
+}
+
+function findCard(cards: HomeSummaryCard[], domain: ActionType) {
+  return cards.find((card) => card.domain === domain);
+}
+
 export function DashboardPage() {
   const [activeChat, setActiveChat] = useState<ChatDomain | null>(null);
+  const homeOverviewQuery = useQuery({
+    queryKey: ["home-overview"],
+    queryFn: () => fetchHomeOverview({}),
+    refetchInterval: 30_000,
+  });
 
-  const stats = [
-    { label: "품절 위험 SKU", value: "3개", tone: "danger" as const },
-    { label: "주문 마감까지", value: "17분", tone: "primary" as const },
-    { label: "오늘 순이익 추정", value: "+342,000원", tone: "success" as const },
-    { label: "알림 상태", value: "긴급 2건", tone: "default" as const },
-  ];
+  const overview = homeOverviewQuery.data;
+  const stats = overview?.stats ?? [];
+  const priorityActions = overview?.priority_actions ?? [];
+  const cards = overview?.cards ?? [];
+  const productionCard = findCard(cards, "production");
+  const orderingCard = findCard(cards, "ordering");
+  const salesCard = findCard(cards, "sales");
 
   return (
     <div className="space-y-6">
@@ -117,7 +169,7 @@ export function DashboardPage() {
       >
         <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
           <Clock className="h-4 w-4" />
-          마지막 업데이트 2026-04-06 14:23 · 5분 단위 자동 갱신
+          마지막 업데이트 {overview?.updated_at ?? "-"} · 30초 단위 자동 갱신
         </div>
       </PageHero>
 
@@ -133,47 +185,65 @@ export function DashboardPage() {
         </div>
 
         <div className="mt-5 grid gap-4 xl:grid-cols-3">
-          <Link
-            to="/production"
-            className="rounded-[24px] border border-red-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600">긴급 · 재고 소진 1시간 전</div>
-                <p className="mt-3 text-lg font-bold text-slate-900">초코 도넛 생산 필요</p>
-                <p className="mt-1 text-sm text-slate-500">현재 12개 → 1시간 후 2개 예상 · 지금 생산 시 찬스 로스 18% 감소</p>
-              </div>
-              <Package className="h-6 w-6 text-red-400" />
+          {homeOverviewQuery.isLoading ? (
+            <div className="rounded-[24px] border border-dashed border-orange-200 bg-white px-5 py-10 text-center text-sm text-slate-400 xl:col-span-3">
+              대시보드 데이터를 불러오는 중입니다...
             </div>
-          </Link>
+          ) : homeOverviewQuery.isError ? (
+            <div className="rounded-[24px] border border-dashed border-red-200 bg-white px-5 py-10 text-center text-sm text-red-500 xl:col-span-3">
+              홈 대시보드 API 연결에 실패했습니다.
+            </div>
+          ) : (
+            priorityActions.map((action) => {
+              const confidenceLabel = formatConfidenceScore(action.confidence_score);
+              return (
+                <article
+                  key={action.id}
+                  className={`rounded-[24px] border bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${priorityBorderMap[action.type]}`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${urgencyBadgeMap[action.urgency]}`}>
+                        {action.badge_label}
+                      </div>
+                      <p className="mt-3 text-lg font-bold text-slate-900">{action.title}</p>
+                      <p className="mt-1 text-sm text-slate-500">{action.description}</p>
+                      {action.ai_reasoning ? <p className="mt-3 text-xs leading-5 text-slate-400">{action.ai_reasoning}</p> : null}
+                    </div>
+                    {priorityIconMap[action.type]}
+                  </div>
 
-          <Link
-            to="/ordering"
-            className="rounded-[24px] border border-orange-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="inline-flex rounded-full bg-orange-50 px-2.5 py-1 text-[11px] font-bold text-orange-600">중요 · 주문 마감 임박</div>
-                <p className="mt-3 text-lg font-bold text-slate-900">주문 마감 17분 남음</p>
-                <p className="mt-1 text-sm text-slate-500">오늘 주문 미완료 · AI 추천 3안 검토 후 점주가 직접 확정</p>
-              </div>
-              <ShoppingCart className="h-6 w-6 text-orange-400" />
-            </div>
-          </Link>
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    {confidenceLabel ? (
+                      <span className="inline-flex items-center rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+                        {confidenceLabel}
+                      </span>
+                    ) : (
+                      <span />
+                    )}
 
-          <Link
-            to="/sales"
-            className="rounded-[24px] border border-green-200 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="inline-flex rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-600">권장 · 손익 확인</div>
-                <p className="mt-3 text-lg font-bold text-slate-900">오늘 손익 확인 권장</p>
-                <p className="mt-1 text-sm text-slate-500">어제 대비 매출 15% 증가 · 손익분기점 초과 달성</p>
-              </div>
-              <TrendingUp className="h-6 w-6 text-green-500" />
-            </div>
-          </Link>
+                    {action.type === "production" && action.is_finished_good ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="rounded-2xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400"
+                      >
+                        생산하기 비활성
+                      </button>
+                    ) : (
+                      <Link
+                        to={action.cta_path}
+                        className="inline-flex items-center gap-2 rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-4 py-2 text-sm font-bold text-slate-700 transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff] hover:text-[#2454C8]"
+                      >
+                        {action.cta_label}
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    )}
+                  </div>
+                </article>
+              );
+            })
+          )}
         </div>
       </section>
 
@@ -181,52 +251,53 @@ export function DashboardPage() {
 
       <section className="grid gap-5 xl:grid-cols-3">
         <SummaryCard
-          icon={<Package className="h-5 w-5 text-[#2454C8]" />}
-          title="생산 현황"
-          description="실시간 재고 및 1시간 후 예측"
-          chatItems={["지금 생산해야 할 품목은?", "찬스 로스가 뭔가요?", "품절 처리 방법은?"]}
+          icon={summaryIconMap.production}
+          title={productionCard?.title ?? "생산 현황"}
+          description={productionCard?.description ?? "실시간 재고 및 1시간 후 예측"}
+          chatItems={productionCard?.prompts ?? ["지금 생산해야 할 품목은?", "찬스 로스가 뭔가요?", "품절 처리 방법은?"]}
           activeChat={activeChat === "production"}
           onToggleChat={() => setActiveChat((current) => (current === "production" ? null : "production"))}
-          to="/production"
-          cta="생산관리 상세보기"
+          to={productionCard?.cta_path ?? "/production"}
+          cta={productionCard?.cta_label ?? "생산관리 상세보기"}
         >
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
-            <p className="text-sm font-bold text-red-700">초코 도넛 재고 소진 1시간 전</p>
-            <p className="mt-1 text-sm text-red-600">현재 재고 12개 · 지금 생산 시 찬스 로스 18% 감소 가능</p>
-          </div>
-          <div className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3">
-            <p className="text-sm font-bold text-orange-700">말차 도넛 소진 속도 빠름</p>
-            <p className="mt-1 text-sm text-orange-600">평소 대비 30% 빠른 판매 속도 감지</p>
-          </div>
+          {(productionCard?.highlights ?? []).map((highlight, index) => (
+            <div key={highlight} className={`rounded-2xl px-4 py-3 ${index === 0 ? "border border-red-200 bg-red-50" : "border border-orange-200 bg-orange-50"}`}>
+              <p className={`text-sm font-bold ${index === 0 ? "text-red-700" : "text-orange-700"}`}>{highlight}</p>
+            </div>
+          ))}
           <div className="space-y-3 rounded-2xl bg-[#f8fbff] px-4 py-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-500">품절 위험</span>
-              <span className="font-bold text-red-600">3개</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-500">찬스 로스 절감</span>
-              <span className="font-bold text-[#2454C8]">23%</span>
-            </div>
+            {(productionCard?.metrics ?? []).map((metric) => (
+              <div key={metric.label} className="flex items-center justify-between text-sm">
+                <span className="text-slate-500">{metric.label}</span>
+                <span className={`font-bold ${metricToneClass(metric.tone)}`}>{metric.value}</span>
+              </div>
+            ))}
           </div>
         </SummaryCard>
 
         <SummaryCard
-          icon={<ShoppingCart className="h-5 w-5 text-[#2454C8]" />}
-          title="주문 관리"
-          description="주문 누락 방지 및 추천 검토"
-          chatItems={["추천 주문량은?", "어제와 비교하면?", "날씨 영향은?"]}
+          icon={summaryIconMap.ordering}
+          title={orderingCard?.title ?? "주문 관리"}
+          description={orderingCard?.description ?? "주문 누락 방지 및 추천 검토"}
+          chatItems={orderingCard?.prompts ?? ["추천 주문량은?", "어제와 비교하면?", "날씨 영향은?"]}
           activeChat={activeChat === "ordering"}
           onToggleChat={() => setActiveChat((current) => (current === "ordering" ? null : "ordering"))}
-          to="/ordering"
-          cta="주문 검토하기"
+          to={orderingCard?.cta_path ?? "/ordering"}
+          cta={orderingCard?.cta_label ?? "주문 검토하기"}
         >
           <div className="flex items-center justify-between rounded-2xl border border-orange-200 bg-orange-50 px-4 py-4">
             <div>
               <p className="font-bold text-orange-900">주문 마감 임박</p>
-              <p className="mt-1 text-2xl font-bold text-orange-700">17분 남음</p>
+              <p className="mt-1 text-2xl font-bold text-orange-700">{orderingCard?.deadline_minutes ?? "-"}분 남음</p>
             </div>
             <Clock className="h-8 w-8 text-orange-500" />
           </div>
+          {orderingCard?.delivery_scheduled ? (
+            <div className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+              <Truck className="h-4 w-4" />
+              배송 예정 주문이 있습니다.
+            </div>
+          ) : null}
           <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-3">
             <p className="text-sm font-bold text-[#2454C8]">주문 누락 방지가 목적입니다</p>
             <p className="mt-1 text-sm text-slate-600">최종 결정은 점주님이 하십니다.</p>
@@ -234,33 +305,31 @@ export function DashboardPage() {
           <div className="space-y-2 rounded-2xl bg-[#f8fbff] px-4 py-4 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-slate-500">주문 상태</span>
-              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-700">검토 필요</span>
+              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-700">{orderingCard?.status_label ?? "-"}</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500">AI 추천안</span>
-              <span className="font-bold text-slate-800">3개 준비됨</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500">추천 기준</span>
-              <span className="font-bold text-slate-800">전일 / 전주 / 패턴</span>
-            </div>
+            {(orderingCard?.metrics ?? []).map((metric) => (
+              <div key={metric.label} className="flex items-center justify-between">
+                <span className="text-slate-500">{metric.label}</span>
+                <span className="font-bold text-slate-800">{metric.value}</span>
+              </div>
+            ))}
           </div>
         </SummaryCard>
 
         <SummaryCard
-          icon={<TrendingUp className="h-5 w-5 text-[#2454C8]" />}
-          title="손익 분석"
-          description="순이익 및 손익분기점 분석"
-          chatItems={["오늘 순이익은?", "손익분기점은?", "어제와 비교하면?"]}
+          icon={summaryIconMap.sales}
+          title={salesCard?.title ?? "손익 분석"}
+          description={salesCard?.description ?? "순이익 및 손익분기점 분석"}
+          chatItems={salesCard?.prompts ?? ["오늘 순이익은?", "손익분기점은?", "어제와 비교하면?"]}
           activeChat={activeChat === "sales"}
           onToggleChat={() => setActiveChat((current) => (current === "sales" ? null : "sales"))}
-          to="/sales"
-          cta="손익분석 상세보기"
+          to={salesCard?.cta_path ?? "/sales"}
+          cta={salesCard?.cta_label ?? "손익분석 상세보기"}
         >
           <div className="flex items-center justify-between rounded-2xl border border-green-200 bg-green-50 px-4 py-4">
             <div>
               <p className="text-sm font-medium text-green-700">오늘 순이익</p>
-              <p className="mt-1 text-2xl font-bold text-green-900">+342,000원</p>
+              <p className="mt-1 text-2xl font-bold text-green-900">{salesCard?.metrics?.[0]?.value ?? "+342,000원"}</p>
               <p className="mt-1 text-xs text-green-700">순이익률 18.5%</p>
             </div>
             <DollarSign className="h-8 w-8 text-green-500" />
@@ -268,18 +337,22 @@ export function DashboardPage() {
           <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-3">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-[#2454C8]" />
-              <p className="text-sm font-bold text-[#2454C8]">손익분기점 달성 · +230,000원 초과</p>
+              <p className="text-sm font-bold text-[#2454C8]">{salesCard?.metrics?.[1]?.label ?? "손익분기점"} · {salesCard?.metrics?.[1]?.value ?? "초과 달성"}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-[#eadfff] bg-[#faf6ff] px-4 py-3">
             <p className="text-sm font-bold text-[#6d4db4]">강남점 맞춤 분석</p>
-            <p className="mt-1 text-sm text-slate-600">매장 운영 패턴과 최근 성과를 반영한 답변을 제공합니다.</p>
+            <p className="mt-1 text-sm text-slate-600">{salesCard?.highlights?.join(" · ") ?? "매장 운영 패턴과 최근 성과를 반영한 답변을 제공합니다."}</p>
           </div>
           <div className="space-y-2 rounded-2xl bg-[#f8fbff] px-4 py-4 text-sm">
-            <div className="flex items-center justify-between"><span className="text-slate-500">매출</span><span className="font-bold text-slate-800">1,850,000원</span></div>
-            <div className="flex items-center justify-between"><span className="text-slate-500">원가</span><span className="font-bold text-red-600">-890,000원</span></div>
-            <div className="flex items-center justify-between"><span className="text-slate-500">인건비</span><span className="font-bold text-red-600">-520,000원</span></div>
-            <div className="flex items-center justify-between"><span className="text-slate-500">기타 비용</span><span className="font-bold text-red-600">-98,000원</span></div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">손익 상태</span>
+              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-green-700">{salesCard?.status_label ?? "흑자"}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">추천 액션</span>
+              <span className="font-bold text-slate-800">피크타임 재고 유지</span>
+            </div>
           </div>
         </SummaryCard>
       </section>
@@ -288,11 +361,7 @@ export function DashboardPage() {
         <article className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
           <p className="text-lg font-bold text-slate-900">오늘의 주요 인사이트</p>
           <div className="mt-4 space-y-3">
-            {[
-              "주말 매출이 평일 대비 40% 높습니다. 주말 생산량 선반영이 필요합니다.",
-              "초코 도넛 순이익률 18.9%로 최고 수익 품목입니다.",
-              "말차 도넛 원가율 개선 필요. 현재 순이익률 17.9%입니다.",
-            ].map((item) => (
+            {(productionCard?.highlights ?? ["현재 위험 품목이 없습니다.", "주문 검토 상태를 확인해 주세요.", "손익 인사이트가 곧 반영됩니다."]).map((item) => (
               <div key={item} className="flex items-start gap-3 rounded-2xl bg-[#f8fbff] px-4 py-3 text-sm text-slate-600">
                 <Zap className="mt-0.5 h-4 w-4 shrink-0 text-[#2454C8]" />
                 {item}

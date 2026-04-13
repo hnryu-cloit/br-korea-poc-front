@@ -185,6 +185,61 @@ export type ProductionRegistrationSummaryResponse = {
   filtered_date_to?: string | null;
 };
 
+export type HomeOverviewRequest = {
+  store_id?: string;
+  business_date?: string;
+};
+
+export type HomePriorityAction = {
+  id: string;
+  type: "production" | "ordering" | "sales";
+  urgency: "urgent" | "important" | "recommended";
+  badge_label: string;
+  title: string;
+  description: string;
+  cta_label: string;
+  cta_path: string;
+  focus_section?: string | null;
+  related_sku_id?: string | null;
+  ai_reasoning?: string | null;
+  confidence_score?: number | null;
+  is_finished_good: boolean;
+};
+
+export type HomeStatItem = {
+  key: "production_risk_count" | "ordering_deadline_minutes" | "today_profit_estimate" | "alert_count";
+  label: string;
+  value: string;
+  tone: "danger" | "primary" | "success" | "default";
+};
+
+export type HomeCardMetric = {
+  label: string;
+  value: string;
+  tone: "danger" | "primary" | "success" | "default";
+};
+
+export type HomeSummaryCard = {
+  domain: "production" | "ordering" | "sales";
+  title: string;
+  description: string;
+  highlights: string[];
+  metrics: HomeCardMetric[];
+  cta_label: string;
+  cta_path: string;
+  prompts: string[];
+  status_label?: string | null;
+  deadline_minutes?: number | null;
+  delivery_scheduled?: boolean | null;
+};
+
+export type HomeOverviewResponse = {
+  updated_at: string;
+  priority_actions: HomePriorityAction[];
+  stats: HomeStatItem[];
+  cards: HomeSummaryCard[];
+};
+
 export async function fetchBootstrap() {
   return request<BootstrapResponse>("/api/bootstrap");
 }
@@ -246,6 +301,51 @@ export async function fetchProductionRegistrationSummary(filters?: { storeId?: s
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
   return request<ProductionRegistrationSummaryResponse>(`/api/production/registrations/summary?${query.toString()}`);
+}
+
+export type ProductionSimulationRequest = {
+  store_id: string;
+  item_id: string;
+  simulation_date: string; // YYYY-MM-DD
+  lead_time_hour?: number;
+  margin_rate?: number;
+};
+
+export type SimulationChartPoint = {
+  time: string;
+  actual_stock: number;
+  ai_guided_stock: number;
+};
+
+export type SimulationSummaryMetrics = {
+  additional_sales_qty: number;
+  additional_profit_amt: number;
+  additional_waste_qty: number;
+  additional_waste_cost: number;
+  net_profit_change: number;
+  performance_status: string;
+  chance_loss_reduction?: number | null;
+};
+
+export type ProductionSimulationResponse = {
+  metadata: Record<string, unknown>;
+  summary_metrics: SimulationSummaryMetrics;
+  time_series_data: SimulationChartPoint[];
+  actions_timeline: string[];
+};
+
+export async function runProductionSimulation(payload: ProductionSimulationRequest) {
+  return request<ProductionSimulationResponse>("/api/production/simulation", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function fetchHomeOverview(payload: HomeOverviewRequest = {}) {
+  return request<HomeOverviewResponse>("/api/home/overview", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 // ── Sales ──────────────────────────────────────────────────────────────────

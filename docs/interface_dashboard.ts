@@ -1,5 +1,3 @@
-import type { ContextPromptItem, NotificationItem } from "./interface_common";
-
 /**
  * DashboardPage
  * - 오늘의 운영 현황
@@ -12,7 +10,7 @@ import type { ContextPromptItem, NotificationItem } from "./interface_common";
  * 대시보드 요약 조회 요청
  */
 export interface GetDashboardSummaryRequest {
-  store_id: string; // 조회 대상 매장 ID
+  store_id?: string; // 조회 대상 매장 ID
   business_date?: string; // 기준 영업일
 }
 
@@ -33,6 +31,9 @@ export interface DashboardPriorityAction {
   cta_path: string; // 행동 유도 버튼 이동 경로
   focus_section?: string; // 이동 후 강조할 섹션 키
   related_sku_id?: string; // 관련 SKU ID
+  ai_reasoning?: string; // AI 추천 상세 근거
+  confidence_score?: number; // AI 신뢰도 (0.0 ~ 1.0)
+  is_finished_good: boolean; // 본사 납품 완제품 여부
 }
 
 /**
@@ -53,26 +54,17 @@ export interface DashboardSummaryCard {
   title: string; // 카드 제목
   description: string; // 카드 설명
   highlights: string[]; // 카드 안에서 강조할 핵심 정보 목록
+  metrics: Array<{
+    label: string;
+    value: string;
+    tone: "danger" | "primary" | "success" | "default";
+  }>; // 카드 내부 보조 지표
   cta_label: string; // 행동 유도 버튼 라벨
   cta_path: string; // 행동 유도 버튼 이동 경로
-  prompts: ContextPromptItem[]; // 카드별 AI 질문 프롬프트 목록
-}
-
-/**
- * 대시보드 하단 인사이트 항목
- */
-export interface DashboardInsightItem {
-  id: string; // 인사이트 고유 ID
-  title: string; // 인사이트 제목
-  description: string; // 인사이트 설명
-}
-
-/**
- * 대시보드 빠른 이동 링크
- */
-export interface DashboardQuickLink {
-  label: string; // 링크 라벨
-  path: string; // 이동 경로
+  prompts: string[]; // 카드별 AI 질문 프롬프트 목록
+  status_label?: string; // 카드 상태 라벨
+  deadline_minutes?: number; // 주문 마감까지 남은 시간
+  delivery_scheduled?: boolean; // 배송 예정 여부
 }
 
 /**
@@ -83,7 +75,4 @@ export interface GetDashboardSummaryResponse {
   priority_actions: DashboardPriorityAction[]; // 우선순위 액션 카드 목록
   stats: DashboardStatItem[]; // 상단 KPI 카드 목록
   cards: DashboardSummaryCard[]; // 생산/주문/손익 요약 카드 목록
-  insights: DashboardInsightItem[]; // 운영 인사이트 목록
-  quick_links: DashboardQuickLink[]; // 빠른 이동 링크 목록
-  notifications: NotificationItem[]; // 대시보드에 함께 노출할 알림 목록
 }
