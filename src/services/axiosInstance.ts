@@ -1,57 +1,139 @@
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
+import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
 
-type Primitive = string | number | boolean;
-type QueryValue = Primitive | null | undefined;
+import {
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+} from "@/lib/tokenManager";
+import type { CommonError } from "@/services/type";
 
-export type RequestConfig = {
-  params?: Record<string, QueryValue>;
-  headers?: HeadersInit;
-};
+// const DEFAULT_API_BASE_URL = "http://localhost:8000";
+// refresh 제외 대상 API
+const AUTH_EXCLUDED_URLS = [''];
 
-function getBaseUrl() {
-  return (import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, "");
-}
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-function buildUrl(path: string, params?: Record<string, QueryValue>) {
-  const url = new URL(`${getBaseUrl()}${path}`);
+let isRefreshing = false; // refresh 중복 호출 방지용 플래그
+let failedQueue: any[] = []; // 대기열 추가
 
-  Object.entries(params ?? {}).forEach(([key, value]) => {
-    if (value === undefined || value === null) return;
-    url.searchParams.set(key, String(value));
+// 대기열에 있는 요청들을 처리하는 함수
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
   });
-
-  return url.toString();
-}
-
-async function parseResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `request failed: ${response.status}`);
-  }
-
-  return response.json() as Promise<T>;
-}
-
-export const axiosInstance = {
-  async get<T>(path: string, config?: RequestConfig): Promise<T> {
-    const response = await fetch(buildUrl(path, config?.params), {
-      method: "GET",
-      headers: config?.headers,
-    });
-
-    return parseResponse<T>(response);
-  },
-
-  async post<T>(path: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    const response = await fetch(buildUrl(path, config?.params), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(config?.headers ?? {}),
-      },
-      body: data === undefined ? undefined : JSON.stringify(data),
-    });
-
-    return parseResponse<T>(response);
-  },
+  failedQueue = [];
 };
+
+/**
+ * 요청 인터셉터
+ * 모든 API 요청이 보내지기 전에 헤더에 액세스 토큰을 추가합니다.
+ */
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // FormData인 경우, 브라우저가 자동으로 Content-Type을 설정하도록 헤더를 삭제
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
+    const accessToken = getAccessToken();
+    // 토큰이 있으면 헤더에 추가
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+/**
+ * 응답 인터셉터
+ * 401 에러 발생 시 토큰 갱신을 시도하고, 실패 시 로그아웃 처리합니다.
+ */
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError<CommonError>) => {
+    const originalRequest = error.config as any;
+    const requestUrl = originalRequest?.url ?? '';
+
+    // refresh 대상 제외
+    if (AUTH_EXCLUDED_URLS.includes(requestUrl)) {
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      // 이미 refresh 중이라면, 이 요청을 Promise에 담아 대기열에 추가
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+      const refreshToken = getRefreshToken();
+
+      // refresh token 없다면 로그아웃처리
+      if (!refreshToken) {
+        handleSessionExpiry('로그인 정보가 없습니다. 다시 로그인 해주세요.');
+        return;
+      }
+
+      isRefreshing = true;
+
+      // try {
+      //   const { data } = await postRefreshToken({
+      //     refresh_token: refreshToken,
+      //   });
+      //   const { access_token } = data.data;
+
+      //   setAccessToken(access_token);
+
+      //   // 대기 중이던 요청들에게 새 토큰 전달하며 실행
+      //   processQueue(null, access_token);
+
+      //   originalRequest.headers.Authorization = `Bearer ${access_token}`;
+      //   return axiosInstance(originalRequest);
+      // } catch (error) {
+      //   // 갱신 실패 시 대기 중인 요청들도 모두 에러 처리
+      //   processQueue(error, null);
+      //   handleSessionExpiry('세션이 만료되었습니다. 다시 로그인 해주세요.');
+      //   return Promise.reject(error);
+      // } finally {
+      //   isRefreshing = false;
+      // }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+function handleSessionExpiry(message: string) {
+  clearTokens();
+  if (window.location.pathname !== '/login') {
+    alert(message);
+    window.location.href = '/login';
+  }
+}
+
+export default axiosInstance;

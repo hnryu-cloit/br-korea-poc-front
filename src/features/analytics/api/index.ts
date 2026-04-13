@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axiosInstance";
+import axiosInstance from "@/services/axiosInstance";
 
 import type { AnalyticsMetricsResponse, AuditLogListResponse } from "@/features/analytics/types";
 
