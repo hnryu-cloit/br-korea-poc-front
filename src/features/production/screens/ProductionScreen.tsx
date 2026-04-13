@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { AppModal } from "@/components/common/modal/AppModal";
 import { StatsGrid } from "@/components/common/page";
 import {
   ProductionAlertsSection,
@@ -58,13 +59,15 @@ export function ProductionPage() {
       <StatsGrid stats={stats} />
       <ProductionTableSection items={items} onOpenRegister={openRegister} />
       {activeSku ? (
-        <ProductionRegistrationPanel
-          activeSku={activeSku}
-          form={registrationFormQuery.data}
-          qty={qty}
-          onChangeQty={setQty}
-          onClose={() => setActiveSku(null)}
-        />
+        <AppModal onClose={() => setActiveSku(null)}>
+          <ProductionRegistrationPanel
+            activeSku={activeSku}
+            form={registrationFormQuery.data}
+            qty={qty}
+            onChangeQty={setQty}
+            onClose={() => setActiveSku(null)}
+          />
+        </AppModal>
       ) : null}
     </div>
   );
