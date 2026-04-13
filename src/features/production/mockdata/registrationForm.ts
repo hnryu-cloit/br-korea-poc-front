@@ -1,0 +1,51 @@
+import type { GetProductionRegistrationFormResponse } from "@/features/production/type/production";
+
+export const productionRegistrationFormMock: Record<string, GetProductionRegistrationFormResponse> = {
+  choco: {
+    sku_id: "choco",
+    sku_name: "초코 도넛",
+    current_stock: 12,
+    forecast_stock_1h: 2,
+    recommended_qty: 48,
+    chance_loss_saving_pct: 18,
+    chance_loss_basis_text: "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+    material_alert: true,
+    material_alert_message: "재료 부족 경고가 있습니다. 생산 등록 전에 재료 주문 상태를 함께 확인하세요.",
+  },
+  strawberry: {
+    sku_id: "strawberry",
+    sku_name: "딸기 도넛",
+    current_stock: 28,
+    forecast_stock_1h: 18,
+    recommended_qty: 36,
+    chance_loss_saving_pct: 8,
+    chance_loss_basis_text: "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+  },
+  glazed: {
+    sku_id: "glazed",
+    sku_name: "글레이즈드 도넛",
+    current_stock: 45,
+    forecast_stock_1h: 38,
+    recommended_qty: 60,
+    chance_loss_saving_pct: 2,
+    chance_loss_basis_text: "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+  },
+  cream: {
+    sku_id: "cream",
+    sku_name: "크림 도넛",
+    current_stock: 31,
+    forecast_stock_1h: 24,
+    recommended_qty: 42,
+    chance_loss_saving_pct: 3,
+    chance_loss_basis_text: "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+  },
+  matcha: {
+    sku_id: "matcha",
+    sku_name: "말차 도넛",
+    current_stock: 15,
+    forecast_stock_1h: 8,
+    recommended_qty: 30,
+    chance_loss_saving_pct: 12,
+    chance_loss_basis_text: "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+  },
+};
