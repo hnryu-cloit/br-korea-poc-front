@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Clock, MessageCircle, Wrench, Zap } from "lucide-react";
+import { AlertCircle, BarChart3, Clock, MessageCircle, Sparkles, Table2, Wrench, Zap } from "lucide-react";
 
 import { PageHero, StatsGrid } from "@/components/common/page";
 import { sessionUser } from "@/features/session/constants/session-user";
 import {
   fetchProductionOverview,
+  getProductionSimulationChartData,
+  getProductionSimulationTimeline,
   saveProductionRegistration,
   runProductionSimulation,
   type ProductionItem,
@@ -69,6 +71,22 @@ function StatusBadge({ status }: { status: ProductionSku["status"] }) {
   );
 }
 
+function formatMetricValue(value: number) {
+  return value.toLocaleString("ko-KR");
+}
+
+function getSimulationMetaValue(metadata: Record<string, unknown>, key: string) {
+  const value = metadata[key];
+  return typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? value : null;
+}
+
+function getBarWidth(value: number, maxValue: number) {
+  if (maxValue <= 0) {
+    return 0;
+  }
+  return Math.max(6, Math.round((value / maxValue) * 100));
+}
+
 export function ProductionPage() {
   const queryClient = useQueryClient();
   const [activeSku, setActiveSku] = useState<ProductionSku | null>(null);
@@ -100,6 +118,13 @@ export function ProductionPage() {
     onSuccess: (result) => setSimulationResult(result),
   });
 
+  const simulationSeries = useMemo(() => getProductionSimulationChartData(simulationResult), [simulationResult]);
+  const simulationTimeline = useMemo(() => getProductionSimulationTimeline(simulationResult), [simulationResult]);
+  const simulationPeak = useMemo(
+    () => simulationSeries.reduce((max, point) => Math.max(max, point.actual_stock, point.ai_guided_stock), 0),
+    [simulationSeries],
+  );
+
   const stats = useMemo(() => {
     const danger = skus.filter((s) => s.status === "danger").length;
     const warning = skus.filter((s) => s.status === "warning").length;
@@ -120,6 +145,7 @@ export function ProductionPage() {
     setActiveSku(sku);
     setQty(String(sku.avgFirstQty));
     setSimulationResult(null);
+    simulationMutation.reset();
     simulationMutation.mutate({
       store_id: sessionUser.storeId,
       item_id: sku.id,
@@ -267,76 +293,82 @@ export function ProductionPage() {
           <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
           <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1080px] text-sm">
-            <thead>
-              <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
-                <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">품목명</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">현재 재고</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">1시간 후 예측</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 1차</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 2차</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">찬스 로스 절감</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500">알림</th>
-                <th className="px-4 py-3 text-xs font-bold text-slate-500"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {skus.map((sku) => (
-                <tr
-                  key={sku.id}
-                  className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
-                >
-                  <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
-                  <td className="px-4 py-4 font-semibold text-slate-800">{sku.name}</td>
-                  <td className="px-4 py-4">
-                    <div className="font-bold text-slate-900">{sku.current}개</div>
-                    <div className="mt-2 h-2 rounded-full bg-slate-100">
-                      <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${Math.min((sku.current / 60) * 100, 100)}%` }} />
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <span className={`font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-600" : "text-green-600"}`}>
-                      {sku.forecast}개
-                    </span>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="font-semibold text-slate-800">{sku.avgFirstQty}개</div>
-                    <div className="text-xs text-slate-400">{sku.avgFirstTime}</div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="font-semibold text-slate-800">{sku.avgSecondQty}개</div>
-                    <div className="text-xs text-slate-400">{sku.avgSecondTime}</div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="font-bold text-[#2454C8]">-{sku.chanceLossSaving}%</div>
-                    <div className="mt-1 text-[11px] text-slate-400">1시간 후 재고 예측 및 4주 평균 손실률 기준</div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      {sku.speedAlert ? <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] font-bold text-orange-600">속도↑</span> : null}
-                      {sku.materialAlert ? <span className="rounded-full border border-yellow-200 bg-yellow-50 px-2 py-1 text-[11px] font-bold text-yellow-700">재료</span> : null}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <button
-                      type="button"
-                      onClick={() => openRegister(sku)}
-                      className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
-                        sku.status === "danger"
-                          ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
-                          : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
-                      }`}
-                    >
-                      생산
-                    </button>
-                  </td>
+        {skus.length === 0 ? (
+          <div className="px-6 py-10 text-center text-sm text-slate-500">
+            조회된 품목이 없습니다. 필터 조건이나 백엔드 응답을 확인해주세요.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[1080px] text-sm">
+              <thead>
+                <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
+                  <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">품목명</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">현재 재고</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">1시간 후 예측</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 1차</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 2차</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">찬스 로스 절감</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500">알림</th>
+                  <th className="px-4 py-3 text-xs font-bold text-slate-500"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {skus.map((sku) => (
+                  <tr
+                    key={sku.id}
+                    className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
+                  >
+                    <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
+                    <td className="px-4 py-4 font-semibold text-slate-800">{sku.name}</td>
+                    <td className="px-4 py-4">
+                      <div className="font-bold text-slate-900">{sku.current}개</div>
+                      <div className="mt-2 h-2 rounded-full bg-slate-100">
+                        <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${Math.min((sku.current / 60) * 100, 100)}%` }} />
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className={`font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-600" : "text-green-600"}`}>
+                        {sku.forecast}개
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="font-semibold text-slate-800">{sku.avgFirstQty}개</div>
+                      <div className="text-xs text-slate-400">{sku.avgFirstTime}</div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="font-semibold text-slate-800">{sku.avgSecondQty}개</div>
+                      <div className="text-xs text-slate-400">{sku.avgSecondTime}</div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="font-bold text-[#2454C8]">-{sku.chanceLossSaving}%</div>
+                      <div className="mt-1 text-[11px] text-slate-400">1시간 후 재고 예측 및 4주 평균 손실률 기준</div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {sku.speedAlert ? <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-[11px] font-bold text-orange-600">속도↑</span> : null}
+                        {sku.materialAlert ? <span className="rounded-full border border-yellow-200 bg-yellow-50 px-2 py-1 text-[11px] font-bold text-yellow-700">재료</span> : null}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <button
+                        type="button"
+                        onClick={() => openRegister(sku)}
+                        className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
+                          sku.status === "danger"
+                            ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
+                            : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
+                        }`}
+                      >
+                        생산
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       {activeSku ? (
@@ -384,12 +416,12 @@ export function ProductionPage() {
                     순이익 변화{" "}
                     <span className={simulationResult.summary_metrics.net_profit_change >= 0 ? "text-[#2454C8]" : "text-red-600"}>
                       {simulationResult.summary_metrics.net_profit_change >= 0 ? "+" : ""}
-                      {simulationResult.summary_metrics.net_profit_change.toLocaleString()}원
+                      {formatMetricValue(simulationResult.summary_metrics.net_profit_change)}원
                     </span>
                   </p>
                   {simulationResult.summary_metrics.chance_loss_reduction != null ? (
                     <p className="mt-1 text-xs text-slate-500">
-                      찬스로스 회복 가능액 {simulationResult.summary_metrics.chance_loss_reduction.toLocaleString()}원
+                      찬스로스 회복 가능액 {formatMetricValue(simulationResult.summary_metrics.chance_loss_reduction)}원
                     </p>
                   ) : null}
                 </>
@@ -406,11 +438,224 @@ export function ProductionPage() {
             </div>
           ) : null}
 
-          {registerMutation.isError ? (
-            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              생산 등록에 실패했습니다. 다시 시도해주세요.
+          {simulationMutation.isError ? (
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>
+                  시뮬레이션 실행에 실패했습니다.
+                  {simulationMutation.error instanceof Error && simulationMutation.error.message ? ` ${simulationMutation.error.message}` : " 잠시 후 다시 시도해주세요."}
+                </p>
+              </div>
             </div>
           ) : null}
+
+          {registerMutation.isError ? (
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>
+                  생산 등록에 실패했습니다.
+                  {registerMutation.error instanceof Error && registerMutation.error.message ? ` ${registerMutation.error.message}` : " 다시 시도해주세요."}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mt-6 rounded-[24px] border border-[#dbe6fb] bg-[#f8fbff] px-5 py-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-base font-bold text-slate-900">시뮬레이션 결과</p>
+                <p className="mt-1 text-sm text-slate-500">실재고와 AI 가이드 시나리오를 표와 간단 시각 블록으로 비교합니다.</p>
+              </div>
+              {simulationResult ? (
+                <span
+                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${
+                    simulationResult.summary_metrics.performance_status === "POSITIVE"
+                      ? "border border-green-200 bg-green-50 text-green-700"
+                      : "border border-red-200 bg-red-50 text-red-700"
+                  }`}
+                >
+                  {simulationResult.summary_metrics.performance_status === "POSITIVE" ? "개선 시나리오" : "주의 시나리오"}
+                </span>
+              ) : null}
+            </div>
+
+            {simulationMutation.isPending ? (
+              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {["분석 중", "차트 생성", "손익 비교", "액션 정리"].map((item) => (
+                  <div key={item} className="animate-pulse rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <div className="h-3 w-16 rounded-full bg-slate-100" />
+                    <div className="mt-3 h-6 w-20 rounded-full bg-slate-100" />
+                    <div className="mt-2 h-3 w-24 rounded-full bg-slate-100" />
+                  </div>
+                ))}
+              </div>
+            ) : simulationResult ? (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <p className="text-xs font-bold text-slate-400">추가 판매 수량</p>
+                    <p className="mt-2 text-xl font-bold text-slate-900">{formatMetricValue(simulationResult.summary_metrics.additional_sales_qty)}</p>
+                  </div>
+                  <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <p className="text-xs font-bold text-slate-400">추가 이익</p>
+                    <p className="mt-2 text-xl font-bold text-[#2454C8]">+{formatMetricValue(simulationResult.summary_metrics.additional_profit_amt)}원</p>
+                  </div>
+                  <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <p className="text-xs font-bold text-slate-400">추가 폐기</p>
+                    <p className="mt-2 text-xl font-bold text-red-600">+{formatMetricValue(simulationResult.summary_metrics.additional_waste_qty)}</p>
+                    <p className="mt-1 text-xs text-slate-500">폐기 비용 {formatMetricValue(simulationResult.summary_metrics.additional_waste_cost)}원</p>
+                  </div>
+                  <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <p className="text-xs font-bold text-slate-400">순이익 변화</p>
+                    <p className={`mt-2 text-xl font-bold ${simulationResult.summary_metrics.net_profit_change >= 0 ? "text-[#2454C8]" : "text-red-600"}`}>
+                      {simulationResult.summary_metrics.net_profit_change >= 0 ? "+" : ""}
+                      {formatMetricValue(simulationResult.summary_metrics.net_profit_change)}원
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.9fr)]">
+                  <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">시각 블록</p>
+                        <p className="text-xs text-slate-500">시간대별 실재고와 AI 가이드 재고를 비교합니다.</p>
+                      </div>
+                      <BarChart3 className="h-4 w-4 text-[#2454C8]" />
+                    </div>
+
+                    {simulationSeries.length > 0 ? (
+                      <div className="mt-4 space-y-3">
+                        {simulationSeries.map((point) => (
+                          <div key={`${point.time}-${point.actual_stock}-${point.ai_guided_stock}`} className="space-y-2 rounded-2xl bg-[#f8fbff] px-3 py-3">
+                            <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                              <span>{point.time}</span>
+                              <span className="text-slate-400">실재고 / AI 가이드</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="w-12 text-[11px] font-bold text-slate-400">실재고</span>
+                              <div className="h-2 flex-1 rounded-full bg-slate-100">
+                                <div
+                                  className="h-2 rounded-full bg-slate-400"
+                                  style={{ width: `${getBarWidth(point.actual_stock, simulationPeak)}%` }}
+                                />
+                              </div>
+                              <span className="w-12 text-right text-xs font-semibold text-slate-700">{formatMetricValue(point.actual_stock)}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="w-12 text-[11px] font-bold text-[#2454C8]">AI</span>
+                              <div className="h-2 flex-1 rounded-full bg-[#e6efff]">
+                                <div
+                                  className="h-2 rounded-full bg-[#2454C8]"
+                                  style={{ width: `${getBarWidth(point.ai_guided_stock, simulationPeak)}%` }}
+                                />
+                              </div>
+                              <span className="w-12 text-right text-xs font-semibold text-[#2454C8]">{formatMetricValue(point.ai_guided_stock)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="mt-4 rounded-2xl border border-dashed border-[#dce4f3] bg-[#fbfdff] px-4 py-8 text-center text-sm text-slate-500">
+                        시각화할 시뮬레이션 데이터가 없습니다.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-[#2454C8]" />
+                        <p className="text-sm font-bold text-slate-900">메타 정보</p>
+                      </div>
+                      <dl className="mt-3 space-y-2 text-sm">
+                        <div className="flex items-center justify-between gap-3">
+                          <dt className="text-slate-500">매장</dt>
+                          <dd className="font-semibold text-slate-800">{getSimulationMetaValue(simulationResult.metadata, "store_id") ?? sessionUser.storeId}</dd>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <dt className="text-slate-500">품목</dt>
+                          <dd className="font-semibold text-slate-800">{getSimulationMetaValue(simulationResult.metadata, "item_name") ?? activeSku.name}</dd>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <dt className="text-slate-500">기준일</dt>
+                          <dd className="font-semibold text-slate-800">{getSimulationMetaValue(simulationResult.metadata, "date") ?? "-"}</dd>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <dt className="text-slate-500">상태</dt>
+                          <dd className="font-semibold text-slate-800">{getSimulationMetaValue(simulationResult.metadata, "stub") ? "스텁 응답" : "실제 응답"}</dd>
+                        </div>
+                      </dl>
+                    </div>
+
+                    <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <Table2 className="h-4 w-4 text-[#2454C8]" />
+                        <p className="text-sm font-bold text-slate-900">액션 타임라인</p>
+                      </div>
+                      {simulationTimeline.length > 0 ? (
+                        <ul className="mt-3 space-y-2">
+                          {simulationTimeline.map((item) => (
+                            <li key={item} className="rounded-2xl bg-[#f8fbff] px-3 py-2 text-sm text-slate-700">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="mt-3 rounded-2xl border border-dashed border-[#dce4f3] bg-[#fbfdff] px-4 py-6 text-center text-sm text-slate-500">
+                          액션 로그가 없습니다.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 overflow-hidden rounded-2xl border border-[#dce4f3] bg-white">
+                  <div className="border-b border-[#dce4f3] px-4 py-3">
+                    <p className="text-sm font-bold text-slate-900">시뮬레이션 표</p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-[720px] w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-[#e8eef8] bg-[#f8fbff] text-left text-xs font-bold text-slate-500">
+                          <th className="px-4 py-3">시간</th>
+                          <th className="px-4 py-3">실재고</th>
+                          <th className="px-4 py-3">AI 가이드 재고</th>
+                          <th className="px-4 py-3">차이</th>
+                          <th className="px-4 py-3">해석</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {simulationSeries.map((point) => {
+                          const gap = point.ai_guided_stock - point.actual_stock;
+                          return (
+                            <tr key={`${point.time}-table`} className="border-b border-[#eef3fb] last:border-0">
+                              <td className="px-4 py-3 font-semibold text-slate-800">{point.time}</td>
+                              <td className="px-4 py-3 text-slate-700">{formatMetricValue(point.actual_stock)}</td>
+                              <td className="px-4 py-3 text-[#2454C8]">{formatMetricValue(point.ai_guided_stock)}</td>
+                              <td className={`px-4 py-3 font-semibold ${gap >= 0 ? "text-[#2454C8]" : "text-red-600"}`}>
+                                {gap >= 0 ? "+" : ""}
+                                {formatMetricValue(gap)}
+                              </td>
+                              <td className="px-4 py-3 text-slate-500">
+                                {gap >= 0 ? "AI 가이드가 재고를 더 확보합니다." : "실재고가 AI 가이드보다 높습니다."}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="mt-5 rounded-2xl border border-dashed border-[#dce4f3] bg-white px-4 py-8 text-center text-sm text-slate-500">
+                품목을 선택하면 시뮬레이션 결과가 이 영역에 표시됩니다.
+              </div>
+            )}
+          </div>
 
           <div className="mt-5 flex flex-wrap gap-3">
             <button

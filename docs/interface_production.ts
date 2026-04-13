@@ -149,13 +149,48 @@ export interface GetProductionRegistrationHistoryResponse {
  * 생산 등록 요약
  * GET /api/production/registrations/summary
  */
-export interface GetProductionRegistrationSummaryRequest extends DateRangeParams {}
+export type GetProductionRegistrationSummaryRequest = DateRangeParams;
 
 export interface GetProductionRegistrationSummaryResponse {
   recent_registration_count_7d: number; // 최근 7일 생산 등록 건수
   recent_registered_qty_7d: number; // 최근 7일 총 생산 등록 수량
   affected_sku_count: number; // 최근 기간 동안 생산 등록된 SKU 수
   latest_registration?: ProductionRegistrationHistoryItem | null; // 가장 최근 생산 등록 이력
+}
+
+/**
+ * 생산 시뮬레이션
+ * POST /api/production/simulation
+ */
+export interface ProductionSimulationRequest {
+  store_id: string; // 조회 대상 매장 ID
+  item_id: string; // 시뮬레이션 대상 SKU ID
+  simulation_date: string; // 시뮬레이션 기준일 (YYYY-MM-DD)
+  lead_time_hour?: number; // 리드 타임(시간)
+  margin_rate?: number; // 마진율
+}
+
+export interface SimulationChartPoint {
+  time: string; // 시간대 (HH:mm)
+  actual_stock: number; // 실제 재고 추이
+  ai_guided_stock: number; // AI 가이드 재고 추이
+}
+
+export interface SimulationSummaryMetrics {
+  additional_sales_qty: number; // 추가 판매 수량
+  additional_profit_amt: number; // 추가 이익 금액
+  additional_waste_qty: number; // 추가 폐기 수량
+  additional_waste_cost: number; // 추가 폐기 비용
+  net_profit_change: number; // 순이익 변화
+  performance_status: string; // POSITIVE / NEGATIVE
+  chance_loss_reduction?: number | null; // 찬스 로스 회복 가능액
+}
+
+export interface ProductionSimulationResponse {
+  metadata: Record<string, unknown>; // 매장/품목/기준일 메타 정보
+  summary_metrics: SimulationSummaryMetrics; // 손익 요약
+  time_series_data: SimulationChartPoint[]; // 시계열 차트 데이터
+  actions_timeline: string[]; // AI 주요 액션 로그
 }
 
 /**
