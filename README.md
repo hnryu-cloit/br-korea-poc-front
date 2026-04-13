@@ -191,7 +191,7 @@ npm run build
 | 경로 | 화면 | 연동 API |
 |---|---|---|
 | `/` | 홈 대시보드 | `/api/home/overview` |
-| `/production` | 생산 현황 | `/api/production/overview`, `/api/production/registrations` |
+| `/production` | 생산 현황 | `/api/production/overview`, `/api/production/registrations`, `/api/production/simulation` |
 | `/ordering` | 주문 관리 | `/api/ordering/options`, `/api/ordering/selections` |
 | `/sales` | 매출 현황 | `/api/sales/insights`, `/api/sales/query`, `/api/sales/prompts` |
 | `/analytics` | 매출 조회 | `/api/analytics/metrics` |
@@ -202,6 +202,11 @@ npm run build
 - `confidence_score`는 `AI 신뢰도 n%` 배지로 표시합니다.
 - `is_finished_good=true`인 생산 액션은 생산 CTA를 disabled 처리합니다.
 - 주문 관리 카드의 배송 예정 아이콘/문구는 `delivery_scheduled` 값으로 제어합니다.
+
+### 생산 화면 표시 규칙
+
+- `POST /api/production/simulation` 응답의 `summary_metrics`, `time_series_data`, `actions_timeline`을 생산 등록 패널에 함께 표시합니다.
+- 시뮬레이션 결과는 요약 카드, 시간대별 비교 블록, 표, 액션 타임라인으로 나눠서 렌더링합니다.
 
 ### 본사 화면 (`hq_admin` 전용)
 
