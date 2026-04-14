@@ -4,10 +4,14 @@ export function OrderingConfirmSection({
   reason,
   onChangeReason,
   onConfirm,
+  isSubmitting = false,
+  errorMessage,
 }: {
   reason: string;
   onChangeReason: (value: string) => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  isSubmitting?: boolean;
+  errorMessage?: string | null;
 }) {
   return (
     <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -37,10 +41,14 @@ export function OrderingConfirmSection({
       <button
         type="button"
         onClick={onConfirm}
-        className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
+        disabled={isSubmitting}
+        className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8] disabled:cursor-not-allowed disabled:bg-slate-300"
       >
-        점주가 직접 확정하기
+        {isSubmitting ? "확정 중..." : "점주가 직접 확정하기"}
       </button>
+      {errorMessage ? (
+        <p className="mt-3 text-sm font-medium text-red-600">{errorMessage}</p>
+      ) : null}
     </section>
   );
 }
