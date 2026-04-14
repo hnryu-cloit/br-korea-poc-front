@@ -1,5 +1,5 @@
 import type {
-  GetProductionRegistrationFormResponse,
+  ProductionRegistrationForm,
   ProductionSkuItem,
 } from "@/features/production/types/production";
 
@@ -11,7 +11,7 @@ export function ProductionRegistrationPanel({
   onClose,
 }: {
   activeSku: ProductionSkuItem;
-  form?: GetProductionRegistrationFormResponse;
+  form?: ProductionRegistrationForm;
   qty: string;
   onChangeQty: (value: string) => void;
   onClose: () => void;
