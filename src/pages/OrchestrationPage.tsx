@@ -1,4 +1,4 @@
-import { OrchestrationScreen } from "@/features/admin/orchestration";
+import { OrchestrationPage as OrchestrationScreen } from "@/features/admin/orchestration/screens/OrchestrationScreen";
 
 export function OrchestrationPage() {
   return <OrchestrationScreen />;

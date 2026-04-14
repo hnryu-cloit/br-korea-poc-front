@@ -1,19 +1,15 @@
 import { useMemo, useState } from "react";
 
 import { AppModal } from "@/components/common/modal/AppModal";
-import { StatsGrid } from "@/components/common/page";
-import {
-  ProductionAlertsSection,
-  ProductionHero,
-  ProductionQuickChat,
-  ProductionRegistrationPanel,
-  ProductionTableSection,
-} from "@/features/production/components";
-import {
-  useProductionOverviewQuery,
-  useProductionRegistrationFormQuery,
-  useProductionSkuListQuery,
-} from "@/features/production/queries";
+import { StatsGrid } from "@/components/common/page/page-layout";
+import { ProductionAlertsSection } from "@/features/production/components/ProductionAlertsSection";
+import { ProductionHero } from "@/features/production/components/ProductionHero";
+import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
+import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
+import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
+import { useProductionOverviewQuery } from "@/features/production/queries/useProductionOverviewQuery";
+import { useProductionRegistrationFormQuery } from "@/features/production/queries/useProductionRegistrationFormQuery";
+import { useProductionSkuListQuery } from "@/features/production/queries/useProductionSkuListQuery";
 import type { ProductionSkuItem } from "@/features/production/type/production";
 import { sessionUser } from "@/features/session/constants/session-user";
 

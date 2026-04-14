@@ -1,7 +1,7 @@
 import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page";
+import { PageHero } from "@/components/common/page/page-layout";
 import { fetchHQInspection } from "@/features/admin/hq-inspection/api";
 import type { StoreInspectionItem } from "@/features/admin/hq-inspection/types";
 

@@ -3,16 +3,18 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
+import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
 import { SectionHint } from "@/components/ui/SectionHint";
 import { sessionUser } from "@/data/session-user";
-import { PageHero, StatsGrid } from "@/pages/shared";
 import {
   fetchSalesInsights,
   fetchSalesPrompts,
   querySales,
-  type SalesInsightSection,
-  type SalesQueryResponse,
-} from "@/lib/api";
+} from "@/features/sales/api";
+import type {
+  SalesInsightSection,
+  SalesQueryResponse,
+} from "@/features/sales/type/sales";
 
 type ChatMessage = {
   id: number;

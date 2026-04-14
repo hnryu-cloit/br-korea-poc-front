@@ -1,17 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import { AppLayout } from "@/components/common/layout/AppLayout";
-import {
-  AnalyticsPage,
-  DashboardPage,
-  HQCoachingPage,
-  HQInspectionPage,
-  OrchestrationPage,
-  OrderingPage,
-  ProductionPage,
-  SalesPage,
-  SignalsPage,
-} from "@/pages";
+import { AnalyticsPage } from "@/pages/AnalyticsPage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { HQCoachingPage } from "@/pages/HQCoachingPage";
+import { HQInspectionPage } from "@/pages/HQInspectionPage";
+import { OrchestrationPage } from "@/pages/OrchestrationPage";
+import { OrderingPage } from "@/pages/OrderingPage";
+import { ProductionPage } from "@/pages/ProductionPage";
+import { SalesPage } from "@/pages/SalesPage";
+import { SignalsPage } from "@/pages/SignalsPage";
 
 export const router = createBrowserRouter([
   {

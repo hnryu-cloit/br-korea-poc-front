@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
-import { PageHero } from "@/components/common/page";
+import { PageHero } from "@/components/common/page/page-layout";
 import { fetchAnalyticsMetrics, fetchAuditLogs } from "@/features/analytics/api";
-import type { AnalyticsMetric } from "@/features/analytics/types";
+import type { AnalyticsMetric } from "@/features/analytics/type/analytics";
 
 type QueryCategory = "전체" | "FAQ" | "데이터 조회" | "분석" | "민감정보";
 

@@ -202,8 +202,11 @@ export interface SalesComparisonMetric {
 
 /**
  * 매장 대 비교군 비교 분석 결과
+ *
+ * 현재 UI는 매장명을 직접 노출하고 있어 `store` 필드를 추가로 유지한다.
  */
 export interface SalesQueryComparison {
+  store: string;
   peer_group: string; // 비교군 설명
   summary: string; // 비교 결과 요약
   metrics: SalesComparisonMetric[]; // 비교 지표 목록
@@ -221,4 +224,31 @@ export interface CreateSalesQueryResponse {
   processing_route?: string | null; // 응답 생성 처리 경로
   blocked: boolean; // 정책상 차단된 질의 여부
   masked_fields?: string[]; // 마스킹 처리된 필드 목록
+}
+
+export type SalesPrompt = SalesPromptItem;
+
+export type SalesInsightMetric = SalesInsightMetricItem;
+
+export type SalesInsightSection = Omit<SalesInsightSectionItem, "key">;
+
+export interface SalesInsightsResponse {
+  peak_hours: SalesInsightSection;
+  channel_mix: SalesInsightSection;
+  payment_mix: SalesInsightSection;
+  menu_mix: SalesInsightSection;
+  campaign_seasonality?: SalesInsightSection | null;
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+}
+
+export type SalesComparison = SalesQueryComparison;
+
+export interface SalesQueryResponse extends CreateSalesQueryResponse {
+  evidence?: string[];
+  confidence_score?: number;
+  semantic_logic?: string;
+  sources?: string[];
+  visual_data?: unknown;
 }

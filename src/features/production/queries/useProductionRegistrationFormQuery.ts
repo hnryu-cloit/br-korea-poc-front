@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchProductionRegistrationForm } from "@/features/production/api";
-import { productionRegistrationFormMock } from "@/features/production/mockdata";
+import { productionRegistrationFormMock } from "@/features/production/mockdata/registrationForm";
 import { productionQueryKeys } from "@/features/production/queries/queryKeys";
 import type { GetProductionRegistrationFormRequest } from "@/features/production/type/production";
 

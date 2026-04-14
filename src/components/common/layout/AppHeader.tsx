@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Menu, X } from "lucide-react";
 
-import { useDemoSession } from "@/features/session";
 import { fetchNotifications } from "@/features/notifications/api";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
   "/": ["홈"],

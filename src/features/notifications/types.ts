@@ -1,4 +1,4 @@
-export type NotificationCategory = "alert" | "workflow" | "analysis";
+import type { NotificationCategory } from "@/type/common";
 
 export type ApiNotification = {
   id: number;

@@ -52,3 +52,17 @@ export interface GetAuditLogsResponse {
   items: AuditLogItem[]; // 감사 로그 목록
   total: number; // 전체 로그 건수
 }
+
+export type AnalyticsMetric = AnalyticsMetricItem;
+
+export type AnalyticsMetricsResponse = GetAnalyticsMetricsResponse;
+
+export interface AuditLogEntry extends AuditLogItem {
+  event_type: string;
+  actor_role: string;
+}
+
+export interface AuditLogListResponse extends GetAuditLogsResponse {
+  items: AuditLogEntry[];
+  filtered_domain?: string | null;
+}

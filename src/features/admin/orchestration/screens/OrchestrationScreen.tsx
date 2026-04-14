@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
 import { orchestrationStats } from "@/commons/constants/page-content";
-import { PageHero, StatsGrid } from "@/components/common/page";
+import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
 import { fetchAuditLogs } from "@/features/analytics/api";
-import type { AuditLogEntry } from "@/features/analytics/types";
+import type { AuditLogEntry } from "@/features/analytics/type/analytics";
 
 const ROUTE_COLOR: Record<string, string> = {
   stub_repository: "bg-[#eef4ff] text-[#2454C8]",

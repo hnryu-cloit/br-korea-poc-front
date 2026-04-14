@@ -1,7 +1,7 @@
 import { TrendingUp, TrendingDown, Minus, Bell } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page";
+import { PageHero } from "@/components/common/page/page-layout";
 import { fetchSignals } from "@/features/admin/signals/api";
 import type { SalesSignal } from "@/features/admin/signals/types";
 

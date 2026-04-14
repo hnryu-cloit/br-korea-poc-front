@@ -1,6 +1,6 @@
 import { Clock, MessageCircle } from "lucide-react";
 
-import { PageHero } from "@/components/common/page";
+import { PageHero } from "@/components/common/page/page-layout";
 
 export function ProductionHero({
   updatedAt,

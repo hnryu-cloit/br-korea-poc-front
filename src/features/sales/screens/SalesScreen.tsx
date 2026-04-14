@@ -10,7 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { PageHero, StatsGrid } from "@/components/common/page";
+import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
 
 type QueryResponse = {
   query: string;

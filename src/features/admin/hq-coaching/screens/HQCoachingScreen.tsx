@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page";
+import { PageHero } from "@/components/common/page/page-layout";
 import { fetchHQCoaching } from "@/features/admin/hq-coaching/api";
 
 const statusConfig = {
