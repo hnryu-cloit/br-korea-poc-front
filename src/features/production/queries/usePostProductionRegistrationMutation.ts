@@ -10,9 +10,8 @@ export const usePostProductionRegistrationMutation = () => {
     mutationFn: postProductionRegistration,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productionQueryKeys.overview() });
-      queryClient.invalidateQueries({ queryKey: productionQueryKeys.alerts() });
-      queryClient.invalidateQueries({ queryKey: productionQueryKeys.registrationHistory() });
-      queryClient.invalidateQueries({ queryKey: productionQueryKeys.registrationSummary() });
+      queryClient.invalidateQueries({ queryKey: productionQueryKeys.skuList() });
+      queryClient.invalidateQueries({ queryKey: [...productionQueryKeys.all, "sku-detail"] });
     },
   });
 };
