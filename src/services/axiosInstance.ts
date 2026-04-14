@@ -9,11 +9,12 @@ import {
 import type { CommonError } from "@/services/type";
 
 // const DEFAULT_API_BASE_URL = "http://localhost:8000";
+const DEFAULT_API_BASE_URL = "http://localhost:6002";
 // refresh 제외 대상 API
 const AUTH_EXCLUDED_URLS = [''];
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
