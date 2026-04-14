@@ -60,6 +60,12 @@ export interface ProductionSkuListResponse {
   };
 }
 
+export interface ProductionSkuListParams {
+  page?: number;
+  page_size?: number;
+  store_id?: string;
+}
+
 export interface ProductionRegistrationForm {
   sku_id: string;
   sku_name: string;
