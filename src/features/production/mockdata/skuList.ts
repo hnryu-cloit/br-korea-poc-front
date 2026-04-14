@@ -1,6 +1,4 @@
-import type { GetProductionSkuListResponse } from "@/features/production/types/production";
-
-export const productionSkuListMock: GetProductionSkuListResponse = {
+export const productionSkuListMock = {
   items: [
     {
       sku_id: "choco",

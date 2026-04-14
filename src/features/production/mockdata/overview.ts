@@ -1,6 +1,4 @@
-import type { GetProductionOverviewResponse } from "@/features/production/types/production";
-
-export const productionOverviewMock: GetProductionOverviewResponse = {
+export const productionOverviewMock = {
   updated_at: "2026-04-06 14:23",
   refresh_interval_minutes: 5,
   summary_stats: [

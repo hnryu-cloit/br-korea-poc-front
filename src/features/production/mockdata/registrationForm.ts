@@ -1,6 +1,4 @@
-import type { GetProductionRegistrationFormResponse } from "@/features/production/types/production";
-
-export const productionRegistrationFormMock: GetProductionRegistrationFormResponse[] = [
+export const productionRegistrationFormMock = [
   {
     sku_id: "choco",
     sku_name: "초코 도넛",
