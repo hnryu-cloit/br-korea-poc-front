@@ -1,4 +1,4 @@
-import type { OrderingOption } from "@/features/ordering/constants/ordering";
+import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingOptionCard({
   option,
@@ -30,8 +30,8 @@ export function OrderingOptionCard({
 
         <div className="mt-4 space-y-2">
           {option.items.map((item) => (
-            <div key={item.name} className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm">
-              <span className="text-slate-600">{item.name}</span>
+            <div key={`${option.option_id}-${item.sku_name}`} className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm">
+              <span className="text-slate-600">{item.sku_name}</span>
               <span className="font-bold text-slate-800">{item.quantity}개</span>
             </div>
           ))}
@@ -39,9 +39,9 @@ export function OrderingOptionCard({
 
         <div className="mt-4 rounded-2xl bg-[#edf4ff] px-4 py-4">
           <p className="text-xs font-bold text-[#2454C8]">추천 근거</p>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{option.reasoning}</p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">{option.reasoning_text}</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            {option.metrics.map((metric) => (
+            {option.reasoning_metrics.map((metric) => (
               <div key={metric.key} className="rounded-2xl bg-white px-3 py-3">
                 <p className="text-[11px] font-semibold text-slate-400">{metric.key}</p>
                 <p className="mt-1 text-sm font-bold text-slate-900">{metric.value}</p>
@@ -50,11 +50,11 @@ export function OrderingOptionCard({
           </div>
         </div>
 
-        {option.specialFactors?.length ? (
+        {option.special_factors.length ? (
           <div className="mt-4">
             <p className="text-xs font-bold text-slate-500">예외 변수 반영</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {option.specialFactors.map((factor) => (
+              {option.special_factors.map((factor) => (
                 <span key={factor} className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-[11px] font-semibold text-slate-600">
                   {factor}
                 </span>

@@ -1,5 +1,5 @@
 import { OrderingOptionCard } from "@/features/ordering/components/OrderingOptionCard";
-import type { OrderingOption } from "@/features/ordering/constants/ordering";
+import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingOptionsSection({
   options,
@@ -23,10 +23,10 @@ export function OrderingOptionsSection({
       <div className="mt-5 grid gap-5 xl:grid-cols-3">
         {options.map((option) => (
           <OrderingOptionCard
-            key={option.id}
+            key={option.option_id}
             option={option}
-            selected={selectedOptionId === option.id}
-            onSelect={() => onSelectOption(option.id)}
+            selected={selectedOptionId === option.option_id}
+            onSelect={() => onSelectOption(option.option_id)}
           />
         ))}
       </div>

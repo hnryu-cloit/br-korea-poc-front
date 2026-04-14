@@ -1,7 +1,7 @@
 import { CheckCircle } from "lucide-react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
-import type { OrderingOption } from "@/features/ordering/constants/ordering";
+import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingConfirmedSummary({
   option,
@@ -23,8 +23,8 @@ export function OrderingConfirmedSummary({
             <p className="mt-1 text-sm text-green-700">{option.title} 기준으로 주문을 확정했습니다.</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {option.items.map((item) => (
-                <div key={item.name} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
-                  <p className="text-xs font-semibold text-slate-400">{item.name}</p>
+                <div key={`${option.option_id}-${item.sku_name}`} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-400">{item.sku_name}</p>
                   <p className="mt-1 text-lg font-bold text-slate-900">{item.quantity}개</p>
                 </div>
               ))}

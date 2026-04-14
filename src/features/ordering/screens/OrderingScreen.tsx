@@ -10,21 +10,23 @@ import { OrderingOptionsSection } from "@/features/ordering/components/OrderingO
 import { OrderingPrincipleNotice } from "@/features/ordering/components/OrderingPrincipleNotice";
 import { OrderingQuickChat } from "@/features/ordering/components/OrderingQuickChat";
 import {
-  orderingOptions,
   orderingQuickPrompts,
   orderingStats,
 } from "@/features/ordering/constants/ordering";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
+import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 
 export function OrderingPage() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const optionsQuery = useGetOrderingOptionsQuery();
   const { seconds, mmss } = useOrderingCountdown(17 * 60, confirmed);
+  const orderingOptions = optionsQuery.data?.options ?? [];
   const selectedOption = useMemo(
-    () => orderingOptions.find((option) => option.id === selectedOptionId) ?? null,
-    [selectedOptionId],
+    () => orderingOptions.find((option) => option.option_id === selectedOptionId) ?? null,
+    [orderingOptions, selectedOptionId],
   );
 
   if (confirmed && selectedOption) {
