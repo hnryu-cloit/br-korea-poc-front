@@ -87,6 +87,93 @@ features
     └── types
 ```
 
+### 7. screen 파일은 화면 조합만 담당하고, 화면 구역은 components로 분리한다
+
+하나의 `screen` 파일 안에 화면의 모든 UI 블록과 보조 컴포넌트를 몰아넣지 않는다.
+프론트 화면은 퍼블리싱 단위로 구역이 나뉘므로, 코드도 같은 기준으로 나누어 관리한다.
+
+원칙:
+
+* `screens/*Screen.tsx` 는 페이지 진입점 역할만 담당한다.
+* screen 파일에는 데이터 조회, 상태 조합, 섹션 배치 정도만 남긴다.
+* 화면의 각 영역은 `components` 아래 별도 파일로 분리한다.
+* 하나의 파일에서 hero, filter, table, summary card, modal, panel, empty state까지 전부 같이 선언하지 않는다.
+* screen 내부에서만 잠깐 쓰는 작은 JSX 조각이라도 재사용 가능성이나 길이가 생기면 바로 분리한다.
+* "이 화면에서만 쓰니까 screen 파일 안에 같이 둔다"가 기본값이 아니라, "이 화면에서만 쓰더라도 section 단위로 components에 둔다"가 기본값이다.
+
+예시:
+
+```text
+features
+└── production
+    ├── screens
+    │   └── ProductionScreen.tsx
+    └── components
+        ├── ProductionHero.tsx
+        ├── ProductionAlertsSection.tsx
+        ├── ProductionTableSection.tsx
+        └── ProductionRegistrationPanel.tsx
+```
+
+잘못된 예시:
+
+* `ProductionScreen.tsx` 안에 `Hero`, `AlertCard`, `TableSection`, `ModalPanel` 을 모두 내부 컴포넌트로 선언하는 구조
+* `DashboardScreen.tsx` 안에 카드, 섹션, CTA 블록, 채팅 패널을 전부 한 파일에서 처리하는 구조
+
+좋은 기준:
+
+* 디자이너나 퍼블리셔가 화면을 구역으로 나눠 설명할 수 있다면, 코드도 그 구역 단위로 파일이 나뉘어야 한다.
+* 파일을 열었을 때 screen은 "무엇을 배치했는지"가 보여야 하고, 각 component 파일에서는 "그 구역이 어떻게 그려지는지"가 보여야 한다.
+
+### 8. UI 로직과 비즈니스 로직은 분리할 수 있으면 분리한다
+
+기존 코드 전체를 한 번에 이 원칙으로 되돌리는 것은 비용이 크다.
+따라서 이 규칙은 **앞으로 추가하거나 수정하는 작업부터 우선 적용**한다.
+
+원칙:
+
+* UI 컴포넌트는 가능한 한 렌더링과 사용자 인터랙션 표현에 집중한다.
+* 데이터 가공, 분기 규칙, 폼 계산, 필터 조합, API 호출 조합 같은 비즈니스 로직은 screen이나 component 내부에 길게 남기지 않는다.
+* 분리 가능한 로직은 `hooks`, `queries`, `utils` 등으로 이동한다.
+* React를 사용하는 장점을 살려, 화면 상태와 도메인 규칙이 함께 움직이는 경우는 custom hook으로 분리하는 것을 우선 검토한다.
+* 무조건 억지로 나누지는 않지만, screen/component 가 길어지거나 조건 분기가 많아지면 분리를 기본 선택으로 본다.
+
+권장 예시:
+
+* 조회와 캐싱은 `queries`
+* 화면 전용 상태 조합과 액션 핸들링은 `hooks`
+* 순수 계산과 변환은 `utils`
+* UI 출력은 `components`
+
+예시:
+
+```text
+features
+└── sales
+    ├── components
+    │   ├── SalesChatPanel.tsx
+    │   └── SalesInsightCards.tsx
+    ├── hooks
+    │   └── useSalesChat.ts
+    ├── queries
+    │   └── useSalesInsightsQuery.ts
+    ├── utils
+    │   └── sales-response.ts
+    └── screens
+        └── SalesScreen.tsx
+```
+
+잘못된 예시:
+
+* `Screen.tsx` 하나에 API 호출, 응답 정규화, 권한 분기, 계산 로직, UI 섹션 선언이 전부 같이 들어있는 구조
+* 재사용 가능한 상태 로직인데도 여러 screen/component 에 복사해서 붙여넣는 구조
+
+좋은 기준:
+
+* screen 을 읽을 때 "이 화면이 어떤 데이터와 컴포넌트로 구성되는지"가 먼저 보여야 한다.
+* component 를 읽을 때는 "이 UI가 어떻게 보이는지"가 보여야 한다.
+* 비즈니스 규칙을 설명해야 하는 코드가 많아지면 UI 파일 밖으로 빼는 쪽을 우선 검토한다.
+
 ---
 
 ## 권장 루트 구조
