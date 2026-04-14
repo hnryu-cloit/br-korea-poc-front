@@ -31,7 +31,7 @@
 * API 호출은 `api`
 * query 관련 로직은 `queries`
 * feature 내부에서만 쓰는 유틸은 해당 feature의 `utils`
-* 전역 설정, 라이브러리 초기화, 인프라 성격 파일은 `lib`
+* 전역 설정, 라이브러리 초기화, 인프라 성격 파일은 `lib` 또는 `services`
 
 ### 3. 폴더 구조보다 배치 기준이 더 중요하다
 
@@ -44,13 +44,55 @@
 * import 경로가 길어지더라도 명시적인 경로 import를 사용한다.
 * 파일 이동 시 참조 관계를 더 쉽게 추적하기 위함이다.
 
+### 5. api 함수명은 HTTP 메서드 기준으로 작성한다
+
+* `GET` 호출은 `get...`
+* `POST` 호출은 `post...`
+* `PUT` 호출은 `put...`
+* `PATCH` 호출은 `patch...`
+* `DELETE` 호출은 `delete...`
+
+예시:
+
+* `getDashboardOverview`
+* `getNotifications`
+* `postSalesQuery`
+* `postProductionRegistration`
+
+`fetch`, `create`, `save`, `load` 같은 혼합 규칙은 사용하지 않는다.
+
+### 6. api / types 파일명도 도메인 기준으로 맞춘다
+
+폴더만 `api`, `types`로 만들고 파일을 루트에 따로 두지 않는다.
+
+예시:
+
+```text
+features
+└── analytics
+    ├── api
+    │   └── analytics.ts
+    └── types
+        └── analytics.ts
+```
+
+다음 구조는 금지한다.
+
+```text
+features
+└── analytics
+    ├── api.ts
+    ├── types.ts
+    ├── api
+    └── types
+```
+
 ---
 
 ## 권장 루트 구조
 
 ```text
 src
-├── app
 ├── assets
 ├── commons
 │   ├── components
@@ -61,29 +103,48 @@ src
 ├── components
 │   └── ui
 ├── features
+│   ├── analytics
+│   │   ├── api
+│   │   │   └── analytics.ts
+│   │   ├── screens
+│   │   └── types
+│   │       └── analytics.ts
+│   ├── dashboard
+│   │   ├── api
+│   │   │   └── dashboard.ts
+│   │   ├── components
+│   │   ├── mockdata
+│   │   ├── queries
+│   │   ├── screens
+│   │   └── types
+│   │       └── dashboard.ts
 │   ├── production
 │   │   ├── api
+│   │   │   └── production.ts
 │   │   ├── queries
 │   │   ├── components
 │   │   ├── hooks
 │   │   ├── constants
 │   │   ├── types
+│   │   │   └── production.ts
 │   │   ├── utils
-│   │   └── data
+│   │   ├── screens
+│   │   └── mockdata
 │   └── ordering
-│       ├── api
-│       ├── queries
-│       ├── components
-│       ├── hooks
-│       ├── constants
+│       ├── screens
 │       ├── types
-│       └── utils
+│       │   └── ordering.ts
+│       └── components
 ├── lib
-│   ├── axiosInstance.ts
 │   ├── queryClient.ts
-│   └── storage.ts
+│   ├── tokenManager.ts
+│   └── utils.ts
+├── services
+│   ├── axiosInstance.ts
+│   └── type.ts
 ├── pages
-├── routes
+├── providers
+├── router.tsx
 └── styles
 ```
 
@@ -95,6 +156,7 @@ src
 ## components/ui 폴더 가이드
 
 `components/ui` 폴더는 유지한다. 이 폴더는 일반 공통 컴포넌트 보관소가 아니라, **shadcn/ui 컴포넌트 전용 폴더**로 사용한다.
+현재 shadcn 컴포넌트가 없다면 비어 있어도 된다.
 
 ### 원칙
 
@@ -217,9 +279,12 @@ features
 
 예시:
 
-* `ApiResponse.ts`
-* `PaginationMeta.ts`
-* `SelectOption.ts`
+* `common.ts`
+* `pagination.ts`
+* `select-option.ts`
+
+공통 타입을 루트 `src/type` 같은 별도 폴더에 두지 않는다.
+공통 타입은 `src/commons/types` 아래에 둔다.
 
 ### 넣으면 안 되는 것
 
@@ -285,7 +350,8 @@ src
 ## lib 폴더 가이드
 
 `lib`는 공용 유틸을 모아두는 폴더가 아니다.
-이 폴더는 **앱 전역 설정**, **외부 라이브러리 래핑**, **인프라 성격 파일**만 두는 공간으로 사용한다.
+이 폴더는 **앱 전역 설정**, **토큰/캐시 같은 인프라 보조 로직**, **전역 헬퍼**만 두는 공간으로 사용한다.
+HTTP 클라이언트 설정처럼 서비스 계층 성격이 분명한 파일은 `services`로 분리할 수 있다.
 
 ### 넣어도 되는 것
 
@@ -294,6 +360,7 @@ src
 * `storage.ts`
 * `dayjs.ts`
 * `i18n.ts`
+* `tokenManager.ts`
 
 ### 설명
 
@@ -301,6 +368,7 @@ src
 * `queryClient.ts`: React Query 전역 설정
 * `storage.ts`: localStorage / sessionStorage 래퍼
 * `dayjs.ts`: dayjs plugin 초기화
+* `tokenManager.ts`: 인증 토큰 보관/조회/삭제
 
 ### 넣지 않는 것
 
@@ -317,6 +385,42 @@ lib
 ├── useOrderingFilter.ts
 └── formatOrderStatus.ts
 ```
+
+### services 폴더
+
+`services`는 네트워크/서비스 계층에 가까운 파일을 두는 공간이다.
+
+예시:
+
+* `axiosInstance.ts`
+* `type.ts`
+
+API endpoint별 함수는 `services`가 아니라 각 feature의 `api/{feature}.ts`로 둔다.
+
+---
+
+## 추가 규칙
+
+### 공통 타입과 feature 타입을 섞지 않는다
+
+* 여러 feature에서 공통으로 쓰는 타입만 `commons/types`
+* 특정 도메인의 요청/응답 타입은 해당 feature의 `types/{feature}.ts`
+
+예시:
+
+* `NotificationCategory`가 알림 외에서도 공통 개념이면 `commons/types/common.ts`
+* `HQInspectionResponse`는 `features/admin/hq-inspection/types/hq-inspection.ts`
+
+### feature 루트에 우회용 re-export 파일을 두지 않는다
+
+다음과 같은 파일은 만들지 않는다.
+
+* `features/foo.ts`
+* `features/foo/api.ts`
+* `features/foo/types.ts`
+* `src/data/session-user.ts` 같은 단순 re-export shim
+
+항상 실제 파일 경로를 직접 import 한다.
 
 위 파일들은 `lib`에 둘 성격이 아니다.
 
