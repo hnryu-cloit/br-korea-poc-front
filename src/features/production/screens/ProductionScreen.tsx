@@ -7,42 +7,32 @@ import { ProductionHero } from "@/features/production/components/ProductionHero"
 import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
-import { useProductionOverviewQuery } from "@/features/production/queries/useProductionOverviewQuery";
-import { useProductionRegistrationFormQuery } from "@/features/production/queries/useProductionRegistrationFormQuery";
-import { useProductionSkuListQuery } from "@/features/production/queries/useProductionSkuListQuery";
-import type { ProductionSkuItem } from "@/features/production/types/production";
-import { sessionUser } from "@/features/session/constants/session-user";
+import { useGetProductionAlertsQuery } from "@/features/production/queries/useGetProductionAlertsQuery";
+import { useGetProductionOverviewQuery } from "@/features/production/queries/useGetProductionOverviewQuery";
+import {
+  mapAlertsToUiAlerts,
+  mapOverviewToSkuItems,
+  mapSkuItemsToSummaryStats,
+  mapSkuToRegistrationForm,
+} from "@/features/production/utils/productionViewAdapter";
+import type {
+  ProductionSkuItem,
+} from "@/features/production/types/production";
 
 export function ProductionPage() {
   const [activeSku, setActiveSku] = useState<ProductionSkuItem | null>(null);
   const [qty, setQty] = useState("48");
   const [showChat, setShowChat] = useState(false);
 
-  const params = useMemo(
-    () => ({
-      store_id: sessionUser.storeId,
-    }),
-    [],
-  );
+  const overviewQuery = useGetProductionOverviewQuery();
+  const alertsQuery = useGetProductionAlertsQuery();
 
-  const overviewQuery = useProductionOverviewQuery(params);
-  const skuListQuery = useProductionSkuListQuery({
-    store_id: sessionUser.storeId,
-    page: 1,
-    page_size: 20,
-  });
-  const registrationFormQuery = useProductionRegistrationFormQuery(
-    activeSku
-      ? {
-          store_id: sessionUser.storeId,
-          sku_id: activeSku.sku_id,
-        }
-      : undefined,
+  const items = useMemo(() => mapOverviewToSkuItems(overviewQuery.data?.items ?? []), [overviewQuery.data?.items]);
+  const stats = useMemo(() => mapSkuItemsToSummaryStats(items), [items]);
+  const alerts = useMemo(
+    () => mapAlertsToUiAlerts(items, alertsQuery.data?.alerts ?? []),
+    [alertsQuery.data?.alerts, items],
   );
-
-  const stats = overviewQuery.data?.summary_stats ?? [];
-  const alerts = overviewQuery.data?.alerts ?? [];
-  const items = skuListQuery.data?.items ?? [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
@@ -64,7 +54,7 @@ export function ProductionPage() {
         <AppModal onClose={() => setActiveSku(null)}>
           <ProductionRegistrationPanel
             activeSku={activeSku}
-            form={registrationFormQuery.data}
+            form={mapSkuToRegistrationForm(activeSku)}
             qty={qty}
             onChangeQty={setQty}
             onClose={() => setActiveSku(null)}
