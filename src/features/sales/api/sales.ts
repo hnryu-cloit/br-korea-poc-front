@@ -1,7 +1,9 @@
 import axiosInstance from "@/services/axiosInstance";
 
 import type {
+  GetSalesPromptsResponse,
   SalesInsightsResponse,
+  SalesInsightSection,
   SalesPrompt,
   SalesQueryResponse,
 } from "@/features/sales/types/sales";
@@ -24,9 +26,15 @@ function appendOperationalFilters(
   }
 }
 
-export async function getSalesPrompts() {
-  const response = await axiosInstance.get<SalesPrompt[]>("/api/sales/prompts");
-  return response.data;
+export async function getSalesPrompts(): Promise<SalesPrompt[]> {
+  const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>("/api/sales/prompts");
+  const payload = response.data;
+
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  return payload.items ?? [];
 }
 
 export async function postSalesQuery(prompt: string) {
@@ -34,12 +42,28 @@ export async function postSalesQuery(prompt: string) {
   return response.data;
 }
 
-export async function getSalesInsights(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
+export async function getSalesInsights(
+  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
+): Promise<SalesInsightsResponse> {
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
 
-  const response = await axiosInstance.get<SalesInsightsResponse>("/api/sales/insights", {
+  const response = await axiosInstance.get<SalesInsightsResponse | { sections?: SalesInsightSection[] }>("/api/sales/insights", {
     params: Object.fromEntries(query.entries()),
   });
-  return response.data;
+  const payload = response.data;
+
+  if ("sections" in payload && Array.isArray(payload.sections)) {
+    const [peakHours, channelMix, paymentMix, menuMix] = payload.sections;
+
+    return {
+      peak_hours: peakHours,
+      channel_mix: channelMix,
+      payment_mix: paymentMix,
+      menu_mix: menuMix,
+      campaign_seasonality: null,
+    } satisfies SalesInsightsResponse;
+  }
+
+  return payload as SalesInsightsResponse;
 }
