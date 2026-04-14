@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import type { DemoRole } from "@/components/common/layout/menu";
+import type { DemoRole } from "@/commons/components/layout/menu";
 import type { SessionUser } from "@/features/session/constants/session-user";
 
 export type DemoSessionContextValue = {

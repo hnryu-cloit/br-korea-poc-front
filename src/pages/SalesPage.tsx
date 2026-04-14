@@ -3,16 +3,18 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
-import { SectionHint } from "@/components/ui/SectionHint";
-import { sessionUser } from "@/features/session/constants/session-user";
-import { PageHero, StatsGrid } from "@/components/common/page";
+import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
 import {
-  fetchSalesInsights,
-  fetchSalesPrompts,
-  querySales,
-  type SalesInsightSection,
-  type SalesQueryResponse,
-} from "@/lib/api";
+  getSalesInsights,
+  getSalesPrompts,
+  postSalesQuery,
+} from "@/features/sales/api/sales";
+import { SectionHint } from "@/features/sales/components/SectionHint";
+import { sessionUser } from "@/features/session/constants/session-user";
+import type {
+  SalesInsightSection,
+  SalesQueryResponse,
+} from "@/features/sales/types/sales";
 
 type ChatMessage = {
   id: number;
@@ -82,11 +84,11 @@ export function SalesPage() {
 
   const promptsQuery = useQuery({
     queryKey: ["sales-prompts"],
-    queryFn: fetchSalesPrompts,
+    queryFn: getSalesPrompts,
   });
   const salesInsightsQuery = useQuery({
     queryKey: ["sales-insights", sessionUser.storeId],
-    queryFn: () => fetchSalesInsights({ storeId: sessionUser.storeId }),
+    queryFn: () => getSalesInsights({ storeId: sessionUser.storeId }),
   });
 
   const suggestedPrompts = promptsQuery.data ?? [];
@@ -124,7 +126,7 @@ export function SalesPage() {
     setInput("");
     setLoading(true);
     try {
-      const res = await querySales(text);
+      const res = await postSalesQuery(text);
       setMessages((prev) => [
         ...prev,
         {
@@ -205,7 +207,7 @@ export function SalesPage() {
             <div className="mt-4 space-y-1.5">
               {section.actions.slice(0, 2).map((action) => (
                 <div key={action} className="flex items-start gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
-                  <span className="material-symbols-outlined text-[14px] shrink-0 mt-0.5">task_alt</span>
+                  <span className="material-symbols-outlined mt-0.5 shrink-0 text-[14px]">task_alt</span>
                   {action}
                 </div>
               ))}
@@ -220,27 +222,28 @@ export function SalesPage() {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[1fr_300px]">
-        {/* Chat area */}
-        <div className="flex flex-col rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden" style={{ minHeight: 520 }}>
+        <div className="flex min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
           <div className="flex items-center justify-between gap-3 border-b border-border/60 px-6 py-4">
             <div>
               <p className="text-sm font-bold text-slate-800">매출 분석</p>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="mt-0.5 text-xs text-slate-400">
                 {latestAssistantMessage
                   ? `최근 응답 경로는 ${ROUTE_LABEL[latestAssistantMessage.processingRoute ?? ""] ?? "분석"} 기준입니다`
                   : "아래에 궁금한 내용을 입력하거나 오른쪽 버튼을 눌러보세요"}
               </p>
             </div>
-            <SectionHint questions={[
-              { q: "어떻게 물어보면 되나요?", a: "평소 말하듯이 입력하시면 돼요. 예를 들어 '이번 주 배달이 왜 줄었나요?' 처럼 입력하면 분석해 드려요." },
-              { q: "오른쪽 버튼은 뭔가요?", a: "자주 묻는 질문들이에요. 버튼을 누르면 바로 분석해 드려요. 직접 입력하기 어려우시면 눌러보세요." },
-            ]} />
+            <SectionHint
+              questions={[
+                { q: "어떻게 물어보면 되나요?", a: "평소 말하듯이 입력하시면 돼요. 예를 들어 '이번 주 배달이 왜 줄었나요?' 처럼 입력하면 분석해 드려요." },
+                { q: "오른쪽 버튼은 뭔가요?", a: "자주 묻는 질문들이에요. 버튼을 누르면 바로 분석해 드려요. 직접 입력하기 어려우시면 눌러보세요." },
+              ]}
+            />
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5" style={{ maxHeight: 420 }}>
+          <div className="max-h-[420px] flex-1 space-y-5 overflow-y-auto px-5 py-5">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-48 text-center">
-                <BarChart3 className="h-10 w-10 text-slate-200 mb-3" />
+              <div className="flex h-48 flex-col items-center justify-center text-center">
+                <BarChart3 className="mb-3 h-10 w-10 text-slate-200" />
                 <p className="text-sm font-medium text-slate-400">오른쪽에서 질문을 선택하거나</p>
                 <p className="text-sm text-slate-400">아래에 직접 입력해 보세요</p>
               </div>
@@ -257,7 +260,7 @@ export function SalesPage() {
                     <div className={`rounded-[20px] rounded-bl-sm border px-5 py-4 ${msg.blocked ? "border-red-200 bg-red-50" : "border-border bg-[#f8fbff]"}`}>
                       {msg.blocked ? (
                         <div className="flex items-start gap-2">
-                          <ShieldAlert className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+                          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
                           <p className="text-sm leading-6 text-red-700">{msg.text}</p>
                         </div>
                       ) : (
@@ -278,7 +281,7 @@ export function SalesPage() {
                           <p className="text-[11px] font-bold text-slate-400">할 수 있는 것</p>
                           {msg.actions.map((a) => (
                             <div key={a} className="flex items-start gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
-                              <span className="material-symbols-outlined text-[14px] shrink-0 mt-0.5">task_alt</span>
+                              <span className="material-symbols-outlined mt-0.5 shrink-0 text-[14px]">task_alt</span>
                               {a}
                             </div>
                           ))}
@@ -311,7 +314,7 @@ export function SalesPage() {
                         </div>
                       ) : null}
 
-                      {(msg.queryType || msg.processingRoute) ? (
+                      {msg.queryType || msg.processingRoute ? (
                         <div className="mt-3 flex items-center gap-1.5">
                           {msg.queryType ? (
                             <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${QUERY_TYPE_STYLE[msg.queryType] ?? "bg-slate-100 text-slate-600"}`}>
@@ -335,7 +338,7 @@ export function SalesPage() {
               <div className="flex justify-start">
                 <div className="rounded-[20px] rounded-bl-sm border border-border bg-[#f8fbff] px-5 py-4">
                   <div className="flex items-center gap-2 text-sm text-slate-400">
-                    <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                    <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
                     분석 중...
                   </div>
                 </div>
@@ -366,23 +369,22 @@ export function SalesPage() {
           </div>
         </div>
 
-        {/* Suggested prompts */}
         <div className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          <p className="text-sm font-bold text-slate-800 mb-1">자주 묻는 질문</p>
-          <p className="text-xs text-slate-400 mb-4">현재 {suggestedPrompts.length}개 질문을 바로 실행할 수 있어요</p>
+          <p className="mb-1 text-sm font-bold text-slate-800">자주 묻는 질문</p>
+          <p className="mb-4 text-xs text-slate-400">현재 {suggestedPrompts.length}개 질문을 바로 실행할 수 있어요</p>
           <div className="space-y-2">
             {promptsQuery.isLoading ? (
-              <p className="text-xs text-slate-400 px-1">불러오는 중...</p>
+              <p className="px-1 text-xs text-slate-400">불러오는 중...</p>
             ) : (
               suggestedPrompts.map((p) => (
                 <button
                   key={p.prompt}
                   type="button"
                   onClick={() => sendMessage(p.prompt)}
-                  className="w-full text-left rounded-2xl border border-border bg-[#f8fbff] px-4 py-3 text-sm transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff]"
+                  className="w-full rounded-2xl border border-border bg-[#f8fbff] px-4 py-3 text-left text-sm transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff]"
                 >
                   <p className="text-sm font-semibold text-slate-700">{p.label}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{p.category}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-400">{p.category}</p>
                 </button>
               ))
             )}
