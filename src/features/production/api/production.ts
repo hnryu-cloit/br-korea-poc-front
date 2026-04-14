@@ -1,4 +1,7 @@
 import axiosInstance from "@/services/axiosInstance";
+import { productionOverviewMock } from "@/features/production/mockdata/overview";
+import { productionRegistrationFormMock } from "@/features/production/mockdata/registrationForm";
+import { productionSkuListMock } from "@/features/production/mockdata/skuList";
 
 import type {
   ProductionOverviewResponse,
@@ -8,6 +11,8 @@ import type {
   ProductionRegistrationPayload,
   ProductionRegistrationResponse,
 } from "@/features/production/types/production";
+
+const USE_PRODUCTION_MOCK = true;
 
 /**
  * API: GET /api/production/overview
@@ -37,6 +42,9 @@ import type {
  */
 export const getProductionOverview = async (
 ) => {
+  if (USE_PRODUCTION_MOCK) {
+    return productionOverviewMock as ProductionOverviewResponse;
+  }
   const response = await axiosInstance.get<ProductionOverviewResponse>(
     "/api/production/overview",
   );
@@ -77,6 +85,26 @@ export const getProductionOverview = async (
  * }
  */
 export const getProductionSkuList = async (params: ProductionSkuListParams) => {
+  if (USE_PRODUCTION_MOCK) {
+    const page = params.page ?? 1;
+    const pageSize = params.page_size ?? productionSkuListMock.pagination.page_size;
+    const allItems = productionSkuListMock.items;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const pagedItems = allItems.slice(start, end);
+    const totalItems = allItems.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+
+    return {
+      items: pagedItems,
+      pagination: {
+        page,
+        page_size: pageSize,
+        total_items: totalItems,
+        total_pages: totalPages,
+      },
+    } as ProductionSkuListResponse;
+  }
   const response = await axiosInstance.get<ProductionSkuListResponse>(
     "/api/production/items",
     { params },
@@ -108,6 +136,14 @@ export const getProductionSkuList = async (params: ProductionSkuListParams) => {
  * }
  */
 export const getProductionSkuDetail = async (skuId: string, storeId: string) => {
+  if (USE_PRODUCTION_MOCK) {
+    const found = productionRegistrationFormMock.find((item) => item.sku_id === skuId);
+    if (found) {
+      return found as ProductionSkuDetailResponse;
+    }
+    void storeId;
+    return productionRegistrationFormMock[0] as ProductionSkuDetailResponse;
+  }
   const response = await axiosInstance.get<ProductionSkuDetailResponse>(
     `/api/production/items/${skuId}`,
     { params: { store_id: storeId } },
@@ -136,6 +172,16 @@ export const getProductionSkuDetail = async (skuId: string, storeId: string) => 
 export const postProductionRegistration = async (
   payload: ProductionRegistrationPayload,
 ) => {
+  if (USE_PRODUCTION_MOCK) {
+    return {
+      sku_id: payload.sku_id,
+      qty: payload.qty,
+      registered_by: payload.registered_by ?? "store_owner",
+      feedback_type: "chance_loss_reduced",
+      feedback_message: "재고 소진 전에 등록되어 찬스 로스 감소 효과를 기록했습니다.",
+      store_id: payload.store_id,
+    };
+  }
   const response = await axiosInstance.post<ProductionRegistrationResponse>(
     "/api/production/registrations",
     payload,

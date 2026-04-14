@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
 import { StatsGrid } from "@/commons/components/page/page-layout";
@@ -7,36 +7,55 @@ import { ProductionHero } from "@/features/production/components/ProductionHero"
 import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
-import { useGetProductionAlertsQuery } from "@/features/production/queries/useGetProductionAlertsQuery";
+import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
 import { useGetProductionOverviewQuery } from "@/features/production/queries/useGetProductionOverviewQuery";
-import {
-  mapAlertsToUiAlerts,
-  mapOverviewToSkuItems,
-  mapSkuItemsToSummaryStats,
-  mapSkuToRegistrationForm,
-} from "@/features/production/utils/productionViewAdapter";
+import { useGetProductionSkuListQuery } from "@/features/production/queries/useGetProductionSkuListQuery";
+import { usePostProductionRegistrationMutation } from "@/features/production/queries/usePostProductionRegistrationMutation";
+import { sessionUser } from "@/features/session/constants/session-user";
 import type {
   ProductionSkuItem,
 } from "@/features/production/types/production";
 
 export function ProductionPage() {
   const [activeSku, setActiveSku] = useState<ProductionSkuItem | null>(null);
+  const [activeSkuId, setActiveSkuId] = useState<string | null>(null);
   const [qty, setQty] = useState("48");
   const [showChat, setShowChat] = useState(false);
 
   const overviewQuery = useGetProductionOverviewQuery();
-  const alertsQuery = useGetProductionAlertsQuery();
+  const skuListQuery = useGetProductionSkuListQuery({
+    page: 1,
+    page_size: 20,
+    store_id: sessionUser.storeId,
+  });
+  const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, sessionUser.storeId);
+  const postRegistrationMutation = usePostProductionRegistrationMutation();
 
-  const items = useMemo(() => mapOverviewToSkuItems(overviewQuery.data?.items ?? []), [overviewQuery.data?.items]);
-  const stats = useMemo(() => mapSkuItemsToSummaryStats(items), [items]);
-  const alerts = useMemo(
-    () => mapAlertsToUiAlerts(items, alertsQuery.data?.alerts ?? []),
-    [alertsQuery.data?.alerts, items],
-  );
+  const items = skuListQuery.data?.items ?? [];
+  const stats = overviewQuery.data?.summary_stats ?? [];
+  const alerts = overviewQuery.data?.alerts ?? [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
-    setQty(String(sku.recommended_production_qty ?? sku.avg_first_production_qty_4w));
+    setActiveSkuId(sku.sku_id);
+    setQty(String(sku.recommended_production_qty ?? sku.avg_first_production_qty_4w ?? 0));
+  };
+
+  const closeRegister = () => {
+    setActiveSku(null);
+    setActiveSkuId(null);
+  };
+
+  const submitRegistration = async () => {
+    if (!activeSku) return;
+    const parsedQty = Number.parseInt(qty, 10);
+    if (!Number.isFinite(parsedQty) || parsedQty <= 0) return;
+    await postRegistrationMutation.mutateAsync({
+      sku_id: activeSku.sku_id,
+      qty: parsedQty,
+      store_id: sessionUser.storeId,
+    });
+    closeRegister();
   };
 
   return (
@@ -51,13 +70,15 @@ export function ProductionPage() {
       <StatsGrid stats={stats} />
       <ProductionTableSection items={items} onOpenRegister={openRegister} />
       {activeSku ? (
-        <AppModal onClose={() => setActiveSku(null)}>
+        <AppModal onClose={closeRegister}>
           <ProductionRegistrationPanel
             activeSku={activeSku}
-            form={mapSkuToRegistrationForm(activeSku)}
+            form={skuDetailQuery.data}
             qty={qty}
             onChangeQty={setQty}
-            onClose={() => setActiveSku(null)}
+            onSubmit={submitRegistration}
+            isSubmitting={postRegistrationMutation.isPending}
+            onClose={closeRegister}
           />
         </AppModal>
       ) : null}

@@ -59,7 +59,7 @@ export function ProductionTableSection({
                 </td>
                 <td className="px-4 py-4">
                   <div className="flex flex-nowrap gap-1.5 whitespace-nowrap">
-                    {sku.decision.tags.map((tag) => (
+                    {(sku.tags ?? []).map((tag) => (
                       <span
                         key={`${sku.sku_id}-${tag}`}
                         className={`whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-bold ${
@@ -74,22 +74,22 @@ export function ProductionTableSection({
                       </span>
                     ))}
                   </div>
-                  <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">{sku.decision.alert_message}</p>
+                  <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">{sku.alert_message ?? "-"}</p>
                 </td>
                 <td className="px-4 py-4">
                   <button
                     type="button"
                     onClick={() => onOpenRegister(sku)}
-                    disabled={!sku.decision.can_produce}
+                    disabled={sku.can_produce === false}
                     className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
-                      !sku.decision.can_produce
+                      sku.can_produce === false
                         ? "cursor-not-allowed bg-slate-100 text-slate-400"
                         : sku.status === "danger"
                         ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
                         : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
                     }`}
                   >
-                    {sku.decision.can_produce ? "생산" : "생산 불가"}
+                    {sku.can_produce === false ? "생산 불가" : "생산"}
                   </button>
                 </td>
               </tr>

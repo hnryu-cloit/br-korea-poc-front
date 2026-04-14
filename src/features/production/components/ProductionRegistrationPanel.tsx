@@ -8,12 +8,16 @@ export function ProductionRegistrationPanel({
   form,
   qty,
   onChangeQty,
+  onSubmit,
+  isSubmitting,
   onClose,
 }: {
   activeSku: ProductionSkuItem;
   form?: ProductionRegistrationForm;
   qty: string;
   onChangeQty: (value: string) => void;
+  onSubmit: () => void;
+  isSubmitting?: boolean;
   onClose: () => void;
 }) {
   const detail = form ?? {
@@ -24,11 +28,11 @@ export function ProductionRegistrationPanel({
     recommended_qty: activeSku.recommended_production_qty ?? activeSku.avg_first_production_qty_4w,
     chance_loss_saving_pct: activeSku.chance_loss_saving_pct,
     chance_loss_basis_text: activeSku.chance_loss_basis_text ?? "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
-    predicted_stockout_time: activeSku.decision.predicted_stockout_time,
-    can_produce: activeSku.decision.can_produce,
-    sales_velocity: activeSku.decision.sales_velocity,
-    tags: activeSku.decision.tags,
-    alert_message: activeSku.decision.alert_message,
+    predicted_stockout_time: activeSku.predicted_stockout_time,
+    can_produce: activeSku.can_produce,
+    sales_velocity: activeSku.sales_velocity,
+    tags: activeSku.tags ?? [],
+    alert_message: activeSku.alert_message,
     material_alert: activeSku.material_alert,
     material_alert_message: activeSku.material_alert_message,
   };
@@ -121,10 +125,11 @@ export function ProductionRegistrationPanel({
         </button>
         <button
           type="button"
-          disabled={detail.can_produce === false}
+          onClick={onSubmit}
+          disabled={detail.can_produce === false || isSubmitting}
           className="rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
         >
-          {detail.can_produce === false ? "생산 불가" : "생산 등록"}
+          {detail.can_produce === false ? "생산 불가" : isSubmitting ? "등록 중..." : "생산 등록"}
         </button>
       </div>
     </section>

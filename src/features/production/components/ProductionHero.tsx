@@ -12,6 +12,8 @@ export function ProductionHero({
   showChat: boolean;
   onToggleChat: () => void;
 }) {
+  const formattedUpdatedAt = updatedAt ? dayjs(updatedAt).format("YYYY-MM-DD HH:mm") : "-";
+
   return (
     <PageHero
       title="생산관리"
@@ -20,7 +22,7 @@ export function ProductionHero({
       <div className="flex flex-wrap items-center gap-3">
         <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
           <Clock className="h-4 w-4" />
-          마지막 업데이트 {dayjs(updatedAt).format("YYYY-MM-DD HH:mm") ?? "-"}
+          마지막 업데이트 {formattedUpdatedAt}
         </div>
         <button
           type="button"
