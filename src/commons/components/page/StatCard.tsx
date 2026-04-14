@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { HighlightStat } from "@/commons/constants/page-content";
 
 const toneClassMap: Record<NonNullable<HighlightStat["tone"]>, string> = {
-  default: "bg-white text-slate-800",
+  default: "bg-[#E2E8F0] text-[#1D293D]",
   primary: "bg-[#eef4ff] text-[#2454c8]",
   danger: "bg-[#fff1f1] text-[#d14343]",
   success: "bg-[#eefaf2] text-[#15803d]",

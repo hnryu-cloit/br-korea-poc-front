@@ -1,7 +1,8 @@
 export type HighlightStat = {
+  key?: string;
   label: string;
   value: string;
-  tone?: "default" | "primary" | "danger" | "success";
+  tone: "default" | "primary" | "danger" | "success";
 };
 
 export type InsightCard = {

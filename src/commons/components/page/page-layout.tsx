@@ -24,9 +24,10 @@ export function PageHero({
 export function StatsGrid({ stats }: { stats: HighlightStat[] }) {
   return (
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => (
-        <StatCard key={stat.label} {...stat} />
-      ))}
+      {stats.map((stat) => {
+        const { key: _key, ...rest } = stat as HighlightStat & { key?: string };
+        return <StatCard key={rest.label} {...rest} />;
+      })}
     </section>
   );
 }
