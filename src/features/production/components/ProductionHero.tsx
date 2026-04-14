@@ -1,6 +1,7 @@
 import { Clock, MessageCircle } from "lucide-react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import dayjs from "dayjs";
 
 export function ProductionHero({
   updatedAt,
@@ -19,7 +20,7 @@ export function ProductionHero({
       <div className="flex flex-wrap items-center gap-3">
         <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
           <Clock className="h-4 w-4" />
-          마지막 갱신 {updatedAt ?? "-"} · 5분 단위 자동 갱신
+          마지막 업데이트 {dayjs(updatedAt).format("YYYY-MM-DD HH:mm") ?? "-"}
         </div>
         <button
           type="button"
