@@ -7,12 +7,6 @@ export interface DashboardOverviewRequest {
   business_date?: string;
 }
 
-export interface DashboardPromptItem {
-  id: string;
-  label: string;
-  prompt: string;
-}
-
 export interface DashboardNotificationLink {
   path: string;
   focus_section?: string;
@@ -41,6 +35,9 @@ export interface DashboardPriorityAction {
   cta_path: string;
   focus_section?: string;
   related_sku_id?: string;
+  ai_reasoning?: string;
+  confidence_score?: number;
+  is_finished_good: boolean;  
 }
 
 export interface DashboardStatItem {
@@ -55,48 +52,28 @@ export interface DashboardHighlightItem {
   description: string;
   tone?: "danger" | "warning" | "success" | "info" | "neutral";
 }
-
 export interface DashboardMetricItem {
   label: string;
   value: string;
   tone?: "danger" | "primary" | "success" | "default";
 }
-
 export interface DashboardSummaryCard {
   domain: DashboardDomain;
   title: string;
   description: string;
-  highlights: DashboardHighlightItem[];
+  highlights: string[];
+  metrics: DashboardMetricItem[];
   cta_label: string;
   cta_path: string;
-  prompts: DashboardPromptItem[];
-  metrics: DashboardMetricItem[];
-}
-
-export interface DashboardInsightItem {
-  id: string;
-  description: string;
+  prompts: string[];
+  status_label?:string;
+  deadline_minutes?: number;
+  delivery_scheduled?: boolean;
 }
 
 export interface DashboardOverviewResponse {
   updated_at: string;
   priority_actions: DashboardPriorityAction[];
   stats: DashboardStatItem[];
-}
-
-export interface DashboardCardsResponse {
   cards: DashboardSummaryCard[];
-}
-
-export interface DashboardInsightsResponse {
-  insights: DashboardInsightItem[];
-}
-
-export interface GetDashboardSummaryResponse {
-  updated_at: string;
-  priority_actions: DashboardPriorityAction[];
-  stats: DashboardStatItem[];
-  cards: DashboardSummaryCard[];
-  insights: DashboardInsightItem[];
-  notifications: DashboardNotificationItem[];
 }

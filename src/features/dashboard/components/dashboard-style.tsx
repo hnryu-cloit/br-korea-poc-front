@@ -1,22 +1,15 @@
 import { Clock, DollarSign, Package, ShoppingCart, Target, TrendingUp } from "lucide-react";
 
 import type {
-  DashboardActionType,
   DashboardDomain,
   DashboardHighlightItem,
-  DashboardUrgency,
+  DashboardUrgency
 } from "@/features/dashboard/types/dashboard";
 
 export const urgencyStyleMap: Record<DashboardUrgency, string> = {
   urgent: "bg-red-50 text-red-600",
   important: "bg-orange-50 text-orange-600",
   recommended: "bg-green-50 text-green-600",
-};
-
-export const priorityActionIconMap: Record<DashboardActionType, React.ReactNode> = {
-  production: <Package className="h-6 w-6 text-red-400" />,
-  ordering: <ShoppingCart className="h-6 w-6 text-orange-400" />,
-  sales: <TrendingUp className="h-6 w-6 text-green-500" />,
 };
 
 export const summaryCardIconMap: Record<DashboardDomain, React.ReactNode> = {

@@ -2,8 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import {
-  priorityActionIconMap,
-  urgencyStyleMap,
+  urgencyStyleMap
 } from "@/features/dashboard/components/dashboard-style";
 import type { DashboardPriorityAction } from "@/features/dashboard/types/dashboard";
 
@@ -35,7 +34,6 @@ export function PriorityActionsSection({ actions }: { actions: DashboardPriority
                 <p className="mt-3 text-lg font-bold text-slate-900">{action.title}</p>
                 <p className="mt-1 text-sm text-slate-500">{action.description}</p>
               </div>
-              {priorityActionIconMap[action.type]}
             </div>
           </Link>
         ))}

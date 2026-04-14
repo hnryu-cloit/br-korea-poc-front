@@ -20,7 +20,7 @@ export function SummaryCardsSection({
           icon={summaryCardIconMap[card.domain]}
           title={card.title}
           description={card.description}
-          chatItems={card.prompts.map((prompt) => prompt.label)}
+          chatItems={card.prompts}
           activeChat={activeChat === card.domain}
           onToggleChat={() => onToggleChat(card.domain)}
           to={card.cta_path}
