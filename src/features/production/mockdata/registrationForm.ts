@@ -1,4 +1,4 @@
-import type { GetProductionRegistrationFormResponse } from "@/features/production/type/production";
+import type { GetProductionRegistrationFormResponse } from "@/features/production/types/production";
 
 export const productionRegistrationFormMock: GetProductionRegistrationFormResponse[] = [
   {

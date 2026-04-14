@@ -1,4 +1,4 @@
-import type { ProductionStatus } from "@/features/production/type/production";
+import type { ProductionStatus } from "@/features/production/types/production";
 
 const badgeClasses: Record<ProductionStatus, string> = {
   danger: "border border-red-200 bg-red-50 text-red-600",

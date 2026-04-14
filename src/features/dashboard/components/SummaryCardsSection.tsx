@@ -1,4 +1,4 @@
-import type { DashboardDomain, DashboardSummaryCard } from "@/features/dashboard/type/dashboard";
+import type { DashboardDomain, DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import { summaryCardIconMap } from "@/features/dashboard/components/dashboard-style";
 import { SummaryCard } from "@/features/dashboard/components/SummaryCard";
 import { SummaryCardBody } from "@/features/dashboard/components/SummaryCardBody";

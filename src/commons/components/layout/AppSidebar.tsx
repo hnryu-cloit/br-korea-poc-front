@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 
 import Logo from "@/assets/logo.svg";
-import { menuSections } from "@/components/common/layout/menu";
+import { menuSections } from "@/commons/components/layout/menu";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { cn } from "@/lib/utils";
 

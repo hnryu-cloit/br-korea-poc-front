@@ -1,4 +1,4 @@
-import { PageHero } from "@/components/common/page/page-layout";
+import { PageHero } from "@/commons/components/page/page-layout";
 import { Clock } from "lucide-react";
 
 export function DashboardHero({ updatedAt }: { updatedAt?: string }) {

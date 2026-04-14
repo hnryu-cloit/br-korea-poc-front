@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page/page-layout";
-import { fetchHQCoaching } from "@/features/admin/hq-coaching/api";
+import { PageHero } from "@/commons/components/page/page-layout";
+import { getHQCoaching } from "@/features/admin/hq-coaching/api/hq-coaching";
 
 const statusConfig = {
   normal: { label: "정상", className: "bg-green-50 text-green-600 border border-green-100" },
@@ -12,7 +12,7 @@ const statusConfig = {
 export function HQCoachingPage() {
   const coachingQuery = useQuery({
     queryKey: ["hq-coaching"],
-    queryFn: fetchHQCoaching,
+    queryFn: getHQCoaching,
     refetchInterval: 30_000,
   });
 

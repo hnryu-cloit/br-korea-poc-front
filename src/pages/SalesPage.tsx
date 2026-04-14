@@ -3,18 +3,18 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Send, BarChart3, ShieldAlert } from "lucide-react";
 
-import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
-import { SectionHint } from "@/components/ui/SectionHint";
-import { sessionUser } from "@/data/session-user";
+import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
 import {
-  fetchSalesInsights,
-  fetchSalesPrompts,
-  querySales,
-} from "@/features/sales/api";
+  getSalesInsights,
+  getSalesPrompts,
+  postSalesQuery,
+} from "@/features/sales/api/sales";
+import { SectionHint } from "@/features/sales/components/SectionHint";
+import { sessionUser } from "@/features/session/constants/session-user";
 import type {
   SalesInsightSection,
   SalesQueryResponse,
-} from "@/features/sales/type/sales";
+} from "@/features/sales/types/sales";
 
 type ChatMessage = {
   id: number;
@@ -84,11 +84,11 @@ export function SalesPage() {
 
   const promptsQuery = useQuery({
     queryKey: ["sales-prompts"],
-    queryFn: fetchSalesPrompts,
+    queryFn: getSalesPrompts,
   });
   const salesInsightsQuery = useQuery({
     queryKey: ["sales-insights", sessionUser.storeId],
-    queryFn: () => fetchSalesInsights({ storeId: sessionUser.storeId }),
+    queryFn: () => getSalesInsights({ storeId: sessionUser.storeId }),
   });
 
   const suggestedPrompts = promptsQuery.data ?? [];
@@ -126,7 +126,7 @@ export function SalesPage() {
     setInput("");
     setLoading(true);
     try {
-      const res = await querySales(text);
+      const res = await postSalesQuery(text);
       setMessages((prev) => [
         ...prev,
         {

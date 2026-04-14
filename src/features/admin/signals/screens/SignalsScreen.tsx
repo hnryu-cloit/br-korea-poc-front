@@ -1,9 +1,9 @@
 import { TrendingUp, TrendingDown, Minus, Bell } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page/page-layout";
-import { fetchSignals } from "@/features/admin/signals/api";
-import type { SalesSignal } from "@/features/admin/signals/types";
+import { PageHero } from "@/commons/components/page/page-layout";
+import { getSignals } from "@/features/admin/signals/api/signals";
+import type { SalesSignal } from "@/features/admin/signals/types/signals";
 
 const trendIcon = (trend: SalesSignal["trend"]) => {
   if (trend === "up") return <TrendingUp className="h-4 w-4" />;
@@ -26,7 +26,7 @@ const trendConfig = {
 export function SignalsPage() {
   const signalsQuery = useQuery({
     queryKey: ["signals"],
-    queryFn: fetchSignals,
+    queryFn: getSignals,
     refetchInterval: 30_000,
   });
 

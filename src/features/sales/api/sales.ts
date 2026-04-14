@@ -4,7 +4,7 @@ import type {
   SalesInsightsResponse,
   SalesPrompt,
   SalesQueryResponse,
-} from "@/features/sales/type/sales";
+} from "@/features/sales/types/sales";
 
 function appendOperationalFilters(
   params: URLSearchParams,
@@ -24,17 +24,17 @@ function appendOperationalFilters(
   }
 }
 
-export async function fetchSalesPrompts() {
+export async function getSalesPrompts() {
   const response = await axiosInstance.get<SalesPrompt[]>("/api/sales/prompts");
   return response.data;
 }
 
-export async function querySales(prompt: string) {
+export async function postSalesQuery(prompt: string) {
   const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", { prompt });
   return response.data;
 }
 
-export async function fetchSalesInsights(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
+export async function getSalesInsights(filters?: { storeId?: string; dateFrom?: string; dateTo?: string }) {
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
 

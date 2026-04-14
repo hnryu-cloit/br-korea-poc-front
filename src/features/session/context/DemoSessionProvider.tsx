@@ -1,6 +1,6 @@
 import { useMemo, useState, type PropsWithChildren } from "react";
 
-import type { DemoRole } from "@/components/common/layout/menu";
+import type { DemoRole } from "@/commons/components/layout/menu";
 import { sessionUser, type SessionUser } from "@/features/session/constants/session-user";
 import { DemoSessionContext } from "@/features/session/context/demo-session-context";
 

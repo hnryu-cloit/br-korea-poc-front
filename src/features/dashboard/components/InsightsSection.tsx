@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import type {
   DashboardInsightItem,
-} from "@/features/dashboard/type/dashboard";
+} from "@/features/dashboard/types/dashboard";
 
 const quickLinks = [
   { label: "생산 관리", path: "/production" },

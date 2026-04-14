@@ -1,6 +1,6 @@
 import { Wrench, Zap } from "lucide-react";
 
-import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/type/production";
+import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
 
 function findPrimarySku(items: ProductionSkuItem[], alert: ProductionAlertItem) {
   if (!alert.sku_id) return null;

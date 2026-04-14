@@ -1,4 +1,4 @@
-import type { DashboardOverviewResponse } from "@/features/dashboard/type/dashboard";
+import type { DashboardOverviewResponse } from "@/features/dashboard/types/dashboard";
 
 export const dashboardOverviewMock: DashboardOverviewResponse = {
   updated_at: "2026-04-06 14:23",

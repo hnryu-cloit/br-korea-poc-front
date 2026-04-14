@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
-import { PageHero } from "@/components/common/page/page-layout";
-import { fetchAnalyticsMetrics, fetchAuditLogs } from "@/features/analytics/api";
-import type { AnalyticsMetric } from "@/features/analytics/type/analytics";
+import { PageHero } from "@/commons/components/page/page-layout";
+import { getAnalyticsMetrics, getAuditLogs } from "@/features/analytics/api/analytics";
+import type { AnalyticsMetric } from "@/features/analytics/types/analytics";
 
 type QueryCategory = "전체" | "FAQ" | "데이터 조회" | "분석" | "민감정보";
 
@@ -45,7 +45,7 @@ export function AnalyticsPage() {
 
   const metricsQuery = useQuery({
     queryKey: ["analytics-metrics"],
-    queryFn: fetchAnalyticsMetrics,
+    queryFn: getAnalyticsMetrics,
     refetchInterval: 15_000,
   });
 
@@ -53,7 +53,7 @@ export function AnalyticsPage() {
 
   const logsQuery = useQuery({
     queryKey: ["audit-logs-sales"],
-    queryFn: () => fetchAuditLogs("sales", 20),
+    queryFn: () => getAuditLogs("sales", 20),
     refetchInterval: 15_000,
   });
 

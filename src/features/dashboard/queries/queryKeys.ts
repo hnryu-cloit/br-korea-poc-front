@@ -1,4 +1,4 @@
-import type { DashboardOverviewRequest } from "@/features/dashboard/type/dashboard";
+import type { DashboardOverviewRequest } from "@/features/dashboard/types/dashboard";
 
 export const dashboardQueryKeys = {
   all: ["dashboard"] as const,

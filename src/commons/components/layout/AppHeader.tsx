@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Menu, X } from "lucide-react";
 
-import { fetchNotifications } from "@/features/notifications/api";
+import { getNotifications } from "@/features/notifications/api/notifications";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
@@ -31,7 +31,7 @@ export function AppHeader({ onMenuToggle }: Props) {
 
   const notificationsQuery = useQuery({
     queryKey: ["notifications"],
-    queryFn: fetchNotifications,
+    queryFn: getNotifications,
     refetchInterval: 30_000,
   });
 

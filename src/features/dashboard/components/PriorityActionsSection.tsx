@@ -5,7 +5,7 @@ import {
   priorityActionIconMap,
   urgencyStyleMap,
 } from "@/features/dashboard/components/dashboard-style";
-import type { DashboardPriorityAction } from "@/features/dashboard/type/dashboard";
+import type { DashboardPriorityAction } from "@/features/dashboard/types/dashboard";
 
 export function PriorityActionsSection({ actions }: { actions: DashboardPriorityAction[] }) {
   return (

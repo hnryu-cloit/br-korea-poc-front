@@ -1,5 +1,5 @@
 import { StatusBadge } from "@/features/production/components/StatusBadge";
-import type { ProductionSkuItem } from "@/features/production/type/production";
+import type { ProductionSkuItem } from "@/features/production/types/production";
 
 export function ProductionTableSection({
   items,

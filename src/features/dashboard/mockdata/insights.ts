@@ -1,4 +1,4 @@
-import type { DashboardInsightsResponse } from "@/features/dashboard/type/dashboard";
+import type { DashboardInsightsResponse } from "@/features/dashboard/types/dashboard";
 
 export const dashboardInsightsMock: DashboardInsightsResponse = {
   insights: [

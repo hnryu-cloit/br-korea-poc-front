@@ -10,7 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
+import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
 
 type OrderItem = { name: string; quantity: number };
 type OrderOption = {

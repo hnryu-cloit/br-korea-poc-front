@@ -5,7 +5,7 @@ import type {
   DashboardDomain,
   DashboardHighlightItem,
   DashboardUrgency,
-} from "@/features/dashboard/type/dashboard";
+} from "@/features/dashboard/types/dashboard";
 
 export const urgencyStyleMap: Record<DashboardUrgency, string> = {
   urgent: "bg-red-50 text-red-600",

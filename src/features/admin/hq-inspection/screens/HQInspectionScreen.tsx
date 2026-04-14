@@ -1,9 +1,9 @@
 import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { PageHero } from "@/components/common/page/page-layout";
-import { fetchHQInspection } from "@/features/admin/hq-inspection/api";
-import type { StoreInspectionItem } from "@/features/admin/hq-inspection/types";
+import { PageHero } from "@/commons/components/page/page-layout";
+import { getHQInspection } from "@/features/admin/hq-inspection/api/hq-inspection";
+import type { StoreInspectionItem } from "@/features/admin/hq-inspection/types/hq-inspection";
 
 type ComplianceStatus = StoreInspectionItem["status"];
 
@@ -40,7 +40,7 @@ function ProgressBar({ value, max, color }: { value: number; max: number; color:
 export function HQInspectionPage() {
   const inspectionQuery = useQuery({
     queryKey: ["hq-inspection"],
-    queryFn: fetchHQInspection,
+    queryFn: getHQInspection,
     refetchInterval: 30_000,
   });
 

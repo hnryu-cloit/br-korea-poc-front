@@ -1,4 +1,4 @@
-import type { ActorInfo, DateRangeParams } from "@/type/common";
+import type { ActorInfo, DateRangeParams } from "@/commons/types/common";
 
 /**
  * OrderingPage

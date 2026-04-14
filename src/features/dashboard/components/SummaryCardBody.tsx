@@ -1,4 +1,4 @@
-import type { DashboardSummaryCard } from "@/features/dashboard/type/dashboard";
+import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import {
   Clock,
   DollarSign,

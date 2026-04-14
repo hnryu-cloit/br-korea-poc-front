@@ -1,4 +1,4 @@
-import type { GetProductionSkuListResponse } from "@/features/production/type/production";
+import type { GetProductionSkuListResponse } from "@/features/production/types/production";
 
 export const productionSkuListMock: GetProductionSkuListResponse = {
   items: [

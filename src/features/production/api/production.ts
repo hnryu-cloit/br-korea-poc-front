@@ -9,30 +9,30 @@ import type {
   GetProductionRegistrationFormResponse,
   GetProductionSkuListRequest,
   GetProductionSkuListResponse,
-} from "@/features/production/type/production";
+} from "@/features/production/types/production";
 
-export async function fetchProductionOverview(params: GetProductionOverviewRequest) {
+export async function getProductionOverview(params: GetProductionOverviewRequest) {
   const response = await axiosInstance.get<GetProductionOverviewResponse>("/api/production/overview", {
     params: { ...params },
   });
   return response.data;
 }
 
-export async function fetchProductionSkuList(params: GetProductionSkuListRequest) {
+export async function getProductionSkuList(params: GetProductionSkuListRequest) {
   const response = await axiosInstance.get<GetProductionSkuListResponse>("/api/production/skus", {
     params: { ...params },
   });
   return response.data;
 }
 
-export async function fetchProductionRegistrationForm(params: GetProductionRegistrationFormRequest) {
+export async function getProductionRegistrationForm(params: GetProductionRegistrationFormRequest) {
   const response = await axiosInstance.get<GetProductionRegistrationFormResponse>("/api/production/registrations/form", {
     params: { ...params },
   });
   return response.data;
 }
 
-export async function createProductionRegistration(payload: CreateProductionRegistrationRequest) {
+export async function postProductionRegistration(payload: CreateProductionRegistrationRequest) {
   const response = await axiosInstance.post<CreateProductionRegistrationResponse>("/api/production/registrations", payload);
   return response.data;
 }

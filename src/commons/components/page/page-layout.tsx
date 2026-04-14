@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { StatCard } from "@/components/common/page/StatCard";
+import { StatCard } from "@/commons/components/page/StatCard";
 import type { HighlightStat } from "@/commons/constants/page-content";
 
 export function PageHero({

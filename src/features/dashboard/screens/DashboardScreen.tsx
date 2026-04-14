@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { StatsGrid } from "@/components/common/page/page-layout";
+import { StatsGrid } from "@/commons/components/page/page-layout";
 import { DashboardHero } from "@/features/dashboard/components/DashboardHero";
 import { InsightsSection } from "@/features/dashboard/components/InsightsSection";
 import { PriorityActionsSection } from "@/features/dashboard/components/PriorityActionsSection";
@@ -9,7 +9,7 @@ import { useDashboardCardsQuery } from "@/features/dashboard/queries/useDashboar
 import { useDashboardInsightsQuery } from "@/features/dashboard/queries/useDashboardInsightsQuery";
 import { useDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
 import { sessionUser } from "@/features/session/constants/session-user";
-import type { DashboardDomain } from "@/features/dashboard/type/dashboard";
+import type { DashboardDomain } from "@/features/dashboard/types/dashboard";
 
 export function DashboardPage() {
   const [activeChat, setActiveChat] = useState<DashboardDomain | null>(null);

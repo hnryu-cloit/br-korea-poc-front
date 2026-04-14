@@ -1,4 +1,4 @@
-import type { DemoRole } from "@/components/common/layout/menu";
+import type { DemoRole } from "@/commons/components/layout/menu";
 
 export interface SessionUser {
   id: string;

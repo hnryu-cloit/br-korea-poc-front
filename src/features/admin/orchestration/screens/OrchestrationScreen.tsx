@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
 import { orchestrationStats } from "@/commons/constants/page-content";
-import { PageHero, StatsGrid } from "@/components/common/page/page-layout";
-import { fetchAuditLogs } from "@/features/analytics/api";
-import type { AuditLogEntry } from "@/features/analytics/type/analytics";
+import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
+import { getAuditLogs } from "@/features/analytics/api/analytics";
+import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 
 const ROUTE_COLOR: Record<string, string> = {
   stub_repository: "bg-[#eef4ff] text-[#2454C8]",
@@ -50,7 +50,7 @@ function getQueryFromMetadata(entry: AuditLogEntry): string {
 export function OrchestrationPage() {
   const logsQuery = useQuery({
     queryKey: ["audit-logs"],
-    queryFn: () => fetchAuditLogs(undefined, 50),
+    queryFn: () => getAuditLogs(undefined, 50),
     refetchInterval: 10_000,
   });
 

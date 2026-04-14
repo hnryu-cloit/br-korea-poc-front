@@ -1,7 +1,7 @@
 import type {
   GetProductionRegistrationFormResponse,
   ProductionSkuItem,
-} from "@/features/production/type/production";
+} from "@/features/production/types/production";
 
 export function ProductionRegistrationPanel({
   activeSku,

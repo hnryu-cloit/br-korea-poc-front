@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { AppLayout } from "@/components/common/layout/AppLayout";
+import { AppLayout } from "@/commons/components/layout/AppLayout";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { HQCoachingPage } from "@/pages/HQCoachingPage";

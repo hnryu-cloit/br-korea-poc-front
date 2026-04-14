@@ -5,23 +5,23 @@ import type {
   DashboardInsightsResponse,
   DashboardOverviewRequest,
   DashboardOverviewResponse,
-} from "@/features/dashboard/type/dashboard";
+} from "@/features/dashboard/types/dashboard";
 
-export async function fetchDashboardOverview(params: DashboardOverviewRequest) {
+export async function getDashboardOverview(params: DashboardOverviewRequest) {
   const response = await axiosInstance.get<DashboardOverviewResponse>("/api/dashboard/overview", {
     params: { ...params },
   });
   return response.data;
 }
 
-export async function fetchDashboardCards(params: DashboardOverviewRequest) {
+export async function getDashboardCards(params: DashboardOverviewRequest) {
   const response = await axiosInstance.get<DashboardCardsResponse>("/api/dashboard/cards", {
     params: { ...params },
   });
   return response.data;
 }
 
-export async function fetchDashboardInsights(params: DashboardOverviewRequest) {
+export async function getDashboardInsights(params: DashboardOverviewRequest) {
   const response = await axiosInstance.get<DashboardInsightsResponse>("/api/dashboard/insights", {
     params: { ...params },
   });

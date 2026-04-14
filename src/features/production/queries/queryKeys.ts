@@ -2,7 +2,7 @@ import type {
   GetProductionOverviewRequest,
   GetProductionRegistrationFormRequest,
   GetProductionSkuListRequest,
-} from "@/features/production/type/production";
+} from "@/features/production/types/production";
 
 export const productionQueryKeys = {
   all: ["production"] as const,
