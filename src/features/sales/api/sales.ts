@@ -2,31 +2,66 @@ import axiosInstance from "@/services/axiosInstance";
 
 import type {
   GetSalesPromptsResponse,
+  GetSalesInsightsRequest,
   SalesInsightsResponse,
   SalesInsightSection,
   SalesPrompt,
   SalesQueryResponse,
 } from "@/features/sales/types/sales";
 
-function appendOperationalFilters(
+const appendOperationalFilters = (
   params: URLSearchParams,
-  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
-) {
+  filters?: GetSalesInsightsRequest,
+) => {
   if (!filters) {
     return;
   }
-  if (filters.storeId) {
-    params.set("store_id", filters.storeId);
+  if (filters.store_id) {
+    params.set("store_id", filters.store_id);
   }
-  if (filters.dateFrom) {
-    params.set("date_from", filters.dateFrom);
+  if (filters.date_from) {
+    params.set("date_from", filters.date_from);
   }
-  if (filters.dateTo) {
-    params.set("date_to", filters.dateTo);
+  if (filters.date_to) {
+    params.set("date_to", filters.date_to);
   }
-}
+};
 
-export async function getSalesPrompts(): Promise<SalesPrompt[]> {
+// export const getSalesSummary = async (params: GetSalesSummaryRequest) => {
+//   const response = await axiosInstance.get<GetSalesSummaryResponse>(
+//     "/api/sales/summary",
+//     { params },
+//   );
+//   return response.data;
+// };
+
+// export const getSalesProfitTrend = async (params: GetSalesProfitTrendRequest) => {
+//   const response = await axiosInstance.get<GetSalesProfitTrendResponse>(
+//     "/api/sales/profit-trend",
+//     { params },
+//   );
+//   return response.data;
+// };
+
+// export const getSalesCostBreakdown = async (params: GetSalesCostBreakdownRequest) => {
+//   const response = await axiosInstance.get<GetSalesCostBreakdownResponse>(
+//     "/api/sales/cost-breakdown",
+//     { params },
+//   );
+//   return response.data;
+// };
+
+// export const getSalesProductProfitability = async (
+//   params: GetSalesProductProfitabilityRequest,
+// ) => {
+//   const response = await axiosInstance.get<GetSalesProductProfitabilityResponse>(
+//     "/api/sales/product-profitability",
+//     { params },
+//   );
+//   return response.data;
+// };
+
+export const getSalesPrompts = async (): Promise<SalesPrompt[]> => {
   const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>("/api/sales/prompts");
   const payload = response.data;
 
@@ -35,16 +70,16 @@ export async function getSalesPrompts(): Promise<SalesPrompt[]> {
   }
 
   return payload.items ?? [];
-}
+};
 
-export async function postSalesQuery(prompt: string) {
+export const postSalesQuery = async (prompt: string) => {
   const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", { prompt });
   return response.data;
-}
+};
 
-export async function getSalesInsights(
-  filters?: { storeId?: string; dateFrom?: string; dateTo?: string },
-): Promise<SalesInsightsResponse> {
+export const getSalesInsights = async (
+  filters?: GetSalesInsightsRequest,
+): Promise<SalesInsightsResponse> => {
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
 
@@ -66,4 +101,4 @@ export async function getSalesInsights(
   }
 
   return payload as SalesInsightsResponse;
-}
+};

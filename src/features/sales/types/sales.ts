@@ -168,11 +168,11 @@ export interface SalesInsightSectionItem {
   summary: string; // 섹션 요약 설명
   metrics: SalesInsightMetricItem[]; // 섹션 핵심 지표 목록
   actions: string[]; // 실행 권장 액션 목록
-  status: "active" | "review"; // 현재 모니터링 상태
+  status: "active" | "review" | "normal"; // 현재 모니터링 상태
 }
 
 export interface GetSalesInsightsRequest {
-  store_id: string; // 조회 대상 매장 ID
+  store_id?: string; // 조회 대상 매장 ID
   date_from?: string; // 조회 시작일
   date_to?: string; // 조회 종료일
 }
