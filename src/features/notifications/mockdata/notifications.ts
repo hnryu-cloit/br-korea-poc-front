@@ -1,0 +1,57 @@
+import type { NotificationListResponse } from "@/features/notifications/types/notifications";
+
+export const notificationListMock: NotificationListResponse = {
+  unread_count: 3,
+  items: [
+    {
+      id: 101,
+      category: "alert",
+      title: "반죽 온도 이탈 감지",
+      description: "17:10 배치 온도가 기준보다 3.2도 높습니다. 즉시 점검해 주세요.",
+      created_at: "1분 전",
+      unread: true,
+      link_to: "/production",
+      link_state: { focusBatchId: "BATCH-20260415-17" },
+    },
+    {
+      id: 102,
+      category: "workflow",
+      title: "내일 발주 마감 임박",
+      description: "치즈/소시지 권장 발주안을 확인하고 21:00 전 확정해 주세요.",
+      created_at: "9분 전",
+      unread: true,
+      link_to: "/ordering",
+      link_state: { highlightSku: "CHEESE-2KG" },
+    },
+    {
+      id: 103,
+      category: "analytics",
+      title: "피크타임 손익 리포트 업데이트",
+      description: "18~20시 원가율이 어제 대비 1.4%p 상승했습니다.",
+      created_at: "25분 전",
+      unread: true,
+      link_to: "/sales",
+      link_state: { tab: "profit", preset: "peak_time" },
+    },
+    {
+      id: 104,
+      category: "workflow",
+      title: "점검 체크리스트 제출 완료",
+      description: "본사 생산 점검 항목 12건이 모두 처리되었습니다.",
+      created_at: "어제",
+      unread: false,
+      link_to: "/hq/inspection",
+      link_state: { status: "completed" },
+    },
+    {
+      id: 105,
+      category: "analytics",
+      title: "주간 매출 시그널 생성",
+      description: "상권 유입 증가 신호가 감지되어 추천 캠페인을 준비했습니다.",
+      created_at: "2일 전",
+      unread: false,
+      link_to: "/signals",
+      link_state: { filter: "traffic_up" },
+    },
+  ],
+};

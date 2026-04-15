@@ -1,8 +1,6 @@
-import type { NotificationCategory } from "@/commons/types/common";
-
 export type ApiNotification = {
   id: number;
-  category: NotificationCategory;
+  category: string;
   title: string;
   description: string;
   created_at: string;
