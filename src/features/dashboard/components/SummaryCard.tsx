@@ -1,16 +1,11 @@
-import { MessageCircle, ArrowRight } from "lucide-react";
+import { SquareArrowOutUpRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-
-import { DomainChat } from "@/features/dashboard/components/DomainChat";
 
 export function SummaryCard({
   icon,
   title,
   description,
-  chatItems,
-  activeChat,
-  onToggleChat,
   children,
   to,
   cta,
@@ -18,9 +13,6 @@ export function SummaryCard({
   icon: ReactNode;
   title: string;
   description: string;
-  chatItems: string[];
-  activeChat: boolean;
-  onToggleChat: () => void;
   children: ReactNode;
   to: string;
   cta: string;
@@ -35,27 +27,16 @@ export function SummaryCard({
           </div>
           <p className="mt-1 text-sm text-slate-500">{description}</p>
         </div>
-        <button
-          type="button"
-          onClick={onToggleChat}
-          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] p-2 text-slate-500 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
-          aria-label={`${title} 질문 열기`}
+        <Link
+          to={to}
+          aria-label={cta}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce4f3] bg-[#f7faff] text-slate-600 transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff] hover:text-[#2454C8]"
         >
-          <MessageCircle className="h-4 w-4" />
-        </button>
+          <SquareArrowOutUpRight className="h-4 w-4" />
+        </Link>
       </div>
 
-      {activeChat ? <DomainChat title={`${title} AI 질문`} items={chatItems} /> : null}
-
-      <div className="mt-5 space-y-4">{children}</div>
-
-      <Link
-        to={to}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-[#bfd1ed] hover:bg-[#eef4ff] hover:text-[#2454C8]"
-      >
-        {cta}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+      <div className="mt-5 space-y-5">{children}</div>
     </article>
   );
 }

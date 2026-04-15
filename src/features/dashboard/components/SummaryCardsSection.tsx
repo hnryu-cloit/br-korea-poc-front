@@ -1,16 +1,12 @@
-import type { DashboardDomain, DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
+import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import { summaryCardIconMap } from "@/features/dashboard/components/dashboard-style";
 import { SummaryCard } from "@/features/dashboard/components/SummaryCard";
 import { SummaryCardBody } from "@/features/dashboard/components/SummaryCardBody";
 
 export function SummaryCardsSection({
   cards,
-  activeChat,
-  onToggleChat,
 }: {
   cards: DashboardSummaryCard[];
-  activeChat: DashboardDomain | null;
-  onToggleChat: (domain: DashboardDomain) => void;
 }) {
   return (
     <section className="grid gap-5 xl:grid-cols-3">
@@ -20,9 +16,6 @@ export function SummaryCardsSection({
           icon={summaryCardIconMap[card.domain]}
           title={card.title}
           description={card.description}
-          chatItems={card.prompts}
-          activeChat={activeChat === card.domain}
-          onToggleChat={() => onToggleChat(card.domain)}
           to={card.cta_path}
           cta={card.cta_label}
         >
