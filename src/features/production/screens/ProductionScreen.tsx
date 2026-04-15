@@ -87,9 +87,9 @@ export function ProductionPage() {
           }
         />
       ) : null}
-      <ProductionAlertsSection alerts={alerts} items={items} onOpenRegister={openRegister} />
+      <ProductionAlertsSection alerts={alerts} items={items} />
       <StatsGrid stats={stats} />
-      <ProductionTableSection items={items} onOpenRegister={openRegister} />
+        <ProductionTableSection items={items} onOpenRegister={openRegister} />
       {activeSku ? (
         <AppModal onClose={closeRegister}>
           <ProductionRegistrationPanel
