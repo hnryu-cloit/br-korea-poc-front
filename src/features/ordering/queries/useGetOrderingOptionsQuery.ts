@@ -8,4 +8,6 @@ export const useGetOrderingOptionsQuery = (params?: OrderingOptionsParams) =>
   useQuery({
     queryKey: orderingQueryKeys.options(params),
     queryFn: () => getOrderingOptions(params),
+    refetchInterval: 60 * 1000,
+    refetchIntervalInBackground: false,
   });

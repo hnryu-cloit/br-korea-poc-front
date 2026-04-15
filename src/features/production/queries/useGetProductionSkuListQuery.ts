@@ -8,4 +8,6 @@ export const useGetProductionSkuListQuery = (params: ProductionSkuListParams) =>
   useQuery({
     queryKey: productionQueryKeys.skuList(params),
     queryFn: () => getProductionSkuList(params),
+    refetchInterval: 5 * 60 * 1000,
+    refetchIntervalInBackground: false,
   });
