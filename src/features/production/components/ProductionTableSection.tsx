@@ -1,13 +1,21 @@
 import { StatusBadge } from "@/features/production/components/StatusBadge";
-import type { ProductionSkuItem } from "@/features/production/types/production";
+import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/production/types/production";
 
 export function ProductionTableSection({
   items,
+  pagination,
+  onChangePage,
   onOpenRegister,
 }: {
   items: ProductionSkuItem[];
+  pagination?: ProductionSkuListResponse["pagination"];
+  onChangePage?: (page: number) => void;
   onOpenRegister: (sku: ProductionSkuItem) => void;
 }) {
+  const totalPages = pagination?.total_pages ?? 1;
+  const currentPage = pagination?.page ?? 1;
+  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="border-b border-border/60 px-6 py-5">
@@ -97,6 +105,42 @@ export function ProductionTableSection({
           </tbody>
         </table>
       </div>
+      {pagination ? (
+        <div className="flex items-center justify-center border-t border-border/50 px-6 py-4">
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => onChangePage?.(currentPage - 1)}
+              disabled={currentPage <= 1}
+              className="px-2 py-1 text-sm font-semibold text-slate-700 transition-colors hover:text-[#2454C8] disabled:cursor-not-allowed disabled:text-slate-300"
+            >
+              {"<"}
+            </button>
+            {pageNumbers.map((page) => (
+              <button
+                key={page}
+                type="button"
+                onClick={() => onChangePage?.(page)}
+                className={`px-1.5 py-1 text-sm font-semibold transition-colors ${
+                  page === currentPage
+                    ? "text-[#2454C8]"
+                    : "text-slate-700 hover:text-[#2454C8]"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => onChangePage?.(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+              className="px-2 py-1 text-sm font-semibold text-slate-700 transition-colors hover:text-[#2454C8] disabled:cursor-not-allowed disabled:text-slate-300"
+            >
+              {">"}
+            </button>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

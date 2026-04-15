@@ -32,10 +32,11 @@ export function ProductionPage() {
   const [activeSkuId, setActiveSkuId] = useState<string | null>(null);
   const [qty, setQty] = useState("48");
   const [showChat, setShowChat] = useState(fromDashboardProduction);
+  const [page, setPage] = useState(1);
 
   const overviewQuery = useGetProductionOverviewQuery();
   const skuListQuery = useGetProductionSkuListQuery({
-    page: 1,
+    page,
     page_size: 20,
     store_id: user.storeId,
   });
@@ -89,7 +90,12 @@ export function ProductionPage() {
       ) : null}
       <ProductionAlertsSection alerts={alerts} items={items} />
       <StatsGrid stats={stats} />
-        <ProductionTableSection items={items} onOpenRegister={openRegister} />
+      <ProductionTableSection
+        items={items}
+        pagination={skuListQuery.data?.pagination}
+        onChangePage={setPage}
+        onOpenRegister={openRegister}
+      />
       {activeSku ? (
         <AppModal onClose={closeRegister}>
           <ProductionRegistrationPanel
