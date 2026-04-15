@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
-import { orchestrationStats } from "@/commons/constants/page-content";
+// import { orchestrationStats } from "@/commons/constants/page-content";
 import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
 import { getAuditLogs } from "@/features/analytics/api/analytics";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
@@ -67,7 +67,7 @@ export function OrchestrationPage() {
         title="보안 정책과 AI 처리 현황을 점검합니다."
         description="질의 라우팅, 민감정보 마스킹, 감사 로그 수집 상태를 한 화면에서 확인합니다."
       />
-      <StatsGrid stats={orchestrationStats} />
+      {/* <StatsGrid stats={orchestrationStats} /> */}
 
       {/* Summary metrics */}
       <section className="grid gap-4 sm:grid-cols-3">
