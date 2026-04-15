@@ -1,10 +1,12 @@
 export const SalesV2PromptRail = ({
   prompts,
   isLoading,
+  sending,
   onSelectPrompt,
 }: {
   prompts: { label: string; prompt: string }[];
   isLoading: boolean;
+  sending: boolean;
   onSelectPrompt: (prompt: string) => void;
 }) => (
   <aside className="rounded-[28px] border border-border bg-white p-4 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -15,7 +17,8 @@ export const SalesV2PromptRail = ({
           key={item.prompt}
           type="button"
           onClick={() => onSelectPrompt(item.prompt)}
-          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-left text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+          disabled={sending}
+          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-left text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {item.label}
         </button>

@@ -129,6 +129,7 @@ export const SalesScreenV2 = () => {
         <SalesV2PromptRail
           prompts={suggestedPrompts}
           isLoading={promptsQuery.isLoading}
+          sending={postSalesQueryMutation.isPending}
           onSelectPrompt={sendMessage}
         />
       </section>

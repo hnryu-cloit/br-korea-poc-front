@@ -37,7 +37,7 @@ export const SalesV2InsightsSection = ({
 
         <div className="mt-4 space-y-1.5">
           {section.actions.slice(0, 2).map((action) => (
-            <div key={action} className="flex items-start gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
+            <div key={action} className="flex items-center gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
               <span className="material-symbols-outlined mt-0.5 shrink-0 text-[14px]">task_alt</span>
               {action}
             </div>
