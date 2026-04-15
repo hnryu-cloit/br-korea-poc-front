@@ -13,11 +13,12 @@ import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSales
 import type { SalesInsightSection } from "@/features/sales/types/sales";
 import type { SalesV2Message } from "@/features/sales/types/sales-v2";
 import { toSalesV2Comparison } from "@/features/sales/utils/sales-v2";
-import { sessionUser } from "@/features/session/constants/session-user";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 let salesV2MessageId = 1;
 
 export const SalesScreenV2 = () => {
+  const { user } = useDemoSession();
   const location = useLocation();
   const routeState = location.state as {
     source?: string;
@@ -42,7 +43,7 @@ export const SalesScreenV2 = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const promptsQuery = useGetSalesPromptsQuery();
-  const insightsQuery = useGetSalesInsightsQuery({ store_id: sessionUser.storeId });
+  const insightsQuery = useGetSalesInsightsQuery({ store_id: user.storeId });
   const postSalesQueryMutation = usePostSalesQueryMutation();
 
   const suggestedPrompts = promptsQuery.data ?? [];

@@ -13,7 +13,7 @@ import { useGetProductionSkuDetailQuery } from "@/features/production/queries/us
 import { useGetProductionOverviewQuery } from "@/features/production/queries/useGetProductionOverviewQuery";
 import { useGetProductionSkuListQuery } from "@/features/production/queries/useGetProductionSkuListQuery";
 import { usePostProductionRegistrationMutation } from "@/features/production/queries/usePostProductionRegistrationMutation";
-import { sessionUser } from "@/features/session/constants/session-user";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import type {
   ProductionSkuItem,
 } from "@/features/production/types/production";
@@ -27,6 +27,7 @@ export function ProductionPage() {
     prompt?: string;
   } | null;
   const fromDashboardProduction = routeState?.source === "dashboard-card-chat" && routeState?.domain === "production";
+  const { user } = useDemoSession();
   const [activeSku, setActiveSku] = useState<ProductionSkuItem | null>(null);
   const [activeSkuId, setActiveSkuId] = useState<string | null>(null);
   const [qty, setQty] = useState("48");
@@ -36,9 +37,9 @@ export function ProductionPage() {
   const skuListQuery = useGetProductionSkuListQuery({
     page: 1,
     page_size: 20,
-    store_id: sessionUser.storeId,
+    store_id: user.storeId,
   });
-  const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, sessionUser.storeId);
+  const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, user.storeId);
   const postRegistrationMutation = usePostProductionRegistrationMutation();
 
   const items = skuListQuery.data?.items ?? [];
@@ -64,7 +65,7 @@ export function ProductionPage() {
     await postRegistrationMutation.mutateAsync({
       sku_id: activeSku.sku_id,
       qty: parsedQty,
-      store_id: sessionUser.storeId,
+      store_id: user.storeId,
     });
     closeRegister();
   };

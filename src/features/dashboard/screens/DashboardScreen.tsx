@@ -4,14 +4,15 @@ import { InsightsSection } from "@/features/dashboard/components/InsightsSection
 import { PriorityActionsSection } from "@/features/dashboard/components/PriorityActionsSection";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
 import { useDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
-import { sessionUser } from "@/features/session/constants/session-user";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
 import { INSIGHTS } from "../mockdata/insights";
 
 export function DashboardPage() {
+  const { user } = useDemoSession();
   const now = dayjs(new Date()).format("YYYY-MM-DD");
   const params = {
-    store_id: sessionUser.storeId,
+    store_id: user.storeId,
     business_date: now,
   };
   const overviewQuery = useDashboardOverviewQuery(params);
