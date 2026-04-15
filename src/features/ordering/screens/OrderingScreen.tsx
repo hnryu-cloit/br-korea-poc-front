@@ -41,7 +41,7 @@ export function OrderingPage() {
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
-  const { mmss } = useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 17) * 60, confirmed);
+  const { mmss } = useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 20) * 60, confirmed);
   const orderingOptions = useMemo(
     () => optionsQuery.data?.options ?? [],
     [optionsQuery.data?.options],
