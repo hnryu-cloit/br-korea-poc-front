@@ -12,7 +12,7 @@ import type {
   ProductionRegistrationResponse,
 } from "@/features/production/types/production";
 
-const USE_PRODUCTION_MOCK = true;
+const USE_PRODUCTION_MOCK = false;
 
 /**
  * API: GET /api/production/overview
