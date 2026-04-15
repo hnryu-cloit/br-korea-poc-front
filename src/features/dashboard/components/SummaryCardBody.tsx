@@ -1,19 +1,45 @@
-import { useState } from "react";
+import { Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 
+const domainAccentClassMap: Record<DashboardSummaryCard["domain"], string> = {
+  production: "bg-[#eef4ff] text-[#2454C8] border-[#cdddfc]",
+  ordering: "bg-[#eefaf4] text-[#0f766e] border-[#cfeee3]",
+  sales: "bg-[#fff6ee] text-[#c2410c] border-[#fedec3]",
+};
+
+const metricToneClassMap: Record<NonNullable<NonNullable<DashboardSummaryCard["metrics"]>[number]["tone"]>, string> = {
+  default: "text-slate-800",
+  primary: "text-[#2454C8]",
+  success: "text-[#15803d]",
+  danger: "text-red-600",
+};
+
+const parseHighlight = (text: string): { title: string; detail?: string } => {
+  const byDot = text.split("·").map((item) => item.trim()).filter(Boolean);
+  if (byDot.length > 1) {
+    return { title: byDot[0], detail: byDot.slice(1).join(" · ") };
+  }
+  const byColon = text.split(":").map((item) => item.trim()).filter(Boolean);
+  if (byColon.length > 1) {
+    return { title: byColon[0], detail: byColon.slice(1).join(": ") };
+  }
+  return { title: text };
+};
+
 export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const [answer, setAnswer] = useState<string>("");
   const [lastQuestion, setLastQuestion] = useState<string>("");
-  const [expandedHighlights, setExpandedHighlights] = useState(false);
-  const [expandedMetrics, setExpandedMetrics] = useState(false);
   const postSalesQueryMutation = usePostSalesQueryMutation();
 
-  const visibleHighlights = expandedHighlights ? card.highlights : card.highlights.slice(0, 2);
-  const visibleMetrics = expandedMetrics ? card.metrics : card.metrics.slice(0, 2);
+  const parsedHighlights = useMemo(
+    () => card.highlights.map(parseHighlight),
+    [card.highlights],
+  );
 
   const runPrompt = async (prompt: string) => {
     if (!prompt.trim() || postSalesQueryMutation.isPending) return;
@@ -34,7 +60,11 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   return (
     <>
       <section>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+          <Sparkles className="h-3.5 w-3.5 text-[#2454C8]" />
+          AI 질문
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
           {card.prompts.map((prompt) => (
             <button
               key={prompt}
@@ -43,18 +73,21 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
                 void runPrompt(prompt);
               }}
               disabled={postSalesQueryMutation.isPending}
-              className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-60"
+              className={`rounded-xl border px-3 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${domainAccentClassMap[card.domain]} hover:brightness-95`}
             >
               {prompt}
             </button>
           ))}
         </div>
-        <div className="mt-3 rounded-2xl border border-[#dce4f3] bg-[#f8fbff] px-4 py-3 text-sm leading-6 text-slate-700">
+        <div className="mt-3">
+          <p className="mb-1 text-xs font-semibold text-slate-500">AI 응답</p>
+          <div className="rounded-xl border border-[#dce4f3] bg-[#f8fbff] px-4 py-3 text-sm leading-6 text-slate-700">
           {postSalesQueryMutation.isPending
             ? "응답 생성 중..."
             : answer || "질문을 선택하면 이 영역에 답변을 표시합니다."}
+          </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3">
           <Link
             to={card.cta_path}
             state={{
@@ -63,7 +96,7 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
               intent: "ask",
               prompt: lastQuestion || undefined,
             }}
-            className="inline-flex items-center justify-center rounded-full border border-[#dce4f3] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
+            className="inline-flex items-center justify-center text-xs font-semibold text-[#2454C8] underline underline-offset-2 transition-colors hover:text-[#1d44a8]"
           >
             더 자세히 질문하기
           </Link>
@@ -72,43 +105,30 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
       <div className="h-px bg-[#e6edf9]" />
 
       <section>
-        <div className="space-y-2">
-          {visibleHighlights.map((highlight) => (
-            <div key={highlight} className="rounded-2xl border border-[#e6edf9] px-4 py-3">
-              <p className="text-sm font-bold text-slate-800">{highlight}</p>
-            </div>
+        <ul className="list-disc space-y-2 pl-5">
+          {parsedHighlights.map((highlight) => (
+            <li key={`${highlight.title}-${highlight.detail ?? ""}`} className="text-sm text-slate-700 marker:text-slate-400">
+              <p className="font-semibold text-slate-800">{highlight.title}</p>
+              {highlight.detail ? (
+                <p className="mt-1 text-xs leading-5 text-slate-500">{highlight.detail}</p>
+              ) : null}
+            </li>
           ))}
-        </div>
-        {card.highlights.length > 2 ? (
-          <button
-            type="button"
-            onClick={() => setExpandedHighlights((prev) => !prev)}
-            className="mt-2 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
-          >
-            {expandedHighlights ? "접기" : "더보기"}
-          </button>
-        ) : null}
+        </ul>
       </section>
       <div className="h-px bg-[#e6edf9]" />
 
       <section>
-        <div className="space-y-3 rounded-2xl bg-[#f8fbff] px-4 py-4">
-          {visibleMetrics.map((metric) => (
-            <div key={metric.label} className="flex items-center justify-between gap-2 text-sm">
-              <span className="text-slate-500">{metric.label}</span>
-              <span className={metric.tone === "danger" ? "font-bold text-red-600" : "font-bold text-slate-800"}>{metric.value}</span>
+        <div className="grid grid-cols-2 gap-2">
+          {card.metrics.map((metric) => (
+            <div key={metric.label} className="rounded-lg border border-[#edf2f7] bg-[#fbfcfe] px-3 py-2">
+              <p className="text-[11px] font-medium text-slate-400">{metric.label}</p>
+              <p className={`mt-1 text-base font-semibold ${metricToneClassMap[metric.tone ?? "default"]}`}>
+                {metric.value}
+              </p>
             </div>
           ))}
         </div>
-        {card.metrics.length > 2 ? (
-          <button
-            type="button"
-            onClick={() => setExpandedMetrics((prev) => !prev)}
-            className="mt-2 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
-          >
-            {expandedMetrics ? "접기" : "더보기"}
-          </button>
-        ) : null}
       </section>
     </>
   );

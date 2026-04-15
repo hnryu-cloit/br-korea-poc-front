@@ -11,8 +11,8 @@ const toneClassMap: Record<NonNullable<HighlightStat["tone"]>, string> = {
 export function StatCard({ label, value, tone = "default" }: HighlightStat) {
   return (
     <article className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>
-      <div className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-sm font-semibold", toneClassMap[tone])}>{value}</div>
+      <p className="text-lg font-semibold uppercase tracking-[0.18em] text-slate-600">{label}</p>
+      <div className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-md font-semibold", toneClassMap[tone])}>{value}</div>
     </article>
   );
 }

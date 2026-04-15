@@ -13,9 +13,13 @@ export function SummaryCardsSection({
       {cards.map((card) => (
         <SummaryCard
           key={card.domain}
+          domain={card.domain}
           icon={summaryCardIconMap[card.domain]}
           title={card.title}
           description={card.description}
+          statusLabel={card.status_label}
+          deadlineMinutes={card.deadline_minutes}
+          deliveryScheduled={card.delivery_scheduled}
           to={card.cta_path}
           cta={card.cta_label}
         >
