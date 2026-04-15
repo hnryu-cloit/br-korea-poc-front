@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
+import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
@@ -25,37 +26,44 @@ export function OrderingPage() {
     source?: string;
     notificationId?: number;
     focusOptionId?: string;
+    domain?: string;
+    intent?: "view" | "ask";
+    prompt?: string;
   } | null;
+  const fromDashboardOrdering = routeState?.source === "dashboard-card-chat" && routeState?.domain === "ordering";
   const notificationEntry = routeState?.source === "notification";
   const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [confirmed, setConfirmed] = useState(false);
-  const [showChat, setShowChat] = useState(false);
+  const [showChat, setShowChat] = useState(fromDashboardOrdering);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
   const { mmss } = useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 17) * 60, confirmed);
-  const orderingOptions = optionsQuery.data?.options ?? [];
-  const selectedOption = useMemo(
-    () => orderingOptions.find((option) => option.option_id === selectedOptionId) ?? null,
-    [orderingOptions, selectedOptionId],
+  const orderingOptions = useMemo(
+    () => optionsQuery.data?.options ?? [],
+    [optionsQuery.data?.options],
   );
-
-  useEffect(() => {
-    if (selectedOptionId || orderingOptions.length === 0) return;
+  const defaultOptionId = useMemo(() => {
     const focusOptionId = routeState?.focusOptionId ?? contextQuery.data?.focus_option_id ?? null;
     const fallbackOptionId = orderingOptions.find((option) => option.recommended)?.option_id ?? orderingOptions[0]?.option_id ?? null;
-    setSelectedOptionId(focusOptionId ?? fallbackOptionId);
-  }, [contextQuery.data?.focus_option_id, orderingOptions, routeState?.focusOptionId, selectedOptionId]);
+    return focusOptionId ?? fallbackOptionId;
+  }, [contextQuery.data?.focus_option_id, orderingOptions, routeState?.focusOptionId]);
+  const effectiveSelectedOptionId = selectedOptionId ?? defaultOptionId;
+  const selectedOption = useMemo(
+    () => orderingOptions.find((option) => option.option_id === effectiveSelectedOptionId) ?? null,
+    [effectiveSelectedOptionId, orderingOptions],
+  );
+  const dashboardChatHistory = fromDashboardOrdering ? getDashboardCardChatHistory("ordering") : [];
 
   const handleConfirm = async () => {
-    if (!selectedOptionId || postOrderingSelectionMutation.isPending) return;
+    if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
     setSubmitError(null);
     try {
       const response = await postOrderingSelectionMutation.mutateAsync({
-        option_id: selectedOptionId,
+        option_id: effectiveSelectedOptionId,
         reason: reason.trim() || undefined,
       });
       if (response.saved) {
@@ -96,14 +104,24 @@ export function OrderingPage() {
   return (
     <div className="space-y-6">
       <OrderingHero timeText={mmss} showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
-      {showChat ? <OrderingQuickChat prompts={orderingQuickPrompts} /> : null}
+      {showChat ? (
+        <OrderingQuickChat
+          prompts={orderingQuickPrompts}
+          initialHistory={dashboardChatHistory}
+          initialInput={
+            fromDashboardOrdering && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+              ? routeState.prompt ?? ""
+              : ""
+          }
+        />
+      ) : null}
       <StatsGrid stats={orderingStats} />
       <OrderingPrincipleNotice purpose={optionsQuery.data?.purpose_text} caution={optionsQuery.data?.caution_text} />
       <OrderingDeadlineAlert deadlineAt={optionsQuery.data?.deadline_at} />
       <OrderingContextCards weather={optionsQuery.data?.weather_summary} trend={optionsQuery.data?.trend_summary} />
       <OrderingOptionsSection
         options={orderingOptions}
-        selectedOptionId={selectedOptionId}
+        selectedOptionId={effectiveSelectedOptionId}
         onSelectOption={setSelectedOptionId}
       />
       {selectedOption ? (

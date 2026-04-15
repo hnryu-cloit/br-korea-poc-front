@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
 import { StatsGrid } from "@/commons/components/page/page-layout";
+import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { ProductionAlertsSection } from "@/features/production/components/ProductionAlertsSection";
 import { ProductionHero } from "@/features/production/components/ProductionHero";
 import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
@@ -17,10 +19,18 @@ import type {
 } from "@/features/production/types/production";
 
 export function ProductionPage() {
+  const location = useLocation();
+  const routeState = location.state as {
+    source?: string;
+    domain?: string;
+    intent?: "view" | "ask";
+    prompt?: string;
+  } | null;
+  const fromDashboardProduction = routeState?.source === "dashboard-card-chat" && routeState?.domain === "production";
   const [activeSku, setActiveSku] = useState<ProductionSkuItem | null>(null);
   const [activeSkuId, setActiveSkuId] = useState<string | null>(null);
   const [qty, setQty] = useState("48");
-  const [showChat, setShowChat] = useState(false);
+  const [showChat, setShowChat] = useState(fromDashboardProduction);
 
   const overviewQuery = useGetProductionOverviewQuery();
   const skuListQuery = useGetProductionSkuListQuery({
@@ -34,6 +44,7 @@ export function ProductionPage() {
   const items = skuListQuery.data?.items ?? [];
   const stats = overviewQuery.data?.summary_stats ?? [];
   const alerts = overviewQuery.data?.alerts ?? [];
+  const dashboardChatHistory = fromDashboardProduction ? getDashboardCardChatHistory("production") : [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
@@ -65,7 +76,16 @@ export function ProductionPage() {
         showChat={showChat}
         onToggleChat={() => setShowChat((value) => !value)}
       />
-      {showChat ? <ProductionQuickChat /> : null}
+      {showChat ? (
+        <ProductionQuickChat
+          initialHistory={dashboardChatHistory}
+          initialInput={
+            fromDashboardProduction && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+              ? routeState.prompt ?? ""
+              : ""
+          }
+        />
+      ) : null}
       <ProductionAlertsSection alerts={alerts} items={items} onOpenRegister={openRegister} />
       <StatsGrid stats={stats} />
       <ProductionTableSection items={items} onOpenRegister={openRegister} />

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
+import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { SalesV2ChatPanel } from "@/features/sales/components/SalesV2ChatPanel";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
 import { SalesV2PromptRail } from "@/features/sales/components/SalesV2PromptRail";
@@ -18,8 +19,26 @@ let salesV2MessageId = 1;
 
 export const SalesScreenV2 = () => {
   const location = useLocation();
-  const [messages, setMessages] = useState<SalesV2Message[]>([]);
-  const [input, setInput] = useState("");
+  const routeState = location.state as {
+    source?: string;
+    notificationId?: number;
+    prompt?: string;
+    domain?: string;
+    intent?: "view" | "ask";
+  } | null;
+  const fromDashboardSales = routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
+  const dashboardChatHistory = fromDashboardSales ? getDashboardCardChatHistory("sales") : [];
+  const [messages, setMessages] = useState<SalesV2Message[]>(() =>
+    dashboardChatHistory.flatMap((item) => [
+      { id: salesV2MessageId++, role: "user" as const, text: item.question },
+      { id: salesV2MessageId++, role: "assistant" as const, text: item.answer, blocked: false },
+    ]),
+  );
+  const [input, setInput] = useState(
+    fromDashboardSales && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+      ? routeState.prompt ?? ""
+      : "",
+  );
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const promptsQuery = useGetSalesPromptsQuery();
@@ -93,12 +112,11 @@ export const SalesScreenV2 = () => {
   );
 
   useEffect(() => {
-    const state = location.state as { source?: string; notificationId?: number; prompt?: string } | null;
-    if (state?.source === "notification" && state.prompt && messages.length === 0) {
-      sendMessage(state.prompt);
+    if (routeState?.source === "notification" && routeState.prompt && messages.length === 0) {
+      sendMessage(routeState.prompt);
       window.history.replaceState({}, document.title);
     }
-  }, [location.state, messages.length, sendMessage]);
+  }, [messages.length, routeState?.prompt, routeState?.source, sendMessage]);
 
   return (
     <div className="space-y-6">

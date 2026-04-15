@@ -1,6 +1,7 @@
 import { Send } from "lucide-react";
 import { useState } from "react";
 
+import type { DashboardCardChatHistoryItem } from "@/commons/utils/dashboard-card-chat-history";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 
 interface ProductionQuickChatMessage {
@@ -18,9 +19,20 @@ const FALLBACK_QUICK_QUESTIONS = [
   "4주 평균 패턴은 어떻게 계산하나요?",
 ];
 
-export function ProductionQuickChat() {
-  const [messages, setMessages] = useState<ProductionQuickChatMessage[]>([]);
-  const [input, setInput] = useState("");
+export function ProductionQuickChat({
+  initialHistory = [],
+  initialInput = "",
+}: {
+  initialHistory?: DashboardCardChatHistoryItem[];
+  initialInput?: string;
+}) {
+  const [messages, setMessages] = useState<ProductionQuickChatMessage[]>(() =>
+    initialHistory.flatMap((item) => [
+      { id: productionChatMessageId++, role: "user" as const, text: item.question },
+      { id: productionChatMessageId++, role: "assistant" as const, text: item.answer },
+    ]),
+  );
+  const [input, setInput] = useState(initialInput);
   const postSalesQueryMutation = usePostSalesQueryMutation();
 
   const suggestedQuestions = FALLBACK_QUICK_QUESTIONS;

@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
+import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 
 export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const [answer, setAnswer] = useState<string>("");
+  const [lastQuestion, setLastQuestion] = useState<string>("");
   const [expandedHighlights, setExpandedHighlights] = useState(false);
   const [expandedMetrics, setExpandedMetrics] = useState(false);
   const postSalesQueryMutation = usePostSalesQueryMutation();
@@ -14,11 +17,17 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
 
   const runPrompt = async (prompt: string) => {
     if (!prompt.trim() || postSalesQueryMutation.isPending) return;
+    const question = prompt.trim();
+    setLastQuestion(question);
     try {
-      const response = await postSalesQueryMutation.mutateAsync(prompt);
-      setAnswer(response.text || "답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      const response = await postSalesQueryMutation.mutateAsync(question);
+      const nextAnswer = response.text || "답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.";
+      setAnswer(nextAnswer);
+      appendDashboardCardChatHistory(card.domain, question, nextAnswer);
     } catch {
-      setAnswer("답변 생성 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
+      const nextAnswer = "답변 생성 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.";
+      setAnswer(nextAnswer);
+      appendDashboardCardChatHistory(card.domain, question, nextAnswer);
     }
   };
 
@@ -44,6 +53,20 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
           {postSalesQueryMutation.isPending
             ? "응답 생성 중..."
             : answer || "질문을 선택하면 이 영역에 답변을 표시합니다."}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            to={card.cta_path}
+            state={{
+              source: "dashboard-card-chat",
+              domain: card.domain,
+              intent: "ask",
+              prompt: lastQuestion || undefined,
+            }}
+            className="inline-flex items-center justify-center rounded-full border border-[#dce4f3] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-[#bfd1ed] hover:text-[#2454C8]"
+          >
+            더 자세히 질문하기
+          </Link>
         </div>
       </section>
       <div className="h-px bg-[#e6edf9]" />
