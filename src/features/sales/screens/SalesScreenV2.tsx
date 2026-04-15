@@ -103,7 +103,7 @@ export const SalesScreenV2 = () => {
   return (
     <div className="space-y-6">
       <PageHero
-        title="매출 현황"
+        title="손익 분석"
         description={
           latestAssistantMessage?.queryType
             ? `최근 ${SALES_V2_QUERY_TYPE_LABEL[latestAssistantMessage.queryType] ?? latestAssistantMessage.queryType} 응답까지 반영해 보여드려요.`
