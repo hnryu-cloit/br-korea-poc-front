@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
 import { AnalyticsQueryLogSection } from "@/features/analytics/components/AnalyticsQueryLogSection";
-import { getAuditLogs, getAnalyticsMetrics } from "@/features/analytics/api/analytics";
+import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGetAnalyticsMetricsQuery";
+import { useGetAuditLogsQuery } from "@/features/analytics/queries/useGetAuditLogsQuery";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 import type { QueryCategory } from "@/features/analytics/types/analytics-screen";
 import {
@@ -15,19 +15,11 @@ import {
 export function AnalyticsScreen() {
   const [activeCategory, setActiveCategory] = useState<QueryCategory>("전체");
 
-  const metricsQuery = useQuery({
-    queryKey: ["analytics-metrics"],
-    queryFn: getAnalyticsMetrics,
-    refetchInterval: 15_000,
-  });
+  const metricsQuery = useGetAnalyticsMetricsQuery();
 
   const metrics = metricsQuery.data?.items ?? [];
 
-  const logsQuery = useQuery({
-    queryKey: ["audit-logs-sales"],
-    queryFn: () => getAuditLogs("sales", 20),
-    refetchInterval: 15_000,
-  });
+  const logsQuery = useGetAuditLogsQuery({ domain: "sales", limit: 20 });
 
   const allLogs: AuditLogEntry[] = logsQuery.data?.items ?? [];
   const filteredLogs = filterLogsByCategory(allLogs, activeCategory);
