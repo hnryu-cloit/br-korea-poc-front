@@ -1,7 +1,7 @@
-import { StatsGrid } from "@/commons/components/page/page-layout";
 import { DashboardHero } from "@/features/dashboard/components/DashboardHero";
 import { InsightsSection } from "@/features/dashboard/components/InsightsSection";
 import { PriorityActionsSection } from "@/features/dashboard/components/PriorityActionsSection";
+import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
 import { useDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
 import { sessionUser } from "@/features/session/constants/session-user";
@@ -24,7 +24,7 @@ export function DashboardPage() {
     <div className="space-y-6">
       <DashboardHero updatedAt={overviewQuery.data?.updated_at} />
       <PriorityActionsSection actions={priorityActions} />
-      <StatsGrid stats={stats} />
+      <DashboardStatsTiles stats={stats} />
       <SummaryCardsSection cards={cards} />
       <InsightsSection insights={INSIGHTS} />
     </div>
