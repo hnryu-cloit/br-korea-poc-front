@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Bell, Menu, X } from "lucide-react";
 
-import { getNotifications } from "@/features/notifications/api/notifications";
+import type { ApiNotification } from "@/features/notifications/types/notifications";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
@@ -20,23 +19,16 @@ const breadcrumbMap: Record<string, string[]> = {
 
 type Props = {
   onMenuToggle: () => void;
+  notifications: ApiNotification[];
+  unreadCount: number;
 };
 
-export function AppHeader({ onMenuToggle }: Props) {
+export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const { user } = useDemoSession();
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
-
-  const notificationsQuery = useQuery({
-    queryKey: ["notifications"],
-    queryFn: getNotifications,
-    refetchInterval: 30_000,
-  });
-
-  const notifications = notificationsQuery.data?.items ?? [];
-  const unreadCount = notificationsQuery.data?.unread_count ?? 0;
 
   const handleNotificationClick = (id: number) => {
     setIsInboxOpen(false);
