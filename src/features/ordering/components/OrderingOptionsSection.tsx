@@ -20,16 +20,23 @@ export function OrderingOptionsSection({
         <p className="text-sm font-medium text-slate-500">예측 및 권고는 최소 범위로 제공됩니다.</p>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-3">
-        {options.map((option) => (
-          <OrderingOptionCard
-            key={option.option_id}
-            option={option}
-            selected={selectedOptionId === option.option_id}
-            onSelect={() => onSelectOption(option.option_id)}
-          />
-        ))}
-      </div>
+      {options.length === 0 ? (
+        <div className="mt-5 rounded-[24px] border border-dashed border-[#d6dfef] bg-[#f8fbff] px-6 py-10 text-center">
+          <p className="text-base font-semibold text-slate-800">주문 추천안이 없습니다.</p>
+          <p className="mt-2 text-sm text-slate-500">잠시 후 다시 조회하거나 주문 기준 조건을 확인해 주세요.</p>
+        </div>
+      ) : (
+        <div className="mt-5 grid gap-5 xl:grid-cols-3">
+          {options.map((option) => (
+            <OrderingOptionCard
+              key={option.option_id}
+              option={option}
+              selected={selectedOptionId === option.option_id}
+              onSelect={() => onSelectOption(option.option_id)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

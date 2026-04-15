@@ -11,11 +11,11 @@ import { OrderingPrincipleNotice } from "@/features/ordering/components/Ordering
 import { OrderingQuickChat } from "@/features/ordering/components/OrderingQuickChat";
 import {
   orderingQuickPrompts,
-  orderingStats,
 } from "@/features/ordering/constants/ordering";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
+import type { HighlightStat } from "@/commons/constants/page-content";
 
 export function OrderingPage() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export function OrderingPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const optionsQuery = useGetOrderingOptionsQuery();
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
-  const { seconds, mmss } = useOrderingCountdown(17 * 60, confirmed);
+  const { mmss } = useOrderingCountdown(17 * 60, confirmed);
   const orderingOptions = optionsQuery.data?.options ?? [];
   const selectedOption = useMemo(
     () => orderingOptions.find((option) => option.option_id === selectedOptionId) ?? null,
@@ -54,14 +54,27 @@ export function OrderingPage() {
     return <OrderingConfirmedSummary option={selectedOption} reason={reason} />;
   }
 
+  const orderingStats: HighlightStat[] = [  
+    {
+      label: "주문 마감까지",
+      value: typeof optionsQuery.data?.deadline_minutes === "number"
+        ? `${optionsQuery.data.deadline_minutes}분`
+        : "-",
+      tone: "danger" as const,
+    },
+    { label: "추천 옵션", value: `${orderingOptions.length}개`, tone: "primary" as const },
+    { label: "주문 목적", value: "누락 방지", tone: "default" as const },
+    { label: "최종 의사결정", value: "점주 직접", tone: "success" as const }
+  ];
+
   return (
     <div className="space-y-6">
       <OrderingHero timeText={mmss} showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
       {showChat ? <OrderingQuickChat prompts={orderingQuickPrompts} /> : null}
       <StatsGrid stats={orderingStats} />
-      <OrderingPrincipleNotice />
-      <OrderingDeadlineAlert timeText={mmss} progressPct={Math.max((seconds / (20 * 60)) * 100, 3)} />
-      <OrderingContextCards />
+      <OrderingPrincipleNotice purpose={optionsQuery.data?.purpose_text} caution={optionsQuery.data?.caution_text} />
+      <OrderingDeadlineAlert deadlineAt={optionsQuery.data?.deadline_at} />
+      <OrderingContextCards weather={optionsQuery.data?.weather_summary} trend={optionsQuery.data?.trend_summary} />
       <OrderingOptionsSection
         options={orderingOptions}
         selectedOptionId={selectedOptionId}

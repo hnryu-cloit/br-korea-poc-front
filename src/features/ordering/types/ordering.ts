@@ -4,10 +4,10 @@ export interface OrderingOptionsParams {
 }
 
 export interface OrderingOptionItemLine {
-  sku_id?: string | null; // SKU 식별자(없을 수 있음)
+  sku_id?: string; // SKU 식별자(없을 수 있음)
   sku_name: string; // 품목명
   quantity: number; // 추천 주문 수량(개)
-  note?: string | null; // 품목 보정/참고 메모
+  note?: string; // 품목 보정/참고 메모
 }
 
 export interface OrderingOptionMetric {
@@ -29,13 +29,13 @@ export interface OrderingOption {
 
 export interface OrderingOptionsResponse {
   deadline_minutes: number; // 주문 마감까지 남은 시간(분)
-  deadline_at?: string | null; // 주문 마감 시각(없을 수 있음)
+  deadline_at?: string; // 주문 마감 시각(없을 수 있음)
   notification_entry: boolean; // 알림 진입 여부(응답 반영값)
   purpose_text: string; // 화면 목적 안내 문구
   caution_text: string; // 점주 최종결정 안내 문구
-  weather_summary?: string | null; // 날씨 요약
-  trend_summary?: string | null; // 최근 트렌드 요약
-  business_date?: string | null; // 기준 영업일
+  weather_summary?: string; // 날씨 요약
+  trend_summary?: string; // 최근 트렌드 요약
+  business_date?: string; // 기준 영업일
   options: OrderingOption[]; // 추천안 목록
 }
 

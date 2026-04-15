@@ -17,10 +17,10 @@ export function OrderingHero({
       description="주문 누락 방지를 목적으로 추천 3안을 비교합니다. 예측과 권고는 최소 범위로 제공하며 최종 의사결정은 점주가 수행합니다."
     >
       <div className="flex flex-wrap items-center gap-3">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
+        {/* <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
           <Clock className="h-4 w-4" />
           주문 마감까지 {timeText}
-        </div>
+        </div> */}
         <button
           type="button"
           onClick={onToggleChat}
