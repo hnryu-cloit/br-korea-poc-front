@@ -4,6 +4,10 @@ export const useOrderingCountdown = (initialSeconds: number, paused: boolean) =>
   const [seconds, setSeconds] = useState(initialSeconds);
 
   useEffect(() => {
+    setSeconds(initialSeconds);
+  }, [initialSeconds]);
+
+  useEffect(() => {
     if (paused) return;
     const timer = window.setInterval(() => {
       setSeconds((current) => Math.max(0, current - 1));

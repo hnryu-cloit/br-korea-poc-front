@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
 import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
@@ -13,24 +14,41 @@ import {
   orderingQuickPrompts,
 } from "@/features/ordering/constants/ordering";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
+import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
 import type { HighlightStat } from "@/commons/constants/page-content";
 
 export function OrderingPage() {
+  const location = useLocation();
+  const routeState = location.state as {
+    source?: string;
+    notificationId?: number;
+    focusOptionId?: string;
+  } | null;
+  const notificationEntry = routeState?.source === "notification";
+  const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const optionsQuery = useGetOrderingOptionsQuery();
+  const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
+  const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
-  const { mmss } = useOrderingCountdown(17 * 60, confirmed);
+  const { mmss } = useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 17) * 60, confirmed);
   const orderingOptions = optionsQuery.data?.options ?? [];
   const selectedOption = useMemo(
     () => orderingOptions.find((option) => option.option_id === selectedOptionId) ?? null,
     [orderingOptions, selectedOptionId],
   );
+
+  useEffect(() => {
+    if (selectedOptionId || orderingOptions.length === 0) return;
+    const focusOptionId = routeState?.focusOptionId ?? contextQuery.data?.focus_option_id ?? null;
+    const fallbackOptionId = orderingOptions.find((option) => option.recommended)?.option_id ?? orderingOptions[0]?.option_id ?? null;
+    setSelectedOptionId(focusOptionId ?? fallbackOptionId);
+  }, [contextQuery.data?.focus_option_id, orderingOptions, routeState?.focusOptionId, selectedOptionId]);
 
   const handleConfirm = async () => {
     if (!selectedOptionId || postOrderingSelectionMutation.isPending) return;
@@ -63,8 +81,16 @@ export function OrderingPage() {
       tone: "danger" as const,
     },
     { label: "추천 옵션", value: `${orderingOptions.length}개`, tone: "primary" as const },
-    { label: "주문 목적", value: "누락 방지", tone: "default" as const },
-    { label: "최종 의사결정", value: "점주 직접", tone: "success" as const }
+    {
+      label: "기준 영업일",
+      value: optionsQuery.data?.business_date ?? "-",
+      tone: "default" as const,
+    },
+    {
+      label: "주문 기준",
+      value: optionsQuery.data?.deadline_at ?? "-",
+      tone: "success" as const,
+    }
   ];
 
   return (
