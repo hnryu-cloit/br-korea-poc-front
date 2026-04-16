@@ -13,14 +13,14 @@ export const SalesV2InsightsSection = ({
         key={section.title}
         className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
+        <div className="flex flex-col items-start justify-between gap-3">
+          <div className="flex w-full items-center justify-between">
             <p className="text-sm font-bold text-slate-800">{section.title}</p>
-            <p className="mt-1 text-xs leading-5 text-slate-400">{section.summary}</p>
+            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${section.status === "active" ? "bg-[#eef4ff] text-[#2454C8]" : "bg-slate-100 text-slate-500"}`}>
+              {section.status === "active" ? "실데이터" : "점검"}
+            </span>
           </div>
-          <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${section.status === "active" ? "bg-[#eef4ff] text-[#2454C8]" : "bg-slate-100 text-slate-500"}`}>
-            {section.status === "active" ? "실데이터" : "점검"}
-          </span>
+            <p className="text-xs leading-5 text-slate-400">{section.summary}</p>
         </div>
 
         <div className="mt-4 space-y-2">
