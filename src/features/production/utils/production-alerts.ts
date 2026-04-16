@@ -1,21 +1,47 @@
-import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
+import type { ProductionAlertItem, ProductionOverviewAlertItem } from "@/features/production/types/production";
 import type { AlertSeverity, GroupedAlertRow, GroupedAlertSection } from "@/features/production/types/production-alerts";
 import { severityDescriptionMap } from "@/features/production/data/production-alerts";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 
-const depletionSortValue = (sku?: ProductionSkuItem) =>
-  sku && typeof sku.depletion_eta_minutes === "number" ? sku.depletion_eta_minutes : Number.POSITIVE_INFINITY;
+const parseDepletionMinutes = (value?: string): number | null => {
+  if (!value) return null;
 
-const depletionLabel = (alert: ProductionAlertItem, sku?: ProductionSkuItem) => {
-  if (alert.expected_at) return alert.expected_at;
-  if (sku?.predicted_stockout_time) return sku.predicted_stockout_time;
-  if (typeof sku?.depletion_eta_minutes === "number") return `약 ${sku.depletion_eta_minutes}분 후`;
-  return "-";
+  const onlyNumberPattern = /^\d+$/;
+  if (onlyNumberPattern.test(value)) {
+    return Number(value);
+  }
+
+  const hhmmPattern = /^(\d{1,2}):([0-5]\d)$/;
+  const hhmmMatch = value.match(hhmmPattern);
+  if (hhmmMatch) {
+    const hours = Number(hhmmMatch[1]);
+    const minutes = Number(hhmmMatch[2]);
+    return (hours * 60) + minutes;
+  }
+
+  return null;
 };
 
-const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items: ProductionSkuItem[]): GroupedAlertRow[] => {
+const depletionSortValue = (sku?: ProductionOverviewAlertItem) =>
+  parseDepletionMinutes(sku?.depletion_time) ?? Number.POSITIVE_INFINITY;
+
+const depletionLabel = (sku?: ProductionOverviewAlertItem) => {
+  const totalMinutes = parseDepletionMinutes(sku?.depletion_time);
+  if (totalMinutes === null) return "-";
+
+  if (totalMinutes === 0) return "곧 소진";
+
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) return `약 ${minutes}분 후`;
+  if (minutes === 0) return `약 ${hours}시간 후`;
+  return `약 ${hours}시간 ${minutes}분 후`;
+};
+
+const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items: ProductionOverviewAlertItem[]): GroupedAlertRow[] => {
   const skuMap = new Map(items.map((item) => [item.sku_id, item] as const));
-  const byKey = new Map<string, { sku?: ProductionSkuItem; row: GroupedAlertRow }>();
+  const byKey = new Map<string, { sku?: ProductionOverviewAlertItem; row: GroupedAlertRow }>();
 
   alerts
     .filter((alert) => alert.severity === severity)
@@ -27,9 +53,9 @@ const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items
           sku,
           row: {
             key: rowKey,
-            skuName: sku?.sku_name ?? alert.title,
-            currentStock: sku ? formatCountWithUnit(sku.current_stock, "개") : "-",
-            depletionTime: depletionLabel(alert, sku),
+            skuName: sku?.name ?? alert.title,
+            currentStock: sku ? formatCountWithUnit(sku.current, "개") : "-",
+            depletionTime: depletionLabel(sku),
           },
         });
         return;
@@ -38,7 +64,7 @@ const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items
       const current = byKey.get(rowKey);
       if (!current) return;
       if (current.row.depletionTime === "-") {
-        current.row.depletionTime = depletionLabel(alert, sku);
+        current.row.depletionTime = depletionLabel(sku);
       }
     });
 
@@ -49,7 +75,7 @@ const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items
 
 export const buildGroupedAlertSections = (
   alerts: ProductionAlertItem[],
-  items: ProductionSkuItem[],
+  items: ProductionOverviewAlertItem[],
 ): GroupedAlertSection[] => {
   return (["high", "medium"] as const)
     .map((severity) => {

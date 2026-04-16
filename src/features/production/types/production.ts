@@ -16,11 +16,25 @@ export interface ProductionSummaryStat {
   tone: "danger" | "primary" | "success" | "default";
 }
 
+export interface ProductionOverviewAlertItem {
+  sku_id: string,
+  name: string,
+  current:number,
+  forecast: number,
+  status: string,
+  depletion_time:string,
+  recommended: number,
+  prod1:string,
+  prod2: string
+}
 export interface ProductionOverviewResponse {
   updated_at: string;
   refresh_interval_minutes: number;
   summary_stats: ProductionSummaryStat[];
   alerts: ProductionAlertItem[];
+  production_lead_time_minutes: number;
+  danger_count: number;
+  items: ProductionOverviewAlertItem[];
 }
 
 export type ProductionStatus = "danger" | "warning" | "safe";

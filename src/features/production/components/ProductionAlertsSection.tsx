@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { formatCount, formatCountWithUnit } from "@/commons/utils/format-count";
-import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
+import type { ProductionAlertItem, ProductionOverviewAlertItem } from "@/features/production/types/production";
 import {
   severityDetailClassMap,
   severityLabelMap,
@@ -16,7 +16,7 @@ export function ProductionAlertsSection({
   items,
 }: {
   alerts: ProductionAlertItem[];
-  items: ProductionSkuItem[];
+  items: ProductionOverviewAlertItem[];
 }) {
   const sections = useMemo(() => buildGroupedAlertSections(alerts, items), [alerts, items]);
   const [openSeverity, setOpenSeverity] = useState<AlertSeverity | null>(

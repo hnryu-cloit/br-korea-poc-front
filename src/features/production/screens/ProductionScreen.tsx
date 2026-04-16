@@ -46,6 +46,7 @@ export function ProductionPage() {
   const items = skuListQuery.data?.items ?? [];
   const stats = overviewQuery.data?.summary_stats ?? [];
   const alerts = overviewQuery.data?.alerts ?? [];
+  const alertsItems = overviewQuery.data?.items ?? [];
   const dashboardChatHistory = fromDashboardProduction ? getDashboardCardChatHistory("production") : [];
 
   const openRegister = (sku: ProductionSkuItem) => {
@@ -88,7 +89,7 @@ export function ProductionPage() {
           }
         />
       ) : null}
-      <ProductionAlertsSection alerts={alerts} items={items} />
+      <ProductionAlertsSection alerts={alerts} items={alertsItems} />
       <StatsGrid stats={stats} />
       <ProductionTableSection
         items={items}
