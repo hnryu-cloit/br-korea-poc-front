@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Bell, Menu, X } from "lucide-react";
+import { Bell, ChevronDown, Menu, X } from "lucide-react";
 
 import { formatCount } from "@/commons/utils/format-count";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
+import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
@@ -28,7 +29,9 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
-  const { user } = useDemoSession();
+  const [isStoreMenuOpen, setIsStoreMenuOpen] = useState(false);
+  const { user, setStore } = useDemoSession();
+  const { data: stores = [] } = useGetStoresQuery();
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
 
   const handleNotificationClick = (id: number) => {
@@ -128,21 +131,68 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
             ) : null}
           </div>
 
-          <div className="hidden h-[42px] w-[270px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] md:flex">
-            <div className="size-[28px] overflow-hidden rounded-full border border-[#CCDAF0] bg-[linear-gradient(135deg,#316BFF_0%,#4AA2FF_100%)] text-white">
-              {user.avatarUrl ? (
-                <img src={user.avatarUrl} alt={user.name} className="size-full object-cover" />
-              ) : (
-                <div className="grid size-full place-items-center text-[12px] font-bold">{user.initials}</div>
-              )}
-            </div>
-            <div className="mx-2 flex-1 truncate">
-              <p className="truncate text-[13px] font-semibold leading-tight text-slate-800">{user.name}</p>
-              <p className="truncate text-[11px] leading-tight text-slate-500">{user.email}</p>
-            </div>
-            <button className="text-slate-400" aria-label="user menu" type="button">
-              <span className="material-symbols-outlined text-[18px]">more_vert</span>
+          <div className="relative hidden md:block">
+            <button
+              type="button"
+              onClick={() => setIsStoreMenuOpen((v) => !v)}
+              className="flex h-[42px] w-[270px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed]"
+              aria-label="점포 전환"
+            >
+              <div className="size-[28px] overflow-hidden rounded-full border border-[#CCDAF0] bg-[linear-gradient(135deg,#316BFF_0%,#4AA2FF_100%)] text-white">
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} className="size-full object-cover" />
+                ) : (
+                  <div className="grid size-full place-items-center text-[12px] font-bold">{user.initials}</div>
+                )}
+              </div>
+              <div className="mx-2 flex-1 truncate text-left">
+                <p className="truncate text-[13px] font-semibold leading-tight text-slate-800">{user.storeName}</p>
+                <p className="truncate text-[11px] leading-tight text-slate-500">{user.storeId}</p>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isStoreMenuOpen ? "rotate-180" : ""}`} />
             </button>
+
+            {isStoreMenuOpen ? (
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 z-40 cursor-default"
+                  onClick={() => setIsStoreMenuOpen(false)}
+                  aria-label="점포 메뉴 닫기"
+                />
+                <div className="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_rgba(31,77,187,0.16)]">
+                  <div className="border-b border-border/70 px-4 py-3">
+                    <p className="text-xs font-semibold text-slate-500">점포 선택</p>
+                  </div>
+                  <div className="max-h-72 overflow-y-auto py-1">
+                    {stores.map((store) => (
+                      <button
+                        key={store.store_id}
+                        type="button"
+                        onClick={() => {
+                          setStore(store.store_id, `${store.store_name}점`);
+                          setIsStoreMenuOpen(false);
+                        }}
+                        className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#eef4ff] ${
+                          user.storeId === store.store_id ? "bg-[#f0f5ff]" : ""
+                        }`}
+                      >
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EEF4FF] text-[11px] font-bold text-[#2454C8]">
+                          {store.store_name.charAt(0)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[13px] font-semibold text-slate-800">{store.store_name}점</p>
+                          <p className="text-[11px] text-slate-400">{store.sido} · {store.store_id}</p>
+                        </div>
+                        {user.storeId === store.store_id ? (
+                          <span className="material-symbols-outlined text-[16px] text-[#2454C8]">check</span>
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </div>

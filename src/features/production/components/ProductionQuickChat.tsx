@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 
 import type { DashboardCardChatHistoryItem } from "@/commons/utils/dashboard-card-chat-history";
+import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 
 interface ProductionQuickChatMessage {
@@ -13,13 +14,6 @@ interface ProductionQuickChatMessage {
 }
 
 let productionChatMessageId = 1;
-
-const FALLBACK_QUICK_QUESTIONS = [
-  "지금 생산해야 할 품목은?",
-  "찬스 로스를 어떻게 줄이나요?",
-  "1시간 후 재고 예측 기준은?",
-  "4주 평균 패턴은 어떻게 계산하나요?",
-];
 
 export function ProductionQuickChat({
   initialHistory = [],
@@ -42,8 +36,7 @@ export function ProductionQuickChat({
   );
   const [input, setInput] = useState(initialInput);
   const postSalesQueryMutation = usePostSalesQueryMutation();
-
-  const suggestedQuestions = FALLBACK_QUICK_QUESTIONS;
+  const { data: prompts = [] } = useGetSalesPromptsQuery();
 
   const sendMessage = async (rawText: string) => {
     const text = rawText.trim();
@@ -83,17 +76,17 @@ export function ProductionQuickChat({
       <div className="border-b border-[#e6edf9] px-6 py-5">
         <p className="text-sm font-bold text-slate-900">생산 관련 빠른 질문</p>
         <div className="mt-3 flex flex-wrap gap-2">
-          {suggestedQuestions.map((item) => (
+          {prompts.map((item) => (
             <button
-              key={item}
+              key={item.prompt}
               type="button"
               onClick={() => {
-                void sendMessage(item);
+                void sendMessage(item.prompt);
               }}
               disabled={postSalesQueryMutation.isPending}
               className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </div>

@@ -10,24 +10,41 @@ const roleLabelMap: Record<DemoRole, string> = {
 };
 
 const BYPASS_ROLE_KEY = "bypassUserRole";
+const SELECTED_STORE_KEY = "selectedStoreId";
+const SELECTED_STORE_NAME_KEY = "selectedStoreName";
+
+function getInitials(storeName: string): string {
+  return storeName.charAt(0);
+}
+
+function loadInitialUser(): SessionUser {
+  if (typeof window === "undefined") {
+    return sessionUser;
+  }
+
+  const storedRole = window.localStorage.getItem(BYPASS_ROLE_KEY) as DemoRole | null;
+  const storedStoreId = window.localStorage.getItem(SELECTED_STORE_KEY);
+  const storedStoreName = window.localStorage.getItem(SELECTED_STORE_NAME_KEY);
+
+  const base = { ...sessionUser };
+
+  if (storedRole && storedRole in roleLabelMap) {
+    base.role = storedRole;
+    base.roleLabel = roleLabelMap[storedRole];
+  }
+
+  if (storedStoreId && storedStoreName) {
+    base.storeId = storedStoreId;
+    base.storeName = storedStoreName;
+    base.name = storedStoreName;
+    base.initials = getInitials(storedStoreName);
+  }
+
+  return base;
+}
 
 export function DemoSessionProvider({ children }: PropsWithChildren) {
-  const [user, setUser] = useState<SessionUser>(() => {
-    if (typeof window === "undefined") {
-      return sessionUser;
-    }
-
-    const storedRole = window.localStorage.getItem(BYPASS_ROLE_KEY) as DemoRole | null;
-    if (!storedRole || !(storedRole in roleLabelMap)) {
-      return sessionUser;
-    }
-
-    return {
-      ...sessionUser,
-      role: storedRole,
-      roleLabel: roleLabelMap[storedRole],
-    };
-  });
+  const [user, setUser] = useState<SessionUser>(loadInitialUser);
 
   const value = useMemo(
     () => ({
@@ -40,6 +57,19 @@ export function DemoSessionProvider({ children }: PropsWithChildren) {
           ...current,
           role,
           roleLabel: roleLabelMap[role],
+        }));
+      },
+      setStore: (storeId: string, storeName: string) => {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(SELECTED_STORE_KEY, storeId);
+          window.localStorage.setItem(SELECTED_STORE_NAME_KEY, storeName);
+        }
+        setUser((current) => ({
+          ...current,
+          storeId,
+          storeName,
+          name: storeName,
+          initials: getInitials(storeName),
         }));
       },
     }),
