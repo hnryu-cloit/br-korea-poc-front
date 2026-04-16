@@ -14,11 +14,11 @@ export interface SessionUser {
 
 export const sessionUser: SessionUser = {
   id: "U-1001",
-  name: "클로잇",
+  name: "강남점",
   role: "store_owner",
   roleLabel: "점주",
-  email: "cloit.genai@itcen.com",
-  initials: "클",
+  email: "gangnam@store.com",
+  initials: "강",
   storeId: "POC_001",
   storeName: "고양시02점",
   avatarUrl:
