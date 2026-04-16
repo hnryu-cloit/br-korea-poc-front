@@ -30,6 +30,7 @@ export function OrderingPage() {
     domain?: string;
     intent?: "view" | "ask";
     prompt?: string;
+    chatHistoryId?: string;
   } | null;
   const fromDashboardOrdering = routeState?.source === "dashboard-card-chat" && routeState?.domain === "ordering";
   const notificationEntry = routeState?.source === "notification";
@@ -57,7 +58,9 @@ export function OrderingPage() {
     () => orderingOptions.find((option) => option.option_id === effectiveSelectedOptionId) ?? null,
     [effectiveSelectedOptionId, orderingOptions],
   );
-  const dashboardChatHistory = fromDashboardOrdering ? getDashboardCardChatHistory("ordering") : [];
+  const dashboardChatHistory = fromDashboardOrdering && routeState?.chatHistoryId
+    ? getDashboardCardChatHistory("ordering").filter((item) => item.id === routeState.chatHistoryId)
+    : [];
 
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
@@ -111,6 +114,7 @@ export function OrderingPage() {
           initialHistory={dashboardChatHistory}
           initialInput={
             fromDashboardOrdering && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+              && !routeState?.chatHistoryId
               ? routeState.prompt ?? ""
               : ""
           }

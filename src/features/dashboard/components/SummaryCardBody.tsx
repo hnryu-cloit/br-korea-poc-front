@@ -1,10 +1,11 @@
-import { Sparkles } from "lucide-react";
+import { ShieldAlert, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
+import type { SalesQueryResponse } from "@/features/sales/types/sales";
 
 const domainAccentClassMap: Record<DashboardSummaryCard["domain"], string> = {
   production: "bg-[#eef4ff] text-[#2454C8] border-[#cdddfc]",
@@ -32,8 +33,9 @@ const parseHighlight = (text: string): { title: string; detail?: string } => {
 };
 
 export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
-  const [answer, setAnswer] = useState<string>("");
+  const [latestResponse, setLatestResponse] = useState<SalesQueryResponse | null>(null);
   const [lastQuestion, setLastQuestion] = useState<string>("");
+  const [lastHistoryId, setLastHistoryId] = useState<string>("");
   const postSalesQueryMutation = usePostSalesQueryMutation();
 
   const parsedHighlights = useMemo(
@@ -47,13 +49,33 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
     setLastQuestion(question);
     try {
       const response = await postSalesQueryMutation.mutateAsync(question);
-      const nextAnswer = response.text || "답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.";
-      setAnswer(nextAnswer);
-      appendDashboardCardChatHistory(card.domain, question, nextAnswer);
+      const nextResponse: SalesQueryResponse = {
+        ...response,
+        text: response.text || "답변을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.",
+      };
+      setLatestResponse(nextResponse);
+      const saved = appendDashboardCardChatHistory(card.domain, question, nextResponse.text, {
+        evidence: nextResponse.evidence,
+        actions: nextResponse.actions,
+      });
+      setLastHistoryId(saved?.id ?? "");
     } catch {
-      const nextAnswer = "답변 생성 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.";
-      setAnswer(nextAnswer);
-      appendDashboardCardChatHistory(card.domain, question, nextAnswer);
+      const nextResponse: SalesQueryResponse = {
+        text: "답변 생성 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.",
+        actions: [],
+        store_context: "",
+        data_source: "",
+        comparison_basis: "",
+        calculation_date: "",
+        blocked: false,
+        evidence: [],
+      };
+      setLatestResponse(nextResponse);
+      const saved = appendDashboardCardChatHistory(card.domain, question, nextResponse.text, {
+        evidence: [],
+        actions: [],
+      });
+      setLastHistoryId(saved?.id ?? "");
     }
   };
 
@@ -81,10 +103,46 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
         </div>
         <div className="mt-3">
           <p className="mb-1 text-xs font-semibold text-slate-500">AI 응답</p>
-          <div className="rounded-xl border border-[#dce4f3] bg-[#f8fbff] px-4 py-3 text-sm leading-6 text-slate-700">
-          {postSalesQueryMutation.isPending
-            ? "응답 생성 중..."
-            : answer || "질문을 선택하면 이 영역에 답변을 표시합니다."}
+          <div className="space-y-3 rounded-xl border border-[#dce4f3] bg-[#f8fbff] px-4 py-3">
+            {postSalesQueryMutation.isPending ? (
+              <p className="text-sm leading-6 text-slate-500">응답 생성 중...</p>
+            ) : !latestResponse ? (
+              <p className="text-sm leading-6 text-slate-700">질문을 선택하면 이 영역에 답변을 표시합니다.</p>
+            ) : (
+              <>
+                <p className={`text-sm leading-6 ${latestResponse.blocked ? "text-red-700" : "text-slate-700"}`}>
+                  {latestResponse.text}
+                </p>
+
+                {latestResponse.blocked ? (
+                  <div className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-bold text-red-600">
+                    <ShieldAlert className="h-3.5 w-3.5" />
+                    민감정보 정책 적용
+                  </div>
+                ) : null}
+
+                {latestResponse.evidence?.length ? (
+                  <div className="rounded-xl bg-white px-3 py-2 text-xs text-slate-500">
+                    <p className="mb-1 font-semibold text-slate-700">근거</p>
+                    <ul className="list-disc space-y-1 pl-4">
+                      {latestResponse.evidence.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {latestResponse.actions?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {latestResponse.actions.map((action) => (
+                      <span key={action} className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            )}
           </div>
         </div>
         <div className="mt-3">
@@ -95,6 +153,7 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
               domain: card.domain,
               intent: "ask",
               prompt: lastQuestion || undefined,
+              chatHistoryId: lastHistoryId || undefined,
             }}
             className="inline-flex items-center justify-center text-xs font-semibold text-[#2454C8] underline underline-offset-2 transition-colors hover:text-[#1d44a8]"
           >

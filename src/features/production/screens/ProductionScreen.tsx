@@ -25,6 +25,7 @@ export function ProductionPage() {
     domain?: string;
     intent?: "view" | "ask";
     prompt?: string;
+    chatHistoryId?: string;
   } | null;
   const fromDashboardProduction = routeState?.source === "dashboard-card-chat" && routeState?.domain === "production";
   const { user } = useDemoSession();
@@ -47,7 +48,9 @@ export function ProductionPage() {
   const stats = overviewQuery.data?.summary_stats ?? [];
   const alerts = overviewQuery.data?.alerts ?? [];
   const alertsItems = overviewQuery.data?.items ?? [];
-  const dashboardChatHistory = fromDashboardProduction ? getDashboardCardChatHistory("production") : [];
+  const dashboardChatHistory = fromDashboardProduction && routeState?.chatHistoryId
+    ? getDashboardCardChatHistory("production").filter((item) => item.id === routeState.chatHistoryId)
+    : [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
@@ -84,6 +87,7 @@ export function ProductionPage() {
           initialHistory={dashboardChatHistory}
           initialInput={
             fromDashboardProduction && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+              && !routeState?.chatHistoryId
               ? routeState.prompt ?? ""
               : ""
           }

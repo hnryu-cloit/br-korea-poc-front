@@ -27,17 +27,28 @@ export const SalesScreenV2 = () => {
     prompt?: string;
     domain?: string;
     intent?: "view" | "ask";
+    chatHistoryId?: string;
   } | null;
   const fromDashboardSales = routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
-  const dashboardChatHistory = fromDashboardSales ? getDashboardCardChatHistory("sales") : [];
+  const dashboardChatHistory = fromDashboardSales && routeState?.chatHistoryId
+    ? getDashboardCardChatHistory("sales").filter((item) => item.id === routeState.chatHistoryId)
+    : [];
   const [messages, setMessages] = useState<SalesV2Message[]>(() =>
     dashboardChatHistory.flatMap((item) => [
       { id: salesV2MessageId++, role: "user" as const, text: item.question },
-      { id: salesV2MessageId++, role: "assistant" as const, text: item.answer, blocked: false },
+      {
+        id: salesV2MessageId++,
+        role: "assistant" as const,
+        text: item.answer,
+        evidence: item.evidence,
+        actions: item.actions,
+        blocked: false,
+      },
     ]),
   );
   const [input, setInput] = useState(
     fromDashboardSales && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
+      && !routeState?.chatHistoryId
       ? routeState.prompt ?? ""
       : "",
   );
