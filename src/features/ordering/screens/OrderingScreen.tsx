@@ -43,7 +43,7 @@ export function OrderingPage() {
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
-  const { mmss } = useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 20) * 60, confirmed);
+  useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 20) * 60, confirmed);
   const orderingOptions = useMemo(
     () => optionsQuery.data?.options ?? [],
     [optionsQuery.data?.options],
@@ -107,7 +107,7 @@ export function OrderingPage() {
 
   return (
     <div className="space-y-6">
-      <OrderingHero timeText={mmss} showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
+      <OrderingHero showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
       {showChat ? (
         <OrderingQuickChat
           prompts={orderingQuickPrompts}

@@ -1,10 +1,9 @@
-import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
+import axios, { AxiosError } from "axios";
 
 import {
   clearTokens,
   getAccessToken,
   getRefreshToken,
-  setAccessToken,
 } from "@/lib/tokenManager";
 import type { CommonError } from "@/services/type";
 
@@ -20,20 +19,8 @@ const axiosInstance = axios.create({
   },
 });
 
-let isRefreshing = false; // refresh 중복 호출 방지용 플래그
-let failedQueue: any[] = []; // 대기열 추가
-
-// 대기열에 있는 요청들을 처리하는 함수
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
+let isRefreshing = false;
+let failedQueue: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
 
 /**
  * 요청 인터셉터

@@ -244,6 +244,9 @@ export interface SalesSummaryResponse {
   today_net_revenue: number;
   weekly_data: SalesSummaryWeeklyItem[];
   top_products: SalesSummaryProductItem[];
+  avg_margin_rate: number;
+  avg_net_profit_per_item: number;
+  estimated_today_profit: number;
 }
 
 export type SalesPrompt = SalesPromptItem;

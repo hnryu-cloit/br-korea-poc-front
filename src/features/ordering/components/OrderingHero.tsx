@@ -1,13 +1,11 @@
-import { Clock, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 
 export function OrderingHero({
-  timeText,
   showChat,
   onToggleChat,
 }: {
-  timeText: string;
   showChat: boolean;
   onToggleChat: () => void;
 }) {

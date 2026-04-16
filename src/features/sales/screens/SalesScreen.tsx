@@ -117,11 +117,10 @@ export function SalesPage() {
       <StatsGrid stats={stats} />
 
       <SalesBreakEvenSection
-        breakEvenPoint={0}
-        todayProfit={todayNetRevenue}
         todayRevenue={todayRevenue}
-        targetProfit={0}
-        itemsNeeded={0}
+        estimatedTodayProfit={summary?.estimated_today_profit ?? 0}
+        avgMarginRate={summary?.avg_margin_rate ?? 0}
+        avgNetProfitPerItem={summary?.avg_net_profit_per_item ?? 0}
       />
 
       <SalesStoreContextCard />
