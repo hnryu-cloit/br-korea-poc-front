@@ -226,6 +226,26 @@ export interface CreateSalesQueryResponse {
   masked_fields?: string[]; // 마스킹 처리된 필드 목록
 }
 
+export interface SalesSummaryWeeklyItem {
+  day: string;
+  revenue: number;
+  net_revenue: number;
+}
+
+export interface SalesSummaryProductItem {
+  name: string;
+  sales: number;
+  qty: number;
+}
+
+export interface SalesSummaryResponse {
+  data_date: string | null;
+  today_revenue: number;
+  today_net_revenue: number;
+  weekly_data: SalesSummaryWeeklyItem[];
+  top_products: SalesSummaryProductItem[];
+}
+
 export type SalesPrompt = SalesPromptItem;
 
 export type SalesInsightMetric = SalesInsightMetricItem;

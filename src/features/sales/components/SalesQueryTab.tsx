@@ -6,12 +6,14 @@ export function SalesQueryTab({
   query,
   onChangeQuery,
   onSubmit,
+  isSubmitting = false,
   suggestedQuestions,
   responses,
 }: {
   query: string;
   onChangeQuery: (value: string) => void;
   onSubmit: () => void;
+  isSubmitting?: boolean;
   suggestedQuestions: string[];
   responses: SalesQueryHistoryItem[];
 }) {
@@ -33,7 +35,8 @@ export function SalesQueryTab({
           <button
             type="button"
             onClick={onSubmit}
-            className="inline-flex items-center justify-center rounded-2xl bg-[#2454C8] px-4 py-3 text-white transition-colors hover:bg-[#1d44a8]"
+            disabled={isSubmitting}
+            className="inline-flex items-center justify-center rounded-2xl bg-[#2454C8] px-4 py-3 text-white transition-colors hover:bg-[#1d44a8] disabled:opacity-60"
             aria-label="질문 전송"
           >
             <Send className="h-4 w-4" />

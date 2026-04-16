@@ -13,13 +13,11 @@ export type SalesQueryHistoryItem = {
 export type SalesWeeklyDataItem = {
   day: string;
   revenue: number;
-  profit: number;
-  cost: number;
+  net_revenue: number;
 };
 
 export type SalesProductDataItem = {
   name: string;
   sales: number;
-  profit: number;
-  profitRate: number;
+  qty: number;
 };

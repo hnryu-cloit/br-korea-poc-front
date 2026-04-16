@@ -7,6 +7,7 @@ import type {
   SalesInsightSection,
   SalesPrompt,
   SalesQueryResponse,
+  SalesSummaryResponse,
 } from "@/features/sales/types/sales";
 
 const appendOperationalFilters = (
@@ -74,6 +75,17 @@ export const getSalesPrompts = async (): Promise<SalesPrompt[]> => {
 
 export const postSalesQuery = async (prompt: string) => {
   const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", { prompt });
+  return response.data;
+};
+
+export const getSalesSummary = async (
+  filters?: GetSalesInsightsRequest,
+): Promise<SalesSummaryResponse> => {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  const response = await axiosInstance.get<SalesSummaryResponse>("/api/sales/summary", {
+    params: Object.fromEntries(query.entries()),
+  });
   return response.data;
 };
 
