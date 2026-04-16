@@ -7,7 +7,7 @@ export const usePostSalesQueryMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: postSalesQuery,
+    mutationFn: (prompt: string) => postSalesQuery(prompt),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: salesQueryKeys.insights() });
       queryClient.invalidateQueries({ queryKey: salesQueryKeys.prompts() });

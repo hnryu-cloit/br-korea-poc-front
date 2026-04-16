@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { SalesBottomSummaryCards } from "@/features/sales/components/SalesBottomSummaryCards";
 import { SalesBreakdownTab } from "@/features/sales/components/SalesBreakdownTab";
 import { SalesBreakEvenSection } from "@/features/sales/components/SalesBreakEvenSection";
@@ -20,6 +21,7 @@ import type {
 import { formatWon } from "@/features/sales/utils/format";
 
 export function SalesPage() {
+  const { user } = useDemoSession();
   const [tab, setTab] = useState<SalesTabKey>("profit");
   const [query, setQuery] = useState("");
   const [responses, setResponses] = useState<SalesQueryHistoryItem[]>([]);
@@ -39,7 +41,7 @@ export function SalesPage() {
   });
 
   const queryMutation = useMutation({
-    mutationFn: (prompt: string) => postSalesQuery(prompt),
+    mutationFn: (prompt: string) => postSalesQuery(prompt, user.storeId),
     onSuccess: (data, prompt) => {
       const historyItem: SalesQueryHistoryItem = {
         query: prompt,
@@ -110,6 +112,7 @@ export function SalesPage() {
       <SalesHeroSection
         showChat={showChat}
         onToggleChat={() => setShowChat((value) => !value)}
+        storeName={user.storeName}
       />
 
       {showChat ? <SalesQuickQuestionsPanel questions={quickQuestions} /> : null}
@@ -123,7 +126,7 @@ export function SalesPage() {
         avgNetProfitPerItem={summary?.avg_net_profit_per_item ?? 0}
       />
 
-      <SalesStoreContextCard />
+      <SalesStoreContextCard storeName={user.storeName} />
 
       <section className="rounded-[28px] border border-border bg-white p-2 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <SalesTabs tab={tab} onChangeTab={setTab} />
@@ -140,6 +143,7 @@ export function SalesPage() {
               isSubmitting={queryMutation.isPending}
               suggestedQuestions={suggestedQuestions}
               responses={responses}
+              storeName={user.storeName}
             />
           ) : null}
         </div>

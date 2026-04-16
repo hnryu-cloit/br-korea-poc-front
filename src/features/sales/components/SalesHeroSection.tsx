@@ -5,9 +5,11 @@ import { PageHero } from "@/commons/components/page/page-layout";
 export function SalesHeroSection({
   showChat,
   onToggleChat,
+  storeName,
 }: {
   showChat: boolean;
   onToggleChat: () => void;
+  storeName: string;
 }) {
   return (
     <PageHero
@@ -17,7 +19,7 @@ export function SalesHeroSection({
       <div className="flex flex-wrap items-center gap-3">
         <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4ff] px-4 py-2 text-sm font-semibold text-[#2454C8]">
           <Store className="h-4 w-4" />
-          강남점 맞춤 분석
+          {storeName} 맞춤 분석
         </div>
         <button
           type="button"

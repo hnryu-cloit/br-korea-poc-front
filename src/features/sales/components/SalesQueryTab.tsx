@@ -9,6 +9,7 @@ export function SalesQueryTab({
   isSubmitting = false,
   suggestedQuestions,
   responses,
+  storeName,
 }: {
   query: string;
   onChangeQuery: (value: string) => void;
@@ -16,12 +17,13 @@ export function SalesQueryTab({
   isSubmitting?: boolean;
   suggestedQuestions: string[];
   responses: SalesQueryHistoryItem[];
+  storeName: string;
 }) {
   return (
     <div className="space-y-5">
       <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm">
         <p className="text-lg font-bold text-slate-900">AI 손익 분석</p>
-        <p className="mt-1 text-sm text-slate-500">자연어 질의로 강남점 맞춤형 인사이트를 제공합니다.</p>
+        <p className="mt-1 text-sm text-slate-500">자연어 질의로 {storeName} 맞춤형 인사이트를 제공합니다.</p>
         <div className="mt-4 flex gap-2">
           <input
             value={query}

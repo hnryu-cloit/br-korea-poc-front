@@ -73,8 +73,11 @@ export const getSalesPrompts = async (): Promise<SalesPrompt[]> => {
   return payload.items ?? [];
 };
 
-export const postSalesQuery = async (prompt: string) => {
-  const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", { prompt });
+export const postSalesQuery = async (prompt: string, storeId?: string) => {
+  const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", {
+    prompt,
+    ...(storeId ? { store_id: storeId } : {}),
+  });
   return response.data;
 };
 
