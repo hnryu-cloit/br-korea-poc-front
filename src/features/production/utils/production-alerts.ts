@@ -1,6 +1,7 @@
 import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
 import type { AlertSeverity, GroupedAlertRow, GroupedAlertSection } from "@/features/production/types/production-alerts";
 import { severityDescriptionMap } from "@/features/production/data/production-alerts";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 
 const depletionSortValue = (sku?: ProductionSkuItem) =>
   sku && typeof sku.depletion_eta_minutes === "number" ? sku.depletion_eta_minutes : Number.POSITIVE_INFINITY;
@@ -27,7 +28,7 @@ const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items
           row: {
             key: rowKey,
             skuName: sku?.sku_name ?? alert.title,
-            currentStock: sku ? `${sku.current_stock}개` : "-",
+            currentStock: sku ? formatCountWithUnit(sku.current_stock, "개") : "-",
             depletionTime: depletionLabel(alert, sku),
           },
         });
@@ -59,7 +60,7 @@ export const buildGroupedAlertSections = (
       const earliestDepletion = rows.find((row) => row.depletionTime !== "-")?.depletionTime ?? "-";
       const representativeText =
         rows.length > 1
-          ? `${rows[0]?.skuName ?? "위험 품목"} 외 ${Math.max(rows.length - 1, 0)}개 품목`
+          ? `${rows[0]?.skuName ?? "위험 품목"} 외 ${formatCountWithUnit(Math.max(rows.length - 1, 0), "개")} 품목`
           : `${rows[0]?.skuName ?? "위험 품목"}`;
 
       return {

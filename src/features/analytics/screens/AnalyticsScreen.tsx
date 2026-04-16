@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
 import { AnalyticsQueryLogSection } from "@/features/analytics/components/AnalyticsQueryLogSection";
 import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGetAnalyticsMetricsQuery";
@@ -29,7 +30,7 @@ export function AnalyticsScreen() {
     <div className="space-y-6">
       <PageHero
         title="매출 현황"
-        description={`주요 지표 ${metrics.length}개와 질의 처리 로그 ${allLogs.length}건을 확인합니다.`}
+        description={`주요 지표 ${formatCountWithUnit(metrics.length, "개")}와 질의 처리 로그 ${formatCountWithUnit(allLogs.length, "건")}을 확인합니다.`}
       />
 
       <AnalyticsMetricsGrid metrics={metrics} />

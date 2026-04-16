@@ -2,6 +2,7 @@ import type {
   ProductionRegistrationForm,
   ProductionSkuItem,
 } from "@/features/production/types/production";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 
 export function ProductionRegistrationPanel({
   activeSku,
@@ -84,11 +85,13 @@ export function ProductionRegistrationPanel({
             onChange={(event) => onChangeQty(event.target.value)}
             className="mt-2 w-full rounded-2xl border border-[#dce4f3] bg-white px-4 py-3 text-base font-semibold text-slate-800 outline-none focus:border-[#2454C8]"
           />
-          <p className="mt-2 text-xs text-slate-500">추천 수량 {detail.recommended_qty}개 · 4주 평균 1차 생산 기준</p>
+          <p className="mt-2 text-xs text-slate-500">추천 수량 {formatCountWithUnit(detail.recommended_qty, "개")} · 4주 평균 1차 생산 기준</p>
         </div>
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-4">
           <p className="text-xs font-bold text-red-500">현재 재고 / 1시간 후 예측</p>
-          <p className="mt-1 text-sm text-red-700">{detail.current_stock}개 → {detail.forecast_stock_1h}개 예상</p>
+          <p className="mt-1 text-sm text-red-700">
+            {formatCountWithUnit(detail.current_stock, "개")} → {formatCountWithUnit(detail.forecast_stock_1h, "개")} 예상
+          </p>
           {detail.predicted_stockout_time ? (
             <p className="mt-2 text-xs text-red-500">예상 품절 시각 {detail.predicted_stockout_time}</p>
           ) : null}

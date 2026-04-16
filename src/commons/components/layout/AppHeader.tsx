@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Bell, Menu, X } from "lucide-react";
 
+import { formatCount } from "@/commons/utils/format-count";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
@@ -74,7 +75,7 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
               <Bell className="h-4 w-4" />
               {unreadCount > 0 ? (
                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                  {unreadCount}
+                  {formatCount(unreadCount)}
                 </span>
               ) : null}
             </button>

@@ -1,6 +1,7 @@
 import { CheckCircle } from "lucide-react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { useGetOrderingSelectionHistoryQuery } from "@/features/ordering/queries/useGetOrderingSelectionHistoryQuery";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
@@ -29,7 +30,7 @@ export function OrderingConfirmedSummary({
               {option.items.map((item) => (
                 <div key={`${option.option_id}-${item.sku_name}`} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
                   <p className="text-xs font-semibold text-slate-400">{item.sku_name}</p>
-                  <p className="mt-1 text-lg font-bold text-slate-900">{item.quantity}개</p>
+                  <p className="mt-1 text-lg font-bold text-slate-900">{formatCountWithUnit(item.quantity, "개")}</p>
                 </div>
               ))}
             </div>

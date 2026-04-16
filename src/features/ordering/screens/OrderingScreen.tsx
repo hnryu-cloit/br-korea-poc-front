@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
@@ -88,7 +89,7 @@ export function OrderingPage() {
         : "-",
       tone: "danger" as const,
     },
-    { label: "추천 옵션", value: `${orderingOptions.length}개`, tone: "primary" as const },
+    { label: "추천 옵션", value: formatCountWithUnit(orderingOptions.length, "개"), tone: "primary" as const },
     {
       label: "기준 영업일",
       value: optionsQuery.data?.business_date ?? "-",

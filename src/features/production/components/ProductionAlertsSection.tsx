@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { formatCount, formatCountWithUnit } from "@/commons/utils/format-count";
 import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
 import {
   severityDetailClassMap,
@@ -45,11 +46,11 @@ export function ProductionAlertsSection({
               className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
             >
               <div>
-                <p className="text-base font-bold">{severityLabelMap[section.severity]} {section.count}건</p>
+                <p className="text-base font-bold">{severityLabelMap[section.severity]} {formatCountWithUnit(section.count, "건")}</p>
                 {section.representativeNames.length > 0 ? (
                   <p className="mt-1 text-sm">
                     {section.representativeNames.join(", ")}
-                    {section.count > section.representativeNames.length ? ` 외 ${section.count - section.representativeNames.length}개` : ""}
+                    {section.count > section.representativeNames.length ? ` 외 ${formatCount(section.count - section.representativeNames.length)}개` : ""}
                   </p>
                 ) : null}
               </div>

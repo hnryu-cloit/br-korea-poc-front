@@ -2,6 +2,7 @@ import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCount, formatCountWithUnit } from "@/commons/utils/format-count";
 import { getHQInspection } from "@/features/admin/hq-inspection/api/hq-inspection";
 import type { StoreInspectionItem } from "@/features/admin/hq-inspection/types/hq-inspection";
 
@@ -62,9 +63,9 @@ export function HQInspectionPage() {
       {/* Summary */}
       <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: "생산 준수 매장", value: `${compliantCount} / ${inspections.length}`, tone: "success" },
+          { label: "생산 준수 매장", value: `${formatCount(compliantCount)} / ${formatCount(inspections.length)}`, tone: "success" },
           { label: "평균 알림 대응률", value: `${avgResponseRate}%`, tone: "primary" },
-          { label: "미준수 매장", value: `${noncompliantCount}개`, tone: "danger" },
+          { label: "미준수 매장", value: formatCountWithUnit(noncompliantCount, "개"), tone: "danger" },
         ].map((item) => (
           <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>

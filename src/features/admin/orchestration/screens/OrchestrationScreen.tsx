@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
 // import { orchestrationStats } from "@/commons/constants/page-content";
-import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
+import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getAuditLogs } from "@/features/analytics/api/analytics";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 
@@ -72,9 +73,9 @@ export function OrchestrationPage() {
       {/* Summary metrics */}
       <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${logs.length}건 중 ${logs.filter((l) => l.route === "stub_repository").length}건`, tone: "success" },
-          { label: "민감정보 차단 건수", value: `${blockedCount}건`, desc: "전체 기준", tone: "danger" },
-          { label: "총 처리 건수", value: `${logs.length}건`, desc: "감사 로그 기준", tone: "primary" },
+          { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === "stub_repository").length, "건")}`, tone: "success" },
+          { label: "민감정보 차단 건수", value: formatCountWithUnit(blockedCount, "건"), desc: "전체 기준", tone: "danger" },
+          { label: "총 처리 건수", value: formatCountWithUnit(logs.length, "건"), desc: "감사 로그 기준", tone: "primary" },
         ].map((item) => (
           <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>

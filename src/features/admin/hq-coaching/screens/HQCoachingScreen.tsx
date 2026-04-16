@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getHQCoaching } from "@/features/admin/hq-coaching/api/hq-coaching";
 
 const statusConfig = {
@@ -33,9 +34,9 @@ export function HQCoachingPage() {
       {/* Summary row */}
       <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: "정상 완료", value: `${normalCount}개`, className: "bg-green-50 text-green-600 border border-green-100" },
-          { label: "검토 필요", value: `${reviewCount}개`, className: "bg-orange-50 text-orange-600 border border-orange-100" },
-          { label: "미완료", value: `${riskCount}개`, className: "bg-red-50 text-red-600 border border-red-100" },
+          { label: "정상 완료", value: formatCountWithUnit(normalCount, "개"), className: "bg-green-50 text-green-600 border border-green-100" },
+          { label: "검토 필요", value: formatCountWithUnit(reviewCount, "개"), className: "bg-orange-50 text-orange-600 border border-orange-100" },
+          { label: "미완료", value: formatCountWithUnit(riskCount, "개"), className: "bg-red-50 text-red-600 border border-red-100" },
         ].map((item) => (
           <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>

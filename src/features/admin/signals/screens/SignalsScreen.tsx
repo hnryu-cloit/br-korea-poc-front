@@ -2,6 +2,7 @@ import { TrendingUp, TrendingDown, Minus, Bell } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getSignals } from "@/features/admin/signals/api/signals";
 import type { SalesSignal } from "@/features/admin/signals/types/signals";
 
@@ -42,7 +43,7 @@ export function SignalsPage() {
         {highCount > 0 ? (
           <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-600">
             <Bell className="h-4 w-4" />
-            긴급 시그널 {highCount}건 · 즉시 검토 필요
+            긴급 시그널 {formatCountWithUnit(highCount, "건")} · 즉시 검토 필요
           </div>
         ) : null}
       </PageHero>

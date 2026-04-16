@@ -1,5 +1,6 @@
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/production/types/production";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 
 export function ProductionTableSection({
   items,
@@ -43,22 +44,22 @@ export function ProductionTableSection({
                 <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
                 <td className="px-4 py-4 font-semibold text-slate-800">{sku.sku_name}</td>
                 <td className="px-4 py-4">
-                  <div className="font-bold text-slate-900">{sku.current_stock}개</div>
+                  <div className="font-bold text-slate-900">{formatCountWithUnit(sku.current_stock, "개")}</div>
                   <div className="mt-2 h-2 rounded-full bg-slate-100">
                     <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${Math.min((sku.current_stock / 60) * 100, 100)}%` }} />
                   </div>
                 </td>
                 <td className="px-4 py-4">
                   <span className={`font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-600" : "text-green-600"}`}>
-                    {sku.forecast_stock_1h}개
+                    {formatCountWithUnit(sku.forecast_stock_1h, "개")}
                   </span>
                 </td>
                 <td className="px-4 py-4">
-                  <div className="font-semibold text-slate-800">{sku.avg_first_production_qty_4w}개</div>
+                  <div className="font-semibold text-slate-800">{formatCountWithUnit(sku.avg_first_production_qty_4w, "개")}</div>
                   <div className="text-xs text-slate-400">{sku.avg_first_production_time_4w}</div>
                 </td>
                 <td className="px-4 py-4">
-                  <div className="font-semibold text-slate-800">{sku.avg_second_production_qty_4w}개</div>
+                  <div className="font-semibold text-slate-800">{formatCountWithUnit(sku.avg_second_production_qty_4w, "개")}</div>
                   <div className="text-xs text-slate-400">{sku.avg_second_production_time_4w}</div>
                 </td>
                 <td className="px-4 py-4">

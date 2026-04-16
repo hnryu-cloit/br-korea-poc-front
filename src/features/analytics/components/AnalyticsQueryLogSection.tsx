@@ -1,5 +1,6 @@
 import { BarChart3 } from "lucide-react";
 
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import {
   ANALYTICS_CATEGORIES,
   ROUTE_LABEL,
@@ -33,7 +34,7 @@ export const AnalyticsQueryLogSection = ({
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-6 py-5">
       <div>
         <p className="text-base font-semibold text-slate-900">질의 처리 로그</p>
-        <p className="mt-0.5 text-xs text-slate-400">매출 도메인 · SQL/API 우선 처리율 {sqlPct}% · 차단 {blockedCount}건</p>
+        <p className="mt-0.5 text-xs text-slate-400">매출 도메인 · SQL/API 우선 처리율 {sqlPct}% · 차단 {formatCountWithUnit(blockedCount, "건")}</p>
       </div>
       <div className="flex flex-wrap gap-2">
         {ANALYTICS_CATEGORIES.map((category) => (
@@ -100,7 +101,7 @@ export const AnalyticsQueryLogSection = ({
 
     <div className="border-t border-border/40 px-6 py-4">
       <div className="flex items-center justify-between text-xs text-slate-400">
-        <span>매출 도메인 총 {allLogsCount}건 처리 · SQL/API 우선 처리율 {sqlPct}%</span>
+        <span>매출 도메인 총 {formatCountWithUnit(allLogsCount, "건")} 처리 · SQL/API 우선 처리율 {sqlPct}%</span>
         <div className="flex items-center gap-2">
           <BarChart3 className="h-3.5 w-3.5" />
           감사 로그 기준

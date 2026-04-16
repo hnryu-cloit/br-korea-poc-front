@@ -1,3 +1,4 @@
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingOptionCard({
@@ -32,7 +33,7 @@ export function OrderingOptionCard({
           {option.items.map((item) => (
             <div key={`${option.option_id}-${item.sku_name}`} className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm">
               <span className="text-slate-600">{item.sku_name}</span>
-              <span className="font-bold text-slate-800">{item.quantity}개</span>
+              <span className="font-bold text-slate-800">{formatCountWithUnit(item.quantity, "개")}</span>
             </div>
           ))}
         </div>

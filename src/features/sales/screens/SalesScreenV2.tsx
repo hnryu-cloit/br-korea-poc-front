@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { SalesV2ChatPanel } from "@/features/sales/components/SalesV2ChatPanel";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
@@ -60,9 +61,9 @@ export const SalesScreenV2 = () => {
     const evidencePct = assistantMessages.length > 0 ? Math.round((withEvidence / assistantMessages.length) * 100) : 0;
     return [
       { label: "응답 유형", value: "SQL/API 우선", tone: "primary" as const },
-      { label: "추천 질문", value: `${suggestedPrompts.length}개`, tone: "success" as const },
+      { label: "추천 질문", value: formatCountWithUnit(suggestedPrompts.length, "개"), tone: "success" as const },
       { label: "출처 포함", value: `${evidencePct}%`, tone: "default" as const },
-      { label: "차단 건수", value: `${blockedCount}건`, tone: blockedCount > 0 ? ("danger" as const) : ("default" as const) },
+      { label: "차단 건수", value: formatCountWithUnit(blockedCount, "건"), tone: blockedCount > 0 ? ("danger" as const) : ("default" as const) },
     ];
   }, [messages, suggestedPrompts.length]);
 
