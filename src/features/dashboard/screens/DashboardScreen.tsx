@@ -1,4 +1,5 @@
 import { DashboardHero } from "@/features/dashboard/components/DashboardHero";
+import { DashboardLoadingSkeleton } from "@/features/dashboard/components/DashboardLoadingSkeleton";
 import { InsightsSection } from "@/features/dashboard/components/InsightsSection";
 import { PriorityActionsSection } from "@/features/dashboard/components/PriorityActionsSection";
 import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
@@ -20,13 +21,28 @@ export function DashboardPage() {
   const priorityActions = overviewQuery.data?.priority_actions ?? [];
   const stats = overviewQuery.data?.stats ?? [];
   const cards = overviewQuery.data?.cards ?? [];
+  const isInitialLoading = overviewQuery.isLoading && !overviewQuery.data;
+  const isRefreshing = overviewQuery.isFetching && !isInitialLoading;
 
   return (
     <div className="space-y-6">
       <DashboardHero updatedAt={overviewQuery.data?.updated_at} />
-      <PriorityActionsSection actions={priorityActions} />
-      <DashboardStatsTiles stats={stats} />
-      <SummaryCardsSection cards={cards} />
+      {isRefreshing ? (
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-[#2454C8]" />
+          데이터 요청 중...
+        </div>
+      ) : null}
+
+      {isInitialLoading ? (
+        <DashboardLoadingSkeleton />
+      ) : (
+        <>
+          <PriorityActionsSection actions={priorityActions} />
+          <DashboardStatsTiles stats={stats} />
+          <SummaryCardsSection cards={cards} />
+        </>
+      )}
       <InsightsSection insights={INSIGHTS} />
     </div>
   );
