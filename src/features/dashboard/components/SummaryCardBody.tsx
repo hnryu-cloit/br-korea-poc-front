@@ -3,6 +3,10 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
+import {
+  formatDashboardValueWithUnit,
+  parseDashboardHighlight,
+} from "@/commons/utils/dashboard-formatters";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import type { SalesQueryResponse } from "@/features/sales/types/sales";
@@ -20,18 +24,6 @@ const metricToneClassMap: Record<NonNullable<NonNullable<DashboardSummaryCard["m
   danger: "text-red-600",
 };
 
-const parseHighlight = (text: string): { title: string; detail?: string } => {
-  const byDot = text.split("·").map((item) => item.trim()).filter(Boolean);
-  if (byDot.length > 1) {
-    return { title: byDot[0], detail: byDot.slice(1).join(" · ") };
-  }
-  const byColon = text.split(":").map((item) => item.trim()).filter(Boolean);
-  if (byColon.length > 1) {
-    return { title: byColon[0], detail: byColon.slice(1).join(": ") };
-  }
-  return { title: text };
-};
-
 export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const [latestResponse, setLatestResponse] = useState<SalesQueryResponse | null>(null);
   const [lastQuestion, setLastQuestion] = useState<string>("");
@@ -39,8 +31,8 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const postSalesQueryMutation = usePostSalesQueryMutation();
 
   const parsedHighlights = useMemo(
-    () => card.highlights.map(parseHighlight),
-    [card.highlights],
+    () => card.highlights_text.map(parseDashboardHighlight),
+    [card.highlights_text],
   );
 
   const runPrompt = async (prompt: string) => {
@@ -147,7 +139,7 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
         </div>
         <div className="mt-3">
           <Link
-            to={card.cta_path}
+            to={card.cta.path}
             state={{
               source: "dashboard-card-chat",
               domain: card.domain,
@@ -180,10 +172,10 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
       <section>
         <div className="grid grid-cols-2 gap-2">
           {card.metrics.map((metric) => (
-            <div key={metric.label} className="rounded-lg border border-[#edf2f7] bg-[#fbfcfe] px-3 py-2">
+            <div key={metric.key} className="rounded-lg border border-[#edf2f7] bg-[#fbfcfe] px-3 py-2">
               <p className="text-[11px] font-medium text-slate-400">{metric.label}</p>
               <p className={`mt-1 text-base font-semibold ${metricToneClassMap[metric.tone ?? "default"]}`}>
-                {metric.value}
+                {formatDashboardValueWithUnit(metric.value, metric.unit)}
               </p>
             </div>
           ))}

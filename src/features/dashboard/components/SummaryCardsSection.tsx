@@ -20,8 +20,8 @@ export function SummaryCardsSection({
           statusLabel={card.status_label}
           deadlineMinutes={card.deadline_minutes}
           deliveryScheduled={card.delivery_scheduled}
-          to={card.cta_path}
-          cta={card.cta_label}
+          to={card.cta.path}
+          cta={card.cta.label}
         >
           <SummaryCardBody card={card} />
         </SummaryCard>

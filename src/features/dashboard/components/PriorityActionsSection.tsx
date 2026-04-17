@@ -63,21 +63,21 @@ export function PriorityActionsSection({ actions }: { actions: DashboardPriority
             <div className="mt-4">
               {action.is_finished_good ? (
                 <Link
-                  to={action.cta_path}
+                  to={action.cta.path}
                   className="inline-flex h-9 items-center justify-center rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
                 >
-                  {action.cta_label}
+                  {action.cta.label}
                 </Link>
               ) : action.urgency === "recommended" ? (
                 <Link
-                  to={action.cta_path}
+                  to={action.cta.path}
                   className="inline-flex h-9 items-center justify-center rounded-xl border border-[#cfe0ff] bg-white px-3 text-xs font-semibold text-[#2454C8] transition-colors hover:bg-[#f5f9ff]"
                 >
-                  {action.cta_label}
+                  {action.cta.label}
                 </Link>
               ) : (
                 <Link
-                  to={action.cta_path}
+                  to={action.cta.path}
                   className={cn(
                     "inline-flex h-9 items-center justify-center rounded-xl px-3 text-xs font-semibold text-white transition-colors",
                     action.urgency === "urgent"
@@ -85,7 +85,7 @@ export function PriorityActionsSection({ actions }: { actions: DashboardPriority
                       : "bg-[#2454C8] hover:bg-[#1d44a8]",
                   )}
                 >
-                  {action.cta_label}
+                  {action.cta.label}
                 </Link>
               )}
             </div>

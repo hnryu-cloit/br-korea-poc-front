@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { formatDashboardStatValue } from "@/commons/utils/dashboard-formatters";
 
 import type { DashboardStatItem } from "@/features/dashboard/types/dashboard";
 
@@ -31,7 +32,11 @@ export function DashboardStatsTiles({ stats }: { stats: DashboardStatItem[] }) {
             {stat.label}
           </p>
           <p className={cn("mt-2 text-2xl font-bold leading-tight", statToneClassMap[stat.tone])}>
-            {stat.value}
+            {formatDashboardStatValue({
+              key: stat.key,
+              value: stat.value,
+              unit: stat.unit,
+            })}
           </p>
         </article>
       ))}

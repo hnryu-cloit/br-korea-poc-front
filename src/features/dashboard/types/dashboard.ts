@@ -31,19 +31,23 @@ export interface DashboardPriorityAction {
   badge_label: string;
   title: string;
   description: string;
-  cta_label: string;
-  cta_path: string;
+  cta: {
+    label: string;
+    path: string;
+  };
   focus_section?: string;
   related_sku_id?: string;
   ai_reasoning?: string;
   confidence_score?: number;
-  is_finished_good: boolean;  
+  is_finished_good: boolean;
+  basis_data?: Record<string, string | number | boolean | null | undefined>;
 }
 
 export interface DashboardStatItem {
   key: "production_risk_count" | "ordering_deadline_minutes" | "today_profit_estimate" | "alert_count";
   label: string;
-  value: string;
+  value: number | string;
+  unit?: "count" | "minutes";
   tone: "danger" | "primary" | "success" | "default";
 }
 
@@ -53,20 +57,25 @@ export interface DashboardHighlightItem {
   tone?: "danger" | "warning" | "success" | "info" | "neutral";
 }
 export interface DashboardMetricItem {
+  key: string;
   label: string;
-  value: string;
+  value: number | string;
+  unit?: "count" | "minutes";
   tone?: "danger" | "primary" | "success" | "default";
 }
 export interface DashboardSummaryCard {
   domain: DashboardDomain;
   title: string;
   description: string;
-  highlights: string[];
+  highlights_text: string[];
+  highlights_data: Array<Record<string, string | number | boolean | null>>;
   metrics: DashboardMetricItem[];
-  cta_label: string;
-  cta_path: string;
+  cta: {
+    label: string;
+    path: string;
+  };
   prompts: string[];
-  status_label?:string;
+  status_label?: string;
   deadline_minutes?: number;
   delivery_scheduled?: boolean;
 }
