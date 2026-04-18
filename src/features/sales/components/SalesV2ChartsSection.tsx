@@ -5,9 +5,13 @@ const formatWonShort = (value: number) => `${Math.round(value / 10000).toLocaleS
 export const SalesV2ChartsSection = ({
   summary,
   isLoading,
+  dateFrom,
+  dateTo,
 }: {
   summary?: SalesSummaryResponse;
   isLoading: boolean;
+  dateFrom: string;
+  dateTo: string;
 }) => {
   const weekly = summary?.weekly_data ?? [];
   const maxRevenue = Math.max(...weekly.map((item) => item.revenue), 1);
@@ -20,7 +24,9 @@ export const SalesV2ChartsSection = ({
       <article className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="mb-4">
           <p className="text-sm font-bold text-slate-800">주간 매출/순매출 추이</p>
-          <p className="mt-1 text-xs text-slate-400">점포 일자별 실매출 기준</p>
+          <p className="mt-1 text-xs text-slate-400">
+            {dateFrom} ~ {dateTo} 점포 일자별 실매출 기준
+          </p>
         </div>
         {isLoading ? (
           <p className="text-sm text-slate-400">차트 데이터를 불러오는 중...</p>

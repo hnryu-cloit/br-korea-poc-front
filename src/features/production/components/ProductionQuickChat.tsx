@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 
 import type { DashboardCardChatHistoryItem } from "@/commons/utils/dashboard-card-chat-history";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 
@@ -22,6 +23,7 @@ export function ProductionQuickChat({
   initialHistory?: DashboardCardChatHistoryItem[];
   initialInput?: string;
 }) {
+  const { user } = useDemoSession();
   const [messages, setMessages] = useState<ProductionQuickChatMessage[]>(() =>
     initialHistory.flatMap((item) => [
       { id: productionChatMessageId++, role: "user" as const, text: item.question },
@@ -35,8 +37,8 @@ export function ProductionQuickChat({
     ]),
   );
   const [input, setInput] = useState(initialInput);
-  const postSalesQueryMutation = usePostSalesQueryMutation();
-  const { data: prompts = [] } = useGetSalesPromptsQuery();
+  const postSalesQueryMutation = usePostSalesQueryMutation(user.storeId, "production");
+  const { data: prompts = [] } = useGetSalesPromptsQuery({ store_id: user.storeId, domain: "production" });
 
   const sendMessage = async (rawText: string) => {
     const text = rawText.trim();
@@ -75,21 +77,6 @@ export function ProductionQuickChat({
     <section className="overflow-hidden rounded-[28px] border border-[#dbe6fb] bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="border-b border-[#e6edf9] px-6 py-5">
         <p className="text-sm font-bold text-slate-900">생산 관련 빠른 질문</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {prompts.map((item) => (
-            <button
-              key={item.prompt}
-              type="button"
-              onClick={() => {
-                void sendMessage(item.prompt);
-              }}
-              disabled={postSalesQueryMutation.isPending}
-              className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="max-h-[340px] min-h-[220px] space-y-4 overflow-y-auto px-6 py-5">
@@ -140,6 +127,21 @@ export function ProductionQuickChat({
       </div>
 
       <div className="border-t border-[#e6edf9] px-6 py-4">
+        <div className="mb-3 flex flex-wrap gap-2">
+          {prompts.map((item) => (
+            <button
+              key={item.prompt}
+              type="button"
+              onClick={() => {
+                void sendMessage(item.prompt);
+              }}
+              disabled={postSalesQueryMutation.isPending}
+              className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
         <div className="flex gap-2">
           <input
             value={input}

@@ -28,7 +28,7 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const [latestResponse, setLatestResponse] = useState<SalesQueryResponse | null>(null);
   const [lastQuestion, setLastQuestion] = useState<string>("");
   const [lastHistoryId, setLastHistoryId] = useState<string>("");
-  const postSalesQueryMutation = usePostSalesQueryMutation();
+  const postSalesQueryMutation = usePostSalesQueryMutation(undefined, card.domain);
 
   const parsedHighlights = useMemo(
     () => card.highlights_text.map(parseDashboardHighlight),

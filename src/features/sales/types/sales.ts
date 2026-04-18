@@ -177,6 +177,10 @@ export interface GetSalesInsightsRequest {
   date_to?: string; // 조회 종료일
 }
 
+export interface GetSalesPromptsRequest extends GetSalesInsightsRequest {
+  domain?: "production" | "ordering" | "sales";
+}
+
 export interface GetSalesInsightsResponse {
   sections: SalesInsightSectionItem[]; // 인사이트 섹션 목록
 }
@@ -188,7 +192,7 @@ export interface GetSalesInsightsResponse {
 export interface CreateSalesQueryRequest {
   store_id: string; // 질의 대상 매장 ID
   prompt: string; // 사용자가 입력한 자연어 질문
-  domain?: "sales"; // 질의 도메인 식별자
+  domain?: "production" | "ordering" | "sales"; // 질의 도메인 식별자
 }
 
 /**
@@ -224,6 +228,33 @@ export interface CreateSalesQueryResponse {
   processing_route?: string | null; // 응답 생성 처리 경로
   blocked: boolean; // 정책상 차단된 질의 여부
   masked_fields?: string[]; // 마스킹 처리된 필드 목록
+}
+
+export interface SalesVisualDataset {
+  label: string;
+  data: number[];
+}
+
+export interface SalesVisualChartData {
+  type?: "line" | "bar" | "pie" | string;
+  labels?: string[];
+  datasets?: SalesVisualDataset[];
+}
+
+export interface SalesVisualData {
+  type?: "line" | "bar" | "pie" | string;
+  labels?: string[];
+  datasets?: SalesVisualDataset[];
+  channel_analysis?: {
+    online_amt?: number;
+    offline_amt?: number;
+    online_rate?: number;
+    offline_rate?: number;
+  };
+  profit_simulation?: {
+    estimated_margin_rate?: number;
+    estimated_profit?: number;
+  };
 }
 
 export interface SalesSummaryWeeklyItem {
@@ -266,6 +297,26 @@ export interface SalesInsightsResponse {
   filtered_date_to?: string | null;
 }
 
+export interface SalesCampaignEffectPeriod {
+  label: string;
+  start_date?: string | null;
+  end_date?: string | null;
+  revenue: number;
+}
+
+export interface SalesCampaignEffectResponse {
+  campaign_code: string;
+  campaign_name: string;
+  benefit_type: string;
+  item_group_count: number;
+  item_count: number;
+  discount_cost: number;
+  uplift_revenue: number;
+  roi_pct: number;
+  payback_days?: number | null;
+  periods: SalesCampaignEffectPeriod[];
+}
+
 export type SalesComparison = SalesQueryComparison;
 
 export interface SalesQueryResponse extends CreateSalesQueryResponse {
@@ -273,5 +324,5 @@ export interface SalesQueryResponse extends CreateSalesQueryResponse {
   confidence_score?: number;
   semantic_logic?: string;
   sources?: string[];
-  visual_data?: unknown;
+  visual_data?: SalesVisualData | null;
 }

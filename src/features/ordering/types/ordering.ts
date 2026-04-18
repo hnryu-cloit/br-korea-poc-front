@@ -124,6 +124,28 @@ export interface OrderingDeadlineResponse {
   is_passed: boolean; // 마감 경과 여부
 }
 
+// GET /api/ordering/history
+export interface OrderingHistoryParams {
+  store_id?: string;
+  limit?: number;
+}
+
+export interface OrderingHistoryItem {
+  item_nm: string;
+  dlv_dt?: string | null;
+  ord_qty?: number | null;
+  confrm_qty?: number | null;
+  is_auto: boolean;
+  ord_grp_nm?: string | null;
+}
+
+export interface OrderingHistoryResponse {
+  items: OrderingHistoryItem[];
+  auto_rate: number;
+  manual_rate: number;
+  total_count: number;
+}
+
 // GET /api/ordering/selections/summary
 export interface OrderingSelectionSummaryParams {
   store_id?: string; // 매장 필터

@@ -1,4 +1,4 @@
-import type { SalesQueryResponse } from "@/features/sales/types/sales";
+import type { SalesQueryResponse, SalesVisualData } from "@/features/sales/types/sales";
 
 export type SalesV2Comparison = {
   store: string;
@@ -14,6 +14,7 @@ export type SalesV2Message = {
   evidence?: string[];
   actions?: string[];
   comparison?: SalesV2Comparison;
+  visualData?: SalesVisualData | null;
   queryType?: string | null;
   processingRoute?: string | null;
   blocked?: boolean;

@@ -6,12 +6,16 @@ import { StatsGrid } from "@/commons/components/page/page-layout";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { ProductionAlertsSection } from "@/features/production/components/ProductionAlertsSection";
 import { ProductionHero } from "@/features/production/components/ProductionHero";
+import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
 import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
+import { ProductionWasteSection } from "@/features/production/components/ProductionWasteSection";
+import { useGetProductionInventoryStatusQuery } from "@/features/production/queries/useGetProductionInventoryStatusQuery";
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
 import { useGetProductionOverviewQuery } from "@/features/production/queries/useGetProductionOverviewQuery";
 import { useGetProductionSkuListQuery } from "@/features/production/queries/useGetProductionSkuListQuery";
+import { useGetProductionWasteQuery } from "@/features/production/queries/useGetProductionWasteQuery";
 import { usePostProductionRegistrationMutation } from "@/features/production/queries/usePostProductionRegistrationMutation";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import type {
@@ -43,6 +47,8 @@ export function ProductionPage() {
   });
   const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, user.storeId);
   const postRegistrationMutation = usePostProductionRegistrationMutation();
+  const wasteQuery = useGetProductionWasteQuery(user.storeId ?? "");
+  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "");
 
   const items = skuListQuery.data?.items ?? [];
   const stats = overviewQuery.data?.summary_stats ?? [];
@@ -101,6 +107,8 @@ export function ProductionPage() {
         onChangePage={setPage}
         onOpenRegister={openRegister}
       />
+      <ProductionWasteSection data={wasteQuery.data} isLoading={wasteQuery.isLoading} />
+      <ProductionInventoryStatusSection data={inventoryStatusQuery.data} isLoading={inventoryStatusQuery.isLoading} />
       {activeSku ? (
         <AppModal onClose={closeRegister}>
           <ProductionRegistrationPanel

@@ -9,19 +9,21 @@ import { OrderingConfirmedSummary } from "@/features/ordering/components/Orderin
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
 import { OrderingHero } from "@/features/ordering/components/OrderingHero";
+import { OrderingHistorySection } from "@/features/ordering/components/OrderingHistorySection";
 import { OrderingOptionsSection } from "@/features/ordering/components/OrderingOptionsSection";
 import { OrderingPrincipleNotice } from "@/features/ordering/components/OrderingPrincipleNotice";
 import { OrderingQuickChat } from "@/features/ordering/components/OrderingQuickChat";
-import {
-  orderingQuickPrompts,
-} from "@/features/ordering/constants/ordering";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
+import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
+import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import type { HighlightStat } from "@/commons/constants/page-content";
 
 export function OrderingPage() {
+  const { user } = useDemoSession();
   const location = useLocation();
   const routeState = location.state as {
     source?: string;
@@ -41,7 +43,9 @@ export function OrderingPage() {
   const [showChat, setShowChat] = useState(fromDashboardOrdering);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
+  const orderingPromptsQuery = useGetSalesPromptsQuery({ store_id: user.storeId, domain: "ordering" });
   const contextQuery = useGetOrderingContextQuery(notificationId);
+  const historyQuery = useGetOrderingHistoryQuery(user.storeId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
   useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 20) * 60, confirmed);
   const orderingOptions = useMemo(
@@ -58,6 +62,24 @@ export function OrderingPage() {
     () => orderingOptions.find((option) => option.option_id === effectiveSelectedOptionId) ?? null,
     [effectiveSelectedOptionId, orderingOptions],
   );
+  const orderingQuickPrompts = useMemo(() => {
+    const recommended = orderingOptions.find((option) => option.recommended);
+    const recommendedLabel = recommended?.title ?? "추천안";
+    const deadline = optionsQuery.data?.deadline_minutes ?? 20;
+    return [
+      `${user.storeName} 기준 ${recommendedLabel} 추천 근거는?`,
+      `오늘 주문 마감 ${deadline}분 전 우선 확인 항목은?`,
+      `${user.storeName}의 어제 대비 주문 변화 원인은?`,
+      `지금 선택한 주문안의 품절 리스크는?`,
+    ];
+  }, [optionsQuery.data?.deadline_minutes, orderingOptions, user.storeName]);
+  const quickPromptCandidates = useMemo(() => {
+    const aiPrompts = (orderingPromptsQuery.data ?? []).map((item) => item.prompt).filter(Boolean);
+    if (aiPrompts.length > 0) {
+      return aiPrompts.slice(0, 4);
+    }
+    return orderingQuickPrompts.slice(0, 4);
+  }, [orderingPromptsQuery.data, orderingQuickPrompts]);
   const dashboardChatHistory = fromDashboardOrdering && routeState?.chatHistoryId
     ? getDashboardCardChatHistory("ordering").filter((item) => item.id === routeState.chatHistoryId)
     : [];
@@ -110,7 +132,7 @@ export function OrderingPage() {
       <OrderingHero showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
       {showChat ? (
         <OrderingQuickChat
-          prompts={orderingQuickPrompts}
+          prompts={quickPromptCandidates}
           initialHistory={dashboardChatHistory}
           initialInput={
             fromDashboardOrdering && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
@@ -138,6 +160,7 @@ export function OrderingPage() {
           errorMessage={submitError}
         />
       ) : null}
+      <OrderingHistorySection data={historyQuery.data} isLoading={historyQuery.isLoading} />
     </div>
   );
 }

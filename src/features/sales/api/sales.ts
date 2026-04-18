@@ -2,9 +2,11 @@ import axiosInstance from "@/services/axiosInstance";
 
 import type {
   GetSalesPromptsResponse,
+  GetSalesPromptsRequest,
   GetSalesInsightsRequest,
   SalesInsightsResponse,
   SalesInsightSection,
+  SalesCampaignEffectResponse,
   SalesPrompt,
   SalesQueryResponse,
   SalesSummaryResponse,
@@ -62,8 +64,17 @@ const appendOperationalFilters = (
 //   return response.data;
 // };
 
-export const getSalesPrompts = async (): Promise<SalesPrompt[]> => {
-  const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>("/api/sales/prompts");
+export const getSalesPrompts = async (
+  filters?: GetSalesPromptsRequest,
+): Promise<SalesPrompt[]> => {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  if (filters?.domain) {
+    query.set("domain", filters.domain);
+  }
+  const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>("/api/sales/prompts", {
+    params: Object.fromEntries(query.entries()),
+  });
   const payload = response.data;
 
   if (Array.isArray(payload)) {
@@ -73,10 +84,15 @@ export const getSalesPrompts = async (): Promise<SalesPrompt[]> => {
   return payload.items ?? [];
 };
 
-export const postSalesQuery = async (prompt: string, storeId?: string) => {
+export const postSalesQuery = async (
+  prompt: string,
+  storeId?: string,
+  domain?: "production" | "ordering" | "sales",
+) => {
   const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", {
     prompt,
     ...(storeId ? { store_id: storeId } : {}),
+    ...(domain ? { domain } : {}),
   });
   return response.data;
 };
@@ -116,4 +132,15 @@ export const getSalesInsights = async (
   }
 
   return payload as SalesInsightsResponse;
+};
+
+export const getSalesCampaignEffect = async (
+  filters?: GetSalesInsightsRequest,
+): Promise<SalesCampaignEffectResponse> => {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  const response = await axiosInstance.get<SalesCampaignEffectResponse>("/api/sales/campaign-effect", {
+    params: Object.fromEntries(query.entries()),
+  });
+  return response.data;
 };

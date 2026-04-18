@@ -2,6 +2,7 @@ import { BarChart3, Send, ShieldAlert } from "lucide-react";
 import type { RefObject } from "react";
 
 import { SectionHint } from "@/features/sales/components/SectionHint";
+import { SalesV2QueryDataChart } from "@/features/sales/components/SalesV2QueryDataChart";
 import {
   SALES_V2_HINT_QUESTIONS,
   SALES_V2_QUERY_TYPE_LABEL,
@@ -13,17 +14,23 @@ import type { SalesV2Message } from "@/features/sales/types/sales-v2";
 
 export const SalesV2ChatPanel = ({
   messages,
+  prompts,
+  promptsLoading,
   input,
   loading,
   bottomRef,
   onChangeInput,
+  onSelectPrompt,
   onSubmitInput,
 }: {
   messages: SalesV2Message[];
+  prompts: { label: string; prompt: string }[];
+  promptsLoading: boolean;
   input: string;
   loading: boolean;
   bottomRef: RefObject<HTMLDivElement>;
   onChangeInput: (value: string) => void;
+  onSelectPrompt: (prompt: string) => void;
   onSubmitInput: () => void;
 }) => {
   const latestAssistantMessage = [...messages].reverse().find((message) => message.role === "assistant");
@@ -94,6 +101,11 @@ export const SalesV2ChatPanel = ({
                   </div>
                 ) : null}
 
+                <SalesV2QueryDataChart
+                  comparison={msg.comparison}
+                  visualData={msg.visualData}
+                />
+
                 {msg.actions?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {msg.actions.map((action) => (
@@ -125,6 +137,20 @@ export const SalesV2ChatPanel = ({
       </div>
 
       <div className="border-t border-border/60 px-5 py-4">
+        <div className="mb-3 flex flex-wrap gap-2">
+          {prompts.map((item) => (
+            <button
+              key={item.prompt}
+              type="button"
+              onClick={() => onSelectPrompt(item.prompt)}
+              disabled={loading}
+              className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {item.label}
+            </button>
+          ))}
+          {promptsLoading ? <p className="px-1 py-2 text-xs text-slate-400">추천 질문 불러오는 중...</p> : null}
+        </div>
         <div className="flex gap-2">
           <input
             value={input}

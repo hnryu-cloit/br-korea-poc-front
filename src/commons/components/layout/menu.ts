@@ -28,7 +28,10 @@ export const menuSections: MenuSection[] = [
   {
     section: "분석",
     roles: ["store_owner", "hq_admin"],
-    items: [{ to: "/analytics", label: "매출 조회", icon: "analytics" }],
+    items: [
+      { to: "/analytics", label: "매출 조회", icon: "analytics" },
+      { to: "/analytics/market", label: "상권·고객 분석", icon: "store" },
+    ],
   },
   {
     section: "본사",
@@ -46,6 +49,13 @@ export const menuSections: MenuSection[] = [
       { to: "/signals", label: "매출 시그널", icon: "monitoring" },
     ],
   },
+  {
+    section: "관리",
+    roles: ["hq_admin"],
+    items: [
+      { to: "/settings", label: "AI 설정", icon: "tune" },
+    ],
+  },
 ];
 
 export const routeDescriptions: Record<string, string> = {
@@ -54,6 +64,8 @@ export const routeDescriptions: Record<string, string> = {
   "/ordering": "주문 누락 방지를 위한 주문 추천안을 비교합니다.",
   "/sales": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
   "/analytics": "매출 데이터를 조회합니다.",
+  "/analytics/market": "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.",
+  "/settings": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",
   "/hq/coaching": "담당 매장 주문 현황을 확인합니다.",
   "/hq/inspection": "매장별 생산 준수 현황을 점검합니다.",
   "/orchestration": "시스템 보안 정책 현황을 확인합니다.",

@@ -10,6 +10,8 @@
  */
 export interface GetAnalyticsMetricsRequest {
   store_id?: string; // 필터링할 매장 ID
+  date_from?: string; // 조회 시작일
+  date_to?: string; // 조회 종료일
 }
 
 /**
@@ -65,4 +67,33 @@ export interface AuditLogEntry extends AuditLogItem {
 export interface AuditLogListResponse extends GetAuditLogsResponse {
   items: AuditLogEntry[];
   filtered_domain?: string | null;
+}
+
+export interface StoreProfileResponse {
+  store_cd: string;
+  store_nm: string;
+  sido: string;
+  region: string;
+  store_type: string;
+  area_pyeong: number;
+  business_type: string;
+  peer_count: number;
+  actual_sales_amt: number;
+}
+
+export interface CustomerSegmentItem {
+  segment_nm: string;
+  count: number;
+}
+
+export interface TelecomDiscountItem {
+  name: string;
+  type_nm: string;
+  value: string;
+  method_nm: string;
+}
+
+export interface CustomerProfileResponse {
+  customer_segments: CustomerSegmentItem[];
+  telecom_discounts: TelecomDiscountItem[];
 }

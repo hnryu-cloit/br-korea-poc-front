@@ -47,7 +47,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === "/"}
+                    end
                     onClick={onClose}
                     className={({ isActive }) =>
                       cn(

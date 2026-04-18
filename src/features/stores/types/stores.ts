@@ -4,6 +4,8 @@ export interface Store {
   sido: string;
   region: string;
   store_type: string;
+  business_type?: string;
+  store_area_pyeong?: number | string;
 }
 
 export interface GetStoresResponse {

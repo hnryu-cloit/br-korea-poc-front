@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
-// import { orchestrationStats } from "@/commons/constants/page-content";
 import { PageHero } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
-import { getAuditLogs } from "@/features/analytics/api/analytics";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
+import { useOrchestrationScreen } from "@/features/admin/orchestration/hooks/useOrchestrationScreen";
+import type {
+  PromptDomainKey,
+} from "@/features/admin/orchestration/types/orchestration";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const ROUTE_COLOR: Record<string, string> = {
   stub_repository: "bg-[#eef4ff] text-[#2454C8]",
@@ -42,6 +44,14 @@ const policyItems = [
   { label: "퍼블릭 LLM 직접 전송 제한", description: "민감정보 마스킹 후 요약 컨텍스트만 전달" },
 ];
 
+const DOMAIN_KEYS: PromptDomainKey[] = ["production", "ordering", "sales"];
+
+const DOMAIN_LABEL: Record<PromptDomainKey, string> = {
+  production: "생산관리",
+  ordering: "주문관리",
+  sales: "손익분석",
+};
+
 function getQueryFromMetadata(entry: AuditLogEntry): string {
   const meta = entry.metadata as Record<string, unknown>;
   if (typeof meta?.prompt === "string") return meta.prompt;
@@ -49,18 +59,21 @@ function getQueryFromMetadata(entry: AuditLogEntry): string {
 }
 
 export function OrchestrationPage() {
-  const logsQuery = useQuery({
-    queryKey: ["audit-logs"],
-    queryFn: () => getAuditLogs(undefined, 50),
-    refetchInterval: 10_000,
-  });
-
-  const logs = logsQuery.data?.items ?? [];
-  const isBlocked = (entry: AuditLogEntry) => entry.route === "policy_block" || entry.outcome === "blocked";
-  const sqlPct = logs.length > 0
-    ? Math.round(logs.filter((l) => l.route === "stub_repository").length / logs.length * 100)
-    : 0;
-  const blockedCount = logs.filter(isBlocked).length;
+  const { user } = useDemoSession();
+  const {
+    logsQuery,
+    promptSettingsQuery,
+    saveMutation,
+    form,
+    saveMessage,
+    logs,
+    sqlPct,
+    blockedCount,
+    updatedAtText,
+    isBlocked,
+    handleDomainChange,
+    handleSavePromptSettings,
+  } = useOrchestrationScreen();
 
   return (
     <div className="space-y-6">
@@ -68,9 +81,7 @@ export function OrchestrationPage() {
         title="보안 정책과 AI 처리 현황을 점검합니다."
         description="질의 라우팅, 민감정보 마스킹, 감사 로그 수집 상태를 한 화면에서 확인합니다."
       />
-      {/* <StatsGrid stats={orchestrationStats} /> */}
 
-      {/* Summary metrics */}
       <section className="grid gap-4 sm:grid-cols-3">
         {[
           { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === "stub_repository").length, "건")}`, tone: "success" },
@@ -85,7 +96,63 @@ export function OrchestrationPage() {
         ))}
       </section>
 
-      {/* Audit log */}
+      <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-base font-semibold text-slate-900">시스템 프롬프트 설정</p>
+          <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+            마지막 수정: {updatedAtText} · {promptSettingsQuery.data?.updated_by ?? "-"}
+          </span>
+          <button
+            type="button"
+            onClick={() => { void handleSavePromptSettings(user.id); }}
+            disabled={saveMutation.isPending || promptSettingsQuery.isLoading}
+            className="ml-auto rounded-xl bg-[#2454C8] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {saveMutation.isPending ? "저장 중..." : "설정 저장"}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-slate-400">도메인별 빠른 질문, 시스템 지시문, 쿼리 접두 템플릿을 관리합니다.</p>
+
+        {promptSettingsQuery.isLoading ? (
+          <p className="mt-4 text-sm text-slate-400">프롬프트 설정을 불러오는 중입니다...</p>
+        ) : promptSettingsQuery.isError ? (
+          <p className="mt-4 text-sm text-red-500">프롬프트 설정을 조회하지 못했습니다. (hq_admin 권한 필요)</p>
+        ) : (
+          <div className="mt-4 grid gap-4 xl:grid-cols-3">
+            {DOMAIN_KEYS.map((domain) => (
+              <article key={domain} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
+                <p className="text-sm font-semibold text-slate-900">{DOMAIN_LABEL[domain]}</p>
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">빠른 질문(줄바꿈 구분, 최대 5개)</label>
+                <textarea
+                  value={form[domain].quickPromptsText}
+                  onChange={(event) => handleDomainChange(domain, "quickPromptsText", event.target.value)}
+                  className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">시스템 프롬프트</label>
+                <textarea
+                  value={form[domain].systemInstruction}
+                  onChange={(event) => handleDomainChange(domain, "systemInstruction", event.target.value)}
+                  className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">쿼리 접두 템플릿</label>
+                <input
+                  value={form[domain].queryPrefixTemplate}
+                  onChange={(event) => handleDomainChange(domain, "queryPrefixTemplate", event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+              </article>
+            ))}
+          </div>
+        )}
+
+        {saveMessage ? (
+          <p className={`mt-3 text-sm ${saveMutation.isError ? "text-red-500" : "text-green-600"}`}>{saveMessage}</p>
+        ) : null}
+      </section>
+
       <section className="rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden">
         <div className="flex items-center justify-between border-b border-border/60 px-6 py-5">
           <div>
@@ -166,7 +233,6 @@ export function OrchestrationPage() {
         </div>
       </section>
 
-      {/* Security policy status */}
       <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="flex items-center gap-3 mb-5">
           <Shield className="h-5 w-5 text-primary" />

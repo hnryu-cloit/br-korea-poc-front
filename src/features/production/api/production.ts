@@ -7,6 +7,8 @@ import type {
   ProductionSkuListResponse,
   ProductionRegistrationPayload,
   ProductionRegistrationResponse,
+  WasteSummaryResponse,
+  InventoryStatusResponse,
 } from "@/features/production/types/production";
 
 /**
@@ -138,6 +140,22 @@ export const postProductionRegistration = async (
   const response = await axiosInstance.post<ProductionRegistrationResponse>(
     "/api/production/registrations",
     payload,
+  );
+  return response.data;
+};
+
+export const getProductionWasteSummary = async (storeId: string) => {
+  const response = await axiosInstance.get<WasteSummaryResponse>(
+    "/api/production/waste-summary",
+    { params: { store_id: storeId } },
+  );
+  return response.data;
+};
+
+export const getProductionInventoryStatus = async (storeId: string) => {
+  const response = await axiosInstance.get<InventoryStatusResponse>(
+    "/api/production/inventory-status",
+    { params: { store_id: storeId } },
   );
   return response.data;
 };

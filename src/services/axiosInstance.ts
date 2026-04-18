@@ -34,10 +34,15 @@ axiosInstance.interceptors.request.use(
     }
 
     const accessToken = getAccessToken();
-    // 토큰이 있으면 헤더에 추가
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
+    const role = typeof window !== "undefined"
+      ? (window.localStorage.getItem("bypassUserRole") ?? "store_owner")
+      : "store_owner";
+    config.headers['X-User-Role'] = role;
+
     return config;
   },
   (error) => {

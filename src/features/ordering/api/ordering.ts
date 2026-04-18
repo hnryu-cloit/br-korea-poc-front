@@ -7,6 +7,8 @@ import type {
   OrderingContextResponse,
   OrderingDeadlineParams,
   OrderingDeadlineResponse,
+  OrderingHistoryParams,
+  OrderingHistoryResponse,
   OrderingOptionsParams,
   OrderingOptionsResponse,
   OrderingSelectionHistoryParams,
@@ -74,12 +76,22 @@ export const getOrderingDeadline = async (params?: OrderingDeadlineParams) => {
   return response.data;
 };
 
-// 주문 요약 카드 조회 
+// 주문 요약 카드 조회
 export const getOrderingSelectionSummary = async (
   params?: OrderingSelectionSummaryParams,
 ) => {
   const response = await axiosInstance.get<OrderingSelectionSummaryResponse>(
     "/api/ordering/selections/summary",
+    { params },
+  );
+  return response.data;
+};
+
+// 발주 이력 조회
+export const getOrderingHistory = async (storeId: string, limit = 30) => {
+  const params: OrderingHistoryParams = { store_id: storeId, limit };
+  const response = await axiosInstance.get<OrderingHistoryResponse>(
+    "/api/ordering/history",
     { params },
   );
   return response.data;

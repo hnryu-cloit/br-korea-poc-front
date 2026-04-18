@@ -114,3 +114,25 @@ export interface ProductionRegistrationResponse {
   feedback_message: string;
   store_id?: string;
 }
+
+export interface WasteItem {
+  item_nm: string;
+  total_disuse_qty: number;
+  loss_amount: number;
+}
+
+export interface WasteSummaryResponse {
+  items: WasteItem[];
+  total_loss_amount: number;
+}
+
+export interface InventoryStatusItem {
+  item_nm: string;
+  total_stock: number;
+  total_sold: number;
+  status: "과잉" | "부족" | "적정";
+}
+
+export interface InventoryStatusResponse {
+  items: InventoryStatusItem[];
+}
