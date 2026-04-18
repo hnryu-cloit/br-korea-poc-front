@@ -22,7 +22,7 @@ import type {
   ProductionSkuItem,
 } from "@/features/production/types/production";
 
-export function ProductionPage() {
+export function ProductionScreen() {
   const location = useLocation();
   const routeState = location.state as {
     source?: string;

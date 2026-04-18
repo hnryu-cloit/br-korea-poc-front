@@ -48,29 +48,29 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
   },
   "/production": {
     title: "생산 관리 해설",
-    subtitle: "예측 재고, 생산 패턴, 알림 시점을 함께 보고 대응 우선순위를 정리합니다.",
+    subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",
     quickActions: [
-      { label: "왜 위험한가", prompt: "어떤 SKU가 왜 1시간 내 품절 위험인지 설명해줘" },
-      { label: "생산 시점", prompt: "지금 생산 등록이 필요한 시점을 추천해줘" },
-      { label: "찬스 로스", prompt: "생산 타이밍을 놓치면 찬스 로스가 얼마나 생기는지 알려줘" },
+      { label: "뭐부터 만들어?", prompt: "지금 당장 뭐부터 만들어야 해?" },
+      { label: "품절되면 얼마야?", prompt: "지금 품절되면 얼마 날리는 거야?" },
+      { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
     ],
   },
   "/ordering": {
     title: "주문 관리 해설",
-    subtitle: "3개 옵션과 특이사항을 비교하고 점주 선택 근거를 정리합니다.",
+    subtitle: "마감 전 놓치지 말아야 할 주문 포인트를 확인합니다.",
     quickActions: [
-      { label: "추천 옵션", prompt: "지금 3개 주문 옵션 중 어떤 안을 추천하는지 말해줘" },
-      { label: "특이사항", prompt: "캠페인이나 이상치 때문에 주의할 점을 알려줘" },
-      { label: "선택 사유", prompt: "점주가 입력할 선택 사유 예시를 작성해줘" },
+      { label: "어떤 거 골라?", prompt: "지금 주문 어떤 안으로 하는 게 좋아?" },
+      { label: "안 하면 어떻게 돼?", prompt: "지금 주문 안 하면 어떻게 돼?" },
+      { label: "지난번이랑 달라?", prompt: "지난번 주문이랑 비교해서 이번에 바뀐 게 있어?" },
     ],
   },
   "/sales": {
     title: "매출 분석 해설",
-    subtitle: "자연어 질의 결과를 액션 중심으로 요약해 보여줍니다.",
+    subtitle: "오늘 장사 결과와 다음 액션을 바로 확인합니다.",
     quickActions: [
-      { label: "배달 감소", prompt: "배달 건수 감소 원인과 대응 액션을 알려줘" },
-      { label: "상품 전략", prompt: "상품 믹스를 개선할 수 있는 실행안을 제안해줘" },
-      { label: "보고용 한 줄", prompt: "점주에게 보여줄 요약 문장을 한 줄로 만들어줘" },
+      { label: "오늘 장사 어때?", prompt: "오늘 장사 잘 된 거야 안 된 거야?" },
+      { label: "이대로 가면?", prompt: "이번 달 이 페이스면 얼마 남아?" },
+      { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
     ],
   },
   "/orchestration": {
