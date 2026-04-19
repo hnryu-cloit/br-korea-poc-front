@@ -131,11 +131,11 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
             ) : null}
           </div>
 
-          <div className="relative hidden md:block">
+          <div className="relative">
             <button
               type="button"
               onClick={() => setIsStoreMenuOpen((v) => !v)}
-              className="flex h-[42px] w-[270px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed]"
+              className="flex h-[42px] w-[220px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed] sm:w-[250px] md:w-[270px]"
               aria-label="점포 전환"
             >
               <div className="size-[28px] overflow-hidden rounded-full border border-[#CCDAF0] bg-[linear-gradient(135deg,#316BFF_0%,#4AA2FF_100%)] text-white">
