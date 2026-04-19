@@ -1,110 +1,19 @@
-import { useMemo, useState } from "react";
-
 import { PageHero } from "@/commons/components/page/page-layout";
-import { DEFAULT_DOMAIN_SETTINGS } from "@/features/settings/constants/settings-domains";
-import { useGetPromptSettingsQuery } from "@/features/settings/queries/useGetPromptSettingsQuery";
-import { usePutPromptSettingsMutation } from "@/features/settings/queries/usePutPromptSettingsMutation";
-import type { DomainPromptSettings, SettingsDomain } from "@/features/settings/types/settings";
-
-const DOMAIN_KEYS: SettingsDomain[] = ["production", "ordering", "sales"];
-
-const DOMAIN_LABEL: Record<SettingsDomain, string> = {
-  production: "생산관리",
-  ordering: "주문관리",
-  sales: "손익분석",
-};
-
-type DomainFormState = {
-  quickPromptsText: string;
-  systemInstruction: string;
-  queryPrefixTemplate: string;
-};
-
-type PromptFormState = Record<SettingsDomain, DomainFormState>;
-
-const EMPTY_FORM: PromptFormState = {
-  production: { quickPromptsText: "", systemInstruction: "", queryPrefixTemplate: "" },
-  ordering: { quickPromptsText: "", systemInstruction: "", queryPrefixTemplate: "" },
-  sales: { quickPromptsText: "", systemInstruction: "", queryPrefixTemplate: "" },
-};
-
-function toFormState(domains?: Record<SettingsDomain, DomainPromptSettings>): PromptFormState {
-  const source = domains ?? {
-    production: DEFAULT_DOMAIN_SETTINGS,
-    ordering: DEFAULT_DOMAIN_SETTINGS,
-    sales: DEFAULT_DOMAIN_SETTINGS,
-  };
-  return {
-    production: {
-      quickPromptsText: (source.production?.quick_prompts ?? []).join("\n"),
-      systemInstruction: source.production?.system_instruction ?? "",
-      queryPrefixTemplate: source.production?.query_prefix_template ?? "",
-    },
-    ordering: {
-      quickPromptsText: (source.ordering?.quick_prompts ?? []).join("\n"),
-      systemInstruction: source.ordering?.system_instruction ?? "",
-      queryPrefixTemplate: source.ordering?.query_prefix_template ?? "",
-    },
-    sales: {
-      quickPromptsText: (source.sales?.quick_prompts ?? []).join("\n"),
-      systemInstruction: source.sales?.system_instruction ?? "",
-      queryPrefixTemplate: source.sales?.query_prefix_template ?? "",
-    },
-  };
-}
-
-function toPayloadState(form: PromptFormState): Record<SettingsDomain, DomainPromptSettings> {
-  const toPrompts = (text: string) =>
-    text
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .slice(0, 5);
-  return {
-    production: {
-      quick_prompts: toPrompts(form.production.quickPromptsText),
-      system_instruction: form.production.systemInstruction.trim(),
-      query_prefix_template: form.production.queryPrefixTemplate.trim(),
-    },
-    ordering: {
-      quick_prompts: toPrompts(form.ordering.quickPromptsText),
-      system_instruction: form.ordering.systemInstruction.trim(),
-      query_prefix_template: form.ordering.queryPrefixTemplate.trim(),
-    },
-    sales: {
-      quick_prompts: toPrompts(form.sales.quickPromptsText),
-      system_instruction: form.sales.systemInstruction.trim(),
-      query_prefix_template: form.sales.queryPrefixTemplate.trim(),
-    },
-  };
-}
+import { SETTINGS_DOMAINS } from "@/features/settings/constants/settings-domains";
+import { useSettingsPromptForm } from "@/features/settings/hooks/useSettingsPromptForm";
 
 export function SettingsScreen() {
-  const [draftForm, setDraftForm] = useState<PromptFormState | null>(null);
-
-  const { data, isLoading } = useGetPromptSettingsQuery();
-  const mutation = usePutPromptSettingsMutation();
-
-  const serverForm = useMemo(
-    () => (data ? toFormState(data.domains) : EMPTY_FORM),
-    [data],
-  );
-  const form = draftForm ?? serverForm;
-  const savedAt = mutation.data?.updated_at ?? data?.updated_at ?? null;
-
-  const handleReset = () => {
-    setDraftForm(null);
-  };
-
-  const handleSave = async () => {
-    const result = await mutation.mutateAsync({
-      domains: toPayloadState(form),
-      updated_by: "hq_admin",
-    });
-    setDraftForm(toFormState(result.domains));
-  };
-
-  const isDirty = JSON.stringify(form) !== JSON.stringify(serverForm);
+  const {
+    form,
+    data,
+    isLoading,
+    mutation,
+    savedAt,
+    isDirty,
+    handleReset,
+    handleSave,
+    handleDomainFieldChange,
+  } = useSettingsPromptForm();
 
   return (
     <div className="space-y-6">
@@ -149,55 +58,28 @@ export function SettingsScreen() {
           <p className="mt-4 text-sm text-slate-400">프롬프트 설정을 불러오는 중입니다...</p>
         ) : (
           <div className="mt-4 grid gap-4 xl:grid-cols-3">
-            {DOMAIN_KEYS.map((domain) => (
-              <article key={domain} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
-                <p className="text-sm font-semibold text-slate-900">{DOMAIN_LABEL[domain]}</p>
+            {SETTINGS_DOMAINS.map(({ key, label }) => (
+              <article key={key} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
+                <p className="text-sm font-semibold text-slate-900">{label}</p>
 
                 <label className="mt-3 block text-xs font-semibold text-slate-500">빠른 질문(줄바꿈 구분, 최대 5개)</label>
                 <textarea
-                  value={form[domain].quickPromptsText}
-                  onChange={(event) => {
-                    const next = event.target.value;
-                    setDraftForm((prev) => {
-                      const base = prev ?? serverForm;
-                      return {
-                        ...base,
-                        [domain]: { ...base[domain], quickPromptsText: next },
-                      };
-                    });
-                  }}
+                  value={form[key].quickPromptsText}
+                  onChange={(event) => handleDomainFieldChange(key, "quickPromptsText", event.target.value)}
                   className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
                 />
 
                 <label className="mt-3 block text-xs font-semibold text-slate-500">시스템 프롬프트</label>
                 <textarea
-                  value={form[domain].systemInstruction}
-                  onChange={(event) => {
-                    const next = event.target.value;
-                    setDraftForm((prev) => {
-                      const base = prev ?? serverForm;
-                      return {
-                        ...base,
-                        [domain]: { ...base[domain], systemInstruction: next },
-                      };
-                    });
-                  }}
+                  value={form[key].systemInstruction}
+                  onChange={(event) => handleDomainFieldChange(key, "systemInstruction", event.target.value)}
                   className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
                 />
 
                 <label className="mt-3 block text-xs font-semibold text-slate-500">쿼리 접두 템플릿</label>
                 <input
-                  value={form[domain].queryPrefixTemplate}
-                  onChange={(event) => {
-                    const next = event.target.value;
-                    setDraftForm((prev) => {
-                      const base = prev ?? serverForm;
-                      return {
-                        ...base,
-                        [domain]: { ...base[domain], queryPrefixTemplate: next },
-                      };
-                    });
-                  }}
+                  value={form[key].queryPrefixTemplate}
+                  onChange={(event) => handleDomainFieldChange(key, "queryPrefixTemplate", event.target.value)}
                   className="mt-1 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
                 />
               </article>
