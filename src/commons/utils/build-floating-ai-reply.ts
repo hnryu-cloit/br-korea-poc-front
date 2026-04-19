@@ -1,9 +1,52 @@
-import type { FloatingAiChatMessage } from "@/commons/types/floating-ai-chat";
+import type { FloatingAiCardContextKey, FloatingAiChatMessage } from "@/commons/types/floating-ai-chat";
+
+const cardContextReplies: Record<FloatingAiCardContextKey, FloatingAiChatMessage> = {
+  "production:stock-risk": {
+    id: 1,
+    title: "생산 재고 위험 분석",
+    content:
+      "스트로베리 필드와 올드패션은 최근 30분 판매 속도가 평시보다 높아 1시간 내 품절 위험이 큽니다. 14:20 전 2차 생산을 등록하고, 주말 대비 상위 3개 품목은 생산량을 20% 이상 높이는 것을 권장합니다.",
+    evidence: ["현재고 52개", "1시간 후 예측 8개", "4주 평균 2차 생산 14:15 / 40개"],
+  },
+  "production:inventory-status": {
+    id: 1,
+    title: "재고 수준 진단 결과",
+    content:
+      "부족 품목은 오늘 오후 피크 전까지 추가 생산이 필요합니다. 과잉 품목은 당일 소진을 위해 묶음 판매 또는 할인 행사를 고려할 수 있습니다. 적정 수준은 일 평균 판매량의 1.5배를 기준으로 잡는 게 안전합니다.",
+    evidence: ["부족 품목 3건", "과잉 품목 2건", "적정 기준 1.5x 일 평균"],
+  },
+  "production:waste": {
+    id: 1,
+    title: "폐기 손실 원인 분석",
+    content:
+      "폐기가 많은 품목의 공통점은 오후 피크 이후 수요 급감 구간에서 과생산된 경우입니다. 생산 시점을 피크 직전으로 분산하고, 해당 품목의 2차 생산 수량을 10~15% 줄이면 폐기율을 낮출 수 있습니다.",
+    evidence: ["17시 이후 수요 급감", "2차 생산 과잉 패턴", "4주 평균 폐기율 8.3%"],
+  },
+  "ordering:options": {
+    id: 1,
+    title: "주문 추천안 비교",
+    content:
+      "현재는 전주 동요일 안이 기본 추천이지만, 이번 주 캠페인 영향으로 과주문 가능성이 있어 전전주 동요일 값을 기준선으로 함께 보는 것이 안전합니다. 지난달 동기 대비 배달 채널 증가 추세를 감안하면 옵션 B가 더 균형 잡혀 있습니다.",
+    evidence: ["옵션 A 최근 패턴 일치", "옵션 B 이상치 적음", "옵션 C 월간 시즌성 반영"],
+  },
+  "sales:summary": {
+    id: 1,
+    title: "매출 요약 분석",
+    content:
+      "오늘 매출은 지난주 같은 요일 대비 배달 채널에서 감소세가 확인됩니다. 점심 시간대 전환율 하락과 쿠폰 회수율 저하가 주요 원인으로 보이며, 피크 시간대(11~13시)에 배달 채널 집중 대응이 필요합니다.",
+    evidence: ["11시~13시 배달 주문 감소", "앱 쿠폰 사용률 하락", "점심 세트 묶음 전환 저조"],
+  },
+};
 
 export const buildFloatingAiReply = (
   pathname: string,
   prompt: string,
+  cardContextKey?: FloatingAiCardContextKey | null,
 ): FloatingAiChatMessage => {
+  if (cardContextKey && cardContextReplies[cardContextKey]) {
+    return cardContextReplies[cardContextKey];
+  }
+
   if (pathname === "/production") {
     return {
       id: 1,

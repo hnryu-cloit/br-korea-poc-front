@@ -15,3 +15,20 @@ export type FloatingAiChatRouteGuide = {
   subtitle: string;
   quickActions: FloatingAiChatQuickAction[];
 };
+
+export type FloatingAiCardContextKey =
+  | "production:stock-risk"
+  | "production:inventory-status"
+  | "production:waste"
+  | "ordering:options"
+  | "sales:summary";
+
+export type FloatingAiCardContext = {
+  contextKey: FloatingAiCardContextKey;
+  cardTitle: string;
+  quickActions: FloatingAiChatQuickAction[];
+};
+
+export type ChatEntry =
+  | { role: "user"; text: string }
+  | { role: "assistant"; message: FloatingAiChatMessage };
