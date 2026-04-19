@@ -1,5 +1,5 @@
-import { SettingsScreen } from "@/features/settings/screens/SettingsScreen";
+import { OrchestrationPage as OrchestrationScreen } from "@/features/admin/orchestration/screens/OrchestrationScreen";
 
 export function SettingsPage() {
-  return <SettingsScreen />;
+  return <OrchestrationScreen />;
 }
