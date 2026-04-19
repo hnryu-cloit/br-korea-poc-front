@@ -15,4 +15,6 @@ export const analyticsQueryKeys = {
     [...ANALYTICS_QUERY_ROOT, "store-profile", storeId] as const,
   customerProfile: (storeId: string) =>
     [...ANALYTICS_QUERY_ROOT, "customer-profile", storeId] as const,
+  salesTrend: (storeId?: string) =>
+    [...ANALYTICS_QUERY_ROOT, "sales-trend", storeId ?? "all"] as const,
 };

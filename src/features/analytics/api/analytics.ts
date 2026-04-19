@@ -5,6 +5,7 @@ import type {
   AuditLogListResponse,
   CustomerProfileResponse,
   GetAnalyticsMetricsRequest,
+  SalesTrendResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
 
@@ -35,6 +36,13 @@ export async function getAnalyticsStoreProfile(storeId: string) {
 export async function getAnalyticsCustomerProfile(storeId: string) {
   const response = await axiosInstance.get<CustomerProfileResponse>("/api/analytics/customer-profile", {
     params: { store_id: storeId },
+  });
+  return response.data;
+}
+
+export async function getAnalyticsSalesTrend(storeId?: string) {
+  const response = await axiosInstance.get<SalesTrendResponse>("/api/analytics/sales-trend", {
+    params: storeId ? { store_id: storeId } : undefined,
   });
   return response.data;
 }

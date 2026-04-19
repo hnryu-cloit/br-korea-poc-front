@@ -1,3 +1,5 @@
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+
 import type { CustomerProfileResponse } from "@/features/analytics/types/analytics";
 
 type Props = {
@@ -5,8 +7,11 @@ type Props = {
   isLoading: boolean;
 };
 
+const SEGMENT_COLORS = ["#2454C8", "#4C7DE8", "#7AA2F6", "#A9C5FF", "#D6E4FF"];
+
 export function MarketCustomerSection({ data, isLoading }: Props) {
-  const totalSegmentCount = data?.customer_segments.reduce((acc, s) => acc + s.count, 0) ?? 0;
+  const sortedSegments = [...(data?.customer_segments ?? [])].sort((a, b) => b.count - a.count);
+  const totalSegmentCount = sortedSegments.reduce((acc, segment) => acc + segment.count, 0);
 
   return (
     <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -26,31 +31,76 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
 
       {!isLoading && data && (
         <div className="space-y-6">
-          {data.customer_segments.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">
-                캠페인 타겟 고객 분포
-              </p>
-              <div className="space-y-2.5">
-                {data.customer_segments.map((seg) => {
-                  const ratio = totalSegmentCount > 0 ? Math.round((seg.count / totalSegmentCount) * 100) : 0;
-                  return (
-                    <div key={seg.segment_nm}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm text-slate-700">{seg.segment_nm}</span>
-                        <span className="text-xs font-semibold text-slate-500">
-                          {seg.count}건 ({ratio}%)
-                        </span>
+          {sortedSegments.length > 0 && (
+            <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  고객 분포
+                </p>
+                <div className="h-[190px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={sortedSegments}
+                        dataKey="count"
+                        nameKey="segment_nm"
+                        innerRadius={44}
+                        outerRadius={72}
+                        paddingAngle={2}
+                        strokeWidth={0}
+                      >
+                        {sortedSegments.map((segment, index) => (
+                          <Cell
+                            key={segment.segment_nm}
+                            fill={SEGMENT_COLORS[index % SEGMENT_COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => [`${Number(value).toLocaleString("ko-KR")}건`, "건수"]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">
+                  캠페인 타겟 고객 분포
+                </p>
+                <div className="space-y-2.5">
+                  {sortedSegments.map((segment, index) => {
+                    const ratio =
+                      totalSegmentCount > 0
+                        ? Math.round((segment.count / totalSegmentCount) * 100)
+                        : 0;
+                    return (
+                      <div key={segment.segment_nm}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="h-2 w-2 rounded-full"
+                              style={{ backgroundColor: SEGMENT_COLORS[index % SEGMENT_COLORS.length] }}
+                            />
+                            <span className="text-sm text-slate-700">{segment.segment_nm}</span>
+                          </div>
+                          <span className="text-xs font-semibold text-slate-500">
+                            {segment.count}건 ({ratio}%)
+                          </span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${ratio}%`,
+                              backgroundColor: SEGMENT_COLORS[index % SEGMENT_COLORS.length],
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-[#2454C8]"
-                          style={{ width: `${ratio}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}

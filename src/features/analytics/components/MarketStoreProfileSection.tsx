@@ -1,4 +1,5 @@
 import type { StoreProfileResponse } from "@/features/analytics/types/analytics";
+import { formatWonCompact } from "@/features/analytics/utils/market";
 
 type Props = {
   data?: StoreProfileResponse;
@@ -31,11 +32,13 @@ export function MarketStoreProfileSection({ data, isLoading }: Props) {
 
       {!isLoading && data && (
         <div>
+          <ProfileRow label="매장명" value={data.store_nm || "-"} />
           <ProfileRow label="지역" value={`${data.sido} ${data.region}`} />
           <ProfileRow label="매장 유형" value={data.store_type} />
           <ProfileRow label="매장 면적" value={`${data.area_pyeong}평`} />
           <ProfileRow label="업종" value={data.business_type} />
           <ProfileRow label="유사 매장" value={`${data.peer_count}개 매장`} />
+          <ProfileRow label="추정 매출" value={formatWonCompact(data.actual_sales_amt)} />
         </div>
       )}
     </section>

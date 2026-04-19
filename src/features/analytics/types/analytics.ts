@@ -97,3 +97,38 @@ export interface CustomerProfileResponse {
   customer_segments: CustomerSegmentItem[];
   telecom_discounts: TelecomDiscountItem[];
 }
+
+export interface SalesTrendPoint {
+  day: number;
+  this_month: number | null;
+  last_month: number | null;
+  projection: number | null;
+}
+
+export interface SalesTrendInsightChip {
+  label: string;
+  value: string;
+  trend: string;
+}
+
+export interface DowPoint {
+  dow: number;
+  label: string;
+  this_month_avg: number;
+  last_month_avg: number;
+}
+
+export interface HourPoint {
+  hour: number;
+  this_month_avg: number;
+  last_month_avg: number;
+}
+
+export interface SalesTrendResponse {
+  headline: string;
+  headline_trend: "up" | "down" | "flat";
+  points: SalesTrendPoint[];
+  insight_chips: SalesTrendInsightChip[];
+  dow_points: DowPoint[];
+  hour_points: HourPoint[];
+}

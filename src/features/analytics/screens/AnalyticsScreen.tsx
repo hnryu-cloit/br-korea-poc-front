@@ -6,8 +6,10 @@ import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { AnalyticsDateRangeFilter } from "@/features/analytics/components/AnalyticsDateRangeFilter";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
 import { AnalyticsQueryLogSection } from "@/features/analytics/components/AnalyticsQueryLogSection";
+import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { getDefaultAnalyticsDateRange } from "@/features/analytics/constants/analytics-date-range";
 import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGetAnalyticsMetricsQuery";
+import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import { useGetAuditLogsQuery } from "@/features/analytics/queries/useGetAuditLogsQuery";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 import type { QueryCategory } from "@/features/analytics/types/analytics-screen";
@@ -24,6 +26,8 @@ export function AnalyticsScreen() {
   const defaultDateRange = useMemo(() => getDefaultAnalyticsDateRange(), []);
   const dateFrom = searchParams.get("date_from") ?? defaultDateRange.dateFrom;
   const dateTo = searchParams.get("date_to") ?? defaultDateRange.dateTo;
+
+  const salesTrendQuery = useGetAnalyticsSalesTrendQuery(user.storeId);
 
   const metricsQuery = useGetAnalyticsMetricsQuery({
     store_id: user.storeId,
@@ -73,6 +77,8 @@ export function AnalyticsScreen() {
         onChangeDateFrom={handleChangeDateFrom}
         onChangeDateTo={handleChangeDateTo}
       />
+
+      <SalesTrendChart data={salesTrendQuery.data} isLoading={salesTrendQuery.isLoading} />
 
       <AnalyticsMetricsGrid metrics={metrics} />
 
