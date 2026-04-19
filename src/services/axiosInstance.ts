@@ -1,16 +1,16 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 import {
   clearTokens,
   getAccessToken,
-  getRefreshToken,
 } from "@/lib/tokenManager";
+import { getSessionRole } from "@/lib/sessionStore";
+import { emitSessionExpired } from "@/commons/utils/session-expiry";
 import type { CommonError } from "@/services/type";
 
-// const DEFAULT_API_BASE_URL = "http://localhost:8000";
 const DEFAULT_API_BASE_URL = "http://localhost:6002";
-// refresh 제외 대상 API
-const AUTH_EXCLUDED_URLS = [''];
+const LOGIN_PATH = import.meta.env.VITE_LOGIN_PATH || "/";
+const AUTH_EXCLUDED_URLS: string[] = [];
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL,
@@ -19,16 +19,8 @@ const axiosInstance = axios.create({
   },
 });
 
-let isRefreshing = false;
-let failedQueue: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
-
-/**
- * 요청 인터셉터
- * 모든 API 요청이 보내지기 전에 헤더에 액세스 토큰을 추가합니다.
- */
 axiosInstance.interceptors.request.use(
   (config) => {
-    // FormData인 경우, 브라우저가 자동으로 Content-Type을 설정하도록 헤더를 삭제
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
@@ -38,10 +30,7 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
-    const role = typeof window !== "undefined"
-      ? (window.localStorage.getItem("bypassUserRole") ?? "store_owner")
-      : "store_owner";
-    config.headers['X-User-Role'] = role;
+    config.headers['X-User-Role'] = getSessionRole();
 
     return config;
   },
@@ -57,7 +46,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<CommonError>) => {
-    const originalRequest = error.config as any;
+    const originalRequest = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
     const requestUrl = originalRequest?.url ?? '';
 
     // refresh 대상 제외
@@ -71,49 +62,7 @@ axiosInstance.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
-      // 이미 refresh 중이라면, 이 요청을 Promise에 담아 대기열에 추가
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return axiosInstance(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
-      }
-      const refreshToken = getRefreshToken();
-
-      // refresh token 없다면 로그아웃처리
-      if (!refreshToken) {
-        handleSessionExpiry('로그인 정보가 없습니다. 다시 로그인 해주세요.');
-        return;
-      }
-
-      isRefreshing = true;
-
-      // try {
-      //   const { data } = await postRefreshToken({
-      //     refresh_token: refreshToken,
-      //   });
-      //   const { access_token } = data.data;
-
-      //   setAccessToken(access_token);
-
-      //   // 대기 중이던 요청들에게 새 토큰 전달하며 실행
-      //   processQueue(null, access_token);
-
-      //   originalRequest.headers.Authorization = `Bearer ${access_token}`;
-      //   return axiosInstance(originalRequest);
-      // } catch (error) {
-      //   // 갱신 실패 시 대기 중인 요청들도 모두 에러 처리
-      //   processQueue(error, null);
-      //   handleSessionExpiry('세션이 만료되었습니다. 다시 로그인 해주세요.');
-      //   return Promise.reject(error);
-      // } finally {
-      //   isRefreshing = false;
-      // }
+      handleSessionExpiry('세션이 만료되었습니다. 다시 로그인 해주세요.');
     }
 
     return Promise.reject(error);
@@ -122,9 +71,11 @@ axiosInstance.interceptors.response.use(
 
 function handleSessionExpiry(message: string) {
   clearTokens();
-  if (window.location.pathname !== '/login') {
-    alert(message);
-    window.location.href = '/login';
+  if (typeof window !== "undefined" && window.location.pathname !== LOGIN_PATH) {
+    emitSessionExpired({
+      message,
+      redirectPath: LOGIN_PATH,
+    });
   }
 }
 
