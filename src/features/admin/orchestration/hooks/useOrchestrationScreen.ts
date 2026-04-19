@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
+import { PROCESSING_ROUTE } from "@/commons/constants/audit-route";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 import { useGetOrchestrationAuditLogsQuery } from "@/features/admin/orchestration/queries/useGetOrchestrationAuditLogsQuery";
 import { useGetPromptSettingsQuery } from "@/features/admin/orchestration/queries/useGetPromptSettingsQuery";
@@ -23,12 +24,6 @@ const EMPTY_DOMAIN_FORM: PromptDomainForm = {
   quickPromptsText: "",
   systemInstruction: "",
   queryPrefixTemplate: "[점포:{store_id}] [도메인:{domain}] {question}",
-};
-
-const EMPTY_FORM_STATE: PromptFormState = {
-  production: { ...EMPTY_DOMAIN_FORM },
-  ordering: { ...EMPTY_DOMAIN_FORM },
-  sales: { ...EMPTY_DOMAIN_FORM },
 };
 
 function toFormState(data?: PromptSettingsResponse): PromptFormState {
@@ -64,17 +59,17 @@ export const useOrchestrationScreen = () => {
   const logsQuery = useGetOrchestrationAuditLogsQuery(50);
   const promptSettingsQuery = useGetPromptSettingsQuery();
 
-  const [form, setForm] = useState<PromptFormState>(EMPTY_FORM_STATE);
+  const serverForm = useMemo(
+    () => toFormState(promptSettingsQuery.data),
+    [promptSettingsQuery.data],
+  );
+  const [draftForm, setDraftForm] = useState<PromptFormState | null>(null);
+  const form = draftForm ?? serverForm;
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!promptSettingsQuery.data) return;
-    setForm(toFormState(promptSettingsQuery.data));
-  }, [promptSettingsQuery.data]);
 
   const saveMutation = usePutPromptSettingsMutation({
     onSuccess: (data) => {
-      setForm(toFormState(data));
+      setDraftForm(toFormState(data));
       setSaveMessage("프롬프트 설정이 저장되었습니다.");
     },
     onError: () => {
@@ -82,14 +77,14 @@ export const useOrchestrationScreen = () => {
     },
   });
 
-  const logs = logsQuery.data?.items ?? [];
+  const logs = useMemo(() => logsQuery.data?.items ?? [], [logsQuery.data?.items]);
   const isBlocked = (entry: AuditLogEntry) =>
     entry.route === "policy_block" || entry.outcome === "blocked";
 
   const sqlPct = useMemo(() => {
     if (logs.length === 0) return 0;
     const repositoryRoutedCount = logs.filter(
-      (log) => log.route === "stub_repository",
+      (log) => log.route === PROCESSING_ROUTE.REPOSITORY,
     ).length;
     return Math.round((repositoryRoutedCount / logs.length) * 100);
   }, [logs]);
@@ -99,12 +94,13 @@ export const useOrchestrationScreen = () => {
     [logs],
   );
 
-  const updatedAtText = useMemo(() => {
-    if (!promptSettingsQuery.data?.updated_at) return "-";
-    const date = new Date(promptSettingsQuery.data.updated_at);
-    if (Number.isNaN(date.getTime())) return promptSettingsQuery.data.updated_at;
+  const updatedAtRaw = promptSettingsQuery.data?.updated_at;
+  const updatedAtText = (() => {
+    if (!updatedAtRaw) return "-";
+    const date = new Date(updatedAtRaw);
+    if (Number.isNaN(date.getTime())) return updatedAtRaw;
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  }, [promptSettingsQuery.data?.updated_at]);
+  })();
 
   const handleDomainChange = (
     domain: PromptDomainKey,
@@ -112,13 +108,16 @@ export const useOrchestrationScreen = () => {
     value: string,
   ) => {
     setSaveMessage(null);
-    setForm((prev) => ({
-      ...prev,
-      [domain]: {
-        ...prev[domain],
-        [key]: value,
-      },
-    }));
+    setDraftForm((prev) => {
+      const base = prev ?? serverForm;
+      return {
+        ...base,
+        [domain]: {
+          ...base[domain],
+          [key]: value,
+        },
+      };
+    });
   };
 
   const handleSavePromptSettings = async (updatedBy: string) => {

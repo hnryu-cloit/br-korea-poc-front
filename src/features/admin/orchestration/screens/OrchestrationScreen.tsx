@@ -1,39 +1,22 @@
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
+import {
+  PROCESSING_ROUTE,
+  ROUTE_LABEL,
+  ROUTE_STYLE as ROUTE_COLOR,
+  QUERY_TYPE_LABEL,
+  QUERY_TYPE_STYLE as QUERY_TYPE_COLOR,
+} from "@/commons/constants/audit-route";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 import { useOrchestrationScreen } from "@/features/admin/orchestration/hooks/useOrchestrationScreen";
 import type {
   PromptDomainKey,
 } from "@/features/admin/orchestration/types/orchestration";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-
-const ROUTE_COLOR: Record<string, string> = {
-  stub_repository: "bg-[#eef4ff] text-[#2454C8]",
-  ai_proxy: "bg-orange-50 text-orange-600",
-  policy_block: "bg-red-50 text-red-600",
-};
-
-const ROUTE_LABEL: Record<string, string> = {
-  stub_repository: "SQL/API",
-  ai_proxy: "AI",
-  policy_block: "차단",
-};
-
-const QUERY_TYPE_COLOR: Record<string, string> = {
-  faq: "bg-slate-100 text-slate-600",
-  data_lookup: "bg-[#eef4ff] text-[#2454C8]",
-  analysis: "bg-orange-50 text-orange-600",
-  sensitive_request: "bg-red-50 text-red-600",
-};
-
-const QUERY_TYPE_LABEL: Record<string, string> = {
-  faq: "FAQ",
-  data_lookup: "데이터 조회",
-  analysis: "분석",
-  sensitive_request: "민감정보",
-};
 
 const policyItems = [
   { label: "민감정보 마스킹", description: "매출, 손익, 생산량 원본 → 집계값 또는 차단" },
@@ -52,6 +35,15 @@ const DOMAIN_LABEL: Record<PromptDomainKey, string> = {
   sales: "손익분석",
 };
 
+type TwinTab = "prompt" | "data" | "logs" | "security";
+
+const TWIN_TABS: { key: TwinTab; label: string; description: string }[] = [
+  { key: "prompt", label: "프롬프트 설정", description: "도메인별 AI 지시문/빠른질문 관리" },
+  { key: "data", label: "데이터 설정", description: "데이터 처리·라우팅 지표 확인" },
+  { key: "logs", label: "로그 관리", description: "감사 로그 조회 및 추적" },
+  { key: "security", label: "보안 정책", description: "민감정보/권한 정책 상태 점검" },
+];
+
 function getQueryFromMetadata(entry: AuditLogEntry): string {
   const meta = entry.metadata as Record<string, unknown>;
   if (typeof meta?.prompt === "string") return meta.prompt;
@@ -59,6 +51,9 @@ function getQueryFromMetadata(entry: AuditLogEntry): string {
 }
 
 export function OrchestrationPage() {
+  const location = useLocation();
+  const isSettingsRoute = location.pathname.startsWith("/settings");
+  const [activeTab, setActiveTab] = useState<TwinTab>(isSettingsRoute ? "prompt" : "logs");
   const { user } = useDemoSession();
   const {
     logsQuery,
@@ -78,25 +73,56 @@ export function OrchestrationPage() {
   return (
     <div className="space-y-6">
       <PageHero
-        title="보안 정책과 AI 처리 현황을 점검합니다."
-        description="질의 라우팅, 민감정보 마스킹, 감사 로그 수집 상태를 한 화면에서 확인합니다."
+        title={
+          isSettingsRoute
+            ? "Digital Twin 설정을 관리합니다."
+            : "보안 정책과 AI 처리 현황을 점검합니다."
+        }
+        description={
+          isSettingsRoute
+            ? "도메인별 시스템 프롬프트와 빠른 질문을 운영 환경에 맞게 조정합니다."
+            : "질의 라우팅, 민감정보 마스킹, 감사 로그 수집 상태를 한 화면에서 확인합니다."
+        }
       />
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        {[
-          { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === "stub_repository").length, "건")}`, tone: "success" },
-          { label: "민감정보 차단 건수", value: formatCountWithUnit(blockedCount, "건"), desc: "전체 기준", tone: "danger" },
-          { label: "총 처리 건수", value: formatCountWithUnit(logs.length, "건"), desc: "감사 로그 기준", tone: "primary" },
-        ].map((item) => (
-          <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
-            <p className={`mt-3 text-2xl font-bold ${item.tone === "success" ? "text-green-600" : item.tone === "danger" ? "text-red-600" : "text-[#2454C8]"}`}>{item.value}</p>
-            <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
-          </article>
-        ))}
+      <section className="rounded-[24px] border border-border bg-white p-2 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+          {TWIN_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`rounded-2xl border px-4 py-3 text-left transition-colors ${
+                activeTab === tab.key
+                  ? "border-[#2454C8] bg-[#eef4ff]"
+                  : "border-border bg-white hover:bg-[#f8fbff]"
+              }`}
+            >
+              <p className={`text-sm font-semibold ${activeTab === tab.key ? "text-[#2454C8]" : "text-slate-800"}`}>{tab.label}</p>
+              <p className="mt-0.5 text-xs text-slate-500">{tab.description}</p>
+            </button>
+          ))}
+        </div>
       </section>
 
-      <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      {activeTab === "data" ? (
+        <section className="grid gap-4 sm:grid-cols-3">
+          {[
+            { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === PROCESSING_ROUTE.REPOSITORY).length, "건")}`, tone: "success" },
+            { label: "민감정보 차단 건수", value: formatCountWithUnit(blockedCount, "건"), desc: "전체 기준", tone: "danger" },
+            { label: "총 처리 건수", value: formatCountWithUnit(logs.length, "건"), desc: "감사 로그 기준", tone: "primary" },
+          ].map((item) => (
+            <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
+              <p className={`mt-3 text-2xl font-bold ${item.tone === "success" ? "text-green-600" : item.tone === "danger" ? "text-red-600" : "text-[#2454C8]"}`}>{item.value}</p>
+              <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {activeTab === "prompt" ? (
+        <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-base font-semibold text-slate-900">시스템 프롬프트 설정</p>
           <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
@@ -151,9 +177,11 @@ export function OrchestrationPage() {
         {saveMessage ? (
           <p className={`mt-3 text-sm ${saveMutation.isError ? "text-red-500" : "text-green-600"}`}>{saveMessage}</p>
         ) : null}
-      </section>
+        </section>
+      ) : null}
 
-      <section className="rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden">
+      {activeTab === "logs" ? (
+        <section className="rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden">
         <div className="flex items-center justify-between border-b border-border/60 px-6 py-5">
           <div>
             <p className="text-base font-semibold text-slate-900">감사 로그</p>
@@ -231,9 +259,11 @@ export function OrchestrationPage() {
             </tbody>
           </table>
         </div>
-      </section>
+        </section>
+      ) : null}
 
-      <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      {activeTab === "security" ? (
+        <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="flex items-center gap-3 mb-5">
           <Shield className="h-5 w-5 text-primary" />
           <p className="text-base font-semibold text-slate-900">보안 정책 현황</p>
@@ -250,7 +280,8 @@ export function OrchestrationPage() {
             </div>
           ))}
         </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -1,30 +1,15 @@
+import {
+  ROUTE_STYLE,
+  ROUTE_LABEL,
+  QUERY_TYPE_STYLE,
+  QUERY_TYPE_LABEL,
+} from "@/commons/constants/audit-route";
 import type { SalesV2HintItem } from "@/features/sales/types/sales-v2";
 
-export const SALES_V2_ROUTE_STYLE: Record<string, string> = {
-  ai_proxy: "bg-orange-50 text-orange-600",
-  stub_repository: "bg-[#eef4ff] text-[#2454C8]",
-  policy_block: "bg-red-50 text-red-600",
-};
-
-export const SALES_V2_ROUTE_LABEL: Record<string, string> = {
-  ai_proxy: "AI",
-  stub_repository: "SQL/API",
-  policy_block: "차단",
-};
-
-export const SALES_V2_QUERY_TYPE_STYLE: Record<string, string> = {
-  analysis: "bg-orange-50 text-orange-600",
-  data_lookup: "bg-[#eef4ff] text-[#2454C8]",
-  faq: "bg-slate-100 text-slate-600",
-  sensitive_request: "bg-red-50 text-red-600",
-};
-
-export const SALES_V2_QUERY_TYPE_LABEL: Record<string, string> = {
-  analysis: "분석",
-  data_lookup: "데이터 조회",
-  faq: "FAQ",
-  sensitive_request: "민감정보",
-};
+export const SALES_V2_ROUTE_STYLE = ROUTE_STYLE;
+export const SALES_V2_ROUTE_LABEL = ROUTE_LABEL;
+export const SALES_V2_QUERY_TYPE_STYLE = QUERY_TYPE_STYLE;
+export const SALES_V2_QUERY_TYPE_LABEL = QUERY_TYPE_LABEL;
 
 export const SALES_V2_HINT_QUESTIONS: SalesV2HintItem[] = [
   {
