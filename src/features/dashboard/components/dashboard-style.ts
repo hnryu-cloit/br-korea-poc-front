@@ -1,9 +1,10 @@
+import type { LucideIcon } from "lucide-react";
 import { Clock, DollarSign, Package, ShoppingCart, Target, TrendingUp } from "lucide-react";
 
 import type {
   DashboardDomain,
   DashboardHighlightItem,
-  DashboardUrgency
+  DashboardUrgency,
 } from "@/features/dashboard/types/dashboard";
 
 export const urgencyStyleMap: Record<DashboardUrgency, string> = {
@@ -12,13 +13,15 @@ export const urgencyStyleMap: Record<DashboardUrgency, string> = {
   recommended: "bg-green-50 text-green-600",
 };
 
-export const summaryCardIconMap: Record<DashboardDomain, React.ReactNode> = {
-  production: <Package className="h-5 w-5 text-[#2454C8]" />,
-  ordering: <ShoppingCart className="h-5 w-5 text-[#2454C8]" />,
-  sales: <TrendingUp className="h-5 w-5 text-[#2454C8]" />,
+export const summaryCardIconMap: Record<DashboardDomain, LucideIcon> = {
+  production: Package,
+  ordering: ShoppingCart,
+  sales: TrendingUp,
 };
 
-export function getHighlightToneClasses(tone: DashboardHighlightItem["tone"] = "neutral") {
+export function getHighlightToneClasses(
+  tone: DashboardHighlightItem["tone"] = "neutral",
+) {
   switch (tone) {
     case "danger":
       return "border-red-200 bg-red-50 text-red-700";
