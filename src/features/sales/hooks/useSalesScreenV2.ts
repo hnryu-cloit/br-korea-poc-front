@@ -20,8 +20,6 @@ import type { SalesV2Message } from "@/features/sales/types/sales-v2";
 import { toSalesV2Comparison } from "@/features/sales/utils/sales-v2";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
-let salesV2MessageId = 1;
-
 type SalesRouteState = {
   source?: string;
   notificationId?: number;
@@ -42,23 +40,38 @@ export const useSalesScreenV2 = () => {
   const dateTo = searchParams.get("date_to") ?? defaultDateRange.dateTo;
 
   const fromDashboardSales = routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
-  const dashboardChatHistory = fromDashboardSales && routeState?.chatHistoryId
-    ? getDashboardCardChatHistory("sales").filter((item) => item.id === routeState.chatHistoryId)
-    : [];
-
-  const [messages, setMessages] = useState<SalesV2Message[]>(() =>
-    dashboardChatHistory.flatMap((item) => [
-      { id: salesV2MessageId++, role: "user" as const, text: item.question },
-      {
-        id: salesV2MessageId++,
-        role: "assistant" as const,
-        text: item.answer,
-        evidence: item.evidence,
-        actions: item.actions,
-        blocked: false,
-      },
-    ]),
+  const dashboardChatHistory = useMemo(
+    () => (routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales" && routeState.chatHistoryId
+      ? getDashboardCardChatHistory("sales").filter((item) => item.id === routeState.chatHistoryId)
+      : []),
+    [routeState],
   );
+  const initialMessages = useMemo<SalesV2Message[]>(
+    () =>
+      dashboardChatHistory.flatMap((item, index) => {
+        const baseId = index * 2 + 1;
+        return [
+          { id: baseId, role: "user" as const, text: item.question },
+          {
+            id: baseId + 1,
+            role: "assistant" as const,
+            text: item.answer,
+            evidence: item.evidence,
+            actions: item.actions,
+            blocked: false,
+          },
+        ];
+      }),
+    [dashboardChatHistory],
+  );
+  const messageIdRef = useRef(initialMessages.length + 1);
+  const nextMessageId = useCallback(() => {
+    const id = messageIdRef.current;
+    messageIdRef.current += 1;
+    return id;
+  }, []);
+
+  const [messages, setMessages] = useState<SalesV2Message[]>(initialMessages);
   const [input, setInput] = useState(
     fromDashboardSales && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
       && !routeState?.chatHistoryId
@@ -142,7 +155,7 @@ export const useSalesScreenV2 = () => {
   const sendMessage = useCallback(
     async (text: string) => {
       if (!text.trim() || postSalesQueryMutation.isPending) return;
-      const userMessage: SalesV2Message = { id: salesV2MessageId++, role: "user", text };
+      const userMessage: SalesV2Message = { id: nextMessageId(), role: "user", text };
       setMessages((current) => [...current, userMessage]);
       setInput("");
       try {
@@ -150,7 +163,7 @@ export const useSalesScreenV2 = () => {
         setMessages((current) => [
           ...current,
           {
-            id: salesV2MessageId++,
+            id: nextMessageId(),
             role: "assistant",
             text: response.text,
             evidence: response.evidence,
@@ -166,7 +179,7 @@ export const useSalesScreenV2 = () => {
         setMessages((current) => [
           ...current,
           {
-            id: salesV2MessageId++,
+            id: nextMessageId(),
             role: "assistant",
             text: "분석 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.",
             blocked: false,
@@ -174,7 +187,7 @@ export const useSalesScreenV2 = () => {
         ]);
       }
     },
-    [postSalesQueryMutation],
+    [nextMessageId, postSalesQueryMutation],
   );
 
   useEffect(() => {

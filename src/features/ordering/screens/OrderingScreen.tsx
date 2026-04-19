@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { InPageCarousel } from "@/commons/components/carousel/InPageCarousel";
+import { orderingPostBanners } from "@/commons/constants/carousel-banners";
 import { StatsGrid } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
@@ -103,7 +105,12 @@ export function OrderingPage() {
   };
 
   if (confirmed && selectedOption) {
-    return <OrderingConfirmedSummary option={selectedOption} reason={reason} />;
+    return (
+      <div className="space-y-6">
+        <OrderingConfirmedSummary option={selectedOption} reason={reason} />
+        <InPageCarousel items={orderingPostBanners} />
+      </div>
+    );
   }
 
   const orderingStats: HighlightStat[] = [  

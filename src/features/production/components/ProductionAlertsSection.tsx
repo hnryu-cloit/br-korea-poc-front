@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { formatCount, formatCountWithUnit } from "@/commons/utils/format-count";
 import type { ProductionAlertItem, ProductionOverviewAlertItem } from "@/features/production/types/production";
 import {
@@ -33,6 +34,10 @@ export function ProductionAlertsSection({
 
   return (
     <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-slate-500">재고 경보</p>
+        <CardAiButton contextKey="production:stock-risk" />
+      </div>
       {sections.map((section) => {
         const opened = openSeverity === section.severity;
         return (

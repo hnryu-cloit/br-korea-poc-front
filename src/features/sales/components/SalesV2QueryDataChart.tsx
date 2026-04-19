@@ -29,6 +29,35 @@ const toComparisonRows = (comparison?: SalesV2Comparison): ChartRow[] => {
     .slice(0, 4);
 };
 
+const toEvidenceRows = (evidence?: string[]): ChartRow[] => {
+  if (!evidence?.length) {
+    return [];
+  }
+  return evidence
+    .map((line) => {
+      const text = line.trim();
+      if (!text) return null;
+      const separatorIndex = text.includes(":") ? text.indexOf(":") : text.indexOf("：");
+      if (separatorIndex <= 0) return null;
+
+      const label = text.slice(0, separatorIndex).trim();
+      const valuePart = text.slice(separatorIndex + 1).trim();
+      const numericText = valuePart.match(/-?\d[\d,]*(?:\.\d+)?/)?.[0];
+      if (!label || !numericText) return null;
+
+      const parsedValue = Number(numericText.replace(/,/g, ""));
+      if (!Number.isFinite(parsedValue) || parsedValue <= 0) return null;
+
+      return {
+        label,
+        storeValue: parsedValue,
+        peerValue: 0,
+      } satisfies ChartRow;
+    })
+    .filter((row): row is ChartRow => row !== null)
+    .slice(0, 4);
+};
+
 const toVisualRows = (visualData?: SalesVisualData | null): ChartRow[] => {
   if (!visualData) {
     return [];
@@ -64,15 +93,45 @@ const toVisualRows = (visualData?: SalesVisualData | null): ChartRow[] => {
   return [];
 };
 
-export const SalesV2QueryDataChart = ({
+const getChartRows = ({
   comparison,
   visualData,
+  evidence,
 }: {
   comparison?: SalesV2Comparison;
   visualData?: SalesVisualData | null;
+  evidence?: string[];
+}): ChartRow[] => {
+  const visualRows = toVisualRows(visualData);
+  if (visualRows.length > 0) return visualRows;
+
+  const comparisonRows = toComparisonRows(comparison);
+  if (comparisonRows.length > 0) return comparisonRows;
+
+  return toEvidenceRows(evidence);
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const hasSalesV2ChartData = ({
+  comparison,
+  visualData,
+  evidence,
+}: {
+  comparison?: SalesV2Comparison;
+  visualData?: SalesVisualData | null;
+  evidence?: string[];
+}): boolean => getChartRows({ comparison, visualData, evidence }).length > 0;
+
+export const SalesV2QueryDataChart = ({
+  comparison,
+  visualData,
+  evidence,
+}: {
+  comparison?: SalesV2Comparison;
+  visualData?: SalesVisualData | null;
+  evidence?: string[];
 }) => {
-  const rows = toVisualRows(visualData);
-  const chartRows = rows.length > 0 ? rows : toComparisonRows(comparison);
+  const chartRows = getChartRows({ comparison, visualData, evidence });
   if (chartRows.length === 0) {
     return null;
   }
@@ -84,8 +143,8 @@ export const SalesV2QueryDataChart = ({
       <p className="text-xs font-semibold text-slate-700">질의 근거 데이터 차트</p>
       <div className="mt-3 space-y-2">
         {chartRows.map((item) => {
-          const storeWidth = Math.max(6, Math.round((item.storeValue / maxValue) * 100));
-          const peerWidth = Math.max(6, Math.round((item.peerValue / maxValue) * 100));
+          const storeWidth = item.storeValue > 0 ? Math.max(6, Math.round((item.storeValue / maxValue) * 100)) : 0;
+          const peerWidth = item.peerValue > 0 ? Math.max(6, Math.round((item.peerValue / maxValue) * 100)) : 0;
           return (
             <div key={item.label} className="space-y-1">
               <p className="text-[11px] font-semibold text-slate-600">{item.label}</p>

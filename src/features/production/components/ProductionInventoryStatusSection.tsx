@@ -1,3 +1,4 @@
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import type { InventoryStatusItem, InventoryStatusResponse } from "@/features/production/types/production";
 
 type Props = {
@@ -15,8 +16,13 @@ export function ProductionInventoryStatusSection({ data, isLoading }: Props) {
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="border-b border-border/60 px-6 py-5">
-        <p className="text-lg font-bold text-slate-900">재고 수준 진단</p>
-        <p className="mt-1 text-sm text-slate-500">품목별 현재 재고와 판매량 비교를 통해 적정 재고 수준을 진단합니다.</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-lg font-bold text-slate-900">재고 수준 진단</p>
+            <p className="mt-1 text-sm text-slate-500">품목별 현재 재고와 판매량 비교를 통해 적정 재고 수준을 진단합니다.</p>
+          </div>
+          <CardAiButton contextKey="production:inventory-status" />
+        </div>
       </div>
 
       {isLoading ? (

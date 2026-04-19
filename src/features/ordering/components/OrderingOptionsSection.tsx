@@ -1,3 +1,4 @@
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { OrderingOptionCard } from "@/features/ordering/components/OrderingOptionCard";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
@@ -17,7 +18,10 @@ export function OrderingOptionsSection({
           <p className="text-lg font-bold text-slate-900">주문 추천안 비교</p>
           <p className="mt-1 text-sm text-slate-500">전주, 전전주, 전월 동요일 패턴 3축으로 고정해 비교합니다.</p>
         </div>
-        <p className="text-sm font-medium text-slate-500">예측 및 권고는 최소 범위로 제공됩니다.</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm font-medium text-slate-500">예측 및 권고는 최소 범위로 제공됩니다.</p>
+          <CardAiButton contextKey="ordering:options" />
+        </div>
       </div>
 
       {options.length === 0 ? (

@@ -2,7 +2,7 @@ import { BarChart3, Send, ShieldAlert } from "lucide-react";
 import type { RefObject } from "react";
 
 import { SectionHint } from "@/features/sales/components/SectionHint";
-import { SalesV2QueryDataChart } from "@/features/sales/components/SalesV2QueryDataChart";
+import { SalesV2QueryDataChart, hasSalesV2ChartData } from "@/features/sales/components/SalesV2QueryDataChart";
 import {
   SALES_V2_HINT_QUESTIONS,
   SALES_V2_QUERY_TYPE_LABEL,
@@ -90,7 +90,7 @@ export const SalesV2ChatPanel = ({
                   ) : null}
                 </div>
 
-                {msg.evidence?.length ? (
+                {!hasSalesV2ChartData({ comparison: msg.comparison, visualData: msg.visualData, evidence: msg.evidence }) && msg.evidence?.length ? (
                   <div className="rounded-2xl bg-white px-4 py-3 text-xs text-slate-500 shadow-sm">
                     <p className="mb-1 font-semibold text-slate-700">근거</p>
                     <ul className="list-disc space-y-1 pl-4">
@@ -104,6 +104,7 @@ export const SalesV2ChatPanel = ({
                 <SalesV2QueryDataChart
                   comparison={msg.comparison}
                   visualData={msg.visualData}
+                  evidence={msg.evidence}
                 />
 
                 {msg.actions?.length ? (
