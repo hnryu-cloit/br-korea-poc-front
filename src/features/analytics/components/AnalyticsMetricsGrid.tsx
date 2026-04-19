@@ -18,7 +18,16 @@ export const AnalyticsMetricsGrid = ({
   metrics,
 }: {
   metrics: AnalyticsMetric[];
-}) => (
+}) => {
+  if (metrics.length === 0) {
+    return (
+      <section className="flex items-center justify-center rounded-[26px] border border-border bg-white px-5 py-16 text-sm text-slate-400 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        표시할 지표 데이터가 없습니다.
+      </section>
+    );
+  }
+
+  return (
   <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
     {metrics.map((metric) => (
       <article key={metric.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -34,4 +43,5 @@ export const AnalyticsMetricsGrid = ({
       </article>
     ))}
   </section>
-);
+  );
+};

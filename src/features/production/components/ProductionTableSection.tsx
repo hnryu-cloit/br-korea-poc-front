@@ -1,3 +1,4 @@
+import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/production/types/production";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
@@ -39,7 +40,13 @@ export function ProductionTableSection({
             </tr>
           </thead>
           <tbody>
-            {items.map((sku) => (
+            {items.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="px-6 py-16 text-center text-sm text-slate-400">
+                  표시할 SKU 데이터가 없습니다.
+                </td>
+              </tr>
+            ) : items.map((sku) => (
               <tr key={sku.sku_id} className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
                 <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
                 <td className="px-4 py-4 font-semibold text-slate-800">{sku.sku_name}</td>
@@ -86,6 +93,8 @@ export function ProductionTableSection({
                   <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">{sku.alert_message ?? "-"}</p>
                 </td>
                 <td className="px-4 py-4">
+                  <div className="flex items-center gap-2">
+                  <BookmarkButton type="sku" refId={sku.sku_id} label={sku.sku_name} />
                   <button
                     type="button"
                     onClick={() => onOpenRegister(sku)}
@@ -100,6 +109,7 @@ export function ProductionTableSection({
                   >
                     {sku.can_produce === false ? "생산 불가" : "생산"}
                   </button>
+                  </div>
                 </td>
               </tr>
             ))}
