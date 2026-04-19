@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { InPageCarousel } from "@/commons/components/carousel/InPageCarousel";
-import { orderingPostBanners } from "@/commons/constants/carousel-banners";
 import { StatsGrid } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
@@ -20,6 +19,7 @@ import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOr
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
+import { orderingPostBanners } from "@/features/ordering/constants/ordering-banners";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import type { HighlightStat } from "@/commons/constants/page-content";
