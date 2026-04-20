@@ -263,6 +263,8 @@ npm run build
 - `신규/단골 비율`처럼 원천 데이터 미제공 항목은 프론트에서 `미제공`으로 표시해 합성값 노출을 방지합니다.
 - 백엔드에 고객 식별 컬럼 자동탐지 템플릿이 추가되어, 원천 컬럼이 적재되면 프론트 수정 없이 신규/단골 비율이 자동 반영됩니다.
 - `미제공` 항목에는 툴팁(title)과 보조 문구를 추가해 미제공 사유(원천 컬럼 미식별/집계 미존재)를 화면에서 즉시 확인할 수 있도록 정리했습니다.
+- `ordering/history`의 API 호출 시그니처를 정합화해 잘못된 `store_id` 전달(`"[object Object]"`) 문제를 제거했습니다.
+- `ordering/history`는 `store_id`를 항상 전달하도록 정합화했으며, 누락/오입력은 백엔드 4xx 에러로 명시적으로 노출됩니다(QA 검증 우선).
 
 ## API 계약 메모
 
@@ -274,3 +276,11 @@ npm run build
   - `src/features/sales/types/sales.ts`
   - `src/features/analytics/types/analytics.ts`
   - `src/features/notifications/types/notifications.ts`
+
+- 상권/고객 분석 화면의 글로벌 에러 배너는 `market-intelligence` 메인 쿼리 실패일 때만 표시하도록 조정했습니다. 보조 쿼리(`store-profile`, `customer-profile`, `sales-trend`) 실패만으로 전체 분석 실패 문구를 띄우지 않습니다.
+
+- `/analytics/market` 글로벌 에러 배너는 `market-intelligence` 실패 시에만 표시하도록 조정했고, 보조 API 실패와 분리했습니다.
+- 백엔드 `market-intelligence` 예외 시에도 기본 구조(200 응답)를 반환하도록 안전 처리되어 화면이 즉시 실패 배너로 전환되지 않도록 보강했습니다.
+- 헤더 점포 전환 메뉴 로드 후 현재 세션 `storeId`가 목록에 없으면 첫 점포로 자동 보정하도록 변경해, 초기 `STORE_DEMO` 상태에서 분석 KPI가 0으로 고정되는 문제를 완화했습니다.
+- `.env.example` 기본값을 `VITE_DEFAULT_STORE_ID=POC_012`로 정리해, 기본 진입 시 온라인/할인 KPI가 0으로만 보이는 케이스를 줄였습니다.
+- 백엔드 할인 KPI 포맷 보정으로 `0.1%` 미만 할인 비중도 `0.03%`처럼 소수 둘째 자리까지 확인할 수 있습니다.
