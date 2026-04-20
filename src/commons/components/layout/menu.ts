@@ -52,8 +52,8 @@ export const menuSections: MenuSection[] = [
         icon: "analytics",
         children: [
           { to: "/analytics", label: "매출 현황", icon: "analytics" },
-          { to: "/analytics/market", label: "상권/고객 분석", icon: "store" },
           { to: "/sales/metrics", label: "지표 분석", icon: "query_stats" },
+          { to: "/analytics/market", label: "상권/고객 분석", icon: "store" },
         ],
       },
     ],
