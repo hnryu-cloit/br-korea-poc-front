@@ -5,6 +5,8 @@ import type {
   AuditLogListResponse,
   CustomerProfileResponse,
   GetAnalyticsMetricsRequest,
+  GetMarketIntelligenceRequest,
+  MarketIntelligenceResponse,
   SalesTrendResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
@@ -43,6 +45,13 @@ export async function getAnalyticsCustomerProfile(storeId: string) {
 export async function getAnalyticsSalesTrend(storeId?: string) {
   const response = await axiosInstance.get<SalesTrendResponse>("/api/analytics/sales-trend", {
     params: storeId ? { store_id: storeId } : undefined,
+  });
+  return response.data;
+}
+
+export async function getAnalyticsMarketIntelligence(params?: GetMarketIntelligenceRequest) {
+  const response = await axiosInstance.get<MarketIntelligenceResponse>("/api/analytics/market-intelligence", {
+    params,
   });
   return response.data;
 }

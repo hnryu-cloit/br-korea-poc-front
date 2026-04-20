@@ -1,6 +1,7 @@
 import type {
   GetAnalyticsMetricsRequest,
   GetAuditLogsRequest,
+  GetMarketIntelligenceRequest,
 } from "@/features/analytics/types/analytics";
 
 const ANALYTICS_QUERY_ROOT = ["analytics"] as const;
@@ -17,4 +18,6 @@ export const analyticsQueryKeys = {
     [...ANALYTICS_QUERY_ROOT, "customer-profile", storeId] as const,
   salesTrend: (storeId?: string) =>
     [...ANALYTICS_QUERY_ROOT, "sales-trend", storeId ?? "all"] as const,
+  marketIntelligence: (params?: GetMarketIntelligenceRequest) =>
+    [...ANALYTICS_QUERY_ROOT, "market-intelligence", params ?? {}] as const,
 };

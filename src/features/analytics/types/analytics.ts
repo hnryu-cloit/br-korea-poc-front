@@ -14,6 +14,16 @@ export interface GetAnalyticsMetricsRequest {
   date_to?: string; // 조회 종료일
 }
 
+export interface GetMarketIntelligenceRequest {
+  store_id?: string;
+  gu?: string;
+  dong?: string;
+  industry?: string;
+  year?: number;
+  quarter?: string;
+  radius_m?: number;
+}
+
 /**
  * Analytics 상단 지표 카드
  */
@@ -131,4 +141,110 @@ export interface SalesTrendResponse {
   insight_chips: SalesTrendInsightChip[];
   dow_points: DowPoint[];
   hour_points: HourPoint[];
+}
+
+export interface TradeAreaSalesSlice {
+  category: string;
+  sales_amount: number;
+  share_ratio: number;
+}
+
+export interface CompetitorTrendPoint {
+  month: string;
+  sales_amount: number;
+}
+
+export interface CompetitorPaymentDemographic {
+  age_group: string;
+  male_payment_count: number;
+  female_payment_count: number;
+}
+
+export interface CompetitorInsightItem {
+  rank: number;
+  brand_name: string;
+  store_name: string;
+  distance_km: number;
+  trend_direction: "up" | "down" | "flat" | string;
+  sales_trend: CompetitorTrendPoint[];
+  payment_demographics: CompetitorPaymentDemographic[];
+}
+
+export interface FloatingPopulationTrendPoint {
+  month: string;
+  floating_population: number;
+  estimated_sales_amount: number;
+}
+
+export interface ResidentialPopulationRadarItem {
+  age_group: string;
+  male_population: number;
+  female_population: number;
+}
+
+export interface HouseholdCompositionSlice {
+  household_type: string;
+  household_count: number;
+  share_ratio: number;
+}
+
+export interface ResidenceRegionItem {
+  region_name: string;
+  share_ratio: number;
+  estimated_customers: number;
+}
+
+export interface EstimatedSalesSummary {
+  monthly_estimated_sales: number;
+  weekly_estimated_sales: number;
+  weekend_ratio: number;
+}
+
+export interface SalesHeatmapCell {
+  dow_label: string;
+  hour_band: string;
+  sales_index: number;
+}
+
+export interface StoreReportItem {
+  report_id: string;
+  title: string;
+  period: string;
+  generated_at: string;
+  status: string;
+}
+
+export interface MarketIntelligenceResponse {
+  radius_km: number;
+  category_sales_pie: TradeAreaSalesSlice[];
+  competitors: CompetitorInsightItem[];
+  residential_population_radar: ResidentialPopulationRadarItem[];
+  household_composition_pie: HouseholdCompositionSlice[];
+  estimated_residence_regions: ResidenceRegionItem[];
+  estimated_sales_summary: EstimatedSalesSummary;
+  sales_heatmap: SalesHeatmapCell[];
+  store_reports: StoreReportItem[];
+  floating_population_trend: FloatingPopulationTrendPoint[];
+  floating_population_analysis: string;
+  data_sources: string[];
+}
+
+export interface WeatherImpactCorrelation {
+  metric: string;
+  temperature_corr: number;
+  precipitation_corr: number;
+}
+
+export interface WeatherImpactBySido {
+  sido: string;
+  samples: number;
+  avg_temperature: number;
+  avg_precipitation: number;
+  correlations: WeatherImpactCorrelation[];
+}
+
+export interface WeatherImpactResponse {
+  date_from: string;
+  date_to: string;
+  items: WeatherImpactBySido[];
 }

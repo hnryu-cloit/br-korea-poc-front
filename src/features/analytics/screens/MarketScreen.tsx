@@ -1,13 +1,17 @@
+import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 
+import { AnalysisScopeFilterBar, type AnalysisScope } from "@/commons/components/analysis/AnalysisScopeFilterBar";
 import { PageHero } from "@/commons/components/page/page-layout";
 import { MarketActionGuideSection } from "@/features/analytics/components/MarketActionGuideSection";
 import { MarketCustomerSection } from "@/features/analytics/components/MarketCustomerSection";
 import { MarketInsightBoardSection } from "@/features/analytics/components/MarketInsightBoardSection";
+import { MarketIntelligenceSection } from "@/features/analytics/components/MarketIntelligenceSection";
 import { MarketOverviewCardsSection } from "@/features/analytics/components/MarketOverviewCardsSection";
 import { MarketStoreProfileSection } from "@/features/analytics/components/MarketStoreProfileSection";
 import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { useGetAnalyticsCustomerProfileQuery } from "@/features/analytics/queries/useGetAnalyticsCustomerProfileQuery";
+import { useGetAnalyticsMarketIntelligenceQuery } from "@/features/analytics/queries/useGetAnalyticsMarketIntelligenceQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import { useGetAnalyticsStoreProfileQuery } from "@/features/analytics/queries/useGetAnalyticsStoreProfileQuery";
 import { formatWonCompact } from "@/features/analytics/utils/market";
@@ -15,13 +19,31 @@ import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function MarketScreen() {
   const { user } = useDemoSession();
+  const [scope, setScope] = useState<AnalysisScope>({
+    gu: "전체",
+    dong: "전체",
+    industry: "전체",
+    year: "2026",
+    quarter: "Q1",
+    radiusMeters: 3000,
+  });
+
   const storeProfileQuery = useGetAnalyticsStoreProfileQuery(user.storeId);
   const customerProfileQuery = useGetAnalyticsCustomerProfileQuery(user.storeId);
   const salesTrendQuery = useGetAnalyticsSalesTrendQuery(user.storeId);
+  const marketIntelligenceQuery = useGetAnalyticsMarketIntelligenceQuery({
+    store_id: user.storeId,
+    gu: scope.gu,
+    dong: scope.dong,
+    industry: scope.industry,
+    year: Number(scope.year),
+    quarter: scope.quarter,
+    radius_m: scope.radiusMeters,
+  });
   const isLoading =
-    storeProfileQuery.isLoading || customerProfileQuery.isLoading || salesTrendQuery.isLoading;
+    storeProfileQuery.isLoading || customerProfileQuery.isLoading || salesTrendQuery.isLoading || marketIntelligenceQuery.isLoading;
   const hasError =
-    storeProfileQuery.isError || customerProfileQuery.isError || salesTrendQuery.isError;
+    storeProfileQuery.isError || customerProfileQuery.isError || salesTrendQuery.isError || marketIntelligenceQuery.isError;
   const storeProfile = storeProfileQuery.data;
   const customerProfile = customerProfileQuery.data;
   const salesTrend = salesTrendQuery.data;
@@ -34,8 +56,10 @@ export function MarketScreen() {
     <div className="space-y-6">
       <PageHero
         title="상권·고객 분석"
-        description={heroDescription}
+        description={`${heroDescription} · ${scope.year} ${scope.quarter} · 반경 ${scope.radiusMeters.toLocaleString()}m`}
       />
+
+      <AnalysisScopeFilterBar value={scope} onChange={setScope} />
 
       {hasError ? (
         <section className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -50,6 +74,11 @@ export function MarketScreen() {
         storeProfile={storeProfile}
         customerProfile={customerProfile}
         isLoading={isLoading}
+      />
+
+      <MarketIntelligenceSection
+        data={marketIntelligenceQuery.data}
+        isLoading={marketIntelligenceQuery.isLoading}
       />
 
       <SalesTrendChart data={salesTrend} isLoading={salesTrendQuery.isLoading} />
