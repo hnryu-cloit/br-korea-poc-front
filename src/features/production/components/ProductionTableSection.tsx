@@ -3,6 +3,19 @@ import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/pr
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(/\/$/, "");
+const MENU_PLACEHOLDER_IMAGE = "/images/menu-placeholder.svg";
+
+function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
+  if (!imageUrl) {
+    return null;
+  }
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+  return `${API_BASE_URL}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+}
+
 export function ProductionTableSection({
   items,
   pagination,
@@ -53,10 +66,30 @@ export function ProductionTableSection({
                   표시할 SKU 데이터가 없습니다.
                 </td>
               </tr>
-            ) : items.map((sku) => (
+            ) : items.map((sku) => {
+              const imageUrl = toAbsoluteImageUrl(sku.image_url);
+              const displayImageUrl = imageUrl ?? MENU_PLACEHOLDER_IMAGE;
+              return (
               <tr key={sku.sku_id} className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
                 <td className="px-6 py-4"><StatusBadge status={sku.status} /></td>
-                <td className="px-4 py-4 font-semibold text-slate-800">{sku.sku_name}</td>
+                <td className="px-4 py-4 font-semibold text-slate-800">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={displayImageUrl}
+                      alt={sku.sku_name}
+                      className="h-12 w-12 shrink-0 rounded-xl border border-border/60 object-cover"
+                      onError={(event) => {
+                        event.currentTarget.src = MENU_PLACEHOLDER_IMAGE;
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <div className="truncate">{sku.sku_name}</div>
+                      {!imageUrl ? (
+                        <p className="mt-0.5 text-[11px] font-medium text-slate-400">상품이미지 준비중입니다.</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </td>
                 <td className="px-4 py-4">
                   <div className="font-bold text-slate-900">{formatCountWithUnit(sku.current_stock, "개")}</div>
                   <div className="mt-2 h-2 rounded-full bg-slate-100">
@@ -118,7 +151,8 @@ export function ProductionTableSection({
                   </div>
                 </td>
               </tr>
-            ))}
+            );
+            })}
           </tbody>
         </table>
       </div>
