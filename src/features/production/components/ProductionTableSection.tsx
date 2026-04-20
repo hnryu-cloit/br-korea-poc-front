@@ -2,6 +2,7 @@ import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/production/types/production";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 
 export function ProductionTableSection({
   items,
@@ -20,10 +21,17 @@ export function ProductionTableSection({
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+
       <div className="border-b border-border/60 px-6 py-5">
-        <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
-        <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
+            <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
+          </div>
+          <CardAiButton contextKey="production:waste" />
+        </div>
       </div>
+
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
           <thead>

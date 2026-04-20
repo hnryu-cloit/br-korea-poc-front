@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
-import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { ProductionHero } from "@/features/production/components/ProductionHero";
-import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
@@ -39,9 +37,6 @@ export function ProductionStatusScreen() {
   const postRegistrationMutation = usePostProductionRegistrationMutation();
 
   const items = skuListQuery.data?.items ?? [];
-  const dashboardChatHistory = fromDashboardProduction && routeState?.chatHistoryId
-    ? getDashboardCardChatHistory("production").filter((item) => item.id === routeState.chatHistoryId)
-    : [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
@@ -75,17 +70,6 @@ export function ProductionStatusScreen() {
         // description="5분 단위 자동 갱신 재고와 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 생산 필요 시점을 자동 감지합니다."
         description=""
       />
-      {showChat ? (
-        <ProductionQuickChat
-          initialHistory={dashboardChatHistory}
-          initialInput={
-            fromDashboardProduction && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
-              && !routeState?.chatHistoryId
-              ? routeState.prompt ?? ""
-              : ""
-          }
-        />
-      ) : null}
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}

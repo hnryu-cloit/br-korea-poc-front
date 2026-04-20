@@ -127,15 +127,6 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
     ],
   },
-  "/sales/query-logs": {
-    title: "매출 분석 해설",
-    subtitle: "오늘 장사 결과와 다음 액션을 바로 확인합니다.",
-    quickActions: [
-      { label: "오늘 장사 어때?", prompt: "오늘 장사 잘 된 거야 안 된 거야?" },
-      { label: "이대로 가면?", prompt: "이번 달 이 페이스면 얼마 남아?" },
-      { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
-    ],
-  },
   "/orchestration": {
     title: "보안 정책 해설",
     subtitle: "질의 라우팅, 민감정보 보호, 감사 로그 기준을 화면 문맥으로 해설합니다.",

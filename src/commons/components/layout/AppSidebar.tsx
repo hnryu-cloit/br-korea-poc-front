@@ -26,7 +26,11 @@ export function AppSidebar({ isOpen, onClose }: Props) {
 
       <nav className="scrollbar-hide flex-1 space-y-6 overflow-y-auto pb-6">
         {visibleSections.map((section, sectionIndex) => {
-          const hasActive = section.items.some((item) => (item.to === "/" ? pathname === "/" : pathname.startsWith(item.to)));
+          const hasActive = section.items.some((item) => {
+            const selfActive = isRouteActive(item.to);
+            const childActive = item.children?.some((child) => pathname === child.to) ?? false;
+            return selfActive || childActive;
+          });
 
           return (
             <div key={section.section ?? sectionIndex} className="space-y-1.5">
@@ -45,7 +49,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
 
               <div className={cn("space-y-0.5", section.section ? "relative ml-1 pl-2" : undefined)}>
                 {section.items.map((item) => {
-                  const parentActive = isRouteActive(item.to);
+                  const parentActive = isRouteActive(item.to) || (item.children?.some((child) => pathname === child.to) ?? false);
 
                   return (
                     <div key={item.to} className="space-y-1">

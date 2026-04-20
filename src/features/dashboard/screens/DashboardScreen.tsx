@@ -39,7 +39,7 @@ export function DashboardPage() {
         <DashboardLoadingSkeleton />
       ) : (
         <>
-          <PriorityActionsSection actions={priorityActions} />
+          {/* <PriorityActionsSection actions={priorityActions} /> */}
           <DashboardSchedulePanel
             storeId={user.storeId}
             events={scheduleQuery.data?.events ?? []}

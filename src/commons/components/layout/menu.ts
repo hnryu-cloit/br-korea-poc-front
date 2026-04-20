@@ -40,15 +40,6 @@ export const menuSections: MenuSection[] = [
           { to: "/ordering/history", label: "발주 이력", icon: "history" },
         ],
       },
-      {
-        to: "/sales",
-        label: "손익 분석",
-        icon: "query_stats",
-        children: [
-          { to: "/sales/metrics", label: "지표 분석", icon: "query_stats" },
-          { to: "/sales/query-logs", label: "질의 처리 로그", icon: "receipt_long" },
-        ],
-      },
     ],
   },
   {
@@ -57,11 +48,12 @@ export const menuSections: MenuSection[] = [
     items: [
       {
         to: "/analytics",
-        label: "매출 조회",
+        label: "매장 분석",
         icon: "analytics",
         children: [
           { to: "/analytics", label: "매출 현황", icon: "analytics" },
           { to: "/analytics/market", label: "상권/고객 분석", icon: "store" },
+          { to: "/sales/metrics", label: "지표 분석", icon: "query_stats" },
         ],
       },
     ],
@@ -102,7 +94,6 @@ export const routeDescriptions: Record<string, string> = {
   "/ordering/history": "최근 발주 이력을 조회합니다.",
   "/sales": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
   "/sales/metrics": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
-  "/sales/query-logs": "질의 처리 로그와 응답 이력을 확인합니다.",
   "/analytics": "매출 데이터를 조회합니다.",
   "/analytics/market": "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.",
   "/settings": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",

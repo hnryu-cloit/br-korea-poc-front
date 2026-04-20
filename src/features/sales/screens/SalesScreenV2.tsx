@@ -42,7 +42,7 @@ export const SalesScreenV2 = () => {
             : "궁금한 것을 물어보시면 분석해 드려요."
         }
       />
-      <StatsGrid stats={salesStats} />
+      {/* <StatsGrid stats={salesStats} /> */}
       <SalesDateRangeFilter
         dateFrom={dateFrom}
         dateTo={dateTo}
@@ -68,7 +68,7 @@ export const SalesScreenV2 = () => {
         onChangeTab={handleChangeOpportunityTab}
       />
 
-      <section>
+      {/* <section>
         <SalesV2ChatPanel
           messages={messages}
           prompts={suggestedPrompts}
@@ -80,7 +80,7 @@ export const SalesScreenV2 = () => {
           onSelectPrompt={sendMessage}
           onSubmitInput={() => sendMessage(input)}
         />
-      </section>
+      </section> */}
     </div>
   );
 };
