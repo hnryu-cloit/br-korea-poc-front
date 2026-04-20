@@ -1,25 +1,22 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { InPageCarousel } from "@/commons/components/carousel/InPageCarousel";
-import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
+import { PageTitle } from "@/commons/components/page/PageTitle";
 import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
-import { OrderingHero } from "@/features/ordering/components/OrderingHero";
 import { OrderingOptionsSection } from "@/features/ordering/components/OrderingOptionsSection";
-import { OrderingQuickChat } from "@/features/ordering/components/OrderingQuickChat";
-import { orderingPostBanners } from "@/features/ordering/constants/ordering-banners";
+import { MOCK_ORDERING_DEADLINE_ITEMS } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
-import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
-import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+
+const USE_ORDERING_DEADLINE_MOCK = true;
 
 export function OrderingRecommendationsScreen() {
-  const { user } = useDemoSession();
   const location = useLocation();
   const routeState = location.state as {
     source?: string;
@@ -30,20 +27,14 @@ export function OrderingRecommendationsScreen() {
     prompt?: string;
     chatHistoryId?: string;
   } | null;
-  const fromDashboardOrdering =
-    routeState?.source === "dashboard-card-chat" && routeState?.domain === "ordering";
   const notificationEntry = routeState?.source === "notification";
   const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
-  const [showChat, setShowChat] = useState(fromDashboardOrdering);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
-  const orderingPromptsQuery = useGetSalesPromptsQuery({
-    store_id: user.storeId,
-    domain: "ordering",
-  });
+
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
 
@@ -69,33 +60,6 @@ export function OrderingRecommendationsScreen() {
     [effectiveSelectedOptionId, orderingOptions],
   );
 
-  const orderingQuickPrompts = useMemo(() => {
-    const recommended = orderingOptions.find((option) => option.recommended);
-    const recommendedLabel = recommended?.title ?? "추천안";
-    const deadline = optionsQuery.data?.deadline_minutes ?? 20;
-    return [
-      `${user.storeName} 기준 ${recommendedLabel} 추천 근거는?`,
-      `오늘 주문 마감 ${deadline}분 전 우선 확인 항목은?`,
-      `${user.storeName}의 어제 대비 주문 변화 원인은?`,
-      `지금 선택한 주문안의 품절 리스크는?`,
-    ];
-  }, [optionsQuery.data?.deadline_minutes, orderingOptions, user.storeName]);
-
-  const quickPromptCandidates = useMemo(() => {
-    const aiPrompts = (orderingPromptsQuery.data ?? []).map((item) => item.prompt).filter(Boolean);
-    if (aiPrompts.length > 0) {
-      return aiPrompts.slice(0, 4);
-    }
-    return orderingQuickPrompts.slice(0, 4);
-  }, [orderingPromptsQuery.data, orderingQuickPrompts]);
-
-  const dashboardChatHistory =
-    fromDashboardOrdering && routeState?.chatHistoryId
-      ? getDashboardCardChatHistory("ordering").filter(
-          (item) => item.id === routeState.chatHistoryId,
-        )
-      : [];
-
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
     setSubmitError(null);
@@ -117,29 +81,25 @@ export function OrderingRecommendationsScreen() {
     return (
       <div className="space-y-6">
         <OrderingConfirmedSummary option={selectedOption} />
-        <InPageCarousel items={orderingPostBanners} />
+        {/* <InPageCarousel items={orderingPostBanners} /> */}
       </div>
     );
   }
 
+  const deadlineItems = USE_ORDERING_DEADLINE_MOCK ? MOCK_ORDERING_DEADLINE_ITEMS : [];
+
   return (
     <div className="space-y-6">
-      <OrderingHero showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
-      {showChat ? (
-        <OrderingQuickChat
-          prompts={quickPromptCandidates}
-          initialHistory={dashboardChatHistory}
-          initialInput={
-            fromDashboardOrdering &&
-            dashboardChatHistory.length === 0 &&
-            routeState?.intent === "ask" &&
-            !routeState?.chatHistoryId
-              ? (routeState.prompt ?? "")
-              : ""
-          }
-        />
-      ) : null}
-      <OrderingDeadlineAlert deadlineAt={optionsQuery.data?.deadline_at} />
+      <PageTitle
+        title="주문 관리"
+        description="주문 누락 방지를 목적으로 추천 3안을 비교합니다. 예측과 권고는 최소 범위로 제공하며 최종 의사결정은 점주가 수행합니다."
+      >
+        <CardAiButton contextKey="ordering:options" />
+      </PageTitle>
+      <OrderingDeadlineAlert
+        deadlineAt={optionsQuery.data?.deadline_at}
+        deadlineItems={deadlineItems}
+      />
       <OrderingContextCards
         weather={optionsQuery.data?.weather_summary}
         trend={optionsQuery.data?.trend_summary}

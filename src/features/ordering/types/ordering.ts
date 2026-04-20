@@ -124,6 +124,13 @@ export interface OrderingDeadlineResponse {
   is_passed: boolean; // 마감 경과 여부
 }
 
+export interface OrderingDeadlineItem {
+  id: string;
+  sku_name: string;
+  deadline_at: string; // HH:mm
+  is_ordered: boolean;
+}
+
 // GET /api/ordering/history
 export interface OrderingHistoryParams {
   store_id?: string;

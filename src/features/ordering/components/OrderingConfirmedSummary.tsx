@@ -8,6 +8,7 @@ import type { OrderingOption } from "@/features/ordering/types/ordering";
 export function OrderingConfirmedSummary({ option }: { option: OrderingOption }) {
   const historyQuery = useGetOrderingSelectionHistoryQuery({ limit: 5 });
   const historyItems = historyQuery.data?.items ?? [];
+  const orderedItems = option.items.filter((item) => item.quantity > 0);
 
   return (
     <div className="space-y-6">
@@ -25,19 +26,25 @@ export function OrderingConfirmedSummary({ option }: { option: OrderingOption })
             <p className="mt-1 text-sm text-green-700">
               {option.title} 기준으로 주문을 확정했습니다.
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {option.items.map((item) => (
-                <div
-                  key={`${option.option_id}-${item.sku_name}`}
-                  className="rounded-2xl bg-white px-4 py-4 shadow-sm"
-                >
-                  <p className="text-xs font-semibold text-slate-400">{item.sku_name}</p>
-                  <p className="mt-1 text-lg font-bold text-slate-900">
-                    {formatCountWithUnit(item.quantity, "개")}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {orderedItems.length > 0 ? (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {orderedItems.map((item) => (
+                  <div
+                    key={`${option.option_id}-${item.sku_name}`}
+                    className="rounded-2xl bg-white px-4 py-4 shadow-sm"
+                  >
+                    <p className="text-xs font-semibold text-slate-400">{item.sku_name}</p>
+                    <p className="mt-1 text-lg font-bold text-slate-900">
+                      {formatCountWithUnit(item.quantity, "개")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm text-slate-500">
+                확정된 주문 품목이 없습니다.
+              </p>
+            )}
           </div>
         </div>
       </section>
