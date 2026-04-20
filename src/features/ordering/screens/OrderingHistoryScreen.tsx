@@ -1,7 +1,8 @@
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { StatsGrid } from "@/commons/components/page/page-layout";
+import { PageTitle } from "@/commons/components/page/PageTitle";
 import type { HighlightStat } from "@/commons/constants/page-content";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
-import { OrderingHero } from "@/features/ordering/components/OrderingHero";
 import { OrderingHistorySection } from "@/features/ordering/components/OrderingHistorySection";
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
@@ -31,7 +32,12 @@ export function OrderingHistoryScreen() {
 
   return (
     <div className="space-y-6">
-      <OrderingHero />
+      <PageTitle
+        title="발주 이력"
+        description="일자·품목별 발주 이력과 자동/수동 비중을 함께 점검해 주문 누락과 과다 발주 패턴을 관리합니다."
+      >
+        <CardAiButton contextKey="ordering:history" />
+      </PageTitle>
       <StatsGrid stats={orderingHistoryStats} />
       <OrderingHistorySection data={historyQuery.data} isLoading={historyQuery.isLoading} />
     </div>
