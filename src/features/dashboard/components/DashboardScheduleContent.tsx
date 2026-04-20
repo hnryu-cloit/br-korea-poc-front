@@ -1,37 +1,41 @@
-import { Bell, CalendarDays, CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle } from "lucide-react";
 
 import {
+  SCHEDULE_EVENT_STATUS_LABEL,
+  SCHEDULE_EVENT_STATUS_STYLE,
   SCHEDULE_EVENT_TYPE_LABEL,
   SCHEDULE_EVENT_TYPE_STYLE,
   SCHEDULE_PANEL_TAB_LABELS,
   type SchedulePanelTab,
 } from "@/features/dashboard/constants/schedule-panel";
-import type { ScheduleEvent } from "@/features/dashboard/types/schedule";
 import type { DashboardTodoItem } from "@/features/dashboard/types/todo";
-import {
-  formatScheduleDate,
-  getScheduleDDayLabel,
-} from "@/features/dashboard/utils/schedule-panel";
+import type { ScheduleEventSummaryItem } from "@/features/dashboard/utils/schedule-panel";
 
 export function DashboardScheduleContent({
   activeTab,
   onChangeTab,
   todos,
   toggleTodo,
-  completedCount,
+  hiddenTodoCount,
   scheduleEvents,
+  hiddenEventCount,
   isLoading,
+  onClickTodoMore,
+  onClickEventMore,
 }: {
   activeTab: SchedulePanelTab;
   onChangeTab: (tab: SchedulePanelTab) => void;
   todos: DashboardTodoItem[];
   toggleTodo: (id: string) => void;
-  completedCount: number;
-  scheduleEvents: ScheduleEvent[];
+  hiddenTodoCount: number;
+  scheduleEvents: ScheduleEventSummaryItem[];
+  hiddenEventCount: number;
   isLoading: boolean;
+  onClickTodoMore: () => void;
+  onClickEventMore: () => void;
 }) {
   return (
-    <div className="lg:col-span-2">
+    <div className="flex h-full min-h-0 flex-col lg:col-span-2">
       <div className="mb-4 flex items-center gap-1">
         {(Object.keys(SCHEDULE_PANEL_TAB_LABELS) as SchedulePanelTab[]).map((tab) => (
           <button
@@ -50,11 +54,7 @@ export function DashboardScheduleContent({
       </div>
 
       {activeTab === "todo" ? (
-        <div>
-          <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-slate-400">
-            <Bell className="h-3.5 w-3.5" />
-            매일 반복 운영 체크리스트
-          </div>
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           <ul className="space-y-2">
             {todos.map((todo) => (
               <li key={todo.id}>
@@ -85,16 +85,18 @@ export function DashboardScheduleContent({
           {todos.length === 0 ? (
             <p className="mt-2 text-sm text-slate-400">현재 체크리스트 데이터가 없습니다.</p>
           ) : null}
-          <p className="mt-3 text-xs text-slate-400">
-            완료 {completedCount} / {todos.length}
-          </p>
+          {hiddenTodoCount > 0 ? (
+            <button
+              type="button"
+              onClick={onClickTodoMore}
+              className="mt-3 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
+            >
+              +{hiddenTodoCount}개 더보기
+            </button>
+          ) : null}
         </div>
       ) : (
-        <div>
-          <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-slate-400">
-            <CalendarDays className="h-3.5 w-3.5" />
-            선택일 일정
-          </div>
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           {isLoading ? (
             <p className="text-sm text-slate-400">일정 불러오는 중...</p>
           ) : scheduleEvents.length === 0 ? (
@@ -103,7 +105,7 @@ export function DashboardScheduleContent({
             <ul className="space-y-2">
               {scheduleEvents.map((event) => (
                 <li
-                  key={`${event.date}-${event.type}-${event.title}`}
+                  key={event.id}
                   className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3"
                 >
                   <div className="shrink-0 pt-0.5">
@@ -115,18 +117,29 @@ export function DashboardScheduleContent({
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-slate-800">{event.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">{event.description}</p>
+                    <p className="mt-0.5 text-xs text-slate-500">{event.periodText}</p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-xs font-bold text-[#2454C8]">
-                      {getScheduleDDayLabel(event.date)}
-                    </p>
-                    <p className="text-[10px] text-slate-400">{formatScheduleDate(event.date)}</p>
+                    <p className="text-xs font-bold text-[#2454C8]">{event.dDayText}</p>
+                    <span
+                      className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${SCHEDULE_EVENT_STATUS_STYLE[event.status]}`}
+                    >
+                      {SCHEDULE_EVENT_STATUS_LABEL[event.status]}
+                    </span>
                   </div>
                 </li>
               ))}
             </ul>
           )}
+          {hiddenEventCount > 0 ? (
+            <button
+              type="button"
+              onClick={onClickEventMore}
+              className="mt-3 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
+            >
+              +{hiddenEventCount}개 더보기
+            </button>
+          ) : null}
         </div>
       )}
     </div>
