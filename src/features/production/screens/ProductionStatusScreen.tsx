@@ -2,27 +2,18 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
-import { StatsGrid } from "@/commons/components/page/page-layout";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
-import { ProductionAlertsSection } from "@/features/production/components/ProductionAlertsSection";
 import { ProductionHero } from "@/features/production/components/ProductionHero";
-import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
 import { ProductionQuickChat } from "@/features/production/components/ProductionQuickChat";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
-import { ProductionWasteSection } from "@/features/production/components/ProductionWasteSection";
-import { useGetProductionInventoryStatusQuery } from "@/features/production/queries/useGetProductionInventoryStatusQuery";
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
-import { useGetProductionOverviewQuery } from "@/features/production/queries/useGetProductionOverviewQuery";
 import { useGetProductionSkuListQuery } from "@/features/production/queries/useGetProductionSkuListQuery";
-import { useGetProductionWasteQuery } from "@/features/production/queries/useGetProductionWasteQuery";
 import { usePostProductionRegistrationMutation } from "@/features/production/queries/usePostProductionRegistrationMutation";
+import type { ProductionSkuItem } from "@/features/production/types/production";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-import type {
-  ProductionSkuItem,
-} from "@/features/production/types/production";
 
-export function ProductionScreen() {
+export function ProductionStatusScreen() {
   const location = useLocation();
   const routeState = location.state as {
     source?: string;
@@ -39,21 +30,15 @@ export function ProductionScreen() {
   const [showChat, setShowChat] = useState(fromDashboardProduction);
   const [page, setPage] = useState(1);
 
-  const overviewQuery = useGetProductionOverviewQuery();
   const skuListQuery = useGetProductionSkuListQuery({
     page,
-    page_size: 20,
+    page_size: 10,
     store_id: user.storeId,
   });
   const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, user.storeId);
   const postRegistrationMutation = usePostProductionRegistrationMutation();
-  const wasteQuery = useGetProductionWasteQuery(user.storeId ?? "");
-  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "");
 
   const items = skuListQuery.data?.items ?? [];
-  const stats = overviewQuery.data?.summary_stats ?? [];
-  const alerts = overviewQuery.data?.alerts ?? [];
-  const alertsItems = overviewQuery.data?.items ?? [];
   const dashboardChatHistory = fromDashboardProduction && routeState?.chatHistoryId
     ? getDashboardCardChatHistory("production").filter((item) => item.id === routeState.chatHistoryId)
     : [];
@@ -84,9 +69,11 @@ export function ProductionScreen() {
   return (
     <div className="space-y-6">
       <ProductionHero
-        updatedAt={overviewQuery.data?.updated_at}
         showChat={showChat}
         onToggleChat={() => setShowChat((value) => !value)}
+        title="상품별 생산 현황"
+        // description="5분 단위 자동 갱신 재고와 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 생산 필요 시점을 자동 감지합니다."
+        description=""
       />
       {showChat ? (
         <ProductionQuickChat
@@ -99,16 +86,12 @@ export function ProductionScreen() {
           }
         />
       ) : null}
-      <ProductionAlertsSection alerts={alerts} items={alertsItems} />
-      <StatsGrid stats={stats} />
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}
         onChangePage={setPage}
         onOpenRegister={openRegister}
       />
-      <ProductionWasteSection data={wasteQuery.data} isLoading={wasteQuery.isLoading} />
-      <ProductionInventoryStatusSection data={inventoryStatusQuery.data} isLoading={inventoryStatusQuery.isLoading} />
       {activeSku ? (
         <AppModal onClose={closeRegister}>
           <ProductionRegistrationPanel

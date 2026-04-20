@@ -7,17 +7,21 @@ export function ProductionHero({
   updatedAt,
   showChat,
   onToggleChat,
+  title,
+  description,
 }: {
   updatedAt?: string;
   showChat: boolean;
   onToggleChat: () => void;
+  title: string;
+  description: string;
 }) {
   const formattedUpdatedAt = updatedAt ? dayjs(updatedAt).format("YYYY-MM-DD HH:mm") : undefined;
 
   return (
     <PageHero
-      title="생산관리"
-      description="5분 단위 자동 갱신 재고와 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 생산 필요 시점을 자동 감지합니다."
+      title={title}
+      description={description}
       updatedAt={formattedUpdatedAt}
     >
       <div className="flex flex-wrap items-center gap-3">

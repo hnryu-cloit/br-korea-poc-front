@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { AppLayout } from "@/commons/components/layout/AppLayout";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
@@ -8,7 +8,9 @@ import { HQInspectionPage } from "@/pages/HQInspectionPage";
 import { MarketPage } from "@/pages/MarketPage";
 import { OrchestrationPage } from "@/pages/OrchestrationPage";
 import { OrderingPage } from "@/pages/OrderingPage";
-import { ProductionPage } from "@/pages/ProductionPage";
+import { ProductionInventoryDiagnosisPage } from "@/pages/production/ProductionInventoryDiagnosisPage";
+import { ProductionStatusPage } from "@/pages/production/ProductionStatusPage";
+import { ProductionWasteLossPage } from "@/pages/production/ProductionWasteLossPage";
 import { SalesPage } from "@/pages/SalesPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { SignalsPage } from "@/pages/SignalsPage";
@@ -19,9 +21,16 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "production", element: <ProductionPage /> },
-      { path: "ordering", element: <OrderingPage /> },
-      { path: "sales", element: <SalesPage /> },
+      { path: "production", element: <Navigate to="/production/status" replace /> },
+      { path: "production/status", element: <ProductionStatusPage /> },
+      { path: "production/waste-loss", element: <ProductionWasteLossPage /> },
+      { path: "production/inventory-diagnosis", element: <ProductionInventoryDiagnosisPage /> },
+      { path: "ordering", element: <Navigate to="/ordering/recommendations" replace /> },
+      { path: "ordering/recommendations", element: <OrderingPage /> },
+      { path: "ordering/history", element: <OrderingPage /> },
+      { path: "sales", element: <Navigate to="/sales/metrics" replace /> },
+      { path: "sales/metrics", element: <SalesPage /> },
+      { path: "sales/query-logs", element: <SalesPage /> },
       { path: "analytics", element: <AnalyticsPage /> },
       { path: "analytics/market", element: <MarketPage /> },
       { path: "hq/coaching", element: <HQCoachingPage /> },
