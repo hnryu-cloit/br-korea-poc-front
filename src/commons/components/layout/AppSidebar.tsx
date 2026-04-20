@@ -14,7 +14,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const { user } = useDemoSession();
   const currentRole = user.role;
-  const roleHomePath = currentRole === "hq_admin" ? "/orchestration" : "/dashboard";
+  const roleHomePath = currentRole === "hq_admin" ? "/settings" : "/dashboard";
   const visibleSections = menuSections.filter((section) => !section.roles || section.roles.includes(currentRole));
   const isRouteActive = (to: string) => (to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(`${to}/`));
 
