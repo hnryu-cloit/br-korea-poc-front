@@ -17,7 +17,6 @@ export type FloatingAiChatRouteGuide = {
 };
 
 export type FloatingAiCardContextKey =
-    "production:status"
   | "production:stock-risk"
   | "production:inventory-status"
   | "production:waste"

@@ -28,7 +28,7 @@ export function ProductionTableSection({
             <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
             <p className="mt-1 text-sm text-slate-500">현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.</p>
           </div>
-          <CardAiButton contextKey="production:waste" />
+          <CardAiButton contextKey="production:stock-risk" />
         </div>
       </div>
 
