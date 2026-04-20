@@ -1,4 +1,5 @@
 import { PageHero } from "@/commons/components/page/page-layout";
+import { SettingsSubNav } from "@/features/settings/components/SettingsSubNav";
 import { SETTINGS_DOMAINS } from "@/features/settings/constants/settings-domains";
 import { useSettingsPromptForm } from "@/features/settings/hooks/useSettingsPromptForm";
 
@@ -18,9 +19,11 @@ export function SettingsScreen() {
   return (
     <div className="space-y-6">
       <PageHero
-        title="Digital Twin 설정"
+        title="설정 · 프롬프트 설정"
         description="도메인별 빠른 질문, 시스템 지시문, 쿼리 접두 템플릿을 관리합니다."
       />
+
+      <SettingsSubNav />
 
       <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="flex flex-wrap items-center gap-3">

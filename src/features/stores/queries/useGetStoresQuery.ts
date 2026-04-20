@@ -6,9 +6,10 @@ export const storeQueryKeys = {
   all: ["stores"] as const,
 };
 
-export const useGetStoresQuery = () =>
+export const useGetStoresQuery = (enabled = true) =>
   useQuery({
     queryKey: storeQueryKeys.all,
     queryFn: getStores,
+    enabled,
     staleTime: 5 * 60 * 1000,
   });

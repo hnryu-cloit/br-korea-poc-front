@@ -1,6 +1,7 @@
+import { ImageOff } from "lucide-react";
+
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
-import { ImageOff } from "lucide-react";
 import type {
   ProductionSkuItem,
   ProductionSkuListResponse,
@@ -49,7 +50,9 @@ export function ProductionTableSection({
               items.map((sku) => (
                 <tr
                   key={sku.sku_id}
-                  className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
+                  className={`border-b border-border/30 last:border-0 ${
+                    sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"
+                  }`}
                 >
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
@@ -85,7 +88,13 @@ export function ProductionTableSection({
                   </td>
                   <td className="px-4 py-4">
                     <span
-                      className={`font-bold ${sku.status === "danger" ? "text-red-600" : sku.status === "warning" ? "text-orange-600" : "text-green-600"}`}
+                      className={`font-bold ${
+                        sku.status === "danger"
+                          ? "text-red-600"
+                          : sku.status === "warning"
+                            ? "text-orange-600"
+                            : "text-green-600"
+                      }`}
                     >
                       {formatCountWithUnit(sku.forecast_stock_1h, "개")}
                     </span>
@@ -110,27 +119,6 @@ export function ProductionTableSection({
                       {sku.chance_loss_basis_text ?? "1시간 후 재고 예측 및 4주 평균 손실률 기준"}
                     </div>
                   </td>
-                  {/* <td className="px-4 py-4">
-                    <div className="flex flex-nowrap gap-1.5 whitespace-nowrap">
-                      {(sku.tags ?? []).map((tag) => (
-                        <span
-                          key={`${sku.sku_id}-${tag}`}
-                          className={`whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-bold ${
-                            tag === "속도↑"
-                              ? "border border-orange-200 bg-orange-50 text-orange-600"
-                              : tag === "재료"
-                                ? "border border-yellow-200 bg-yellow-50 text-yellow-700"
-                                : "border border-[#dbe6fb] bg-[#edf4ff] text-[#2454C8]"
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">
-                      {sku.alert_message ?? "-"}
-                    </p>
-                  </td> */}
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
                       <button

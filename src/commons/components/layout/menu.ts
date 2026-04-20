@@ -15,7 +15,7 @@ export type MenuSection = {
 
 export const menuSections: MenuSection[] = [
   {
-    items: [{ to: "/", label: "홈", icon: "home" }],
+    items: [{ to: "/dashboard", label: "홈", icon: "home" }],
   },
   {
     section: "매장 운영",
@@ -62,14 +62,6 @@ export const menuSections: MenuSection[] = [
     section: "본사",
     roles: ["hq_admin"],
     items: [
-      { to: "/hq/coaching", label: "주문 코칭", icon: "support_agent" },
-      { to: "/hq/inspection", label: "생산 점검", icon: "inventory_2" },
-    ],
-  },
-  {
-    section: "본사",
-    roles: ["hq_admin"],
-    items: [
       { to: "/orchestration", label: "시스템 현황", icon: "shield_lock" },
       { to: "/signals", label: "매출 시그널", icon: "monitoring" },
     ],
@@ -82,7 +74,8 @@ export const menuSections: MenuSection[] = [
 ];
 
 export const routeDescriptions: Record<string, string> = {
-  "/": "오늘 매장 운영 현황을 한눈에 확인합니다.",
+  "/": "점주 또는 본사 역할을 선택합니다.",
+  "/dashboard": "오늘 매장 운영 현황을 한눈에 확인합니다.",
   "/production": "지금 생산해야 할 품목과 재고 예측을 확인합니다.",
   "/production/status": "지금 생산해야 할 품목과 재고 예측을 확인합니다.",
   "/production/waste-loss": "폐기 손실 추이와 원인을 확인합니다.",
@@ -94,9 +87,12 @@ export const routeDescriptions: Record<string, string> = {
   "/sales/metrics": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
   "/analytics": "매출 데이터를 조회합니다.",
   "/analytics/market": "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.",
-  "/settings": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",
-  "/hq/coaching": "담당 매장 주문 현황을 확인합니다.",
-  "/hq/inspection": "매장별 생산 준수 현황을 점검합니다.",
+  "/settings": "운영 설정 항목을 선택합니다.",
+  "/settings/connectors": "데이터 커넥터 상태를 확인합니다.",
+  "/settings/access": "멤버 권한과 접근 제어를 확인합니다.",
+  "/settings/audit-logs": "대화 감사 로그를 확인합니다.",
+  "/settings/quality-archive": "품질 검증 이력을 확인합니다.",
+  "/settings/prompts": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",
   "/orchestration": "시스템 보안 정책 현황을 확인합니다.",
   "/signals": "전국 매장 매출 이상 신호를 확인합니다.",
 };

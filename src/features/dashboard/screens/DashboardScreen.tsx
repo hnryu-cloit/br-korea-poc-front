@@ -3,7 +3,7 @@ import { DashboardLoadingSkeleton } from "@/features/dashboard/components/Dashbo
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
 import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
-import { useDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
+import { useGetDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
@@ -16,7 +16,7 @@ export function DashboardPage() {
     store_id: user.storeId,
     business_date: now,
   };
-  const overviewQuery = useDashboardOverviewQuery(params);
+  const overviewQuery = useGetDashboardOverviewQuery(params);
   const scheduleQuery = useGetHomeScheduleQuery(user.storeId);
 
   const stats = overviewQuery.data?.stats ?? [];
