@@ -8,6 +8,7 @@ import type {
   OrderingDeadlineParams,
   OrderingDeadlineResponse,
   OrderingHistoryParams,
+  OrderingHistoryInsightsResponse,
   OrderingHistoryResponse,
   OrderingOptionsParams,
   OrderingOptionsResponse,
@@ -88,11 +89,19 @@ export const getOrderingSelectionSummary = async (
 };
 
 // 발주 이력 조회
-export const getOrderingHistory = async (storeId: string, limit = 30) => {
-  const params: OrderingHistoryParams = { store_id: storeId, limit };
+export const getOrderingHistory = async (params?: OrderingHistoryParams) => {
   const response = await axiosInstance.get<OrderingHistoryResponse>(
     "/api/ordering/history",
     { params },
+  );
+  return response.data;
+};
+
+// 발주 이력 인사이트 조회
+export const getOrderingHistoryInsights = async (params?: OrderingHistoryParams) => {
+  const response = await axiosInstance.get<OrderingHistoryInsightsResponse>(
+    "/api/ordering/history/insights",
+    { params: { ...params, limit: params?.limit ?? 200 } },
   );
   return response.data;
 };

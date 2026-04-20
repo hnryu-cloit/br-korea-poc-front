@@ -1,6 +1,7 @@
 import type {
   OrderingAlertsParams,
   OrderingDeadlineParams,
+  OrderingHistoryParams,
   OrderingOptionsParams,
   OrderingSelectionHistoryParams,
   OrderingSelectionSummaryParams,
@@ -22,4 +23,8 @@ export const orderingQueryKeys = {
     [...ORDERING_QUERY_ROOT, "deadline", params ?? {}] as const,
   selectionSummary: (params?: OrderingSelectionSummaryParams) =>
     [...ORDERING_QUERY_ROOT, "selection-summary", params ?? {}] as const,
+  history: (params?: OrderingHistoryParams) =>
+    [...ORDERING_QUERY_ROOT, "history", params ?? {}] as const,
+  historyInsights: (params?: OrderingHistoryParams) =>
+    [...ORDERING_QUERY_ROOT, "history-insights", params ?? {}] as const,
 };
