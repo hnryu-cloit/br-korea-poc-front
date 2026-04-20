@@ -1,5 +1,4 @@
-import { PageHero, StatsGrid } from "@/commons/components/page/page-layout";
-import { SalesV2ChatPanel } from "@/features/sales/components/SalesV2ChatPanel";
+import { PageHero } from "@/commons/components/page/page-layout";
 import { SalesV2ChartsSection } from "@/features/sales/components/SalesV2ChartsSection";
 import { SalesDateRangeFilter } from "@/features/sales/components/SalesDateRangeFilter";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
@@ -11,22 +10,13 @@ export const SalesScreenV2 = () => {
   const {
     dateFrom,
     dateTo,
-    input,
-    messages,
-    bottomRef,
     opportunity,
     opportunityTab,
     insightSections,
-    salesStats,
-    suggestedPrompts,
     latestAssistantMessage,
     summaryData,
     insightsLoading,
     summaryLoading,
-    promptsLoading,
-    sending,
-    setInput,
-    sendMessage,
     handleChangeDateFrom,
     handleChangeDateTo,
     handleChangeOpportunityTab,

@@ -3,7 +3,6 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import { List, X } from "lucide-react";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
-import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
@@ -34,9 +33,6 @@ export function OrderingOptionCard({
         selected ? "border-[#2454C8] ring-1 ring-[#2454C8]/20" : "border-border hover:border-[#bfd1ed]"
       }`}
     >
-      <div className="absolute right-4 top-4">
-        <BookmarkButton type="order_option" refId={option.option_id} label={option.title} />
-      </div>
       <button type="button" className="w-full text-left" onClick={onSelect}>
         <div className="flex items-start justify-between gap-3">
           <div>

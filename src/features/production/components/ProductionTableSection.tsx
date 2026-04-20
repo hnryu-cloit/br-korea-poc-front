@@ -1,4 +1,3 @@
-import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type { ProductionSkuItem, ProductionSkuListResponse } from "@/features/production/types/production";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
@@ -102,7 +101,6 @@ export function ProductionTableSection({
                 </td>
                 <td className="px-4 py-4">
                   <div className="flex items-center gap-2">
-                  <BookmarkButton type="sku" refId={sku.sku_id} label={sku.sku_name} />
                   <button
                     type="button"
                     onClick={() => onOpenRegister(sku)}

@@ -35,7 +35,7 @@ export function OrderingRecommendationsScreen() {
   const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
-  const [showChat, setShowChat] = useState(fromDashboardOrdering);
+  const showChat = fromDashboardOrdering;
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
@@ -114,7 +114,7 @@ export function OrderingRecommendationsScreen() {
 
   return (
     <div className="space-y-6">
-      <OrderingHero showChat={showChat} onToggleChat={() => setShowChat((value) => !value)} />
+      <OrderingHero />
       {showChat ? (
         <OrderingQuickChat
           prompts={quickPromptCandidates}
