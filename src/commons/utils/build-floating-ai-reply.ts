@@ -87,7 +87,7 @@ export const buildFloatingAiReply = (
     };
   }
 
-  if (pathname === "/orchestration") {
+  if (pathname === "/settings") {
     return {
       id: 1,
       title: "정책 점검 요약",

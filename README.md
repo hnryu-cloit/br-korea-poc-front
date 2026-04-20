@@ -175,9 +175,15 @@ npm run dev
 
 별도 `.env` 파일 없이 실행 가능합니다. 백엔드 URL을 변경해야 할 경우 아래 변수를 지정합니다.
 
-| 변수                | 기본값                  | 설명                |
-| ------------------- | ----------------------- | ------------------- |
+| 변수 | 기본값 | 설명 |
+|---|---|---|
 | `VITE_API_BASE_URL` | `http://localhost:6002` | 백엔드 API base URL |
+
+- 소진공 빅데이터 OpenAPI 인증키는 프론트가 직접 보관하지 않고 백엔드 `.env`(`br-korea-poc-backend/.env`)에서만 관리합니다.
+- 상권 인텔리전스 실시간 경쟁사 데이터는 백엔드가 `EXTERNAL_API_KEY` 우선, `SBIZ_API_COMMERCIAL_MAP_KEY` 2순위, `SBIZ_API_STORE_STATUS_KEY` 3순위 fallback으로 조회합니다.
+- `/analytics/market`의 `매장 보고서 조회` 블록은 백엔드가 반환하는 `store_reports`(소진공 11개 API 키 상태 + 현재 연동중 키)를 그대로 표시합니다.
+- `store_reports` 상태값은 `실호출 미확인/키 미설정/연동중/점검 필요`를 사용할 수 있으며, `점검 필요`는 백엔드 외부 API 실호출 실패 시 표시됩니다.
+- 실호출 상태 판정 대상 API는 백엔드 기준으로 `SNS/핫플레이스/배달분석/관광 축제/업소현황/점포당 매출액 추이`입니다.
 
 ### 빌드
 
@@ -195,15 +201,15 @@ npm run build
 
 ### 점주 화면 (`store_owner` + `hq_admin`)
 
-| 경로                | 화면                    | 연동 API                                                                                                                              |
-| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                 | 시작 페이지 (역할 선택) | 세션 역할 선택                                                                                                                        |
-| `/dashboard`        | 홈 대시보드             | `/api/home/overview`                                                                                                                  |
-| `/production`       | 생산 현황               | `/api/production/overview`, `/api/production/items`, `/api/production/items/{sku_id}`, `/api/production/registrations`                |
-| `/ordering`         | 주문 관리               | `/api/ordering/options`, `/api/ordering/selections`                                                                                   |
-| `/sales`            | 매출 현황               | `/api/sales/insights`, `/api/sales/query`, `/api/sales/prompts`                                                                       |
-| `/analytics`        | 매출 조회               | `/api/analytics/metrics`, `/api/audit/logs`                                                                                           |
-| `/analytics/market` | 상권·고객 분석          | `/api/analytics/store-profile`, `/api/analytics/customer-profile`, `/api/analytics/sales-trend`, `/api/analytics/market-intelligence` |
+| 경로 | 화면 | 연동 API |
+|---|---|---|
+| `/` | 시작 페이지 (역할 선택) | 세션 역할 선택 |
+| `/dashboard` | 홈 대시보드 | `/api/home/overview` |
+| `/production` | 생산 현황 | `/api/production/overview`, `/api/production/items`, `/api/production/items/{sku_id}`, `/api/production/registrations` |
+| `/ordering` | 주문 관리 | `/api/ordering/options`, `/api/ordering/selections` |
+| `/sales` | 매출 현황 | `/api/sales/insights`, `/api/sales/query`, `/api/sales/prompts` |
+| `/analytics` | 매출 조회 | `/api/analytics/metrics`, `/api/audit/logs` |
+| `/analytics/market` | 상권·고객 분석 | `/api/analytics/store-profile`, `/api/analytics/customer-profile`, `/api/analytics/sales-trend`, `/api/analytics/market-intelligence`, `/api/analytics/market-intelligence/weekly-report` |
 
 ### 홈 대시보드 표시 규칙
 
@@ -237,10 +243,26 @@ npm run build
 
 ### 상권·고객 분석 화면 표시 규칙
 
+- `MarketScreen`은 현재 필터 스코프 기준으로 `주간 분석 리포트 PDF 다운로드` 버튼을 제공하며, `GET /api/analytics/market-intelligence/weekly-report?format=pdf`를 호출해 PDF 파일을 다운로드합니다.
 - `MarketIntelligenceSection`은 3km 상권 인텔리전스 기준으로 아래 블록을 노출합니다.
 - 외식업 매출 파이(제과·커피), 경쟁사 10곳 매출 트렌드 + 결제건 연령/성별
 - 서울시 공공데이터 유동인구 추세, 주거인구(19세 이하/20대/30대/40대/50대/60대 이상) 남녀 레이더
 - 1인가구/3인가족 비중 파이, 소비자 추정 거주 지역, 매출 히트맵, 매장 보고서 조회, 추정 매출 데이터
+
+## Session Update (2026-04-20)
+
+- 상권 화면의 주간 리포트 다운로드는 backend `weekly-report` 안정화 패치와 연계되어 `gu/dong` 미지정 상황에서도 실패 없이 동작합니다.
+- 생산 화면(`SKU별 생산 현황`, `생산 등록`)은 backend `image_url`을 사용해 메뉴 썸네일을 노출합니다.
+- `image_url`이 없거나 이미지 로딩이 실패하면 `상품이미지 준비중입니다.` 문구를 표시합니다.
+- 프론트 정적 에셋 `public/images/menu-placeholder.svg`를 추가해 이미지 미존재/실패 시 기본 썸네일을 항상 렌더링합니다.
+- `index.html`에 `/favicon.svg`를 연결해 브라우저 `favicon.ico 404` 콘솔 노이즈를 제거했습니다.
+- `발주 이력` 화면을 필터(기간/품목/자동·수동) + 이상징후 인사이트 + 변동품목 + 이력 상세(행 클릭) 구조로 고도화했습니다.
+- 주문 확정 후 화면은 상세 이력 나열 대신 `발주 이력 분석 보기` 링크를 제공해 주문실행과 이력분석 경계를 분리했습니다.
+- 상권/고객 분석(`MarketIntelligenceSection`)은 백엔드 실데이터 전용 응답으로 동작하며, 연도/분기 미존재 시에도 백엔드 가용 실데이터 폴백 결과를 그대로 표시합니다.
+- 상권/고객 분석 화면은 레퍼런스 구조에 맞춰 `업종 분석`, `매출 분석`, `인구 분석`, `지역현황`, `고객특성` 5개 블록으로 재구성했습니다.
+- `신규/단골 비율`처럼 원천 데이터 미제공 항목은 프론트에서 `미제공`으로 표시해 합성값 노출을 방지합니다.
+- 백엔드에 고객 식별 컬럼 자동탐지 템플릿이 추가되어, 원천 컬럼이 적재되면 프론트 수정 없이 신규/단골 비율이 자동 반영됩니다.
+- `미제공` 항목에는 툴팁(title)과 보조 문구를 추가해 미제공 사유(원천 컬럼 미식별/집계 미존재)를 화면에서 즉시 확인할 수 있도록 정리했습니다.
 
 ## API 계약 메모
 

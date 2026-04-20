@@ -109,7 +109,7 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
     ],
   },
-  "/orchestration": {
+  "/settings": {
     title: "보안 정책 해설",
     subtitle: "질의 라우팅, 민감정보 보호, 감사 로그 기준을 화면 문맥으로 해설합니다.",
     quickActions: [

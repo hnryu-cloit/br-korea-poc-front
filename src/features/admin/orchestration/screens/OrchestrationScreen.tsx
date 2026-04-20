@@ -13,7 +13,10 @@ import {
 } from "@/commons/constants/audit-route";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
 import { useOrchestrationScreen } from "@/features/admin/orchestration/hooks/useOrchestrationScreen";
-import type { PromptDomainKey } from "@/features/admin/orchestration/types/orchestration";
+import type {
+  PromptDomainKey,
+} from "@/features/admin/orchestration/types/orchestration";
+import { SettingsSubNav } from "@/features/settings/components/SettingsSubNav";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const policyItems = [
@@ -83,6 +86,8 @@ export function OrchestrationPage() {
         }
       />
 
+      {isSettingsRoute && <SettingsSubNav />}
+
       <section className="rounded-[24px] border border-border bg-white p-2 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
           {TWIN_TABS.map((tab) => (
@@ -96,11 +101,7 @@ export function OrchestrationPage() {
                   : "border-border bg-white hover:bg-[#f8fbff]"
               }`}
             >
-              <p
-                className={`text-sm font-semibold ${activeTab === tab.key ? "text-[#2454C8]" : "text-slate-800"}`}
-              >
-                {tab.label}
-              </p>
+              <p className={`text-sm font-semibold ${activeTab === tab.key ? "text-[#2454C8]" : "text-slate-800"}`}>{tab.label}</p>
               <p className="mt-0.5 text-xs text-slate-500">{tab.description}</p>
             </button>
           ))}
@@ -110,37 +111,13 @@ export function OrchestrationPage() {
       {activeTab === "data" ? (
         <section className="grid gap-4 sm:grid-cols-3">
           {[
-            {
-              label: "SQL/API 우선 처리율",
-              value: `${sqlPct}%`,
-              desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === PROCESSING_ROUTE.REPOSITORY).length, "건")}`,
-              tone: "success",
-            },
-            {
-              label: "민감정보 차단 건수",
-              value: formatCountWithUnit(blockedCount, "건"),
-              desc: "전체 기준",
-              tone: "danger",
-            },
-            {
-              label: "총 처리 건수",
-              value: formatCountWithUnit(logs.length, "건"),
-              desc: "감사 로그 기준",
-              tone: "primary",
-            },
+            { label: "SQL/API 우선 처리율", value: `${sqlPct}%`, desc: `${formatCountWithUnit(logs.length, "건")} 중 ${formatCountWithUnit(logs.filter((l) => l.route === PROCESSING_ROUTE.REPOSITORY).length, "건")}`, tone: "success" },
+            { label: "민감정보 차단 건수", value: formatCountWithUnit(blockedCount, "건"), desc: "전체 기준", tone: "danger" },
+            { label: "총 처리 건수", value: formatCountWithUnit(logs.length, "건"), desc: "감사 로그 기준", tone: "primary" },
           ].map((item) => (
-            <article
-              key={item.label}
-              className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                {item.label}
-              </p>
-              <p
-                className={`mt-3 text-2xl font-bold ${item.tone === "success" ? "text-green-600" : item.tone === "danger" ? "text-red-600" : "text-[#2454C8]"}`}
-              >
-                {item.value}
-              </p>
+            <article key={item.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
+              <p className={`mt-3 text-2xl font-bold ${item.tone === "success" ? "text-green-600" : item.tone === "danger" ? "text-red-600" : "text-[#2454C8]"}`}>{item.value}</p>
               <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
             </article>
           ))}
@@ -149,215 +126,163 @@ export function OrchestrationPage() {
 
       {activeTab === "prompt" ? (
         <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          <div className="flex flex-wrap items-center gap-3">
-            <p className="text-base font-semibold text-slate-900">시스템 프롬프트 설정</p>
-            <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
-              마지막 수정: {updatedAtText} · {promptSettingsQuery.data?.updated_by ?? "-"}
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                void handleSavePromptSettings(user.id);
-              }}
-              disabled={saveMutation.isPending || promptSettingsQuery.isLoading}
-              className="ml-auto rounded-xl bg-[#2454C8] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {saveMutation.isPending ? "저장 중..." : "설정 저장"}
-            </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-base font-semibold text-slate-900">시스템 프롬프트 설정</p>
+          <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+            마지막 수정: {updatedAtText} · {promptSettingsQuery.data?.updated_by ?? "-"}
+          </span>
+          <button
+            type="button"
+            onClick={() => { void handleSavePromptSettings(user.id); }}
+            disabled={saveMutation.isPending || promptSettingsQuery.isLoading}
+            className="ml-auto rounded-xl bg-[#2454C8] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {saveMutation.isPending ? "저장 중..." : "설정 저장"}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-slate-400">도메인별 빠른 질문, 시스템 지시문, 쿼리 접두 템플릿을 관리합니다.</p>
+
+        {promptSettingsQuery.isLoading ? (
+          <p className="mt-4 text-sm text-slate-400">프롬프트 설정을 불러오는 중입니다...</p>
+        ) : promptSettingsQuery.isError ? (
+          <p className="mt-4 text-sm text-red-500">프롬프트 설정을 조회하지 못했습니다. (hq_admin 권한 필요)</p>
+        ) : (
+          <div className="mt-4 grid gap-4 xl:grid-cols-3">
+            {DOMAIN_KEYS.map((domain) => (
+              <article key={domain} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
+                <p className="text-sm font-semibold text-slate-900">{DOMAIN_LABEL[domain]}</p>
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">빠른 질문(줄바꿈 구분, 최대 5개)</label>
+                <textarea
+                  value={form[domain].quickPromptsText}
+                  onChange={(event) => handleDomainChange(domain, "quickPromptsText", event.target.value)}
+                  className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">시스템 프롬프트</label>
+                <textarea
+                  value={form[domain].systemInstruction}
+                  onChange={(event) => handleDomainChange(domain, "systemInstruction", event.target.value)}
+                  className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+
+                <label className="mt-3 block text-xs font-semibold text-slate-500">쿼리 접두 템플릿</label>
+                <input
+                  value={form[domain].queryPrefixTemplate}
+                  onChange={(event) => handleDomainChange(domain, "queryPrefixTemplate", event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
+                />
+              </article>
+            ))}
           </div>
-          <p className="mt-2 text-xs text-slate-400">
-            도메인별 빠른 질문, 시스템 지시문, 쿼리 접두 템플릿을 관리합니다.
-          </p>
+        )}
 
-          {promptSettingsQuery.isLoading ? (
-            <p className="mt-4 text-sm text-slate-400">프롬프트 설정을 불러오는 중입니다...</p>
-          ) : promptSettingsQuery.isError ? (
-            <p className="mt-4 text-sm text-red-500">
-              프롬프트 설정을 조회하지 못했습니다. (hq_admin 권한 필요)
-            </p>
-          ) : (
-            <div className="mt-4 grid gap-4 xl:grid-cols-3">
-              {DOMAIN_KEYS.map((domain) => (
-                <article key={domain} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
-                  <p className="text-sm font-semibold text-slate-900">{DOMAIN_LABEL[domain]}</p>
-
-                  <label className="mt-3 block text-xs font-semibold text-slate-500">
-                    빠른 질문(줄바꿈 구분, 최대 5개)
-                  </label>
-                  <textarea
-                    value={form[domain].quickPromptsText}
-                    onChange={(event) =>
-                      handleDomainChange(domain, "quickPromptsText", event.target.value)
-                    }
-                    className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
-                  />
-
-                  <label className="mt-3 block text-xs font-semibold text-slate-500">
-                    시스템 프롬프트
-                  </label>
-                  <textarea
-                    value={form[domain].systemInstruction}
-                    onChange={(event) =>
-                      handleDomainChange(domain, "systemInstruction", event.target.value)
-                    }
-                    className="mt-1 h-28 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
-                  />
-
-                  <label className="mt-3 block text-xs font-semibold text-slate-500">
-                    쿼리 접두 템플릿
-                  </label>
-                  <input
-                    value={form[domain].queryPrefixTemplate}
-                    onChange={(event) =>
-                      handleDomainChange(domain, "queryPrefixTemplate", event.target.value)
-                    }
-                    className="mt-1 w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#2454C8]"
-                  />
-                </article>
-              ))}
-            </div>
-          )}
-
-          {saveMessage ? (
-            <p
-              className={`mt-3 text-sm ${saveMutation.isError ? "text-red-500" : "text-green-600"}`}
-            >
-              {saveMessage}
-            </p>
-          ) : null}
+        {saveMessage ? (
+          <p className={`mt-3 text-sm ${saveMutation.isError ? "text-red-500" : "text-green-600"}`}>{saveMessage}</p>
+        ) : null}
         </section>
       ) : null}
 
       {activeTab === "logs" ? (
         <section className="rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border/60 px-6 py-5">
-            <div>
-              <p className="text-base font-semibold text-slate-900">감사 로그</p>
-              <p className="text-xs text-slate-400 mt-0.5">전체 질의 기록 · 감사 가능 저장 완료</p>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-600">
-              <CheckCircle className="h-3.5 w-3.5" />
-              수집 중
-            </div>
+        <div className="flex items-center justify-between border-b border-border/60 px-6 py-5">
+          <div>
+            <p className="text-base font-semibold text-slate-900">감사 로그</p>
+            <p className="text-xs text-slate-400 mt-0.5">전체 질의 기록 · 감사 가능 저장 완료</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/40 bg-[#f8fbff]">
-                  <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    시각
-                  </th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    질의 / 이벤트
-                  </th>
-                  <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    유형
-                  </th>
-                  <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    처리 경로
-                  </th>
-                  <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    마스킹
-                  </th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                    역할
-                  </th>
+          <div className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-600">
+            <CheckCircle className="h-3.5 w-3.5" />
+            수집 중
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/40 bg-[#f8fbff]">
+                <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">시각</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">질의 / 이벤트</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">유형</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">처리 경로</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">마스킹</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">역할</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logsQuery.isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">로그를 불러오는 중입니다...</td>
                 </tr>
-              </thead>
-              <tbody>
-                {logsQuery.isLoading ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">
-                      로그를 불러오는 중입니다...
-                    </td>
-                  </tr>
-                ) : logs.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">
-                      아직 기록된 로그가 없어요.
-                    </td>
-                  </tr>
-                ) : (
-                  logs.map((log) => {
-                    const blocked = isBlocked(log);
-                    const meta = log.metadata as Record<string, unknown>;
-                    const queryType = typeof meta?.query_type === "string" ? meta.query_type : null;
-                    const maskedFields = Array.isArray(meta?.masked_fields)
-                      ? (meta.masked_fields as string[])
-                      : [];
-                    return (
-                      <tr
-                        key={log.id}
-                        className={`border-b border-border/30 last:border-0 ${blocked ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
-                      >
-                        <td className="px-5 py-3.5 text-xs font-mono text-slate-500">
-                          {log.timestamp.slice(11, 19)}
-                        </td>
-                        <td className="px-4 py-3.5 font-medium text-slate-800 max-w-[220px] truncate">
-                          {getQueryFromMetadata(log)}
-                        </td>
-                        <td className="px-4 py-3.5 text-center">
-                          {queryType ? (
-                            <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${QUERY_TYPE_COLOR[queryType] ?? "bg-slate-100 text-slate-600"}`}
-                            >
-                              {QUERY_TYPE_LABEL[queryType] ?? queryType}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-slate-300">-</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3.5 text-center">
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${ROUTE_COLOR[log.route] ?? "bg-slate-100 text-slate-600"}`}
-                          >
-                            {ROUTE_LABEL[log.route] ?? log.route}
+              ) : logs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-sm text-slate-400">아직 기록된 로그가 없어요.</td>
+                </tr>
+              ) : (
+                logs.map((log) => {
+                  const blocked = isBlocked(log);
+                  const meta = log.metadata as Record<string, unknown>;
+                  const queryType = typeof meta?.query_type === "string" ? meta.query_type : null;
+                  const maskedFields = Array.isArray(meta?.masked_fields) ? meta.masked_fields as string[] : [];
+                  return (
+                    <tr key={log.id} className={`border-b border-border/30 last:border-0 ${blocked ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}>
+                      <td className="px-5 py-3.5 text-xs font-mono text-slate-500">
+                        {log.timestamp.slice(11, 19)}
+                      </td>
+                      <td className="px-4 py-3.5 font-medium text-slate-800 max-w-[220px] truncate">
+                        {getQueryFromMetadata(log)}
+                      </td>
+                      <td className="px-4 py-3.5 text-center">
+                        {queryType ? (
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${QUERY_TYPE_COLOR[queryType] ?? "bg-slate-100 text-slate-600"}`}>
+                            {QUERY_TYPE_LABEL[queryType] ?? queryType}
                           </span>
-                        </td>
-                        <td className="px-4 py-3.5 text-center">
-                          {maskedFields.length > 0 ? (
-                            <span className="flex items-center justify-center gap-1 text-xs font-medium text-orange-500">
-                              <AlertTriangle className="h-3.5 w-3.5" />
-                              적용
-                            </span>
-                          ) : (
-                            <span className="text-xs text-slate-300">-</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3.5 text-xs text-slate-500">{log.actor_role}</td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                        ) : (
+                          <span className="text-xs text-slate-300">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3.5 text-center">
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${ROUTE_COLOR[log.route] ?? "bg-slate-100 text-slate-600"}`}>
+                          {ROUTE_LABEL[log.route] ?? log.route}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-center">
+                        {maskedFields.length > 0 ? (
+                          <span className="flex items-center justify-center gap-1 text-xs font-medium text-orange-500">
+                            <AlertTriangle className="h-3.5 w-3.5" />
+                            적용
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-300">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3.5 text-xs text-slate-500">{log.actor_role}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
         </section>
       ) : null}
 
       {activeTab === "security" ? (
         <section className="rounded-[28px] border border-border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-          <div className="flex items-center gap-3 mb-5">
-            <Shield className="h-5 w-5 text-primary" />
-            <p className="text-base font-semibold text-slate-900">보안 정책 현황</p>
-            <span className="ml-auto rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-600">
-              전체 적용 중
-            </span>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {policyItems.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-start gap-3 rounded-2xl bg-[#f8fbff] px-4 py-3"
-              >
-                <CheckCircle className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">{item.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
-                </div>
+        <div className="flex items-center gap-3 mb-5">
+          <Shield className="h-5 w-5 text-primary" />
+          <p className="text-base font-semibold text-slate-900">보안 정책 현황</p>
+          <span className="ml-auto rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-600">전체 적용 중</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {policyItems.map((item) => (
+            <div key={item.label} className="flex items-start gap-3 rounded-2xl bg-[#f8fbff] px-4 py-3">
+              <CheckCircle className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-slate-800">{item.label}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
         </section>
       ) : null}
     </div>

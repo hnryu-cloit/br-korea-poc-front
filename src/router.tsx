@@ -16,7 +16,6 @@ import { SettingsAccessControlPage } from "@/pages/SettingsAccessControlPage";
 import { SettingsAuditLogsPage } from "@/pages/SettingsAuditLogsPage";
 import { SettingsConnectorsPage } from "@/pages/SettingsConnectorsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
-import { SettingsOverviewPage } from "@/pages/SettingsOverviewPage";
 import { SettingsQualityArchivePage } from "@/pages/SettingsQualityArchivePage";
 import { SignalsPage } from "@/pages/SignalsPage";
 
@@ -38,9 +37,9 @@ export const router = createBrowserRouter([
       { path: "sales/metrics", element: <SalesMetricsPage /> },
       { path: "analytics", element: <AnalyticsPage /> },
       { path: "analytics/market", element: <MarketPage /> },
-      { path: "orchestration", element: <OrchestrationPage /> },
+      { path: "orchestration", element: <Navigate to="/settings" replace /> },
       { path: "signals", element: <SignalsPage /> },
-      { path: "settings", element: <SettingsOverviewPage /> },
+      { path: "settings", element: <OrchestrationPage /> },
       { path: "settings/connectors", element: <SettingsConnectorsPage /> },
       { path: "settings/access", element: <SettingsAccessControlPage /> },
       { path: "settings/audit-logs", element: <SettingsAuditLogsPage /> },

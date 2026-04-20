@@ -28,7 +28,7 @@ const roleCards: RoleCard[] = [
     title: "본사",
     subtitle: "담당 매장 모니터링 화면",
     description: "매장별 점검과 코칭 지표를 확인하고 이상 시그널에 선제 대응합니다.",
-    targetPath: "/orchestration",
+    targetPath: "/settings",
     bulletPoints: ["시스템 현황 모니터링", "매출 시그널 감지", "설정 및 접근 제어"],
     icon: "apartment",
   },

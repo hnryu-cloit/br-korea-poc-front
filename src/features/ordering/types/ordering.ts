@@ -135,6 +135,10 @@ export interface OrderingDeadlineItem {
 export interface OrderingHistoryParams {
   store_id?: string;
   limit?: number;
+  date_from?: string;
+  date_to?: string;
+  item_nm?: string;
+  is_auto?: boolean;
 }
 
 export interface OrderingHistoryItem {
@@ -151,6 +155,35 @@ export interface OrderingHistoryResponse {
   auto_rate: number;
   manual_rate: number;
   total_count: number;
+}
+
+export interface OrderingHistoryInsightKpi {
+  key: string;
+  label: string;
+  value: string;
+  tone: "default" | "primary" | "warning" | "danger" | "success";
+}
+
+export interface OrderingAnomalyItem {
+  id: string;
+  severity: "low" | "medium" | "high" | string;
+  kind: string;
+  message: string;
+  recommended_action: string;
+  related_items: string[];
+}
+
+export interface OrderingChangedItem {
+  item_nm: string;
+  avg_ord_qty: number;
+  latest_ord_qty: number;
+  change_ratio: number;
+}
+
+export interface OrderingHistoryInsightsResponse {
+  kpis: OrderingHistoryInsightKpi[];
+  anomalies: OrderingAnomalyItem[];
+  top_changed_items: OrderingChangedItem[];
 }
 
 // GET /api/ordering/selections/summary

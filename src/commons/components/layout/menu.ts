@@ -62,14 +62,9 @@ export const menuSections: MenuSection[] = [
     section: "본사",
     roles: ["hq_admin"],
     items: [
-      { to: "/orchestration", label: "시스템 현황", icon: "shield_lock" },
       { to: "/signals", label: "매출 시그널", icon: "monitoring" },
+      { to: "/settings", label: "시스템 설정", icon: "shield_lock" },
     ],
-  },
-  {
-    section: "관리",
-    roles: ["hq_admin"],
-    items: [{ to: "/settings", label: "AI 설정", icon: "tune" }],
   },
 ];
 
@@ -87,12 +82,11 @@ export const routeDescriptions: Record<string, string> = {
   "/sales/metrics": "순이익, 손익분기점, 매장 맞춤형 분석을 확인합니다.",
   "/analytics": "매출 데이터를 조회합니다.",
   "/analytics/market": "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.",
-  "/settings": "운영 설정 항목을 선택합니다.",
+  "/settings": "보안 정책, AI 처리 현황, 프롬프트 설정을 관리합니다.",
   "/settings/connectors": "데이터 커넥터 상태를 확인합니다.",
   "/settings/access": "멤버 권한과 접근 제어를 확인합니다.",
   "/settings/audit-logs": "대화 감사 로그를 확인합니다.",
   "/settings/quality-archive": "품질 검증 이력을 확인합니다.",
   "/settings/prompts": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",
-  "/orchestration": "시스템 보안 정책 현황을 확인합니다.",
   "/signals": "전국 매장 매출 이상 신호를 확인합니다.",
 };

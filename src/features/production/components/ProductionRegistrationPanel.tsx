@@ -4,6 +4,19 @@ import type {
 } from "@/features/production/types/production";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(/\/$/, "");
+const MENU_PLACEHOLDER_IMAGE = "/images/menu-placeholder.svg";
+
+function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
+  if (!imageUrl) {
+    return null;
+  }
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+  return `${API_BASE_URL}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+}
+
 export function ProductionRegistrationPanel({
   activeSku,
   form,
@@ -24,6 +37,7 @@ export function ProductionRegistrationPanel({
   const detail = form ?? {
     sku_id: activeSku.sku_id,
     sku_name: activeSku.sku_name,
+    image_url: activeSku.image_url,
     current_stock: activeSku.current_stock,
     forecast_stock_1h: activeSku.forecast_stock_1h,
     recommended_qty: activeSku.recommended_production_qty ?? activeSku.avg_first_production_qty_4w,
@@ -39,6 +53,8 @@ export function ProductionRegistrationPanel({
     material_alert: activeSku.material_alert,
     material_alert_message: activeSku.material_alert_message,
   };
+  const detailImageUrl = toAbsoluteImageUrl(detail.image_url);
+  const displayImageUrl = detailImageUrl ?? MENU_PLACEHOLDER_IMAGE;
 
   return (
     <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-6 shadow-[0_18px_36px_rgba(16,32,51,0.08)]">
@@ -61,7 +77,22 @@ export function ProductionRegistrationPanel({
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
           <p className="text-xs font-bold text-slate-400">품목</p>
-          <p className="mt-1 text-lg font-bold text-slate-900">{detail.sku_name}</p>
+          <div className="mt-2 flex items-center gap-3">
+            <img
+              src={displayImageUrl}
+              alt={detail.sku_name}
+              className="h-14 w-14 shrink-0 rounded-xl border border-border/60 object-cover"
+              onError={(event) => {
+                event.currentTarget.src = MENU_PLACEHOLDER_IMAGE;
+              }}
+            />
+            <div className="min-w-0">
+              <p className="truncate text-lg font-bold text-slate-900">{detail.sku_name}</p>
+              {!detailImageUrl ? (
+                <p className="mt-0.5 text-xs font-medium text-slate-400">상품이미지 준비중입니다.</p>
+              ) : null}
+            </div>
+          </div>
           {detail.tags?.length ? (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {detail.tags.map((tag) => (
