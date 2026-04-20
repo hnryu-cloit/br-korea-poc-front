@@ -214,6 +214,66 @@ export interface StoreReportItem {
   status: string;
 }
 
+export interface IndustryBusinessTrendPoint {
+  period: string;
+  business_count: number;
+}
+
+export interface IndustryBusinessAgeItem {
+  bucket: string;
+  business_count: number;
+}
+
+export interface IndustryAnalysis {
+  business_count_trend: IndustryBusinessTrendPoint[];
+  business_age_5y: IndustryBusinessAgeItem[];
+}
+
+export interface SalesMonthlyTrendPoint {
+  period: string;
+  sales_count: number;
+  sales_amount: number;
+}
+
+export interface SalesAnalysis {
+  monthly_sales_trend: SalesMonthlyTrendPoint[];
+  monthly_average_sales: number;
+}
+
+export interface PopulationTrendPoint {
+  period: string;
+  floating_population: number;
+  residential_population: number;
+  worker_population: number;
+}
+
+export interface IncomeConsumptionItem {
+  segment: string;
+  estimated_customers: number;
+  sales_share_ratio: number;
+}
+
+export interface PopulationAnalysis {
+  population_trend: PopulationTrendPoint[];
+  income_consumption: IncomeConsumptionItem[];
+}
+
+export interface RegionalStatus {
+  household_count: number;
+  apartment_household_count: number;
+  major_facilities_count: number;
+  transport_access_index: number;
+}
+
+export interface CustomerCharacteristics {
+  male_ratio: number;
+  female_ratio: number;
+  new_customer_ratio: number | null;
+  regular_customer_ratio: number | null;
+  top_age_group: string | null;
+  top_visit_time: string | null;
+}
+
 export interface MarketIntelligenceResponse {
   radius_km: number;
   category_sales_pie: TradeAreaSalesSlice[];
@@ -227,6 +287,11 @@ export interface MarketIntelligenceResponse {
   floating_population_trend: FloatingPopulationTrendPoint[];
   floating_population_analysis: string;
   data_sources: string[];
+  industry_analysis: IndustryAnalysis;
+  sales_analysis: SalesAnalysis;
+  population_analysis: PopulationAnalysis;
+  regional_status: RegionalStatus;
+  customer_characteristics: CustomerCharacteristics;
 }
 
 export interface WeatherImpactCorrelation {
