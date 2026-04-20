@@ -1,17 +1,14 @@
 import { Bell, CalendarDays, CheckCircle2, Circle } from "lucide-react";
 import { useState } from "react";
 
-import type { CarouselBannerItem } from "@/commons/components/carousel/InPageCarousel";
-import { InPageCarousel } from "@/commons/components/carousel/InPageCarousel";
 import { useDashboardTodos } from "@/features/dashboard/hooks/useDashboardTodos";
-import type { ScheduleEvent, ScheduleNotice, ScheduleTodoItem } from "@/features/dashboard/types/schedule";
+import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/schedule";
 
-type Tab = "todo" | "schedule" | "notice";
+type Tab = "todo" | "schedule";
 
 const TAB_LABELS: Record<Tab, string> = {
   todo: "오늘 할일",
   schedule: "주요 일정",
-  notice: "공지·프로모션",
 };
 
 const EVENT_TYPE_STYLE: Record<string, string> = {
@@ -46,18 +43,13 @@ function getDDayLabel(yyyymmdd: string): string {
 export function DashboardSchedulePanel({
   storeId,
   events,
-  notices,
   todos,
-  updatedAt,
-  source,
   isLoading,
 }: {
   storeId?: string;
   events: ScheduleEvent[];
-  notices: ScheduleNotice[];
   todos: ScheduleTodoItem[];
   updatedAt?: string;
-  source?: string;
   isLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("todo");
@@ -68,13 +60,6 @@ export function DashboardSchedulePanel({
   } = useDashboardTodos(storeId, todos);
 
   const upcomingEvents = events.slice(0, 8);
-  const noticeBanners: CarouselBannerItem[] = notices.map((notice) => ({
-    id: notice.id,
-    tag: notice.tag,
-    title: notice.title,
-    description: notice.description,
-    tagColor: notice.tone,
-  }));
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -172,25 +157,7 @@ export function DashboardSchedulePanel({
         </div>
       )}
 
-      {/* 공지·프로모션 탭 */}
-      {activeTab === "notice" && (
-        <div className="px-6 py-4">
-          <div className="mb-3 flex items-center justify-between gap-2 text-xs font-semibold text-slate-400">
-            <div className="flex items-center gap-2">
-              <Bell className="h-3.5 w-3.5" />
-              본사 공지 및 프로모션
-            </div>
-            <span className="rounded-full border border-[#d7e4ff] bg-[#f5f9ff] px-2 py-0.5 text-[10px] font-semibold text-[#2454C8]">
-              {source ? `${source}` : "source:unknown"} · {updatedAt ? updatedAt : "-"}
-            </span>
-          </div>
-          {noticeBanners.length > 0 ? (
-            <InPageCarousel items={noticeBanners} autoPlayMs={4000} />
-          ) : (
-            <p className="text-sm text-slate-400">노출 가능한 공지 데이터가 없습니다.</p>
-          )}
-        </div>
-      )}
+
     </section>
   );
 }

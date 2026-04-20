@@ -1,13 +1,13 @@
 import { DashboardHero } from "@/features/dashboard/components/DashboardHero";
 import { DashboardLoadingSkeleton } from "@/features/dashboard/components/DashboardLoadingSkeleton";
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
-import { PriorityActionsSection } from "@/features/dashboard/components/PriorityActionsSection";
 import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
 import { useDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
+import { DashboardBanner } from "../components/DashboardBanner";
 
 export function DashboardPage() {
   const { user } = useDemoSession();
@@ -19,7 +19,6 @@ export function DashboardPage() {
   const overviewQuery = useDashboardOverviewQuery(params);
   const scheduleQuery = useGetHomeScheduleQuery(user.storeId);
 
-  const priorityActions = overviewQuery.data?.priority_actions ?? [];
   const stats = overviewQuery.data?.stats ?? [];
   const cards = overviewQuery.data?.cards ?? [];
   const isInitialLoading = overviewQuery.isLoading && !overviewQuery.data;
@@ -39,16 +38,14 @@ export function DashboardPage() {
         <DashboardLoadingSkeleton />
       ) : (
         <>
-          {/* <PriorityActionsSection actions={priorityActions} /> */}
           <DashboardSchedulePanel
             storeId={user.storeId}
             events={scheduleQuery.data?.events ?? []}
-            notices={scheduleQuery.data?.notices ?? []}
             todos={scheduleQuery.data?.todos ?? []}
             updatedAt={scheduleQuery.data?.updated_at}
-            source={scheduleQuery.data?.source}
             isLoading={scheduleQuery.isLoading}
           />
+          <DashboardBanner notices={scheduleQuery.data?.notices ?? []} />
           <DashboardStatsTiles stats={stats} />
           <SummaryCardsSection cards={cards} />
         </>
