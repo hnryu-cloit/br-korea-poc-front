@@ -13,7 +13,9 @@ export function ProductionWasteSection({ data, isLoading }: Props) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-lg font-bold text-slate-900">폐기 손실 현황</p>
-            <p className="mt-1 text-sm text-slate-500">품목별 폐기 수량과 손실 금액을 확인합니다.</p>
+            <p className="mt-1 text-sm text-slate-500">
+              품목별 폐기 수량과 손실 금액을 확인합니다.
+            </p>
           </div>
           <CardAiButton contextKey="production:waste" />
         </div>

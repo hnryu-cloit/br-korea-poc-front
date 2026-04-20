@@ -1,6 +1,10 @@
 import { Heart } from "lucide-react";
 
-import { useAddBookmarkMutation, useGetBookmarksQuery, useRemoveBookmarkMutation } from "@/features/bookmarks/queries/useBookmarks";
+import {
+  useAddBookmarkMutation,
+  useGetBookmarksQuery,
+  useRemoveBookmarkMutation,
+} from "@/features/bookmarks/queries/useBookmarks";
 import type { BookmarkType } from "@/features/bookmarks/types/bookmarks";
 
 export function BookmarkButton({

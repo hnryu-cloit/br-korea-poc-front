@@ -14,7 +14,10 @@ export function HQCoachingTipsSection({ coachingTips }: Props) {
           <p className="text-sm text-slate-400">코칭 포인트가 없어요.</p>
         ) : (
           coachingTips.map((tip) => (
-            <div key={tip.store} className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
+            <div
+              key={tip.store}
+              className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3"
+            >
               <p className="text-sm font-semibold text-orange-800">{tip.store}</p>
               <p className="mt-1 text-sm text-orange-700 leading-6">{tip.tip}</p>
               <button

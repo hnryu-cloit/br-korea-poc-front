@@ -21,11 +21,7 @@ export function DashboardSchedulePanel({
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("todo");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const {
-    todos: resolvedTodos,
-    toggleTodo,
-    completedCount,
-  } = useDashboardTodos(storeId, todos);
+  const { todos: resolvedTodos, toggleTodo, completedCount } = useDashboardTodos(storeId, todos);
 
   const selectedDateEvents = selectEventsByDate(events, selectedDate, 8);
 

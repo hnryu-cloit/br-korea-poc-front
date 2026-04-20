@@ -5,7 +5,9 @@ import type { FloatingAiCardContextKey } from "@/commons/types/floating-ai-chat"
 
 export function FloatingAiChatProvider({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeCardContextKey, setActiveCardContextKey] = useState<FloatingAiCardContextKey | null>(null);
+  const [activeCardContextKey, setActiveCardContextKey] = useState<FloatingAiCardContextKey | null>(
+    null,
+  );
 
   const value = useMemo(
     () => ({
@@ -23,9 +25,5 @@ export function FloatingAiChatProvider({ children }: PropsWithChildren) {
     [isOpen, activeCardContextKey],
   );
 
-  return (
-    <FloatingAiChatContext.Provider value={value}>
-      {children}
-    </FloatingAiChatContext.Provider>
-  );
+  return <FloatingAiChatContext.Provider value={value}>{children}</FloatingAiChatContext.Provider>;
 }

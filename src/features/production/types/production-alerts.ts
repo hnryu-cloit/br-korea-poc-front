@@ -1,4 +1,7 @@
-import type { ProductionAlertItem, ProductionSkuItem } from "@/features/production/types/production";
+import type {
+  ProductionAlertItem,
+  ProductionSkuItem,
+} from "@/features/production/types/production";
 
 export type AlertSeverity = ProductionAlertItem["severity"];
 

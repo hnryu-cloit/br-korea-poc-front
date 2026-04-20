@@ -63,7 +63,11 @@ const toVisualRows = (visualData?: SalesVisualData | null): ChartRow[] => {
     return [];
   }
 
-  if (Array.isArray(visualData.labels) && Array.isArray(visualData.datasets) && visualData.datasets.length >= 2) {
+  if (
+    Array.isArray(visualData.labels) &&
+    Array.isArray(visualData.datasets) &&
+    visualData.datasets.length >= 2
+  ) {
     const storeDataset = visualData.datasets[0];
     const peerDataset = visualData.datasets[1];
     return visualData.labels
@@ -136,15 +140,20 @@ export const SalesV2QueryDataChart = ({
     return null;
   }
 
-  const maxValue = Math.max(1, ...chartRows.map((item) => Math.max(item.storeValue, item.peerValue)));
+  const maxValue = Math.max(
+    1,
+    ...chartRows.map((item) => Math.max(item.storeValue, item.peerValue)),
+  );
 
   return (
     <div className="rounded-2xl border border-[#dce4f3] bg-white px-4 py-3">
       <p className="text-xs font-semibold text-slate-700">질의 근거 데이터 차트</p>
       <div className="mt-3 space-y-2">
         {chartRows.map((item) => {
-          const storeWidth = item.storeValue > 0 ? Math.max(6, Math.round((item.storeValue / maxValue) * 100)) : 0;
-          const peerWidth = item.peerValue > 0 ? Math.max(6, Math.round((item.peerValue / maxValue) * 100)) : 0;
+          const storeWidth =
+            item.storeValue > 0 ? Math.max(6, Math.round((item.storeValue / maxValue) * 100)) : 0;
+          const peerWidth =
+            item.peerValue > 0 ? Math.max(6, Math.round((item.peerValue / maxValue) * 100)) : 0;
           return (
             <div key={item.label} className="space-y-1">
               <p className="text-[11px] font-semibold text-slate-600">{item.label}</p>
@@ -152,16 +161,26 @@ export const SalesV2QueryDataChart = ({
                 <div className="flex items-center gap-2">
                   <span className="w-8 text-[10px] font-semibold text-[#2454C8]">매장</span>
                   <div className="h-2 flex-1 rounded-full bg-[#eef4ff]">
-                    <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${storeWidth}%` }} />
+                    <div
+                      className="h-2 rounded-full bg-[#2454C8]"
+                      style={{ width: `${storeWidth}%` }}
+                    />
                   </div>
-                  <span className="text-[10px] font-semibold text-slate-500">{Math.round(item.storeValue).toLocaleString()}</span>
+                  <span className="text-[10px] font-semibold text-slate-500">
+                    {Math.round(item.storeValue).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-8 text-[10px] font-semibold text-slate-500">비교</span>
                   <div className="h-2 flex-1 rounded-full bg-slate-100">
-                    <div className="h-2 rounded-full bg-slate-400" style={{ width: `${peerWidth}%` }} />
+                    <div
+                      className="h-2 rounded-full bg-slate-400"
+                      style={{ width: `${peerWidth}%` }}
+                    />
                   </div>
-                  <span className="text-[10px] font-semibold text-slate-500">{Math.round(item.peerValue).toLocaleString()}</span>
+                  <span className="text-[10px] font-semibold text-slate-500">
+                    {Math.round(item.peerValue).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>

@@ -36,7 +36,11 @@ export function SummaryCard({
   const statusItems = [
     statusLabel,
     typeof deadlineMinutes === "number" ? `마감 ${deadlineMinutes}분` : undefined,
-    typeof deliveryScheduled === "boolean" ? (deliveryScheduled ? "배송 예약 완료" : "배송 예약 미완료") : undefined,
+    typeof deliveryScheduled === "boolean"
+      ? deliveryScheduled
+        ? "배송 예약 완료"
+        : "배송 예약 미완료"
+      : undefined,
   ].filter(Boolean) as string[];
 
   return (
@@ -51,7 +55,10 @@ export function SummaryCard({
           {statusItems.length > 0 ? (
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               {statusItems.map((item) => (
-                <span key={item} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${domainAccentClassMap[domain]}`}>
+                <span
+                  key={item}
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${domainAccentClassMap[domain]}`}
+                >
                   {item}
                 </span>
               ))}

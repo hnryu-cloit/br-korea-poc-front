@@ -8,7 +8,9 @@ export const EMPTY_PROMPT_FORM: PromptFormState = {
   sales: { quickPromptsText: "", systemInstruction: "", queryPrefixTemplate: "" },
 };
 
-export function toPromptFormState(domains?: Record<SettingsDomain, DomainPromptSettings>): PromptFormState {
+export function toPromptFormState(
+  domains?: Record<SettingsDomain, DomainPromptSettings>,
+): PromptFormState {
   const source = domains ?? {
     production: DEFAULT_DOMAIN_SETTINGS,
     ordering: DEFAULT_DOMAIN_SETTINGS,
@@ -34,7 +36,9 @@ export function toPromptFormState(domains?: Record<SettingsDomain, DomainPromptS
   };
 }
 
-export function toPromptPayloadState(form: PromptFormState): Record<SettingsDomain, DomainPromptSettings> {
+export function toPromptPayloadState(
+  form: PromptFormState,
+): Record<SettingsDomain, DomainPromptSettings> {
   const toPrompts = (text: string) =>
     text
       .split("\n")

@@ -17,7 +17,10 @@ const domainAccentClassMap: Record<DashboardSummaryCard["domain"], string> = {
   sales: "bg-[#fff6ee] text-[#c2410c] border-[#fedec3]",
 };
 
-const metricToneClassMap: Record<NonNullable<NonNullable<DashboardSummaryCard["metrics"]>[number]["tone"]>, string> = {
+const metricToneClassMap: Record<
+  NonNullable<NonNullable<DashboardSummaryCard["metrics"]>[number]["tone"]>,
+  string
+> = {
   default: "text-slate-800",
   primary: "text-[#2454C8]",
   success: "text-[#15803d]",
@@ -99,10 +102,14 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
             {postSalesQueryMutation.isPending ? (
               <p className="text-sm leading-6 text-slate-500">응답 생성 중...</p>
             ) : !latestResponse ? (
-              <p className="text-sm leading-6 text-slate-700">질문을 선택하면 이 영역에 답변을 표시합니다.</p>
+              <p className="text-sm leading-6 text-slate-700">
+                질문을 선택하면 이 영역에 답변을 표시합니다.
+              </p>
             ) : (
               <>
-                <p className={`text-sm leading-6 ${latestResponse.blocked ? "text-red-700" : "text-slate-700"}`}>
+                <p
+                  className={`text-sm leading-6 ${latestResponse.blocked ? "text-red-700" : "text-slate-700"}`}
+                >
                   {latestResponse.text}
                 </p>
 
@@ -127,7 +134,10 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
                 {latestResponse.actions?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {latestResponse.actions.map((action) => (
-                      <span key={action} className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+                      <span
+                        key={action}
+                        className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]"
+                      >
                         {action}
                       </span>
                     ))}
@@ -158,7 +168,10 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
       <section>
         <ul className="list-disc space-y-2 pl-5">
           {parsedHighlights.map((highlight) => (
-            <li key={`${highlight.title}-${highlight.detail ?? ""}`} className="text-sm text-slate-700 marker:text-slate-400">
+            <li
+              key={`${highlight.title}-${highlight.detail ?? ""}`}
+              className="text-sm text-slate-700 marker:text-slate-400"
+            >
               <p className="font-semibold text-slate-800">{highlight.title}</p>
               {highlight.detail ? (
                 <p className="mt-1 text-xs leading-5 text-slate-500">{highlight.detail}</p>
@@ -172,9 +185,14 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
       <section>
         <div className="grid grid-cols-2 gap-2">
           {card.metrics.map((metric) => (
-            <div key={metric.key} className="rounded-lg border border-[#edf2f7] bg-[#fbfcfe] px-3 py-2">
+            <div
+              key={metric.key}
+              className="rounded-lg border border-[#edf2f7] bg-[#fbfcfe] px-3 py-2"
+            >
               <p className="text-[11px] font-medium text-slate-400">{metric.label}</p>
-              <p className={`mt-1 text-base font-semibold ${metricToneClassMap[metric.tone ?? "default"]}`}>
+              <p
+                className={`mt-1 text-base font-semibold ${metricToneClassMap[metric.tone ?? "default"]}`}
+              >
                 {formatDashboardValueWithUnit(metric.value, metric.unit)}
               </p>
             </div>

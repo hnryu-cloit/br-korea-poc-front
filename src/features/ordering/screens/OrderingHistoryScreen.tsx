@@ -1,4 +1,3 @@
-
 import { StatsGrid } from "@/commons/components/page/page-layout";
 import type { HighlightStat } from "@/commons/constants/page-content";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
@@ -32,7 +31,7 @@ export function OrderingHistoryScreen() {
 
   return (
     <div className="space-y-6">
-      <OrderingHero/>
+      <OrderingHero />
       <StatsGrid stats={orderingHistoryStats} />
       <OrderingHistorySection data={historyQuery.data} isLoading={historyQuery.isLoading} />
     </div>

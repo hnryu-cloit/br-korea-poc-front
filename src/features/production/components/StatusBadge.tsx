@@ -13,5 +13,11 @@ const badgeLabels: Record<ProductionStatus, string> = {
 };
 
 export function StatusBadge({ status }: { status: ProductionStatus }) {
-  return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${badgeClasses[status]}`}>{badgeLabels[status]}</span>;
+  return (
+    <span
+      className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${badgeClasses[status]}`}
+    >
+      {badgeLabels[status]}
+    </span>
+  );
 }

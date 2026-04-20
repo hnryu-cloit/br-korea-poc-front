@@ -23,7 +23,9 @@ export function SalesQueryTab({
     <div className="space-y-5">
       <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm">
         <p className="text-lg font-bold text-slate-900">AI 손익 분석</p>
-        <p className="mt-1 text-sm text-slate-500">자연어 질의로 {storeName} 맞춤형 인사이트를 제공합니다.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          자연어 질의로 {storeName} 맞춤형 인사이트를 제공합니다.
+        </p>
         <div className="mt-4 flex gap-2">
           <input
             value={query}
@@ -62,9 +64,14 @@ export function SalesQueryTab({
       </article>
 
       {responses.map((response) => (
-        <article key={`${response.query}-${response.calculationDate}`} className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm">
+        <article
+          key={`${response.query}-${response.calculationDate}`}
+          className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm"
+        >
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">질문</span>
+            <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">
+              질문
+            </span>
             <p className="font-semibold text-slate-900">{response.query}</p>
           </div>
 
@@ -80,7 +87,10 @@ export function SalesQueryTab({
             <p className="text-sm font-bold text-slate-700">실행 가능한 인사이트</p>
             <div className="mt-3 space-y-2">
               {response.insights.map((insight) => (
-                <div key={insight} className="flex items-start gap-3 rounded-2xl bg-[#edf4ff] px-4 py-3 text-sm text-slate-700">
+                <div
+                  key={insight}
+                  className="flex items-start gap-3 rounded-2xl bg-[#edf4ff] px-4 py-3 text-sm text-slate-700"
+                >
                   <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-[#2454C8]" />
                   {insight}
                 </div>

@@ -14,15 +14,17 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const { user } = useDemoSession();
   const currentRole = user.role;
-  const visibleSections = menuSections.filter((section) => !section.roles || section.roles.includes(currentRole));
-  const isRouteActive = (to: string) => (to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(`${to}/`));
+  const visibleSections = menuSections.filter(
+    (section) => !section.roles || section.roles.includes(currentRole),
+  );
+  const isRouteActive = (to: string) =>
+    to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(`${to}/`);
 
   const SidebarContent = (
     <div className="flex w-full flex-col p-5 h-full">
       <NavLink to="/" onClick={onClose} className="mb-6 inline-flex items-center px-1">
         <img src={Logo} alt="AgentGo" className="h-7 w-auto" />
       </NavLink>
-
 
       <nav className="scrollbar-hide flex-1 space-y-6 overflow-y-auto pb-6">
         {visibleSections.map((section, sectionIndex) => {
@@ -47,9 +49,13 @@ export function AppSidebar({ isOpen, onClose }: Props) {
                 </div>
               ) : null}
 
-              <div className={cn("space-y-0.5", section.section ? "relative ml-1 pl-2" : undefined)}>
+              <div
+                className={cn("space-y-0.5", section.section ? "relative ml-1 pl-2" : undefined)}
+              >
                 {section.items.map((item) => {
-                  const parentActive = isRouteActive(item.to) || (item.children?.some((child) => pathname === child.to) ?? false);
+                  const parentActive =
+                    isRouteActive(item.to) ||
+                    (item.children?.some((child) => pathname === child.to) ?? false);
 
                   return (
                     <div key={item.to} className="space-y-1">
@@ -63,16 +69,22 @@ export function AppSidebar({ isOpen, onClose }: Props) {
                             : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-900",
                         )}
                       >
-                        {parentActive ? <div className="absolute left-[-9px] top-1/4 h-1/2 w-1 rounded-r-full bg-[#2454C8]" /> : null}
+                        {parentActive ? (
+                          <div className="absolute left-[-9px] top-1/4 h-1/2 w-1 rounded-r-full bg-[#2454C8]" />
+                        ) : null}
                         <span
                           className={cn(
                             "material-symbols-outlined text-[20px] transition-colors",
-                            parentActive ? "text-[#2454C8]" : "text-slate-400 group-hover:text-slate-600",
+                            parentActive
+                              ? "text-[#2454C8]"
+                              : "text-slate-400 group-hover:text-slate-600",
                           )}
                         >
                           {item.icon}
                         </span>
-                        <span className={parentActive ? "font-bold" : "font-medium"}>{item.label}</span>
+                        <span className={parentActive ? "font-bold" : "font-medium"}>
+                          {item.label}
+                        </span>
                       </NavLink>
 
                       {item.children?.length ? (

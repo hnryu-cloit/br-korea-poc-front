@@ -77,9 +77,7 @@ export const menuSections: MenuSection[] = [
   {
     section: "관리",
     roles: ["hq_admin"],
-    items: [
-      { to: "/settings", label: "AI 설정", icon: "tune" },
-    ],
+    items: [{ to: "/settings", label: "AI 설정", icon: "tune" }],
   },
 ];
 

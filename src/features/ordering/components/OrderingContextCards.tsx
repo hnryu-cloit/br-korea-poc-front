@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { Calendar, CloudRain, TrendingUp } from "lucide-react";
-import 'dayjs/locale/ko'
-dayjs.locale('ko')
+import "dayjs/locale/ko";
+dayjs.locale("ko");
 
 interface Props {
   weather?: string;
@@ -25,7 +25,7 @@ export function OrderingContextCards({ weather, trend }: Props) {
           <CloudRain className="h-7 w-7 text-slate-500" />
           <div>
             <p className="text-sm text-slate-500">날씨 예보</p>
-            <p className="font-bold text-slate-900">{weather ?? '-'}</p>
+            <p className="font-bold text-slate-900">{weather ?? "-"}</p>
           </div>
         </div>
       </article>
@@ -34,7 +34,7 @@ export function OrderingContextCards({ weather, trend }: Props) {
           <TrendingUp className="h-7 w-7 text-green-600" />
           <div>
             <p className="text-sm text-slate-500">최근 트렌드</p>
-            <p className="font-bold text-green-600">{trend ?? '-'}</p>
+            <p className="font-bold text-green-600">{trend ?? "-"}</p>
           </div>
         </div>
       </article>

@@ -38,7 +38,10 @@ export function ProductionQuickChat({
   );
   const [input, setInput] = useState(initialInput);
   const postSalesQueryMutation = usePostSalesQueryMutation(user.storeId, "production");
-  const { data: prompts = [] } = useGetSalesPromptsQuery({ store_id: user.storeId, domain: "production" });
+  const { data: prompts = [] } = useGetSalesPromptsQuery({
+    store_id: user.storeId,
+    domain: "production",
+  });
 
   const sendMessage = async (rawText: string) => {
     const text = rawText.trim();
@@ -84,7 +87,10 @@ export function ProductionQuickChat({
           <p className="text-sm text-slate-400">질문을 선택하거나 아래에 직접 입력해 주세요.</p>
         ) : null}
         {messages.map((message) => (
-          <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div
+            key={message.id}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+          >
             <div className={`max-w-[88%] space-y-2 ${message.role === "user" ? "" : ""}`}>
               <div
                 className={`rounded-[18px] px-4 py-3 text-sm leading-6 ${
@@ -108,7 +114,10 @@ export function ProductionQuickChat({
               {message.role === "assistant" && message.actions?.length ? (
                 <div className="flex flex-wrap gap-2">
                   {message.actions.map((action) => (
-                    <span key={action} className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+                    <span
+                      key={action}
+                      className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]"
+                    >
                       {action}
                     </span>
                   ))}

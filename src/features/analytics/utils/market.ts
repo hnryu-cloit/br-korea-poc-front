@@ -57,7 +57,9 @@ export function buildMarketActionItems(params: {
   }
 
   if (items.length === 0) {
-    items.push("데이터 수집량이 적어 인사이트가 제한됩니다. 최근 2주 기준 데이터 적재 상태를 먼저 점검하세요.");
+    items.push(
+      "데이터 수집량이 적어 인사이트가 제한됩니다. 최근 2주 기준 데이터 적재 상태를 먼저 점검하세요.",
+    );
   }
   return items.slice(0, 3);
 }

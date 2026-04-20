@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Clock } from "lucide-react";
 
-export function OrderingDeadlineAlert({
-  deadlineAt,
-}: {
-  deadlineAt?: string | null;
-}) {
+export function OrderingDeadlineAlert({ deadlineAt }: { deadlineAt?: string | null }) {
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
@@ -33,7 +29,9 @@ export function OrderingDeadlineAlert({
           <Clock className="h-8 w-8 text-orange-500" />
           <div>
             <p className="text-base font-bold text-orange-900">주문 마감 20분 전 알림</p>
-            <p className="mt-1 text-sm font-medium text-orange-700">주문 마감 시간 정보가 없습니다.</p>
+            <p className="mt-1 text-sm font-medium text-orange-700">
+              주문 마감 시간 정보가 없습니다.
+            </p>
           </div>
         </div>
       </section>
@@ -47,11 +45,12 @@ export function OrderingDeadlineAlert({
   const minute = Math.floor((remainingForTimer % 3600) / 60);
   const second = remainingForTimer % 60;
   const timeText = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
-  const statusLabel = remainingSeconds <= 0
-    ? "마감 완료"
-    : remainingSeconds <= alertWindowSeconds
-      ? "20분 전 알림 구간"
-      : "알림 대기";
+  const statusLabel =
+    remainingSeconds <= 0
+      ? "마감 완료"
+      : remainingSeconds <= alertWindowSeconds
+        ? "20분 전 알림 구간"
+        : "알림 대기";
 
   return (
     <section className="rounded-[28px] border border-orange-200 bg-orange-50 px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">

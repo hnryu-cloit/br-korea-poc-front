@@ -74,22 +74,14 @@ const MarketingRoiCard = ({ data }: { data: SalesOpportunityMock }) => {
       </div>
       <div className="mt-4 grid grid-cols-3 gap-3">
         {campaignBars.map((bar) => {
-          const height = Math.max(
-            14,
-            Math.round((bar.value / maxCampaignRevenue) * 88),
-          );
+          const height = Math.max(14, Math.round((bar.value / maxCampaignRevenue) * 88));
           return (
             <div key={bar.label} className="rounded-2xl bg-[#f8fbff] px-3 py-3">
               <p className="text-[11px] text-slate-400">{bar.label}</p>
               <div className="mt-2 flex h-[92px] items-end">
-                <div
-                  className={`w-full rounded ${bar.tone}`}
-                  style={{ height: `${height}px` }}
-                />
+                <div className={`w-full rounded ${bar.tone}`} style={{ height: `${height}px` }} />
               </div>
-              <p className="mt-2 text-xs font-semibold text-slate-700">
-                {formatWon(bar.value)}
-              </p>
+              <p className="mt-2 text-xs font-semibold text-slate-700">{formatWon(bar.value)}</p>
             </div>
           );
         })}
@@ -146,10 +138,7 @@ const ChannelPaymentCard = ({ data }: { data: SalesOpportunityMock }) => {
                   <span>수수료 {item.feeRatePct}%</span>
                 </div>
                 <div className="mt-1 h-2 rounded-full bg-slate-100">
-                  <div
-                    className="h-2 rounded-full bg-[#2454C8]"
-                    style={{ width: `${width}%` }}
-                  />
+                  <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${width}%` }} />
                 </div>
               </div>
             );
@@ -179,7 +168,8 @@ const PromotionEfficiencyCard = ({ data }: { data: SalesOpportunityMock }) => {
         <div className="rounded-2xl bg-[#f8fbff] px-3 py-3">
           <p className="text-[11px] text-slate-400">객단가 변화</p>
           <p className="mt-1 text-sm font-bold text-slate-800">
-            {formatWon(data.promotionEfficiency.beforeAov)} → {formatWon(data.promotionEfficiency.afterAov)}
+            {formatWon(data.promotionEfficiency.beforeAov)} →{" "}
+            {formatWon(data.promotionEfficiency.afterAov)}
           </p>
         </div>
         <div className="rounded-2xl bg-[#f8fbff] px-3 py-3">
@@ -193,7 +183,8 @@ const PromotionEfficiencyCard = ({ data }: { data: SalesOpportunityMock }) => {
         <p className="text-[11px] text-slate-400">유입/마진 변화</p>
         <div className="mt-2 grid grid-cols-2 gap-3 text-xs text-slate-600">
           <p>
-            방문객: {data.promotionEfficiency.beforeVisitors.toLocaleString()}명 → {data.promotionEfficiency.afterVisitors.toLocaleString()}명
+            방문객: {data.promotionEfficiency.beforeVisitors.toLocaleString()}명 →{" "}
+            {data.promotionEfficiency.afterVisitors.toLocaleString()}명
           </p>
           <p>
             마진 영향: {data.promotionEfficiency.marginImpactPct >= 0 ? "+" : ""}
@@ -246,10 +237,7 @@ const StoreBenchmarkCard = ({ data }: { data: SalesOpportunityMock }) => {
               tone: "bg-[#bfd5ff]",
             },
           ].map((item) => {
-            const width = Math.max(
-              12,
-              Math.round((item.value / maxBenchmarkPeak) * 100),
-            );
+            const width = Math.max(12, Math.round((item.value / maxBenchmarkPeak) * 100));
             return (
               <div key={item.label}>
                 <div className="flex items-center justify-between text-[11px] text-slate-600">
@@ -257,10 +245,7 @@ const StoreBenchmarkCard = ({ data }: { data: SalesOpportunityMock }) => {
                   <span>{formatWon(item.value)}</span>
                 </div>
                 <div className="mt-1 h-2 rounded-full bg-slate-100">
-                  <div
-                    className={`h-2 rounded-full ${item.tone}`}
-                    style={{ width: `${width}%` }}
-                  />
+                  <div className={`h-2 rounded-full ${item.tone}`} style={{ width: `${width}%` }} />
                 </div>
               </div>
             );
@@ -272,20 +257,18 @@ const StoreBenchmarkCard = ({ data }: { data: SalesOpportunityMock }) => {
           도넛 비중 {data.benchmark.donutMixStorePct}% (평균 {data.benchmark.donutMixClusterPct}%)
         </p>
         <p>
-          음료 비중 {data.benchmark.beverageMixStorePct}% (평균 {data.benchmark.beverageMixClusterPct}%)
+          음료 비중 {data.benchmark.beverageMixStorePct}% (평균{" "}
+          {data.benchmark.beverageMixClusterPct}%)
         </p>
       </div>
-        <p className="mt-4 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
+      <p className="mt-4 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]">
         {data.benchmark.bestStoreName} 운영 패턴 기준: {data.benchmark.recommendation}
-        </p>
-      </article>
+      </p>
+    </article>
   );
 };
 
-const renderOpportunityCard = (
-  activeTab: SalesOpportunityTabKey,
-  data: SalesOpportunityMock,
-) => {
+const renderOpportunityCard = (activeTab: SalesOpportunityTabKey, data: SalesOpportunityMock) => {
   if (activeTab === "marketing_roi") {
     return <MarketingRoiCard data={data} />;
   }

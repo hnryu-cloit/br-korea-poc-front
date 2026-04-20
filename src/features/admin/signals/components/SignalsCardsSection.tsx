@@ -36,25 +36,36 @@ export function SignalsCardsSection({ signals, isLoading }: Props) {
         const pc = priorityConfig[signal.priority];
         const tc = trendConfig[signal.trend];
         return (
-          <article key={signal.id} className={`rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${
-            signal.priority === "high" ? "border-red-200" : "border-border"
-          }`}>
+          <article
+            key={signal.id}
+            className={`rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${
+              signal.priority === "high" ? "border-red-200" : "border-border"
+            }`}
+          >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tc.bg}`}>
+                <div
+                  className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tc.bg}`}
+                >
                   <span className={tc.text}>{trendIcon(signal.trend)}</span>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-base font-semibold text-slate-900">{signal.title}</p>
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${pc.className}`}>{pc.label}</span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${pc.className}`}
+                    >
+                      {pc.label}
+                    </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">{signal.region}</p>
                 </div>
               </div>
               <div className="text-right shrink-0">
                 <p className="text-xl font-bold text-slate-900">{signal.value}</p>
-                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${tc.bg} ${tc.text}`}>
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${tc.bg} ${tc.text}`}
+                >
                   {trendIcon(signal.trend)}
                   {signal.change}
                 </span>
@@ -62,7 +73,9 @@ export function SignalsCardsSection({ signals, isLoading }: Props) {
             </div>
 
             <div className="mt-4 rounded-2xl bg-[#f8fbff] px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 mb-1">AI 인사이트</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 mb-1">
+                AI 인사이트
+              </p>
               <p className="text-sm leading-6 text-slate-600">{signal.insight}</p>
             </div>
 

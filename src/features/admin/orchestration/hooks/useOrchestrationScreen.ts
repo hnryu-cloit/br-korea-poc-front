@@ -89,10 +89,7 @@ export const useOrchestrationScreen = () => {
     return Math.round((repositoryRoutedCount / logs.length) * 100);
   }, [logs]);
 
-  const blockedCount = useMemo(
-    () => logs.filter((entry) => isBlocked(entry)).length,
-    [logs],
-  );
+  const blockedCount = useMemo(() => logs.filter((entry) => isBlocked(entry)).length, [logs]);
 
   const updatedAtRaw = promptSettingsQuery.data?.updated_at;
   const updatedAtText = (() => {

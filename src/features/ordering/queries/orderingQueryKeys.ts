@@ -12,8 +12,7 @@ export const orderingQueryKeys = {
   all: ORDERING_QUERY_ROOT,
   options: (params?: OrderingOptionsParams) =>
     [...ORDERING_QUERY_ROOT, "options", params ?? {}] as const,
-  context: (notificationId: number) =>
-    [...ORDERING_QUERY_ROOT, "context", notificationId] as const,
+  context: (notificationId: number) => [...ORDERING_QUERY_ROOT, "context", notificationId] as const,
   alerts: (params?: OrderingAlertsParams) =>
     [...ORDERING_QUERY_ROOT, "alerts", params ?? {}] as const,
   selectionHistory: (params?: OrderingSelectionHistoryParams) =>

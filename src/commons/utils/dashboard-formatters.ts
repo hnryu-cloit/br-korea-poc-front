@@ -5,10 +5,7 @@ export type DashboardStatKey =
   | "today_profit_estimate"
   | "alert_count";
 
-export const formatDashboardValueWithUnit = (
-  value: number | string,
-  unit?: DashboardValueUnit,
-) => {
+export const formatDashboardValueWithUnit = (value: number | string, unit?: DashboardValueUnit) => {
   if (typeof value === "number") {
     if (unit === "count") return `${value}개`;
     if (unit === "minutes") return `${value}분`;
@@ -29,14 +26,18 @@ export const formatDashboardStatValue = (params: {
   return formatDashboardValueWithUnit(value, unit);
 };
 
-export const parseDashboardHighlight = (
-  text: string,
-): { title: string; detail?: string } => {
-  const byDot = text.split("·").map((item) => item.trim()).filter(Boolean);
+export const parseDashboardHighlight = (text: string): { title: string; detail?: string } => {
+  const byDot = text
+    .split("·")
+    .map((item) => item.trim())
+    .filter(Boolean);
   if (byDot.length > 1) {
     return { title: byDot[0], detail: byDot.slice(1).join(" · ") };
   }
-  const byColon = text.split(":").map((item) => item.trim()).filter(Boolean);
+  const byColon = text
+    .split(":")
+    .map((item) => item.trim())
+    .filter(Boolean);
   if (byColon.length > 1) {
     return { title: byColon[0], detail: byColon.slice(1).join(": ") };
   }

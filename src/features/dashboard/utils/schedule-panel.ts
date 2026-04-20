@@ -42,7 +42,11 @@ export function hasEventOnDate(events: ScheduleEvent[], date: Date): boolean {
   return events.some((event) => event.date === key);
 }
 
-export function selectEventsByDate(events: ScheduleEvent[], date: Date, limit = 8): ScheduleEvent[] {
+export function selectEventsByDate(
+  events: ScheduleEvent[],
+  date: Date,
+  limit = 8,
+): ScheduleEvent[] {
   const key = formatCalendarDate(date);
   return events.filter((event) => event.date === key).slice(0, limit);
 }

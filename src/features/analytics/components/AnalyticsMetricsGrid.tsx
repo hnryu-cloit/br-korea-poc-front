@@ -14,11 +14,7 @@ const trendColor = (trend: AnalyticsMetric["trend"]) => {
   return "text-slate-500 bg-slate-50";
 };
 
-export const AnalyticsMetricsGrid = ({
-  metrics,
-}: {
-  metrics: AnalyticsMetric[];
-}) => {
+export const AnalyticsMetricsGrid = ({ metrics }: { metrics: AnalyticsMetric[] }) => {
   if (metrics.length === 0) {
     return (
       <section className="flex items-center justify-center rounded-[26px] border border-border bg-white px-5 py-16 text-sm text-slate-400 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -28,20 +24,27 @@ export const AnalyticsMetricsGrid = ({
   }
 
   return (
-  <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    {metrics.map((metric) => (
-      <article key={metric.label} className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{metric.label}</p>
-        <p className="mt-3 text-2xl font-bold text-slate-900">{metric.value}</p>
-        <div className="mt-2 flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${trendColor(metric.trend)}`}>
-            {trendIcon(metric.trend)}
-            {metric.change}
-          </span>
-          <span className="text-xs text-slate-400">{metric.detail}</span>
-        </div>
-      </article>
-    ))}
-  </section>
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {metrics.map((metric) => (
+        <article
+          key={metric.label}
+          className="rounded-[26px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+            {metric.label}
+          </p>
+          <p className="mt-3 text-2xl font-bold text-slate-900">{metric.value}</p>
+          <div className="mt-2 flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${trendColor(metric.trend)}`}
+            >
+              {trendIcon(metric.trend)}
+              {metric.change}
+            </span>
+            <span className="text-xs text-slate-400">{metric.detail}</span>
+          </div>
+        </article>
+      ))}
+    </section>
   );
 };

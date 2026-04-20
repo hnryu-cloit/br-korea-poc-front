@@ -23,23 +23,17 @@ const asString = (value: unknown, fallback = ""): string =>
 const asNumberOrString = (value: unknown): number | string =>
   typeof value === "number" || typeof value === "string" ? value : "";
 
-const isDashboardUnit = (
-  value: unknown,
-): value is DashboardStatItem["unit"] =>
+const isDashboardUnit = (value: unknown): value is DashboardStatItem["unit"] =>
   value === "count" || value === "minutes";
 
-const isDashboardTone = (
-  value: unknown,
-): value is DashboardStatItem["tone"] =>
+const isDashboardTone = (value: unknown): value is DashboardStatItem["tone"] =>
   value === "danger" || value === "primary" || value === "success" || value === "default";
 
-const isDashboardStatKey = (
-  value: unknown,
-): value is DashboardStatItem["key"] =>
-  value === "production_risk_count"
-  || value === "ordering_deadline_minutes"
-  || value === "today_profit_estimate"
-  || value === "alert_count";
+const isDashboardStatKey = (value: unknown): value is DashboardStatItem["key"] =>
+  value === "production_risk_count" ||
+  value === "ordering_deadline_minutes" ||
+  value === "today_profit_estimate" ||
+  value === "alert_count";
 
 const isDashboardUrgency = (value: unknown): value is DashboardUrgency =>
   value === "urgent" || value === "important" || value === "recommended";
@@ -89,7 +83,8 @@ const normalizeAction = (actionRaw: unknown): DashboardPriorityAction => {
     focus_section: asString(action.focus_section) || undefined,
     related_sku_id: asString(action.related_sku_id) || undefined,
     ai_reasoning: asString(action.ai_reasoning) || undefined,
-    confidence_score: typeof action.confidence_score === "number" ? action.confidence_score : undefined,
+    confidence_score:
+      typeof action.confidence_score === "number" ? action.confidence_score : undefined,
     is_finished_good: Boolean(action.is_finished_good),
     basis_data: action.basis_data as DashboardPriorityAction["basis_data"],
   };
@@ -120,7 +115,8 @@ const normalizeCard = (cardRaw: unknown): DashboardSummaryCard => {
     prompts: Array.isArray(card.prompts) ? (card.prompts as string[]) : [],
     status_label: asString(card.status_label) || undefined,
     deadline_minutes: typeof card.deadline_minutes === "number" ? card.deadline_minutes : undefined,
-    delivery_scheduled: typeof card.delivery_scheduled === "boolean" ? card.delivery_scheduled : undefined,
+    delivery_scheduled:
+      typeof card.delivery_scheduled === "boolean" ? card.delivery_scheduled : undefined,
   };
 };
 
@@ -136,12 +132,7 @@ const normalizeOverview = (rawData: unknown): DashboardOverviewResponse => {
   };
 };
 
-export const getDashboardOverview = async (
-  params: DashboardOverviewRequest,
-) => {
-  const response = await axiosInstance.get<unknown>(
-    "/api/home/overview",
-    { params },
-  );
+export const getDashboardOverview = async (params: DashboardOverviewRequest) => {
+  const response = await axiosInstance.get<unknown>("/api/home/overview", { params });
   return normalizeOverview(response.data);
 };

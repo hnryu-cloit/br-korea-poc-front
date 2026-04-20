@@ -3,11 +3,7 @@ import { summaryCardIconMap } from "@/features/dashboard/components/dashboard-st
 import { SummaryCard } from "@/features/dashboard/components/SummaryCard";
 import { SummaryCardBody } from "@/features/dashboard/components/SummaryCardBody";
 
-export function SummaryCardsSection({
-  cards,
-}: {
-  cards: DashboardSummaryCard[];
-}) {
+export function SummaryCardsSection({ cards }: { cards: DashboardSummaryCard[] }) {
   return (
     <section className="grid gap-5 xl:grid-cols-3">
       {cards.map((card) => {

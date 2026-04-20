@@ -17,15 +17,15 @@ export interface ProductionSummaryStat {
 }
 
 export interface ProductionOverviewAlertItem {
-  sku_id: string,
-  name: string,
-  current:number,
-  forecast: number,
-  status: string,
-  depletion_time:string,
-  recommended: number,
-  prod1:string,
-  prod2: string
+  sku_id: string;
+  name: string;
+  current: number;
+  forecast: number;
+  status: string;
+  depletion_time: string;
+  recommended: number;
+  prod1: string;
+  prod2: string;
 }
 export interface ProductionOverviewResponse {
   updated_at: string;

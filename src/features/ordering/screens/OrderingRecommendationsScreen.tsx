@@ -30,7 +30,8 @@ export function OrderingRecommendationsScreen() {
     prompt?: string;
     chatHistoryId?: string;
   } | null;
-  const fromDashboardOrdering = routeState?.source === "dashboard-card-chat" && routeState?.domain === "ordering";
+  const fromDashboardOrdering =
+    routeState?.source === "dashboard-card-chat" && routeState?.domain === "ordering";
   const notificationEntry = routeState?.source === "notification";
   const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -39,7 +40,10 @@ export function OrderingRecommendationsScreen() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
-  const orderingPromptsQuery = useGetSalesPromptsQuery({ store_id: user.storeId, domain: "ordering" });
+  const orderingPromptsQuery = useGetSalesPromptsQuery({
+    store_id: user.storeId,
+    domain: "ordering",
+  });
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
 
@@ -52,7 +56,10 @@ export function OrderingRecommendationsScreen() {
 
   const defaultOptionId = useMemo(() => {
     const focusOptionId = routeState?.focusOptionId ?? contextQuery.data?.focus_option_id ?? null;
-    const fallbackOptionId = orderingOptions.find((option) => option.recommended)?.option_id ?? orderingOptions[0]?.option_id ?? null;
+    const fallbackOptionId =
+      orderingOptions.find((option) => option.recommended)?.option_id ??
+      orderingOptions[0]?.option_id ??
+      null;
     return focusOptionId ?? fallbackOptionId;
   }, [contextQuery.data?.focus_option_id, orderingOptions, routeState?.focusOptionId]);
 
@@ -82,9 +89,12 @@ export function OrderingRecommendationsScreen() {
     return orderingQuickPrompts.slice(0, 4);
   }, [orderingPromptsQuery.data, orderingQuickPrompts]);
 
-  const dashboardChatHistory = fromDashboardOrdering && routeState?.chatHistoryId
-    ? getDashboardCardChatHistory("ordering").filter((item) => item.id === routeState.chatHistoryId)
-    : [];
+  const dashboardChatHistory =
+    fromDashboardOrdering && routeState?.chatHistoryId
+      ? getDashboardCardChatHistory("ordering").filter(
+          (item) => item.id === routeState.chatHistoryId,
+        )
+      : [];
 
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
@@ -106,7 +116,7 @@ export function OrderingRecommendationsScreen() {
   if (confirmed && selectedOption) {
     return (
       <div className="space-y-6">
-        <OrderingConfirmedSummary option={selectedOption}/>
+        <OrderingConfirmedSummary option={selectedOption} />
         <InPageCarousel items={orderingPostBanners} />
       </div>
     );
@@ -120,15 +130,20 @@ export function OrderingRecommendationsScreen() {
           prompts={quickPromptCandidates}
           initialHistory={dashboardChatHistory}
           initialInput={
-            fromDashboardOrdering && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
-              && !routeState?.chatHistoryId
-              ? routeState.prompt ?? ""
+            fromDashboardOrdering &&
+            dashboardChatHistory.length === 0 &&
+            routeState?.intent === "ask" &&
+            !routeState?.chatHistoryId
+              ? (routeState.prompt ?? "")
               : ""
           }
         />
       ) : null}
       <OrderingDeadlineAlert deadlineAt={optionsQuery.data?.deadline_at} />
-      <OrderingContextCards weather={optionsQuery.data?.weather_summary} trend={optionsQuery.data?.trend_summary} />
+      <OrderingContextCards
+        weather={optionsQuery.data?.weather_summary}
+        trend={optionsQuery.data?.trend_summary}
+      />
       <OrderingOptionsSection
         options={orderingOptions}
         selectedOptionId={effectiveSelectedOptionId}

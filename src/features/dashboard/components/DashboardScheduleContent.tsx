@@ -68,11 +68,15 @@ export function DashboardScheduleContent({
                   ) : (
                     <Circle className="h-4 w-4 shrink-0 text-slate-300" />
                   )}
-                  <span className={`text-sm ${todo.done ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}>
+                  <span
+                    className={`text-sm ${todo.done ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}
+                  >
                     {todo.label}
                   </span>
                   {todo.recurring ? (
-                    <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-500">반복</span>
+                    <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-500">
+                      반복
+                    </span>
                   ) : null}
                 </button>
               </li>
@@ -98,9 +102,14 @@ export function DashboardScheduleContent({
           ) : (
             <ul className="space-y-2">
               {scheduleEvents.map((event) => (
-                <li key={`${event.date}-${event.type}-${event.title}`} className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3">
+                <li
+                  key={`${event.date}-${event.type}-${event.title}`}
+                  className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3"
+                >
                   <div className="shrink-0 pt-0.5">
-                    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.type] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}>
+                    <span
+                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.type] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}
+                    >
                       {SCHEDULE_EVENT_TYPE_LABEL[event.type] ?? event.type}
                     </span>
                   </div>
@@ -109,7 +118,9 @@ export function DashboardScheduleContent({
                     <p className="mt-0.5 text-xs text-slate-500">{event.description}</p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-xs font-bold text-[#2454C8]">{getScheduleDDayLabel(event.date)}</p>
+                    <p className="text-xs font-bold text-[#2454C8]">
+                      {getScheduleDDayLabel(event.date)}
+                    </p>
                     <p className="text-[10px] text-slate-400">{formatScheduleDate(event.date)}</p>
                   </div>
                 </li>

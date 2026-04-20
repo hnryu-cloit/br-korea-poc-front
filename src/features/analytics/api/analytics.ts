@@ -34,9 +34,12 @@ export async function getAnalyticsStoreProfile(storeId: string) {
 }
 
 export async function getAnalyticsCustomerProfile(storeId: string) {
-  const response = await axiosInstance.get<CustomerProfileResponse>("/api/analytics/customer-profile", {
-    params: { store_id: storeId },
-  });
+  const response = await axiosInstance.get<CustomerProfileResponse>(
+    "/api/analytics/customer-profile",
+    {
+      params: { store_id: storeId },
+    },
+  );
   return response.data;
 }
 

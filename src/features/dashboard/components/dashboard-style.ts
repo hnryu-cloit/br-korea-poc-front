@@ -19,9 +19,7 @@ export const summaryCardIconMap: Record<DashboardDomain, LucideIcon> = {
   sales: TrendingUp,
 };
 
-export function getHighlightToneClasses(
-  tone: DashboardHighlightItem["tone"] = "neutral",
-) {
+export function getHighlightToneClasses(tone: DashboardHighlightItem["tone"] = "neutral") {
   switch (tone) {
     case "danger":
       return "border-red-200 bg-red-50 text-red-700";

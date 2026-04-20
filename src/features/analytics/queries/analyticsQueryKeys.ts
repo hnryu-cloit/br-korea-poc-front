@@ -11,8 +11,7 @@ export const analyticsQueryKeys = {
     [...ANALYTICS_QUERY_ROOT, "metrics", params ?? {}] as const,
   auditLogs: (params: GetAuditLogsRequest) =>
     [...ANALYTICS_QUERY_ROOT, "audit-logs", params] as const,
-  storeProfile: (storeId: string) =>
-    [...ANALYTICS_QUERY_ROOT, "store-profile", storeId] as const,
+  storeProfile: (storeId: string) => [...ANALYTICS_QUERY_ROOT, "store-profile", storeId] as const,
   customerProfile: (storeId: string) =>
     [...ANALYTICS_QUERY_ROOT, "customer-profile", storeId] as const,
   salesTrend: (storeId?: string) =>

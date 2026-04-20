@@ -1,4 +1,7 @@
-import type { FloatingAiCardContext, FloatingAiCardContextKey } from "@/commons/types/floating-ai-chat";
+import type {
+  FloatingAiCardContext,
+  FloatingAiCardContextKey,
+} from "@/commons/types/floating-ai-chat";
 
 export const floatingAiCardContexts: Record<FloatingAiCardContextKey, FloatingAiCardContext> = {
   "production:stock-risk": {

@@ -52,10 +52,7 @@ export function ProductionStatusScreen() {
 
   return (
     <div className="space-y-6">
-      <ProductionHero
-        title="상품별 생산 현황"
-        description=""
-      />
+      <ProductionHero title="상품별 생산 현황" description="" />
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}

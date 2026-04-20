@@ -38,9 +38,7 @@ import type {
  * }
  */
 export const getProductionOverview = async () => {
-  const response = await axiosInstance.get<ProductionOverviewResponse>(
-    "/api/production/overview",
-  );
+  const response = await axiosInstance.get<ProductionOverviewResponse>("/api/production/overview");
   return response.data;
 };
 
@@ -78,10 +76,9 @@ export const getProductionOverview = async () => {
  * }
  */
 export const getProductionSkuList = async (params: ProductionSkuListParams) => {
-  const response = await axiosInstance.get<ProductionSkuListResponse>(
-    "/api/production/items",
-    { params },
-  );
+  const response = await axiosInstance.get<ProductionSkuListResponse>("/api/production/items", {
+    params,
+  });
   return response.data;
 };
 
@@ -134,9 +131,7 @@ export const getProductionSkuDetail = async (skuId: string, storeId: string) => 
  *   "store_id": "gangnam"
  * }
  */
-export const postProductionRegistration = async (
-  payload: ProductionRegistrationPayload,
-) => {
+export const postProductionRegistration = async (payload: ProductionRegistrationPayload) => {
   const response = await axiosInstance.post<ProductionRegistrationResponse>(
     "/api/production/registrations",
     payload,
@@ -145,10 +140,9 @@ export const postProductionRegistration = async (
 };
 
 export const getProductionWasteSummary = async (storeId: string) => {
-  const response = await axiosInstance.get<WasteSummaryResponse>(
-    "/api/production/waste-summary",
-    { params: { store_id: storeId } },
-  );
+  const response = await axiosInstance.get<WasteSummaryResponse>("/api/production/waste-summary", {
+    params: { store_id: storeId },
+  });
   return response.data;
 };
 

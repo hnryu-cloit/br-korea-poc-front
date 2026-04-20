@@ -9,4 +9,6 @@ export type FloatingAiChatContextValue = {
   close: () => void;
 };
 
-export const FloatingAiChatContext = createContext<FloatingAiChatContextValue | undefined>(undefined);
+export const FloatingAiChatContext = createContext<FloatingAiChatContextValue | undefined>(
+  undefined,
+);

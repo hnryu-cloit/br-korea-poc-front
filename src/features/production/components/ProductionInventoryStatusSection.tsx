@@ -1,5 +1,8 @@
 import { CardAiButton } from "@/commons/components/chat/CardAiButton";
-import type { InventoryStatusItem, InventoryStatusResponse } from "@/features/production/types/production";
+import type {
+  InventoryStatusItem,
+  InventoryStatusResponse,
+} from "@/features/production/types/production";
 
 type Props = {
   data?: InventoryStatusResponse;
@@ -19,7 +22,9 @@ export function ProductionInventoryStatusSection({ data, isLoading }: Props) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-lg font-bold text-slate-900">재고 수준 진단</p>
-            <p className="mt-1 text-sm text-slate-500">품목별 현재 재고와 판매량 비교를 통해 적정 재고 수준을 진단합니다.</p>
+            <p className="mt-1 text-sm text-slate-500">
+              품목별 현재 재고와 판매량 비교를 통해 적정 재고 수준을 진단합니다.
+            </p>
           </div>
           <CardAiButton contextKey="production:inventory-status" />
         </div>
@@ -37,11 +42,13 @@ export function ProductionInventoryStatusSection({ data, isLoading }: Props) {
                 <span className="text-sm font-medium text-slate-800">{item.item_nm}</span>
                 <span className="text-xs text-slate-400">
                   현재 {item.total_stock.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
-                  &nbsp;·&nbsp;
-                  판매 {item.total_sold.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
+                  &nbsp;·&nbsp; 판매{" "}
+                  {item.total_sold.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
                 </span>
               </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_STYLE[item.status]}`}>
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_STYLE[item.status]}`}
+              >
                 {item.status}
               </span>
             </li>

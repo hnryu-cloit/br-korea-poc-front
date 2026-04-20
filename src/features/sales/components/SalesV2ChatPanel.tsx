@@ -2,7 +2,10 @@ import { BarChart3, Send, ShieldAlert } from "lucide-react";
 import type { RefObject } from "react";
 
 import { SectionHint } from "@/features/sales/components/SectionHint";
-import { SalesV2QueryDataChart, hasSalesV2ChartData } from "@/features/sales/components/SalesV2QueryDataChart";
+import {
+  SalesV2QueryDataChart,
+  hasSalesV2ChartData,
+} from "@/features/sales/components/SalesV2QueryDataChart";
 import {
   SALES_V2_HINT_QUESTIONS,
   SALES_V2_QUERY_TYPE_LABEL,
@@ -33,7 +36,9 @@ export const SalesV2ChatPanel = ({
   onSelectPrompt: (prompt: string) => void;
   onSubmitInput: () => void;
 }) => {
-  const latestAssistantMessage = [...messages].reverse().find((message) => message.role === "assistant");
+  const latestAssistantMessage = [...messages]
+    .reverse()
+    .find((message) => message.role === "assistant");
 
   return (
     <div className="flex min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -59,28 +64,41 @@ export const SalesV2ChatPanel = ({
         ) : null}
 
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div
+            key={msg.id}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          >
             {msg.role === "user" ? (
               <div className="max-w-[80%] rounded-[20px] rounded-br-sm bg-[#2454C8] px-4 py-3 text-sm text-white">
                 {msg.text}
               </div>
             ) : (
               <div className="max-w-[90%] space-y-3">
-                <div className={`rounded-[20px] rounded-bl-sm border px-5 py-4 ${msg.blocked ? "border-red-200 bg-red-50" : "border-border bg-[#f8fbff]"}`}>
+                <div
+                  className={`rounded-[20px] rounded-bl-sm border px-5 py-4 ${msg.blocked ? "border-red-200 bg-red-50" : "border-border bg-[#f8fbff]"}`}
+                >
                   <div className="flex flex-wrap items-center gap-2">
                     {msg.processingRoute ? (
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${SALES_V2_ROUTE_STYLE[msg.processingRoute] ?? "bg-slate-100 text-slate-600"}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${SALES_V2_ROUTE_STYLE[msg.processingRoute] ?? "bg-slate-100 text-slate-600"}`}
+                      >
                         {SALES_V2_ROUTE_LABEL[msg.processingRoute] ?? msg.processingRoute}
                       </span>
                     ) : null}
                     {msg.queryType ? (
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${SALES_V2_QUERY_TYPE_STYLE[msg.queryType] ?? "bg-slate-100 text-slate-600"}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${SALES_V2_QUERY_TYPE_STYLE[msg.queryType] ?? "bg-slate-100 text-slate-600"}`}
+                      >
                         {SALES_V2_QUERY_TYPE_LABEL[msg.queryType] ?? msg.queryType}
                       </span>
                     ) : null}
                   </div>
 
-                  <p className={`mt-2 text-sm leading-6 ${msg.blocked ? "text-red-700" : "text-slate-700"}`}>{msg.text}</p>
+                  <p
+                    className={`mt-2 text-sm leading-6 ${msg.blocked ? "text-red-700" : "text-slate-700"}`}
+                  >
+                    {msg.text}
+                  </p>
 
                   {msg.blocked ? (
                     <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-bold text-red-600">
@@ -90,7 +108,11 @@ export const SalesV2ChatPanel = ({
                   ) : null}
                 </div>
 
-                {!hasSalesV2ChartData({ comparison: msg.comparison, visualData: msg.visualData, evidence: msg.evidence }) && msg.evidence?.length ? (
+                {!hasSalesV2ChartData({
+                  comparison: msg.comparison,
+                  visualData: msg.visualData,
+                  evidence: msg.evidence,
+                }) && msg.evidence?.length ? (
                   <div className="rounded-2xl bg-white px-4 py-3 text-xs text-slate-500 shadow-sm">
                     <p className="mb-1 font-semibold text-slate-700">근거</p>
                     <ul className="list-disc space-y-1 pl-4">
@@ -110,7 +132,10 @@ export const SalesV2ChatPanel = ({
                 {msg.actions?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {msg.actions.map((action) => (
-                      <span key={action} className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+                      <span
+                        key={action}
+                        className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]"
+                      >
                         {action}
                       </span>
                     ))}
@@ -150,7 +175,9 @@ export const SalesV2ChatPanel = ({
               {item.label}
             </button>
           ))}
-          {promptsLoading ? <p className="px-1 py-2 text-xs text-slate-400">추천 질문 불러오는 중...</p> : null}
+          {promptsLoading ? (
+            <p className="px-1 py-2 text-xs text-slate-400">추천 질문 불러오는 중...</p>
+          ) : null}
         </div>
         <div className="flex gap-2">
           <input

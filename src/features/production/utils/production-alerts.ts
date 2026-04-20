@@ -1,5 +1,12 @@
-import type { ProductionAlertItem, ProductionOverviewAlertItem } from "@/features/production/types/production";
-import type { AlertSeverity, GroupedAlertRow, GroupedAlertSection } from "@/features/production/types/production-alerts";
+import type {
+  ProductionAlertItem,
+  ProductionOverviewAlertItem,
+} from "@/features/production/types/production";
+import type {
+  AlertSeverity,
+  GroupedAlertRow,
+  GroupedAlertSection,
+} from "@/features/production/types/production-alerts";
 import { severityDescriptionMap } from "@/features/production/data/production-alerts";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 
@@ -16,7 +23,7 @@ const parseDepletionMinutes = (value?: string): number | null => {
   if (hhmmMatch) {
     const hours = Number(hhmmMatch[1]);
     const minutes = Number(hhmmMatch[2]);
-    return (hours * 60) + minutes;
+    return hours * 60 + minutes;
   }
 
   return null;
@@ -39,7 +46,11 @@ const depletionLabel = (sku?: ProductionOverviewAlertItem) => {
   return `약 ${hours}시간 ${minutes}분 후`;
 };
 
-const buildRows = (severity: AlertSeverity, alerts: ProductionAlertItem[], items: ProductionOverviewAlertItem[]): GroupedAlertRow[] => {
+const buildRows = (
+  severity: AlertSeverity,
+  alerts: ProductionAlertItem[],
+  items: ProductionOverviewAlertItem[],
+): GroupedAlertRow[] => {
   const skuMap = new Map(items.map((item) => [item.sku_id, item] as const));
   const byKey = new Map<string, { sku?: ProductionOverviewAlertItem; row: GroupedAlertRow }>();
 

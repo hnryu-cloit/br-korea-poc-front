@@ -12,10 +12,7 @@ import type {
   SalesSummaryResponse,
 } from "@/features/sales/types/sales";
 
-const appendOperationalFilters = (
-  params: URLSearchParams,
-  filters?: GetSalesInsightsRequest,
-) => {
+const appendOperationalFilters = (params: URLSearchParams, filters?: GetSalesInsightsRequest) => {
   if (!filters) {
     return;
   }
@@ -64,17 +61,18 @@ const appendOperationalFilters = (
 //   return response.data;
 // };
 
-export const getSalesPrompts = async (
-  filters?: GetSalesPromptsRequest,
-): Promise<SalesPrompt[]> => {
+export const getSalesPrompts = async (filters?: GetSalesPromptsRequest): Promise<SalesPrompt[]> => {
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
   if (filters?.domain) {
     query.set("domain", filters.domain);
   }
-  const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>("/api/sales/prompts", {
-    params: Object.fromEntries(query.entries()),
-  });
+  const response = await axiosInstance.get<SalesPrompt[] | GetSalesPromptsResponse>(
+    "/api/sales/prompts",
+    {
+      params: Object.fromEntries(query.entries()),
+    },
+  );
   const payload = response.data;
 
   if (Array.isArray(payload)) {
@@ -114,7 +112,9 @@ export const getSalesInsights = async (
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
 
-  const response = await axiosInstance.get<SalesInsightsResponse | { sections?: SalesInsightSection[] }>("/api/sales/insights", {
+  const response = await axiosInstance.get<
+    SalesInsightsResponse | { sections?: SalesInsightSection[] }
+  >("/api/sales/insights", {
     params: Object.fromEntries(query.entries()),
   });
   const payload = response.data;
@@ -139,8 +139,11 @@ export const getSalesCampaignEffect = async (
 ): Promise<SalesCampaignEffectResponse> => {
   const query = new URLSearchParams();
   appendOperationalFilters(query, filters);
-  const response = await axiosInstance.get<SalesCampaignEffectResponse>("/api/sales/campaign-effect", {
-    params: Object.fromEntries(query.entries()),
-  });
+  const response = await axiosInstance.get<SalesCampaignEffectResponse>(
+    "/api/sales/campaign-effect",
+    {
+      params: Object.fromEntries(query.entries()),
+    },
+  );
   return response.data;
 };

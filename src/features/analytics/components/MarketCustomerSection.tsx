@@ -57,7 +57,10 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
                         ))}
                       </Pie>
                       <Tooltip
-                        formatter={(value) => [`${Number(value).toLocaleString("ko-KR")}건`, "건수"]}
+                        formatter={(value) => [
+                          `${Number(value).toLocaleString("ko-KR")}건`,
+                          "건수",
+                        ]}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -80,7 +83,9 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
                           <div className="flex items-center gap-2">
                             <span
                               className="h-2 w-2 rounded-full"
-                              style={{ backgroundColor: SEGMENT_COLORS[index % SEGMENT_COLORS.length] }}
+                              style={{
+                                backgroundColor: SEGMENT_COLORS[index % SEGMENT_COLORS.length],
+                              }}
                             />
                             <span className="text-sm text-slate-700">{segment.segment_nm}</span>
                           </div>

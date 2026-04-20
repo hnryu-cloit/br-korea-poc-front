@@ -23,7 +23,8 @@ const EMPTY_HISTORY_STORE: DashboardCardChatHistoryStore = {
   sales: [],
 };
 
-const canUseSessionStorage = () => typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
+const canUseSessionStorage = () =>
+  typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
 
 const readStore = (): DashboardCardChatHistoryStore => {
   if (!canUseSessionStorage()) return EMPTY_HISTORY_STORE;
@@ -35,14 +36,25 @@ const readStore = (): DashboardCardChatHistoryStore => {
     const normalizeItems = (items: unknown): DashboardCardChatHistoryItem[] =>
       Array.isArray(items)
         ? items
-            .filter((item): item is Partial<DashboardCardChatHistoryItem> => !!item && typeof item === "object")
+            .filter(
+              (item): item is Partial<DashboardCardChatHistoryItem> =>
+                !!item && typeof item === "object",
+            )
             .map((item) => ({
-              id: typeof item.id === "string" ? item.id : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+              id:
+                typeof item.id === "string"
+                  ? item.id
+                  : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
               question: typeof item.question === "string" ? item.question : "",
               answer: typeof item.answer === "string" ? item.answer : "",
-              evidence: Array.isArray(item.evidence) ? item.evidence.filter((entry): entry is string => typeof entry === "string") : [],
-              actions: Array.isArray(item.actions) ? item.actions.filter((entry): entry is string => typeof entry === "string") : [],
-              createdAt: typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString(),
+              evidence: Array.isArray(item.evidence)
+                ? item.evidence.filter((entry): entry is string => typeof entry === "string")
+                : [],
+              actions: Array.isArray(item.actions)
+                ? item.actions.filter((entry): entry is string => typeof entry === "string")
+                : [],
+              createdAt:
+                typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString(),
             }))
             .filter((item) => item.question.trim() && item.answer.trim())
         : [];
@@ -92,8 +104,9 @@ export const appendDashboardCardChatHistory = (
   return nextItem;
 };
 
-export const getDashboardCardChatHistory = (domain: DashboardDomain): DashboardCardChatHistoryItem[] =>
-  readStore()[domain];
+export const getDashboardCardChatHistory = (
+  domain: DashboardDomain,
+): DashboardCardChatHistoryItem[] => readStore()[domain];
 
 export const consumeDashboardCardChatHistory = (
   domain: DashboardDomain,

@@ -28,7 +28,9 @@ export function ProductionRegistrationPanel({
     forecast_stock_1h: activeSku.forecast_stock_1h,
     recommended_qty: activeSku.recommended_production_qty ?? activeSku.avg_first_production_qty_4w,
     chance_loss_saving_pct: activeSku.chance_loss_saving_pct,
-    chance_loss_basis_text: activeSku.chance_loss_basis_text ?? "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
+    chance_loss_basis_text:
+      activeSku.chance_loss_basis_text ??
+      "산출 기준: 1시간 후 재고 소진 예측률 및 4주 평균 판매 기회 손실률 비교",
     predicted_stockout_time: activeSku.predicted_stockout_time,
     can_produce: activeSku.can_produce,
     sales_velocity: activeSku.sales_velocity,
@@ -43,7 +45,9 @@ export function ProductionRegistrationPanel({
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-lg font-bold text-slate-900">생산 등록</p>
-          <p className="mt-1 text-sm text-slate-500">추천 수량은 4주 평균 생산 패턴을 기준으로 계산했습니다.</p>
+          <p className="mt-1 text-sm text-slate-500">
+            추천 수량은 4주 평균 생산 패턴을 기준으로 계산했습니다.
+          </p>
         </div>
         <button
           type="button"
@@ -85,23 +89,32 @@ export function ProductionRegistrationPanel({
             onChange={(event) => onChangeQty(event.target.value)}
             className="mt-2 w-full rounded-2xl border border-[#dce4f3] bg-white px-4 py-3 text-base font-semibold text-slate-800 outline-none focus:border-[#2454C8]"
           />
-          <p className="mt-2 text-xs text-slate-500">추천 수량 {formatCountWithUnit(detail.recommended_qty, "개")} · 4주 평균 1차 생산 기준</p>
+          <p className="mt-2 text-xs text-slate-500">
+            추천 수량 {formatCountWithUnit(detail.recommended_qty, "개")} · 4주 평균 1차 생산 기준
+          </p>
         </div>
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-4">
           <p className="text-xs font-bold text-red-500">현재 재고 / 1시간 후 예측</p>
           <p className="mt-1 text-sm text-red-700">
-            {formatCountWithUnit(detail.current_stock, "개")} → {formatCountWithUnit(detail.forecast_stock_1h, "개")} 예상
+            {formatCountWithUnit(detail.current_stock, "개")} →{" "}
+            {formatCountWithUnit(detail.forecast_stock_1h, "개")} 예상
           </p>
           {detail.predicted_stockout_time ? (
-            <p className="mt-2 text-xs text-red-500">예상 품절 시각 {detail.predicted_stockout_time}</p>
+            <p className="mt-2 text-xs text-red-500">
+              예상 품절 시각 {detail.predicted_stockout_time}
+            </p>
           ) : null}
         </div>
         <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-4">
           <p className="text-xs font-bold text-[#2454C8]">찬스 로스 감소 효과</p>
-          <p className="mt-1 text-sm text-slate-700">지금 생산 시 {detail.chance_loss_saving_pct}% 감소 예상</p>
+          <p className="mt-1 text-sm text-slate-700">
+            지금 생산 시 {detail.chance_loss_saving_pct}% 감소 예상
+          </p>
           <p className="mt-2 text-xs text-slate-500">{detail.chance_loss_basis_text}</p>
           {detail.sales_velocity ? (
-            <p className="mt-2 text-xs text-slate-500">현재 판매 속도 {detail.sales_velocity.toFixed(1)}배</p>
+            <p className="mt-2 text-xs text-slate-500">
+              현재 판매 속도 {detail.sales_velocity.toFixed(1)}배
+            </p>
           ) : null}
         </div>
       </div>
@@ -114,7 +127,8 @@ export function ProductionRegistrationPanel({
 
       {detail.material_alert ? (
         <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
-          {detail.material_alert_message ?? "재료 부족 경고가 있습니다. 생산 등록 전에 재료 주문 상태를 함께 확인하세요."}
+          {detail.material_alert_message ??
+            "재료 부족 경고가 있습니다. 생산 등록 전에 재료 주문 상태를 함께 확인하세요."}
         </div>
       ) : null}
 

@@ -32,10 +32,7 @@ export function MarketScreen() {
 
   return (
     <div className="space-y-6">
-      <PageHero
-        title="상권·고객 분석"
-        description={heroDescription}
-      />
+      <PageHero title="상권·고객 분석" description={heroDescription} />
 
       {hasError ? (
         <section className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

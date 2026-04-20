@@ -75,7 +75,9 @@ export function SettingsDomainEditor({ value, onChange }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-1.5">질의 접두 템플릿</label>
+        <label className="block text-sm font-semibold text-foreground mb-1.5">
+          질의 접두 템플릿
+        </label>
         <p className="text-xs text-muted-foreground mb-2">
           AI로 전달되는 질문 앞에 붙는 맥락 정보입니다.{" "}
           <code className="bg-muted px-1 rounded text-[11px]">{"{store_id}"}</code>,{" "}

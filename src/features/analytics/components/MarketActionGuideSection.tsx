@@ -17,7 +17,9 @@ export function MarketActionGuideSection({ storeProfile, customerProfile, isLoad
     <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="mb-4">
         <p className="text-base font-bold text-slate-900">운영 액션 가이드</p>
-        <p className="mt-1 text-sm text-slate-500">상권/고객 데이터 기준으로 바로 실행할 우선 액션입니다.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          상권/고객 데이터 기준으로 바로 실행할 우선 액션입니다.
+        </p>
       </div>
 
       {isLoading ? (

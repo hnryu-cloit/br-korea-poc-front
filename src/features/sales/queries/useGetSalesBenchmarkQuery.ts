@@ -53,11 +53,7 @@ function getMix(summary: SalesSummaryResponse) {
   };
 }
 
-export const useGetSalesBenchmarkQuery = (
-  storeId?: string,
-  dateFrom?: string,
-  dateTo?: string,
-) =>
+export const useGetSalesBenchmarkQuery = (storeId?: string, dateFrom?: string, dateTo?: string) =>
   useQuery({
     queryKey: salesQueryKeys.benchmark(`${storeId ?? "all"}:${dateFrom ?? ""}:${dateTo ?? ""}`),
     queryFn: async (): Promise<SalesBenchmarkData | null> => {
@@ -68,40 +64,43 @@ export const useGetSalesBenchmarkQuery = (
       if (!currentStore) return null;
 
       const currentAreaBand = toAreaBand(currentStore.store_area_pyeong);
-      const sameClusterStores = stores.filter((store) => {
-        if (store.store_id === storeId) return false;
-        const storeAreaBand = toAreaBand(store.store_area_pyeong);
-        return (
-          store.region === currentStore.region
-          && (store.store_type ?? "") === (currentStore.store_type ?? "")
-          && (store.business_type ?? "") === (currentStore.business_type ?? "")
-          && storeAreaBand === currentAreaBand
-        );
-      }).slice(0, 6);
+      const sameClusterStores = stores
+        .filter((store) => {
+          if (store.store_id === storeId) return false;
+          const storeAreaBand = toAreaBand(store.store_area_pyeong);
+          return (
+            store.region === currentStore.region &&
+            (store.store_type ?? "") === (currentStore.store_type ?? "") &&
+            (store.business_type ?? "") === (currentStore.business_type ?? "") &&
+            storeAreaBand === currentAreaBand
+          );
+        })
+        .slice(0, 6);
       const sameRegionStores = stores
         .filter((store) => store.store_id !== storeId && store.region === currentStore.region)
         .slice(0, 6);
-      const fallbackStores = stores
-        .filter((store) => store.store_id !== storeId)
-        .slice(0, 6);
-      const peerStores = sameClusterStores.length > 0
-        ? sameClusterStores
-        : sameRegionStores.length > 0
-          ? sameRegionStores
-          : fallbackStores;
+      const fallbackStores = stores.filter((store) => store.store_id !== storeId).slice(0, 6);
+      const peerStores =
+        sameClusterStores.length > 0
+          ? sameClusterStores
+          : sameRegionStores.length > 0
+            ? sameRegionStores
+            : fallbackStores;
       const targetStores = [currentStore, ...peerStores];
 
       const summaryList = await Promise.all(
-        targetStores.map(async (store): Promise<StoreSummary> => ({
-          storeId: store.store_id,
-          storeName: store.store_name,
-          region: store.region,
-          summary: await getSalesSummary({
-            store_id: store.store_id,
-            date_from: dateFrom,
-            date_to: dateTo,
+        targetStores.map(
+          async (store): Promise<StoreSummary> => ({
+            storeId: store.store_id,
+            storeName: store.store_name,
+            region: store.region,
+            summary: await getSalesSummary({
+              store_id: store.store_id,
+              date_from: dateFrom,
+              date_to: dateTo,
+            }),
           }),
-        })),
+        ),
       );
 
       const currentSummary = summaryList.find((item) => item.storeId === storeId);
@@ -133,14 +132,16 @@ export const useGetSalesBenchmarkQuery = (
 
       const peerDonutMixPct = Math.round(peerMix.donutPct / peers.length);
       const peerBeverageMixPct = Math.round(peerMix.beveragePct / peers.length);
-      const clusterReason = sameClusterStores.length > 0
-        ? `지역(${currentStore.region})·운영타입(${currentStore.store_type})·업태(${currentStore.business_type ?? "-"})·규모(${currentAreaBand})`
-        : `지역(${currentStore.region}) 중심 유사군`;
+      const clusterReason =
+        sameClusterStores.length > 0
+          ? `지역(${currentStore.region})·운영타입(${currentStore.store_type})·업태(${currentStore.business_type ?? "-"})·규모(${currentAreaBand})`
+          : `지역(${currentStore.region}) 중심 유사군`;
 
       return {
-        clusterName: sameClusterStores.length > 0
-          ? `${currentStore.region} ${currentStore.store_type} 유사군`
-          : `${currentStore.region} 유사 상권`,
+        clusterName:
+          sameClusterStores.length > 0
+            ? `${currentStore.region} ${currentStore.store_type} 유사군`
+            : `${currentStore.region} 유사 상권`,
         clusterSize: peers.length + 1,
         clusterReason,
         bestStoreName: bestPeer.storeName,
