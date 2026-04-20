@@ -53,8 +53,11 @@ export async function getAnalyticsSalesTrend(storeId?: string) {
 }
 
 export async function getAnalyticsMarketIntelligence(params?: GetMarketIntelligenceRequest) {
-  const response = await axiosInstance.get<MarketIntelligenceResponse>("/api/analytics/market-intelligence", {
-    params,
-  });
+  const response = await axiosInstance.get<MarketIntelligenceResponse>(
+    "/api/analytics/market-intelligence",
+    {
+      params,
+    },
+  );
   return response.data;
 }

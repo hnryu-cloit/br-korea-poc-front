@@ -30,14 +30,19 @@ const quarterOptions = ["Q1", "Q2", "Q3", "Q4"];
 const quickRadius = [500, 750, 1000, 2000];
 
 export function AnalysisScopeFilterBar({ value, onChange, className }: Props) {
-  const dongOptions = useMemo(() => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"], [value.gu]);
+  const dongOptions = useMemo(
+    () => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"],
+    [value.gu],
+  );
 
   const setField = <K extends keyof AnalysisScope>(key: K, next: AnalysisScope[K]) => {
     onChange({ ...value, [key]: next });
   };
 
   return (
-    <section className={`rounded-2xl border border-border bg-white px-4 py-4 shadow-sm ${className ?? ""}`}>
+    <section
+      className={`rounded-2xl border border-border bg-white px-4 py-4 shadow-sm ${className ?? ""}`}
+    >
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
         <label className="space-y-1 text-xs text-slate-500">
           <span className="font-semibold text-slate-600">구</span>

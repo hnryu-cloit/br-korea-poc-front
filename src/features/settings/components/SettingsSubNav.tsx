@@ -19,9 +19,11 @@ export function SettingsSubNav() {
             to={item.to}
             end={item.to === "/settings"}
             className={({ isActive }) =>
-              `rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${isActive
-                ? "bg-[#2454C8] text-white"
-                : "bg-[#f5f8ff] text-slate-600 hover:bg-[#e8efff] hover:text-[#2454C8]"}`
+              `rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                isActive
+                  ? "bg-[#2454C8] text-white"
+                  : "bg-[#f5f8ff] text-slate-600 hover:bg-[#e8efff] hover:text-[#2454C8]"
+              }`
             }
           >
             {item.label}

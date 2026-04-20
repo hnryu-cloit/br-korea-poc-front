@@ -19,7 +19,9 @@ export function AppLayout() {
   return (
     <FloatingAiChatProvider>
       <div className="min-h-screen bg-background text-foreground">
-        {!isStartPage ? <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} /> : null}
+        {!isStartPage ? (
+          <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        ) : null}
         {!isStartPage ? (
           <AppHeader
             onMenuToggle={() => setSidebarOpen((v) => !v)}
@@ -28,7 +30,9 @@ export function AppLayout() {
           />
         ) : null}
         <div className={`min-h-screen flex flex-col ${isStartPage ? "" : "lg:ml-64"}`}>
-          <main className={`mx-auto w-full flex-1 px-5 md:px-8 lg:max-w-none lg:px-10 ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : "pb-14 pt-[96px]"}`}>
+          <main
+            className={`mx-auto w-full flex-1 px-5 md:px-8 lg:max-w-none lg:px-10 ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : "pb-14 pt-[96px]"}`}
+          >
             <div className="mx-auto w-full max-w-[1280px]">
               <Outlet />
             </div>
