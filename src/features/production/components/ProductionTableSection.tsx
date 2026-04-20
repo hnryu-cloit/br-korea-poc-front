@@ -1,11 +1,10 @@
-import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton";
+import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
+import { ImageOff } from "lucide-react";
 import type {
   ProductionSkuItem,
   ProductionSkuListResponse,
 } from "@/features/production/types/production";
-import { formatCountWithUnit } from "@/commons/utils/format-count";
-import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 
 export function ProductionTableSection({
   items,
@@ -24,30 +23,18 @@ export function ProductionTableSection({
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <div className="border-b border-border/60 px-6 py-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-lg font-bold text-slate-900">SKU별 생산 현황</p>
-            <p className="mt-1 text-sm text-slate-500">
-              현재 재고 · 1시간 후 예측 · 4주 평균 1차/2차 생산 패턴을 한눈에 확인합니다.
-            </p>
-          </div>
-          <CardAiButton contextKey="production:stock-risk" />
-        </div>
-      </div>
-
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
           <thead>
             <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
-              <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">품목명</th>
+              <th className="px-6 py-3 text-xs font-bold text-slate-500">주문 마감 시간</th>
+              <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">현재 재고</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">1시간 후 예측</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 1차</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">4주 평균 2차</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500">찬스 로스 절감</th>
-              <th className="px-4 py-3 text-xs font-bold text-slate-500">알림</th>
               <th className="px-4 py-3 text-xs font-bold text-slate-500"></th>
             </tr>
           </thead>
@@ -64,10 +51,27 @@ export function ProductionTableSection({
                   key={sku.sku_id}
                   className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
                 >
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      {sku.image ? (
+                        <img
+                          src={sku.image}
+                          alt={sku.sku_name}
+                          className="h-[50px] w-[50px] rounded-xl object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                          <ImageOff className="h-4 w-4" />
+                        </div>
+                      )}
+                      <span className="font-semibold text-slate-800">{sku.sku_name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 text-slate-800">00:00:00</td>
                   <td className="px-6 py-4">
                     <StatusBadge status={sku.status} />
                   </td>
-                  <td className="px-4 py-4 font-semibold text-slate-800">{sku.sku_name}</td>
                   <td className="px-4 py-4">
                     <div className="font-bold text-slate-900">
                       {formatCountWithUnit(sku.current_stock, "개")}
@@ -106,7 +110,7 @@ export function ProductionTableSection({
                       {sku.chance_loss_basis_text ?? "1시간 후 재고 예측 및 4주 평균 손실률 기준"}
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+                  {/* <td className="px-4 py-4">
                     <div className="flex flex-nowrap gap-1.5 whitespace-nowrap">
                       {(sku.tags ?? []).map((tag) => (
                         <span
@@ -126,10 +130,9 @@ export function ProductionTableSection({
                     <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">
                       {sku.alert_message ?? "-"}
                     </p>
-                  </td>
+                  </td> */}
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
-                      <BookmarkButton type="sku" refId={sku.sku_id} label={sku.sku_name} />
                       <button
                         type="button"
                         onClick={() => onOpenRegister(sku)}

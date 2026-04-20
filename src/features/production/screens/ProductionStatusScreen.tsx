@@ -1,7 +1,8 @@
 import { useState } from "react";
 
+import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { AppModal } from "@/commons/components/modal/AppModal";
-import { ProductionHero } from "@/features/production/components/ProductionHero";
+import { PageTitle } from "@/commons/components/page/PageTitle";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
@@ -52,7 +53,12 @@ export function ProductionStatusScreen() {
 
   return (
     <div className="space-y-6">
-      <ProductionHero title="상품별 생산 현황" description="" />
+      <PageTitle
+        title="상품별 생산 현황"
+        description="현재 재고, 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 상품별 생산 우선순위를 확인합니다."
+      >
+        <CardAiButton contextKey="production:stock-risk" />
+      </PageTitle>
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}
