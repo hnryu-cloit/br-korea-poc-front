@@ -1,5 +1,5 @@
-import { SalesScreenV2 } from "@/features/sales/screens/SalesScreenV2";
+import { SalesMetricsPage } from "@/pages/sales/SalesMetricsPage";
 
 export function SalesPage() {
-  return <SalesScreenV2 />;
+  return <SalesMetricsPage />;
 }

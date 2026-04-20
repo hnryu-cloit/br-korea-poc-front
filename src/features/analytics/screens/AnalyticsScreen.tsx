@@ -1,28 +1,21 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { AnalyticsDateRangeFilter } from "@/features/analytics/components/AnalyticsDateRangeFilter";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
-import { AnalyticsQueryLogSection } from "@/features/analytics/components/AnalyticsQueryLogSection";
 import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { getDefaultAnalyticsDateRange } from "@/features/analytics/constants/analytics-date-range";
 import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGetAnalyticsMetricsQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import { useGetAuditLogsQuery } from "@/features/analytics/queries/useGetAuditLogsQuery";
 import type { AuditLogEntry } from "@/features/analytics/types/analytics";
-import type { QueryCategory } from "@/features/analytics/types/analytics-screen";
-import {
-  calculateLogStats,
-  filterLogsByCategory,
-} from "@/features/analytics/utils/analytics-screen";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function AnalyticsScreen() {
   const { user } = useDemoSession();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeCategory, setActiveCategory] = useState<QueryCategory>("전체");
   const defaultDateRange = useMemo(() => getDefaultAnalyticsDateRange(), []);
   const dateFrom = searchParams.get("date_from") ?? defaultDateRange.dateFrom;
   const dateTo = searchParams.get("date_to") ?? defaultDateRange.dateTo;
@@ -40,8 +33,6 @@ export function AnalyticsScreen() {
   const logsQuery = useGetAuditLogsQuery({ domain: "sales", limit: 20 });
 
   const allLogs: AuditLogEntry[] = logsQuery.data?.items ?? [];
-  const filteredLogs = filterLogsByCategory(allLogs, activeCategory);
-  const { sqlPct, blockedCount } = calculateLogStats(allLogs);
   const handleChangeDateFrom = useCallback(
     (value: string) => {
       const nextSearchParams = new URLSearchParams(searchParams);
@@ -81,16 +72,6 @@ export function AnalyticsScreen() {
       <SalesTrendChart data={salesTrendQuery.data} isLoading={salesTrendQuery.isLoading} />
 
       <AnalyticsMetricsGrid metrics={metrics} />
-
-      <AnalyticsQueryLogSection
-        activeCategory={activeCategory}
-        onChangeCategory={setActiveCategory}
-        logs={filteredLogs}
-        allLogsCount={allLogs.length}
-        sqlPct={sqlPct}
-        blockedCount={blockedCount}
-        isLoading={logsQuery.isLoading}
-      />
     </div>
   );
 }
