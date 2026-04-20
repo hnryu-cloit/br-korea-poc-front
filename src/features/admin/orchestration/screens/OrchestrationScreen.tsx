@@ -16,6 +16,7 @@ import { useOrchestrationScreen } from "@/features/admin/orchestration/hooks/use
 import type {
   PromptDomainKey,
 } from "@/features/admin/orchestration/types/orchestration";
+import { SettingsSubNav } from "@/features/settings/components/SettingsSubNav";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const policyItems = [
@@ -84,6 +85,8 @@ export function OrchestrationPage() {
             : "질의 라우팅, 민감정보 마스킹, 감사 로그 수집 상태를 한 화면에서 확인합니다."
         }
       />
+
+      {isSettingsRoute && <SettingsSubNav />}
 
       <section className="rounded-[24px] border border-border bg-white p-2 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
