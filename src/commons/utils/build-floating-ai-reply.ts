@@ -47,7 +47,7 @@ export const buildFloatingAiReply = (
     return cardContextReplies[cardContextKey];
   }
 
-  if (pathname === "/production") {
+  if (pathname === "/production" || pathname.startsWith("/production/")) {
     return {
       id: 1,
       title: "생산 대응 제안",
@@ -57,7 +57,7 @@ export const buildFloatingAiReply = (
     };
   }
 
-  if (pathname === "/ordering") {
+  if (pathname === "/ordering" || pathname.startsWith("/ordering/")) {
     return {
       id: 1,
       title: "주문 옵션 비교",
@@ -67,7 +67,7 @@ export const buildFloatingAiReply = (
     };
   }
 
-  if (pathname === "/sales") {
+  if (pathname === "/sales" || pathname.startsWith("/sales/")) {
     return {
       id: 1,
       title: "매출 분석 액션",

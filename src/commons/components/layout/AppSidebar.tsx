@@ -15,6 +15,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const { user } = useDemoSession();
   const currentRole = user.role;
   const visibleSections = menuSections.filter((section) => !section.roles || section.roles.includes(currentRole));
+  const isRouteActive = (to: string) => (to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(`${to}/`));
 
   const SidebarContent = (
     <div className="flex w-full flex-col p-5 h-full">
@@ -42,38 +43,60 @@ export function AppSidebar({ isOpen, onClose }: Props) {
                 </div>
               ) : null}
 
-              <div className={cn("space-y-0.5", section.section ? "relative ml-1 border-l border-slate-100 pl-2" : undefined)}>
-                {section.items.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end
-                    onClick={onClose}
-                    className={({ isActive }) =>
-                      cn(
-                        "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-all",
-                        isActive
-                          ? "bg-[#EDF3FF] text-[#2454C8]"
-                          : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-900",
-                      )
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive ? <div className="absolute left-[-9px] top-1/4 h-1/2 w-1 rounded-r-full bg-[#2454C8]" /> : null}
+              <div className={cn("space-y-0.5", section.section ? "relative ml-1 pl-2" : undefined)}>
+                {section.items.map((item) => {
+                  const parentActive = isRouteActive(item.to);
+
+                  return (
+                    <div key={item.to} className="space-y-1">
+                      <NavLink
+                        to={item.to}
+                        onClick={onClose}
+                        className={cn(
+                          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-all",
+                          parentActive
+                            ? "bg-[#EDF3FF] text-[#2454C8]"
+                            : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-900",
+                        )}
+                      >
+                        {parentActive ? <div className="absolute left-[-9px] top-1/4 h-1/2 w-1 rounded-r-full bg-[#2454C8]" /> : null}
                         <span
                           className={cn(
                             "material-symbols-outlined text-[20px] transition-colors",
-                            isActive ? "text-[#2454C8]" : "text-slate-400 group-hover:text-slate-600",
+                            parentActive ? "text-[#2454C8]" : "text-slate-400 group-hover:text-slate-600",
                           )}
                         >
                           {item.icon}
                         </span>
-                        <span className={isActive ? "font-bold" : "font-medium"}>{item.label}</span>
-                      </>
-                    )}
-                  </NavLink>
-                ))}
+                        <span className={parentActive ? "font-bold" : "font-medium"}>{item.label}</span>
+                      </NavLink>
+
+                      {item.children?.length ? (
+                        <div className="ml-9 space-y-0.5 border-l border-slate-100 pl-3">
+                          {item.children.map((child) => {
+                            const childActive = pathname === child.to;
+                            return (
+                              <NavLink
+                                key={child.to}
+                                to={child.to}
+                                end
+                                onClick={onClose}
+                                className={cn(
+                                  "block rounded-lg px-2.5 py-1.5 text-[13px] transition-colors",
+                                  childActive
+                                    ? "bg-[#EDF3FF] font-semibold text-[#2454C8]"
+                                    : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-800",
+                                )}
+                              >
+                                {child.label}
+                              </NavLink>
+                            );
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

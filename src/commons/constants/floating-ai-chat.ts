@@ -55,6 +55,33 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
     ],
   },
+  "/production/status": {
+    title: "생산 관리 해설",
+    subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",
+    quickActions: [
+      { label: "뭐부터 만들어?", prompt: "지금 당장 뭐부터 만들어야 해?" },
+      { label: "품절되면 얼마야?", prompt: "지금 품절되면 얼마 날리는 거야?" },
+      { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
+    ],
+  },
+  "/production/waste-loss": {
+    title: "생산 관리 해설",
+    subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",
+    quickActions: [
+      { label: "뭐부터 만들어?", prompt: "지금 당장 뭐부터 만들어야 해?" },
+      { label: "품절되면 얼마야?", prompt: "지금 품절되면 얼마 날리는 거야?" },
+      { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
+    ],
+  },
+  "/production/inventory-diagnosis": {
+    title: "생산 관리 해설",
+    subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",
+    quickActions: [
+      { label: "뭐부터 만들어?", prompt: "지금 당장 뭐부터 만들어야 해?" },
+      { label: "품절되면 얼마야?", prompt: "지금 품절되면 얼마 날리는 거야?" },
+      { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
+    ],
+  },
   "/ordering": {
     title: "주문 관리 해설",
     subtitle: "마감 전 놓치지 말아야 할 주문 포인트를 확인합니다.",
@@ -64,7 +91,43 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "지난번이랑 달라?", prompt: "지난번 주문이랑 비교해서 이번에 바뀐 게 있어?" },
     ],
   },
+  "/ordering/recommendations": {
+    title: "주문 관리 해설",
+    subtitle: "마감 전 놓치지 말아야 할 주문 포인트를 확인합니다.",
+    quickActions: [
+      { label: "어떤 거 골라?", prompt: "지금 주문 어떤 안으로 하는 게 좋아?" },
+      { label: "안 하면 어떻게 돼?", prompt: "지금 주문 안 하면 어떻게 돼?" },
+      { label: "지난번이랑 달라?", prompt: "지난번 주문이랑 비교해서 이번에 바뀐 게 있어?" },
+    ],
+  },
+  "/ordering/history": {
+    title: "주문 관리 해설",
+    subtitle: "마감 전 놓치지 말아야 할 주문 포인트를 확인합니다.",
+    quickActions: [
+      { label: "어떤 거 골라?", prompt: "지금 주문 어떤 안으로 하는 게 좋아?" },
+      { label: "안 하면 어떻게 돼?", prompt: "지금 주문 안 하면 어떻게 돼?" },
+      { label: "지난번이랑 달라?", prompt: "지난번 주문이랑 비교해서 이번에 바뀐 게 있어?" },
+    ],
+  },
   "/sales": {
+    title: "매출 분석 해설",
+    subtitle: "오늘 장사 결과와 다음 액션을 바로 확인합니다.",
+    quickActions: [
+      { label: "오늘 장사 어때?", prompt: "오늘 장사 잘 된 거야 안 된 거야?" },
+      { label: "이대로 가면?", prompt: "이번 달 이 페이스면 얼마 남아?" },
+      { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
+    ],
+  },
+  "/sales/metrics": {
+    title: "매출 분석 해설",
+    subtitle: "오늘 장사 결과와 다음 액션을 바로 확인합니다.",
+    quickActions: [
+      { label: "오늘 장사 어때?", prompt: "오늘 장사 잘 된 거야 안 된 거야?" },
+      { label: "이대로 가면?", prompt: "이번 달 이 페이스면 얼마 남아?" },
+      { label: "뭘 바꿔야 해?", prompt: "매출 올리려면 지금 당장 뭘 바꾸면 돼?" },
+    ],
+  },
+  "/sales/query-logs": {
     title: "매출 분석 해설",
     subtitle: "오늘 장사 결과와 다음 액션을 바로 확인합니다.",
     quickActions: [
