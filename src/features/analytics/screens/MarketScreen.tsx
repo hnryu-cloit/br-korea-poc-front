@@ -50,11 +50,7 @@ export function MarketScreen() {
     customerProfileQuery.isLoading ||
     salesTrendQuery.isLoading ||
     marketIntelligenceQuery.isLoading;
-  const hasError =
-    storeProfileQuery.isError ||
-    customerProfileQuery.isError ||
-    salesTrendQuery.isError ||
-    marketIntelligenceQuery.isError;
+  const hasError = marketIntelligenceQuery.isError;
   const storeProfile = storeProfileQuery.data;
   const customerProfile = customerProfileQuery.data;
   const salesTrend = salesTrendQuery.data;

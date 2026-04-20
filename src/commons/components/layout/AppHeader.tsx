@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Menu, X } from "lucide-react";
 
@@ -45,6 +45,18 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const isHqAdmin = user.role === "hq_admin";
   const { data: stores = [] } = useGetStoresQuery(!isHqAdmin);
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
+
+  useEffect(() => {
+    if (stores.length === 0) {
+      return;
+    }
+    if (stores.some((store) => store.store_id === user.storeId)) {
+      return;
+    }
+
+    const fallbackStore = stores[0];
+    setStore(fallbackStore.store_id, `${fallbackStore.store_name}점`);
+  }, [setStore, stores, user.storeId]);
 
   const handleNotificationClick = (id: number) => {
     setIsInboxOpen(false);
