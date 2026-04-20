@@ -7,10 +7,8 @@ import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingConfirmedSummary({
   option,
-  reason,
 }: {
   option: OrderingOption;
-  reason: string;
 }) {
   const historyQuery = useGetOrderingSelectionHistoryQuery({ limit: 5 });
   const historyItems = historyQuery.data?.items ?? [];
@@ -34,12 +32,6 @@ export function OrderingConfirmedSummary({
                 </div>
               ))}
             </div>
-            {reason ? (
-              <div className="mt-4 rounded-2xl bg-white px-4 py-4 text-sm text-slate-600">
-                <p className="text-xs font-bold text-slate-400">선택 사유</p>
-                <p className="mt-1">{reason}</p>
-              </div>
-            ) : null}
           </div>
         </div>
       </section>

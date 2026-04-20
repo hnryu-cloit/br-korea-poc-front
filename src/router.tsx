@@ -7,7 +7,8 @@ import { HQCoachingPage } from "@/pages/HQCoachingPage";
 import { HQInspectionPage } from "@/pages/HQInspectionPage";
 import { MarketPage } from "@/pages/MarketPage";
 import { OrchestrationPage } from "@/pages/OrchestrationPage";
-import { OrderingPage } from "@/pages/OrderingPage";
+import { OrderingHistoryPage } from "@/pages/ordering/OrderingHistoryPage";
+import { OrderingRecommendationsPage } from "@/pages/ordering/OrderingRecommendationsPage";
 import { ProductionInventoryDiagnosisPage } from "@/pages/production/ProductionInventoryDiagnosisPage";
 import { ProductionStatusPage } from "@/pages/production/ProductionStatusPage";
 import { ProductionWasteLossPage } from "@/pages/production/ProductionWasteLossPage";
@@ -26,8 +27,8 @@ export const router = createBrowserRouter([
       { path: "production/waste-loss", element: <ProductionWasteLossPage /> },
       { path: "production/inventory-diagnosis", element: <ProductionInventoryDiagnosisPage /> },
       { path: "ordering", element: <Navigate to="/ordering/recommendations" replace /> },
-      { path: "ordering/recommendations", element: <OrderingPage /> },
-      { path: "ordering/history", element: <OrderingPage /> },
+      { path: "ordering/recommendations", element: <OrderingRecommendationsPage /> },
+      { path: "ordering/history", element: <OrderingHistoryPage /> },
       { path: "sales", element: <Navigate to="/sales/metrics" replace /> },
       { path: "sales/metrics", element: <SalesPage /> },
       { path: "sales/query-logs", element: <SalesPage /> },
