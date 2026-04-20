@@ -80,10 +80,9 @@ export const getOrderingSelectionSummary = async (params?: OrderingSelectionSumm
 };
 
 // 발주 이력 조회
-export const getOrderingHistory = async (storeId: string, limit = 30) => {
-  const params: OrderingHistoryParams = { store_id: storeId, limit };
+export const getOrderingHistory = async (params?: OrderingHistoryParams) => {
   const response = await axiosInstance.get<OrderingHistoryResponse>("/api/ordering/history", {
-    params,
+    params: { ...params, limit: params?.limit ?? 100 },
   });
   return response.data;
 };

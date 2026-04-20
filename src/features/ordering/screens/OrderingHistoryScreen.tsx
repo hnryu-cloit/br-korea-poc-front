@@ -11,10 +11,19 @@ import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOr
 import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/useGetOrderingHistoryInsightsQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
+function defaultDateRange(): { from: string; to: string } {
+  const to = new Date("2026-03-10");
+  const from = new Date(to);
+  from.setDate(from.getDate() - 89);
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  return { from: fmt(from), to: fmt(to) };
+}
+
 export function OrderingHistoryScreen() {
   const { user } = useDemoSession();
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const { from: defaultFrom, to: defaultTo } = defaultDateRange();
+  const [dateFrom, setDateFrom] = useState(defaultFrom);
+  const [dateTo, setDateTo] = useState(defaultTo);
   const [itemName, setItemName] = useState("");
   const [orderType, setOrderType] = useState<"all" | "auto" | "manual">("all");
 
