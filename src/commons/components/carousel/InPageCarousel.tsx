@@ -45,7 +45,7 @@ export function InPageCarousel({
       return;
     }
     timerRef.current = setInterval(() => {
-      setIndex((prev) => ((prev + 1) % items.length + items.length) % items.length);
+      setIndex((prev) => (((prev + 1) % items.length) + items.length) % items.length);
     }, autoPlayMs);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -92,12 +92,20 @@ export function InPageCarousel({
         onClick={current.onClick}
         role={current.onClick ? "button" : undefined}
         tabIndex={current.onClick ? 0 : undefined}
-        onKeyDown={current.onClick ? (e) => { if (e.key === "Enter") current.onClick?.(); } : undefined}
+        onKeyDown={
+          current.onClick
+            ? (e) => {
+                if (e.key === "Enter") current.onClick?.();
+              }
+            : undefined
+        }
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             {current.tag && (
-              <span className={`mb-2 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold ${TAG_CLASS[current.tagColor ?? "blue"]}`}>
+              <span
+                className={`mb-2 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold ${TAG_CLASS[current.tagColor ?? "blue"]}`}
+              >
                 {current.tag}
               </span>
             )}
@@ -109,7 +117,10 @@ export function InPageCarousel({
           <div className="flex shrink-0 items-center gap-1">
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
               className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200"
               aria-label="이전"
             >
@@ -117,7 +128,10 @@ export function InPageCarousel({
             </button>
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); handleNext(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
               className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200"
               aria-label="다음"
             >
@@ -142,7 +156,9 @@ export function InPageCarousel({
             />
           ))}
         </div>
-        <span className="text-[10px] font-semibold text-slate-400">{safeIndex + 1} / {items.length}</span>
+        <span className="text-[10px] font-semibold text-slate-400">
+          {safeIndex + 1} / {items.length}
+        </span>
       </div>
     </div>
   );

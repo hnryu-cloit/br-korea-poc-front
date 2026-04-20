@@ -1,8 +1,4 @@
-import {
-  ROUTE_LABEL,
-  ROUTE_STYLE,
-  QUERY_TYPE_LABEL,
-} from "@/commons/constants/audit-route";
+import { ROUTE_LABEL, ROUTE_STYLE, QUERY_TYPE_LABEL } from "@/commons/constants/audit-route";
 import type { QueryCategory } from "@/features/analytics/types/analytics-screen";
 
 export { ROUTE_LABEL, ROUTE_STYLE, QUERY_TYPE_LABEL };

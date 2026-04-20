@@ -1,4 +1,7 @@
-import type { FloatingAiCardContext, FloatingAiCardContextKey } from "@/commons/types/floating-ai-chat";
+import type {
+  FloatingAiCardContext,
+  FloatingAiCardContextKey,
+} from "@/commons/types/floating-ai-chat";
 
 export const floatingAiCardContexts: Record<FloatingAiCardContextKey, FloatingAiCardContext> = {
   "production:stock-risk": {
@@ -35,6 +38,15 @@ export const floatingAiCardContexts: Record<FloatingAiCardContextKey, FloatingAi
       { label: "안전한 옵션은?", prompt: "이번 주문에서 가장 안전한 옵션은 어떤 건가요?" },
       { label: "지난달 패턴 비교", prompt: "지난달 주문 패턴과 비교하면 어떤가요?" },
       { label: "캠페인 영향은?", prompt: "이번 주 캠페인이 주문 수량에 영향을 미치나요?" },
+    ],
+  },
+  "ordering:history": {
+    contextKey: "ordering:history",
+    cardTitle: "발주 이력 관리",
+    quickActions: [
+      { label: "누락 구간 점검", prompt: "최근 발주 누락이 반복된 시간대가 있나요?" },
+      { label: "자동/수동 추이", prompt: "자동 발주와 수동 발주의 최근 추이를 비교해줘." },
+      { label: "다음 발주 개선", prompt: "다음 발주에서 줄이거나 늘릴 품목을 추천해줘." },
     ],
   },
   "sales:summary": {

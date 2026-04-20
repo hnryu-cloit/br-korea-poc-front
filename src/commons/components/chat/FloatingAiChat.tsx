@@ -18,7 +18,9 @@ export function FloatingAiChat() {
     [location.pathname],
   );
 
-  const activeCardContext = activeCardContextKey ? floatingAiCardContexts[activeCardContextKey] : null;
+  const activeCardContext = activeCardContextKey
+    ? floatingAiCardContexts[activeCardContextKey]
+    : null;
 
   const guide: FloatingAiChatRouteGuide = activeCardContext
     ? {
@@ -32,7 +34,11 @@ export function FloatingAiChat() {
     (): ChatEntry[] => [
       {
         role: "assistant",
-        message: buildFloatingAiReply(location.pathname, guide.quickActions[0].prompt, activeCardContextKey),
+        message: buildFloatingAiReply(
+          location.pathname,
+          guide.quickActions[0].prompt,
+          activeCardContextKey,
+        ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,10 +52,14 @@ export function FloatingAiChat() {
     setHistory([
       {
         role: "assistant",
-        message: buildFloatingAiReply(location.pathname, guide.quickActions[0].prompt, activeCardContextKey),
+        message: buildFloatingAiReply(
+          location.pathname,
+          guide.quickActions[0].prompt,
+          activeCardContextKey,
+        ),
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCardContextKey]);
 
   const scrollRef = useRef<HTMLDivElement>(null);

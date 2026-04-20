@@ -1,6 +1,6 @@
-import { useState } from "react";
-import type { KeyboardEvent, MouseEvent } from "react";
 import { List, X } from "lucide-react";
+import type { KeyboardEvent, MouseEvent } from "react";
+import { useState } from "react";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
@@ -17,11 +17,14 @@ export function OrderingOptionCard({
 }) {
   const [isItemsModalOpen, setIsItemsModalOpen] = useState(false);
   const maxVisibleItems = 10;
-  const visibleItems = option.items.slice(0, maxVisibleItems);
-  const remainingItems = option.items.slice(maxVisibleItems);
-  const hiddenItemCount = Math.max(option.items.length - maxVisibleItems, 0);
+  const orderedItems = option.items.filter((item) => item.quantity > 0);
+  const visibleItems = orderedItems.slice(0, maxVisibleItems);
+  const remainingItems = orderedItems.slice(maxVisibleItems);
+  const hiddenItemCount = Math.max(orderedItems.length - maxVisibleItems, 0);
 
-  const handleOpenItemsModal = (event: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>) => {
+  const handleOpenItemsModal = (
+    event: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>,
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     setIsItemsModalOpen(true);
@@ -30,7 +33,9 @@ export function OrderingOptionCard({
   return (
     <article
       className={`relative rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] transition-all ${
-        selected ? "border-[#2454C8] ring-1 ring-[#2454C8]/20" : "border-border hover:border-[#bfd1ed]"
+        selected
+          ? "border-[#2454C8] ring-1 ring-[#2454C8]/20"
+          : "border-border hover:border-[#bfd1ed]"
       }`}
     >
       <button type="button" className="w-full text-left" onClick={onSelect}>
@@ -40,7 +45,9 @@ export function OrderingOptionCard({
             <p className="mt-1 text-xs font-semibold text-slate-400">{option.basis}</p>
           </div>
           {option.recommended ? (
-            <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">AI 추천</span>
+            <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">
+              AI 추천
+            </span>
           ) : null}
         </div>
 
@@ -48,9 +55,14 @@ export function OrderingOptionCard({
 
         <div className="mt-4 space-y-2">
           {visibleItems.map((item) => (
-            <div key={`${option.option_id}-${item.sku_name}`} className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm">
+            <div
+              key={`${option.option_id}-${item.sku_name}`}
+              className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm"
+            >
               <span className="text-slate-600">{item.sku_name}</span>
-              <span className="font-bold text-slate-800">{formatCountWithUnit(item.quantity, "개")}</span>
+              <span className="font-bold text-slate-800">
+                {formatCountWithUnit(item.quantity, "개")}
+              </span>
             </div>
           ))}
         </div>
@@ -91,7 +103,10 @@ export function OrderingOptionCard({
             <p className="text-xs font-bold text-slate-500">예외 변수 반영</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {option.special_factors.map((factor) => (
-                <span key={factor} className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-[11px] font-semibold text-slate-600">
+                <span
+                  key={factor}
+                  className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-[11px] font-semibold text-slate-600"
+                >
                   {factor}
                 </span>
               ))}
@@ -125,7 +140,9 @@ export function OrderingOptionCard({
                     className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm"
                   >
                     <span className="text-slate-600">{item.sku_name}</span>
-                    <span className="font-bold text-slate-800">{formatCountWithUnit(item.quantity, "개")}</span>
+                    <span className="font-bold text-slate-800">
+                      {formatCountWithUnit(item.quantity, "개")}
+                    </span>
                   </div>
                 ))}
               </div>

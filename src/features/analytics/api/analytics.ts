@@ -36,9 +36,12 @@ export async function getAnalyticsStoreProfile(storeId: string) {
 }
 
 export async function getAnalyticsCustomerProfile(storeId: string) {
-  const response = await axiosInstance.get<CustomerProfileResponse>("/api/analytics/customer-profile", {
-    params: { store_id: storeId },
-  });
+  const response = await axiosInstance.get<CustomerProfileResponse>(
+    "/api/analytics/customer-profile",
+    {
+      params: { store_id: storeId },
+    },
+  );
   return response.data;
 }
 
@@ -50,8 +53,11 @@ export async function getAnalyticsSalesTrend(storeId?: string) {
 }
 
 export async function getAnalyticsMarketIntelligence(params?: GetMarketIntelligenceRequest) {
-  const response = await axiosInstance.get<MarketIntelligenceResponse>("/api/analytics/market-intelligence", {
-    params,
-  });
+  const response = await axiosInstance.get<MarketIntelligenceResponse>(
+    "/api/analytics/market-intelligence",
+    {
+      params,
+    },
+  );
   return response.data;
 }

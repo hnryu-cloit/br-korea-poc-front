@@ -193,15 +193,24 @@ export function SettingsConnectorsPanel() {
       <div className="flex items-center gap-2">
         <Database className="h-5 w-5 text-[#2454C8]" />
         <p className="text-base font-semibold text-slate-900">데이터 커넥터</p>
-        <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">목업 시연</span>
+        <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
+          목업 시연
+        </span>
       </div>
-      <p className="mt-2 text-xs text-slate-400">소스별 상태, 스키마 범위, 마지막 동기화 시점을 운영자가 확인합니다.</p>
+      <p className="mt-2 text-xs text-slate-400">
+        소스별 상태, 스키마 범위, 마지막 동기화 시점을 운영자가 확인합니다.
+      </p>
       <div className="mt-4 grid gap-3 xl:grid-cols-3">
         {dataConnectors.map((connector) => (
-          <article key={connector.name} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
+          <article
+            key={connector.name}
+            className="rounded-2xl border border-border bg-[#f8fbff] p-4"
+          >
             <div className="flex items-start justify-between gap-2">
               <p className="text-sm font-semibold text-slate-900">{connector.name}</p>
-              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${statusStyle(connector.status)}`}>
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${statusStyle(connector.status)}`}
+              >
                 {connector.status}
               </span>
             </div>
@@ -225,7 +234,9 @@ export function SettingsAccessControlPanel() {
         <Users className="h-5 w-5 text-[#2454C8]" />
         <p className="text-base font-semibold text-slate-900">멤버 & 접근 제어</p>
       </div>
-      <p className="mt-2 text-xs text-slate-400">역할별 접근 범위와 민감정보 정책 적용 상태를 확인합니다.</p>
+      <p className="mt-2 text-xs text-slate-400">
+        역할별 접근 범위와 민감정보 정책 적용 상태를 확인합니다.
+      </p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-border">
         <table className="min-w-full bg-white text-left text-xs">
           <thead className="bg-[#f7faff] text-slate-500">
@@ -259,7 +270,9 @@ export function SettingsAuditLogsPanel() {
         <MessageSquare className="h-5 w-5 text-[#2454C8]" />
         <p className="text-base font-semibold text-slate-900">대화 감사 로그</p>
       </div>
-      <p className="mt-2 text-xs text-slate-400">질의 처리 경로와 차단 결과를 최근 실행 순으로 추적합니다.</p>
+      <p className="mt-2 text-xs text-slate-400">
+        질의 처리 경로와 차단 결과를 최근 실행 순으로 추적합니다.
+      </p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-border">
         <table className="min-w-full bg-white text-left text-xs">
           <thead className="bg-[#f7faff] text-slate-500">
@@ -297,13 +310,17 @@ export function SettingsQualityArchivePanel() {
         <History className="h-5 w-5 text-[#2454C8]" />
         <p className="text-base font-semibold text-slate-900">품질 검증 아카이브</p>
       </div>
-      <p className="mt-2 text-xs text-slate-400">배치 단위 품질 점수와 이슈 이력을 보관해 재현 가능성을 확보합니다.</p>
+      <p className="mt-2 text-xs text-slate-400">
+        배치 단위 품질 점수와 이슈 이력을 보관해 재현 가능성을 확보합니다.
+      </p>
       <div className="mt-4 space-y-3">
         {qualityArchives.map((item) => (
           <article key={item.batch} className="rounded-2xl border border-border bg-[#f8fbff] p-4">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-sm font-semibold text-slate-900">{item.batch}</p>
-              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${qualityStyle(item.status)}`}>
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${qualityStyle(item.status)}`}
+              >
                 {item.status}
               </span>
               <span className="ml-auto rounded-full bg-[#eef4ff] px-2 py-0.5 text-[11px] font-semibold text-[#2454C8]">

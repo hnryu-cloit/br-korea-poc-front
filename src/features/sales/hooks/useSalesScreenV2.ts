@@ -39,11 +39,17 @@ export const useSalesScreenV2 = () => {
   const dateFrom = searchParams.get("date_from") ?? defaultDateRange.dateFrom;
   const dateTo = searchParams.get("date_to") ?? defaultDateRange.dateTo;
 
-  const fromDashboardSales = routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
+  const fromDashboardSales =
+    routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
   const dashboardChatHistory = useMemo(
-    () => (routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales" && routeState.chatHistoryId
-      ? getDashboardCardChatHistory("sales").filter((item) => item.id === routeState.chatHistoryId)
-      : []),
+    () =>
+      routeState?.source === "dashboard-card-chat" &&
+      routeState?.domain === "sales" &&
+      routeState.chatHistoryId
+        ? getDashboardCardChatHistory("sales").filter(
+            (item) => item.id === routeState.chatHistoryId,
+          )
+        : [],
     [routeState],
   );
   const initialMessages = useMemo<SalesV2Message[]>(
@@ -73,9 +79,11 @@ export const useSalesScreenV2 = () => {
 
   const [messages, setMessages] = useState<SalesV2Message[]>(initialMessages);
   const [input, setInput] = useState(
-    fromDashboardSales && dashboardChatHistory.length === 0 && routeState?.intent === "ask"
-      && !routeState?.chatHistoryId
-      ? routeState.prompt ?? ""
+    fromDashboardSales &&
+      dashboardChatHistory.length === 0 &&
+      routeState?.intent === "ask" &&
+      !routeState?.chatHistoryId
+      ? (routeState.prompt ?? "")
       : "",
   );
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -120,19 +128,38 @@ export const useSalesScreenV2 = () => {
   const insightSections = useMemo<SalesInsightSection[]>(() => {
     const data = insightsQuery.data;
     if (!data) return [];
-    return [data.peak_hours, data.channel_mix, data.payment_mix, data.menu_mix, data.campaign_seasonality].filter(Boolean) as SalesInsightSection[];
+    return [
+      data.peak_hours,
+      data.channel_mix,
+      data.payment_mix,
+      data.menu_mix,
+      data.campaign_seasonality,
+    ].filter(Boolean) as SalesInsightSection[];
   }, [insightsQuery.data]);
 
   const salesStats = useMemo(() => {
     const assistantMessages = messages.filter((message) => message.role === "assistant");
     const blockedCount = assistantMessages.filter((message) => message.blocked).length;
-    const withEvidence = assistantMessages.filter((message) => message.evidence && message.evidence.length > 0).length;
-    const evidencePct = assistantMessages.length > 0 ? Math.round((withEvidence / assistantMessages.length) * 100) : 0;
+    const withEvidence = assistantMessages.filter(
+      (message) => message.evidence && message.evidence.length > 0,
+    ).length;
+    const evidencePct =
+      assistantMessages.length > 0
+        ? Math.round((withEvidence / assistantMessages.length) * 100)
+        : 0;
     return [
       { label: "응답 유형", value: "SQL/API 우선", tone: "primary" as const },
-      { label: "추천 질문", value: formatCountWithUnit(suggestedPrompts.length, "개"), tone: "success" as const },
+      {
+        label: "추천 질문",
+        value: formatCountWithUnit(suggestedPrompts.length, "개"),
+        tone: "success" as const,
+      },
       { label: "출처 포함", value: `${evidencePct}%`, tone: "default" as const },
-      { label: "차단 건수", value: formatCountWithUnit(blockedCount, "건"), tone: blockedCount > 0 ? ("danger" as const) : ("default" as const) },
+      {
+        label: "차단 건수",
+        value: formatCountWithUnit(blockedCount, "건"),
+        tone: blockedCount > 0 ? ("danger" as const) : ("default" as const),
+      },
     ];
   }, [messages, suggestedPrompts.length]);
 
@@ -143,9 +170,7 @@ export const useSalesScreenV2 = () => {
 
   const opportunityTab = useMemo<SalesOpportunityTabKey>(() => {
     const tabParam = searchParams.get("tab");
-    return isSalesOpportunityTabKey(tabParam)
-      ? tabParam
-      : SALES_OPPORTUNITY_DEFAULT_TAB;
+    return isSalesOpportunityTabKey(tabParam) ? tabParam : SALES_OPPORTUNITY_DEFAULT_TAB;
   }, [searchParams]);
 
   useEffect(() => {

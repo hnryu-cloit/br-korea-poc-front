@@ -77,9 +77,7 @@
       "domain": "production",
       "title": "생산 현황",
       "description": "실시간 재고 및 1시간 후 예측",
-      "highlights_text": [
-        "페이머스글레이즈드 · 현재 51개 / 1시간 후 2435개 예상"
-      ],
+      "highlights_text": ["페이머스글레이즈드 · 현재 51개 / 1시간 후 2435개 예상"],
       "highlights_data": [
         {
           "type": "production_item",
@@ -124,12 +122,14 @@
 ## 3) 필드 설명
 
 ### top-level
+
 - `updated_at`: 서버 시각 ISO 문자열 (`datetime.now().replace(microsecond=0).isoformat()`)
 - `priority_actions`: 우선 액션 카드
 - `stats`: 상단 KPI
 - `cards`: 도메인 요약 카드
 
 ### priority_actions
+
 - `cta` 객체로 전달 (`label`, `path`)
 - `basis_data`는 액션 생성 근거 데이터
 - 대표 production 액션은 `production.items` 순회 시 `status == "danger"` 조건에 **처음으로 매칭되는 1건**을 선택
@@ -141,6 +141,7 @@
   - 현재 구성: `production(urgent) + ordering(important) + production(recommended)`
 
 ### stats
+
 - `value`는 숫자/문자열
 - `unit`은 숫자값일 때 사용 (`count`, `minutes`)
 - `today_profit_estimate.value`는 현재 `risk | stable`
@@ -148,6 +149,7 @@
   - `production.danger_count + (ordering_summary.summary_status != "recommended_selected" 이면 1, 아니면 0)`
 
 ### cards
+
 - `highlights_text`: 화면 표시용 문자열
 - `highlights_data`: 화면 가공/재사용용 구조화 데이터
 - `metrics`: `key/label/value/unit/tone` 구조
@@ -164,6 +166,7 @@
 - `tone`: `danger | primary | success | default`
 
 ### status_label 생성 기준 (cards)
+
 - `cards[domain=production].status_label`: 현재 고정 `"즉시 확인"`
 - `cards[domain=ordering].status_label`: `recommended_selected`가 `false`면 `"검토 필요"`, `true`면 `"선택 완료"`
 - `cards[domain=sales].status_label`: `_build_sales_status` 결과

@@ -1,4 +1,7 @@
-import type { FloatingAiCardContextKey, FloatingAiChatMessage } from "@/commons/types/floating-ai-chat";
+import type {
+  FloatingAiCardContextKey,
+  FloatingAiChatMessage,
+} from "@/commons/types/floating-ai-chat";
 
 const cardContextReplies: Record<FloatingAiCardContextKey, FloatingAiChatMessage> = {
   "production:stock-risk": {
@@ -28,6 +31,13 @@ const cardContextReplies: Record<FloatingAiCardContextKey, FloatingAiChatMessage
     content:
       "현재는 전주 동요일 안이 기본 추천이지만, 이번 주 캠페인 영향으로 과주문 가능성이 있어 전전주 동요일 값을 기준선으로 함께 보는 것이 안전합니다. 지난달 동기 대비 배달 채널 증가 추세를 감안하면 옵션 B가 더 균형 잡혀 있습니다.",
     evidence: ["옵션 A 최근 패턴 일치", "옵션 B 이상치 적음", "옵션 C 월간 시즌성 반영"],
+  },
+  "ordering:history": {
+    id: 1,
+    title: "발주 이력 점검",
+    content:
+      "최근 발주 이력은 자동 비중이 높지만 특정 시간대에 수동 보정이 반복되고 있습니다. 누락이 잦은 품목은 마감 1시간 전에 사전 점검 목록으로 분리하고, 주간 단위로 자동/수동 편차를 함께 관리하는 것이 안정적입니다.",
+    evidence: ["자동/수동 발주 비중", "마감 시간대별 누락 빈도", "품목별 반복 보정 이력"],
   },
   "sales:summary": {
     id: 1,

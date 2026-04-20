@@ -37,7 +37,9 @@ export function MarketInsightBoardSection({
     <section className="space-y-3">
       <div>
         <p className="text-base font-bold text-slate-900">핵심 인사이트 보드</p>
-        <p className="mt-1 text-sm text-slate-500">상권 경쟁도와 고객·시간대 포인트를 한 번에 확인합니다.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          상권 경쟁도와 고객·시간대 포인트를 한 번에 확인합니다.
+        </p>
       </div>
 
       {isLoading ? (
@@ -68,7 +70,9 @@ export function MarketInsightBoardSection({
               <Users className="h-4 w-4" />
               <p className="text-xs font-semibold tracking-[0.08em]">핵심 고객 타겟</p>
             </div>
-            <p className="text-lg font-bold text-slate-900">{topSegment?.segmentName ?? "데이터 없음"}</p>
+            <p className="text-lg font-bold text-slate-900">
+              {topSegment?.segmentName ?? "데이터 없음"}
+            </p>
             <p className="mt-2 text-sm text-slate-600">
               {topSegment
                 ? `전체 고객군 중 ${topSegment.ratioPct}% 비중`

@@ -22,17 +22,10 @@ export function DashboardPage() {
   const stats = overviewQuery.data?.stats ?? [];
   const cards = overviewQuery.data?.cards ?? [];
   const isInitialLoading = overviewQuery.isLoading && !overviewQuery.data;
-  const isRefreshing = overviewQuery.isFetching && !isInitialLoading;
 
   return (
     <div className="space-y-6">
       <DashboardHero updatedAt={overviewQuery.data?.updated_at} />
-      {isRefreshing ? (
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-xs font-semibold text-[#2454C8]">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-[#2454C8]" />
-          데이터 요청 중...
-        </div>
-      ) : null}
 
       {isInitialLoading ? (
         <DashboardLoadingSkeleton />

@@ -44,7 +44,11 @@ export interface DashboardPriorityAction {
 }
 
 export interface DashboardStatItem {
-  key: "production_risk_count" | "ordering_deadline_minutes" | "today_profit_estimate" | "alert_count";
+  key:
+    | "production_risk_count"
+    | "ordering_deadline_minutes"
+    | "today_profit_estimate"
+    | "alert_count";
   label: string;
   value: number | string;
   unit?: "count" | "minutes";

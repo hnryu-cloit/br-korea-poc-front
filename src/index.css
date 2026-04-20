@@ -94,3 +94,34 @@
     line-height: 1;
   }
 }
+
+/*토요일 파란색 */
+.react-calendar__month-view__days__day--weekend.saturday {
+  color: #3478ff;
+}
+
+/* 일요일 색상 */
+/* .react-calendar__month-view__days__day.sunday{
+  color: #FF5050;
+} */
+
+/* 날짜 mouse hover 시 */
+.react-calendar__tile:hover {
+  background: #ffe0c8 !important;
+  border-radius: 50%;
+}
+
+/* 이전/다음 달 날짜 */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #757575 !important;
+}
+
+/* 오늘 날짜 */
+.react-calendar__tile--now {
+  background: transparent !important;
+}
+
+.react-calendar__tile--active {
+  background: #ff6e00 !important;
+  border-radius: 50%;
+}

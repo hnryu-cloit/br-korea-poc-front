@@ -33,14 +33,20 @@ export function SalesBreakEvenSection({
             </div>
             <div className="rounded-2xl bg-white px-4 py-3">
               <p className="text-xs text-slate-500">추정 매출이익</p>
-              <p className="mt-1 text-base font-bold text-slate-900">{formatWon(estimatedTodayProfit)}</p>
+              <p className="mt-1 text-base font-bold text-slate-900">
+                {formatWon(estimatedTodayProfit)}
+              </p>
             </div>
             <div className="rounded-2xl bg-white px-4 py-3">
               <p className="text-xs text-slate-500">평균 개당 순이익</p>
-              <p className="mt-1 text-base font-bold text-slate-900">{formatWon(avgNetProfitPerItem)}</p>
+              <p className="mt-1 text-base font-bold text-slate-900">
+                {formatWon(avgNetProfitPerItem)}
+              </p>
             </div>
           </div>
-          <p className="mt-3 text-xs text-slate-400">생산 데이터 원가 기록 기준 추정값 · 고정비 미반영</p>
+          <p className="mt-3 text-xs text-slate-400">
+            생산 데이터 원가 기록 기준 추정값 · 고정비 미반영
+          </p>
         </div>
       </div>
     </section>

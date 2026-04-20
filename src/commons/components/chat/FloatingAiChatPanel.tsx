@@ -17,7 +17,15 @@ function UserBubble({ text }: { text: string }) {
   );
 }
 
-function AssistantBubble({ title, content, evidence }: { title: string; content: string; evidence: string[] }) {
+function AssistantBubble({
+  title,
+  content,
+  evidence,
+}: {
+  title: string;
+  content: string;
+  evidence: string[];
+}) {
   return (
     <div className="flex justify-start">
       <div className="max-w-[90%] rounded-[18px] rounded-bl-sm border border-border bg-[#f8fbff] px-4 py-3">
@@ -26,7 +34,10 @@ function AssistantBubble({ title, content, evidence }: { title: string; content:
         {evidence.length > 0 && (
           <div className="mt-3 space-y-1.5">
             {evidence.map((item) => (
-              <div key={item} className="rounded-xl bg-white px-3 py-1.5 text-xs text-slate-500 shadow-sm">
+              <div
+                key={item}
+                className="rounded-xl bg-white px-3 py-1.5 text-xs text-slate-500 shadow-sm"
+              >
                 {item}
               </div>
             ))}
@@ -62,7 +73,8 @@ export function FloatingAiChatPanel({
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] border border-[#d8e5ff] bg-white shadow-[0_24px_60px_rgba(31,77,187,0.2)]"
+    <div
+      className="fixed bottom-24 right-6 z-50 flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] border border-[#d8e5ff] bg-white shadow-[0_24px_60px_rgba(31,77,187,0.2)]"
       style={{ maxHeight: "calc(100vh - 120px)" }}
     >
       {/* 헤더 */}
@@ -129,7 +141,12 @@ export function FloatingAiChatPanel({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
             placeholder="궁금한 것을 물어보세요..."
             className="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none"
           />

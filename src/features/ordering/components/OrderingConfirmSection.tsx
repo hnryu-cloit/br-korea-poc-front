@@ -18,7 +18,10 @@ export function OrderingConfirmSection({
         {isSubmitting ? "확정 중..." : "최종 확정"}
       </button>
 
-      <p className="mt-1 text-sm text-slate-500">추천안은 참고 자료입니다. 품목과 수량을 충분히 확인한 뒤 확정해 주세요. 주문 확정 후에는 수정할 수 없습니다.</p>
+      <p className="mt-1 text-sm text-slate-500">
+        추천안은 참고 자료입니다. 품목과 수량을 충분히 확인한 뒤 확정해 주세요. 주문 확정 후에는
+        수정할 수 없습니다.
+      </p>
 
       {errorMessage ? (
         <p className="mt-3 text-sm font-medium text-red-600">{errorMessage}</p>

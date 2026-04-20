@@ -17,15 +17,15 @@ export interface ProductionSummaryStat {
 }
 
 export interface ProductionOverviewAlertItem {
-  sku_id: string,
-  name: string,
-  current:number,
-  forecast: number,
-  status: string,
-  depletion_time:string,
-  recommended: number,
-  prod1:string,
-  prod2: string
+  sku_id: string;
+  name: string;
+  current: number;
+  forecast: number;
+  status: string;
+  depletion_time: string;
+  recommended: number;
+  prod1: string;
+  prod2: string;
 }
 export interface ProductionOverviewResponse {
   updated_at: string;
@@ -42,6 +42,7 @@ export type ProductionStatus = "danger" | "warning" | "safe";
 export interface ProductionSkuItem {
   sku_id: string;
   sku_name: string;
+  image?: string;
   current_stock: number;
   forecast_stock_1h: number;
   avg_first_production_qty_4w: number;
@@ -83,6 +84,7 @@ export interface ProductionSkuListParams {
 export interface ProductionRegistrationForm {
   sku_id: string;
   sku_name: string;
+  image?: string;
   current_stock: number;
   forecast_stock_1h: number;
   recommended_qty: number;

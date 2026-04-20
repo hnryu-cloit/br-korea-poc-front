@@ -40,10 +40,7 @@ export const SalesScreenV2 = () => {
         onChangeDateTo={handleChangeDateTo}
       />
 
-      <SalesV2InsightsSection
-        sections={insightSections}
-        isLoading={insightsLoading}
-      />
+      <SalesV2InsightsSection sections={insightSections} isLoading={insightsLoading} />
 
       <SalesV2ChartsSection
         summary={summaryData}

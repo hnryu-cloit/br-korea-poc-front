@@ -21,6 +21,7 @@ export type FloatingAiCardContextKey =
   | "production:inventory-status"
   | "production:waste"
   | "ordering:options"
+  | "ordering:history"
   | "sales:summary";
 
 export type FloatingAiCardContext = {

@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
-import {
-  subscribeSessionExpired,
-  type SessionExpiredDetail,
-} from "@/commons/utils/session-expiry";
+import { subscribeSessionExpired, type SessionExpiredDetail } from "@/commons/utils/session-expiry";
 
 type ToastState = {
   id: number;

@@ -71,8 +71,18 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
           <div className="flex items-center gap-2">
             {crumbs.map((crumb, index) => (
               <span key={crumb} className="flex items-center gap-2">
-                {index > 0 && <span className="material-symbols-outlined text-[16px] text-slate-300">chevron_right</span>}
-                <span className={index === crumbs.length - 1 ? "text-base font-semibold text-slate-800" : "text-sm font-medium text-slate-400"}>
+                {index > 0 && (
+                  <span className="material-symbols-outlined text-[16px] text-slate-300">
+                    chevron_right
+                  </span>
+                )}
+                <span
+                  className={
+                    index === crumbs.length - 1
+                      ? "text-base font-semibold text-slate-800"
+                      : "text-sm font-medium text-slate-400"
+                  }
+                >
                   {crumb}
                 </span>
               </span>
@@ -116,7 +126,9 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
                   </div>
                   <div className="max-h-96 overflow-y-auto">
                     {notifications.length === 0 ? (
-                      <p className="px-4 py-6 text-center text-sm text-slate-400">새 알림이 없어요.</p>
+                      <p className="px-4 py-6 text-center text-sm text-slate-400">
+                        새 알림이 없어요.
+                      </p>
                     ) : (
                       notifications.map((item) => (
                         <button
@@ -125,16 +137,30 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
                           onClick={() => handleNotificationClick(item.id)}
                           className={`flex w-full items-start gap-3 border-b border-border/40 px-4 py-3 text-left last:border-0 ${item.unread ? "bg-[#F7FAFF]" : "bg-white"} ${item.link_to ? "hover:bg-[#eef4ff]" : ""}`}
                         >
-                          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${item.category === "alert" ? "bg-red-50" : "bg-[#EEF4FF]"}`}>
-                            <span className={`material-symbols-outlined text-[14px] ${item.category === "alert" ? "text-red-500" : "text-primary"}`}>
-                              {item.category === "alert" ? "notification_important" : item.category === "workflow" ? "account_tree" : "analytics"}
+                          <div
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${item.category === "alert" ? "bg-red-50" : "bg-[#EEF4FF]"}`}
+                          >
+                            <span
+                              className={`material-symbols-outlined text-[14px] ${item.category === "alert" ? "text-red-500" : "text-primary"}`}
+                            >
+                              {item.category === "alert"
+                                ? "notification_important"
+                                : item.category === "workflow"
+                                  ? "account_tree"
+                                  : "analytics"}
                             </span>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className={`text-xs font-semibold ${item.unread ? "text-slate-900" : "text-slate-600"}`}>{item.title}</p>
+                            <p
+                              className={`text-xs font-semibold ${item.unread ? "text-slate-900" : "text-slate-600"}`}
+                            >
+                              {item.title}
+                            </p>
                             <p className="text-xs text-slate-400">{item.description}</p>
                           </div>
-                          <span className="shrink-0 text-[10px] text-slate-400">{item.created_at}</span>
+                          <span className="shrink-0 text-[10px] text-slate-400">
+                            {item.created_at}
+                          </span>
                         </button>
                       ))
                     )}
@@ -155,14 +181,20 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
                 {user.avatarUrl ? (
                   <img src={user.avatarUrl} alt={user.name} className="size-full object-cover" />
                 ) : (
-                  <div className="grid size-full place-items-center text-[12px] font-bold">{user.initials}</div>
+                  <div className="grid size-full place-items-center text-[12px] font-bold">
+                    {user.initials}
+                  </div>
                 )}
               </div>
               <div className="mx-2 flex-1 truncate text-left">
-                <p className="truncate text-[13px] font-semibold leading-tight text-slate-800">{user.storeName}</p>
+                <p className="truncate text-[13px] font-semibold leading-tight text-slate-800">
+                  {user.storeName}
+                </p>
                 <p className="truncate text-[11px] leading-tight text-slate-500">{user.storeId}</p>
               </div>
-              <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isStoreMenuOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`h-4 w-4 text-slate-400 transition-transform ${isStoreMenuOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {isStoreMenuOpen ? (
@@ -194,11 +226,17 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
                           {store.store_name.charAt(0)}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-[13px] font-semibold text-slate-800">{store.store_name}점</p>
-                          <p className="text-[11px] text-slate-400">{store.sido} · {store.store_id}</p>
+                          <p className="truncate text-[13px] font-semibold text-slate-800">
+                            {store.store_name}점
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            {store.sido} · {store.store_id}
+                          </p>
                         </div>
                         {user.storeId === store.store_id ? (
-                          <span className="material-symbols-outlined text-[16px] text-[#2454C8]">check</span>
+                          <span className="material-symbols-outlined text-[16px] text-[#2454C8]">
+                            check
+                          </span>
                         ) : null}
                       </button>
                     ))}

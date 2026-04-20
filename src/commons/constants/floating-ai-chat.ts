@@ -83,12 +83,12 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
     ],
   },
   "/ordering/history": {
-    title: "주문 관리 해설",
-    subtitle: "마감 전 놓치지 말아야 할 주문 포인트를 확인합니다.",
+    title: "발주 이력 해설",
+    subtitle: "발주 누락 패턴과 자동/수동 발주 흐름을 점검합니다.",
     quickActions: [
-      { label: "어떤 거 골라?", prompt: "지금 주문 어떤 안으로 하는 게 좋아?" },
-      { label: "안 하면 어떻게 돼?", prompt: "지금 주문 안 하면 어떻게 돼?" },
-      { label: "지난번이랑 달라?", prompt: "지난번 주문이랑 비교해서 이번에 바뀐 게 있어?" },
+      { label: "누락 패턴", prompt: "최근 발주 누락이 반복되는 패턴이 있나요?" },
+      { label: "자동/수동 비교", prompt: "자동 발주와 수동 발주 비중 변화가 어떻게 됐어?" },
+      { label: "품목 개선안", prompt: "다음 발주에서 조정해야 할 품목을 알려줘." },
     ],
   },
   "/sales": {

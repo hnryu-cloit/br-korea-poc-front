@@ -3,7 +3,10 @@ import { useMemo, useState } from "react";
 
 import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { formatCount, formatCountWithUnit } from "@/commons/utils/format-count";
-import type { ProductionAlertItem, ProductionOverviewAlertItem } from "@/features/production/types/production";
+import type {
+  ProductionAlertItem,
+  ProductionOverviewAlertItem,
+} from "@/features/production/types/production";
 import {
   severityDetailClassMap,
   severityLabelMap,
@@ -21,7 +24,9 @@ export function ProductionAlertsSection({
 }) {
   const sections = useMemo(() => buildGroupedAlertSections(alerts, items), [alerts, items]);
   const [openSeverity, setOpenSeverity] = useState<AlertSeverity | null>(
-    sections.some((section) => section.severity === "high") ? "high" : sections[0]?.severity ?? null,
+    sections.some((section) => section.severity === "high")
+      ? "high"
+      : (sections[0]?.severity ?? null),
   );
 
   if (sections.length === 0) {
@@ -47,19 +52,29 @@ export function ProductionAlertsSection({
           >
             <button
               type="button"
-              onClick={() => setOpenSeverity((prev) => (prev === section.severity ? null : section.severity))}
+              onClick={() =>
+                setOpenSeverity((prev) => (prev === section.severity ? null : section.severity))
+              }
               className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
             >
               <div>
-                <p className="text-base font-bold">{severityLabelMap[section.severity]} {formatCountWithUnit(section.count, "건")}</p>
+                <p className="text-base font-bold">
+                  {severityLabelMap[section.severity]} {formatCountWithUnit(section.count, "건")}
+                </p>
                 {section.representativeNames.length > 0 ? (
                   <p className="mt-1 text-sm">
                     {section.representativeNames.join(", ")}
-                    {section.count > section.representativeNames.length ? ` 외 ${formatCount(section.count - section.representativeNames.length)}개` : ""}
+                    {section.count > section.representativeNames.length
+                      ? ` 외 ${formatCount(section.count - section.representativeNames.length)}개`
+                      : ""}
                   </p>
                 ) : null}
               </div>
-              {opened ? <ChevronUp className="h-5 w-5 shrink-0" /> : <ChevronDown className="h-5 w-5 shrink-0" />}
+              {opened ? (
+                <ChevronUp className="h-5 w-5 shrink-0" />
+              ) : (
+                <ChevronDown className="h-5 w-5 shrink-0" />
+              )}
             </button>
 
             {opened ? (

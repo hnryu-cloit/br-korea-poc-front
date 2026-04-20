@@ -12,9 +12,7 @@ type UsePutPromptSettingsMutationOptions = {
   onError?: () => void;
 };
 
-export const usePutPromptSettingsMutation = (
-  options?: UsePutPromptSettingsMutationOptions,
-) => {
+export const usePutPromptSettingsMutation = (options?: UsePutPromptSettingsMutationOptions) => {
   const queryClient = useQueryClient();
 
   return useMutation({

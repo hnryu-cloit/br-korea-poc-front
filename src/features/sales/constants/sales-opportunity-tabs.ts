@@ -9,9 +9,7 @@ export const SALES_OPPORTUNITY_TABS: { key: SalesOpportunityTabKey; label: strin
   { key: "store_benchmark", label: "매장 간 벤치마킹" },
 ];
 
-export const isSalesOpportunityTabKey = (
-  value: string | null,
-): value is SalesOpportunityTabKey => {
+export const isSalesOpportunityTabKey = (value: string | null): value is SalesOpportunityTabKey => {
   if (!value) return false;
   return SALES_OPPORTUNITY_TABS.some((tab) => tab.key === value);
 };

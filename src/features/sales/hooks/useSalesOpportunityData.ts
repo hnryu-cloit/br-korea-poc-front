@@ -19,11 +19,7 @@ export const useSalesOpportunityData = (params: {
   dateTo?: string;
   prompts?: SalesPrompt[];
 }) => {
-  const benchmarkQuery = useGetSalesBenchmarkQuery(
-    params.storeId,
-    params.dateFrom,
-    params.dateTo,
-  );
+  const benchmarkQuery = useGetSalesBenchmarkQuery(params.storeId, params.dateFrom, params.dateTo);
 
   const opportunity = useMemo(
     () =>

@@ -25,7 +25,9 @@ export function PriorityActionsSection({ actions }: { actions: DashboardPriority
         </div>
         <div>
           <p className="text-lg font-bold text-slate-900">지금 해야 할 일</p>
-          <p className="mt-1 text-sm text-slate-500">즉시 액션이 필요한 항목 3개를 우선순위대로 보여줍니다.</p>
+          <p className="mt-1 text-sm text-slate-500">
+            즉시 액션이 필요한 항목 3개를 우선순위대로 보여줍니다.
+          </p>
         </div>
       </div>
 
@@ -41,10 +43,14 @@ export function PriorityActionsSection({ actions }: { actions: DashboardPriority
             )}
           >
             <div>
-              <div className={cn(
-                "inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold",
-                action.is_finished_good ? "bg-slate-200 text-slate-600" : urgencyBadgeClassMap[action.urgency],
-              )}>
+              <div
+                className={cn(
+                  "inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold",
+                  action.is_finished_good
+                    ? "bg-slate-200 text-slate-600"
+                    : urgencyBadgeClassMap[action.urgency],
+                )}
+              >
                 {action.badge_label}
               </div>
               <p className="mt-3 text-lg font-bold text-slate-900">{action.title}</p>

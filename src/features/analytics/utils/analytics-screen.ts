@@ -19,10 +19,7 @@ const getLogQueryCategory = (log: AuditLogEntry): QueryCategory | null => {
   }
 };
 
-export const filterLogsByCategory = (
-  logs: AuditLogEntry[],
-  activeCategory: QueryCategory,
-) => {
+export const filterLogsByCategory = (logs: AuditLogEntry[], activeCategory: QueryCategory) => {
   if (activeCategory === "전체") return logs;
   return logs.filter((log) => getLogQueryCategory(log) === activeCategory);
 };

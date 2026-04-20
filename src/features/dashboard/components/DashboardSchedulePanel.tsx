@@ -1,11 +1,15 @@
 import { useState } from "react";
 
-import { type SchedulePanelTab } from "@/features/dashboard/constants/schedule-panel";
 import { DashboardScheduleCalendar } from "@/features/dashboard/components/DashboardScheduleCalendar";
 import { DashboardScheduleContent } from "@/features/dashboard/components/DashboardScheduleContent";
+import {
+  SCHEDULE_MAX_VISIBLE_EVENTS,
+  SCHEDULE_MAX_VISIBLE_TODOS,
+  type SchedulePanelTab,
+} from "@/features/dashboard/constants/schedule-panel";
 import { useDashboardTodos } from "@/features/dashboard/hooks/useDashboardTodos";
 import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/schedule";
-import { selectEventsByDate } from "@/features/dashboard/utils/schedule-panel";
+import { getEventSummary } from "@/features/dashboard/utils/schedule-panel";
 
 export function DashboardSchedulePanel({
   storeId,
@@ -21,17 +25,14 @@ export function DashboardSchedulePanel({
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("todo");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const {
-    todos: resolvedTodos,
-    toggleTodo,
-    completedCount,
-  } = useDashboardTodos(storeId, todos);
-
-  const selectedDateEvents = selectEventsByDate(events, selectedDate, 8);
+  const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, todos);
+  const visibleTodos = resolvedTodos.slice(0, SCHEDULE_MAX_VISIBLE_TODOS);
+  const hiddenTodoCount = Math.max(resolvedTodos.length - SCHEDULE_MAX_VISIBLE_TODOS, 0);
+  const eventSummary = getEventSummary(events, selectedDate, SCHEDULE_MAX_VISIBLE_EVENTS);
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <div className="grid gap-6 p-6 lg:grid-cols-3">
+    <section className="h-[350px] overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      <div className="grid h-full gap-6 p-6 lg:grid-cols-3">
         <DashboardScheduleCalendar
           selectedDate={selectedDate}
           events={events}
@@ -40,11 +41,14 @@ export function DashboardSchedulePanel({
         <DashboardScheduleContent
           activeTab={activeTab}
           onChangeTab={setActiveTab}
-          todos={resolvedTodos}
+          todos={visibleTodos}
           toggleTodo={toggleTodo}
-          completedCount={completedCount}
-          scheduleEvents={selectedDateEvents}
+          hiddenTodoCount={hiddenTodoCount}
+          scheduleEvents={eventSummary.visibleEvents}
+          hiddenEventCount={eventSummary.hiddenCount}
           isLoading={isLoading}
+          onClickTodoMore={() => window.alert("준비중입니다")}
+          onClickEventMore={() => window.alert("준비중입니다")}
         />
       </div>
     </section>

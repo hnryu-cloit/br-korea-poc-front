@@ -59,14 +59,18 @@ export function RoleSelectionPage() {
                     <p className="text-sm font-semibold text-[#2c61d6]">{card.subtitle}</p>
                     <h2 className="mt-1 text-2xl font-bold text-slate-900">{card.title}</h2>
                   </div>
-                  <span className="material-symbols-outlined rounded-xl bg-[#eef4ff] p-2 text-[#2c61d6]">{card.icon}</span>
+                  <span className="material-symbols-outlined rounded-xl bg-[#eef4ff] p-2 text-[#2c61d6]">
+                    {card.icon}
+                  </span>
                 </div>
                 <div className="mt-4 transition-opacity duration-200 group-hover:opacity-0">
                   <p className="text-sm leading-relaxed text-slate-600">{card.description}</p>
                   <ul className="mt-4 space-y-2">
                     {card.bulletPoints.map((point) => (
                       <li key={point} className="flex items-center gap-2 text-sm text-slate-700">
-                        <span className="material-symbols-outlined text-[18px] text-[#2c61d6]">check_circle</span>
+                        <span className="material-symbols-outlined text-[18px] text-[#2c61d6]">
+                          check_circle
+                        </span>
                         <span>{point}</span>
                       </li>
                     ))}

@@ -1,8 +1,4 @@
-export function SalesQuickQuestionsPanel({
-  questions,
-}: {
-  questions: string[];
-}) {
+export function SalesQuickQuestionsPanel({ questions }: { questions: string[] }) {
   return (
     <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <p className="text-sm font-bold text-slate-900">손익 관련 빠른 질문</p>

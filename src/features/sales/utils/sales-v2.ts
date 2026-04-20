@@ -1,4 +1,7 @@
-import type { SalesV2Comparison, SalesV2QueryResponseComparison } from "@/features/sales/types/sales-v2";
+import type {
+  SalesV2Comparison,
+  SalesV2QueryResponseComparison,
+} from "@/features/sales/types/sales-v2";
 
 export const toSalesV2Comparison = (
   raw: SalesV2QueryResponseComparison,

@@ -12,8 +12,8 @@ export interface SessionUser {
   avatarUrl?: string;
 }
 
-const DEFAULT_DEMO_ROLE = (import.meta.env.VITE_DEFAULT_DEMO_ROLE as DemoRole | undefined)
-  ?? "store_owner";
+const DEFAULT_DEMO_ROLE =
+  (import.meta.env.VITE_DEFAULT_DEMO_ROLE as DemoRole | undefined) ?? "store_owner";
 const DEFAULT_STORE_ID = import.meta.env.VITE_DEFAULT_STORE_ID ?? "STORE_DEMO";
 const DEFAULT_STORE_NAME = import.meta.env.VITE_DEFAULT_STORE_NAME ?? "기본 매장";
 const DEFAULT_USER_NAME = import.meta.env.VITE_DEFAULT_USER_NAME ?? DEFAULT_STORE_NAME;

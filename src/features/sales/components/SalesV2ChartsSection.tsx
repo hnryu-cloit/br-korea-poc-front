@@ -79,10 +79,15 @@ export const SalesV2ChartsSection = ({
                 <div key={item.name} className="space-y-1">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-xs font-semibold text-slate-700">{item.name}</p>
-                    <p className="text-xs font-semibold text-slate-500">{item.sales.toLocaleString()}원</p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {item.sales.toLocaleString()}원
+                    </p>
                   </div>
                   <div className="h-2 rounded-full bg-slate-100">
-                    <div className="h-2 rounded-full bg-[#2454C8]" style={{ width: `${widthPct}%` }} />
+                    <div
+                      className="h-2 rounded-full bg-[#2454C8]"
+                      style={{ width: `${widthPct}%` }}
+                    />
                   </div>
                 </div>
               );

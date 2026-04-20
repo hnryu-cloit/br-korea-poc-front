@@ -36,7 +36,9 @@ function HeadlineBadge({ headline, trend }: { headline: string; trend: string })
         ? "bg-red-50 text-red-700 border-red-200"
         : "bg-slate-50 text-slate-600 border-slate-200";
   return (
-    <p className={`inline-block rounded-full border px-4 py-1.5 text-sm font-semibold ${colorClass}`}>
+    <p
+      className={`inline-block rounded-full border px-4 py-1.5 text-sm font-semibold ${colorClass}`}
+    >
       {headline}
     </p>
   );
@@ -55,7 +57,9 @@ function CumulativeChart({ points }: { points: SalesTrendResponse["points"] }) {
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="day" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
         <YAxis tick={{ fontSize: 11 }} tickFormatter={formatAmt} width={48} />
-        <Tooltip formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")} />
+        <Tooltip
+          formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")}
+        />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         <Line type="monotone" dataKey="지난달" stroke="#cbd5e1" strokeWidth={2} dot={false} />
         <Line type="monotone" dataKey="이번달" stroke="#2563eb" strokeWidth={2.5} dot={false} />
@@ -84,7 +88,9 @@ function DowChart({ points }: { points: SalesTrendResponse["dow_points"] }) {
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="name" tick={{ fontSize: 12 }} />
         <YAxis tick={{ fontSize: 11 }} tickFormatter={formatAmt} width={48} />
-        <Tooltip formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")} />
+        <Tooltip
+          formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")}
+        />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="지난달평균" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
         <Bar dataKey="이번달평균" fill="#2563eb" radius={[4, 4, 0, 0]} />
@@ -105,7 +111,9 @@ function HourChart({ points }: { points: SalesTrendResponse["hour_points"] }) {
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={1} />
         <YAxis tick={{ fontSize: 11 }} tickFormatter={formatAmt} width={48} />
-        <Tooltip formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")} />
+        <Tooltip
+          formatter={(v) => (typeof v === "number" ? `${v.toLocaleString("ko-KR")}원` : "")}
+        />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         <Line type="monotone" dataKey="지난달" stroke="#cbd5e1" strokeWidth={2} dot={false} />
         <Line type="monotone" dataKey="이번달" stroke="#2563eb" strokeWidth={2.5} dot={false} />
@@ -114,7 +122,13 @@ function HourChart({ points }: { points: SalesTrendResponse["hour_points"] }) {
   );
 }
 
-export function SalesTrendChart({ data, isLoading }: { data?: SalesTrendResponse; isLoading: boolean }) {
+export function SalesTrendChart({
+  data,
+  isLoading,
+}: {
+  data?: SalesTrendResponse;
+  isLoading: boolean;
+}) {
   const [activeTab, setActiveTab] = useState<Tab>("cumulative");
 
   if (isLoading) {
@@ -133,7 +147,9 @@ export function SalesTrendChart({ data, isLoading }: { data?: SalesTrendResponse
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-lg font-bold text-slate-900">매출 추이 분석</p>
-            <p className="mt-1 text-sm text-slate-500">이번 달 vs 지난달 · 요일별 · 시간대별 비교</p>
+            <p className="mt-1 text-sm text-slate-500">
+              이번 달 vs 지난달 · 요일별 · 시간대별 비교
+            </p>
           </div>
           <HeadlineBadge headline={data.headline} trend={data.headline_trend} />
         </div>

@@ -62,16 +62,9 @@ export function OrderingHistorySection({ data, isLoading }: Props) {
               </thead>
               <tbody>
                 {data.items.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-slate-50 last:border-0"
-                  >
-                    <td className="py-2 pr-4 text-slate-600">
-                      {item.dlv_dt ?? "-"}
-                    </td>
-                    <td className="py-2 pr-4 font-medium text-slate-800">
-                      {item.item_nm}
-                    </td>
+                  <tr key={idx} className="border-b border-slate-50 last:border-0">
+                    <td className="py-2 pr-4 text-slate-600">{item.dlv_dt ?? "-"}</td>
+                    <td className="py-2 pr-4 font-medium text-slate-800">{item.item_nm}</td>
                     <td className="py-2 pr-4 text-right tabular-nums text-slate-600">
                       {item.ord_qty != null ? item.ord_qty.toLocaleString() : "-"}
                     </td>

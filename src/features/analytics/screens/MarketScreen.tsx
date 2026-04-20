@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 
-import { AnalysisScopeFilterBar, type AnalysisScope } from "@/commons/components/analysis/AnalysisScopeFilterBar";
+import {
+  AnalysisScopeFilterBar,
+  type AnalysisScope,
+} from "@/commons/components/analysis/AnalysisScopeFilterBar";
 import { PageHero } from "@/commons/components/page/page-layout";
 import { MarketActionGuideSection } from "@/features/analytics/components/MarketActionGuideSection";
 import { MarketCustomerSection } from "@/features/analytics/components/MarketCustomerSection";
@@ -41,9 +44,15 @@ export function MarketScreen() {
     radius_m: scope.radiusMeters,
   });
   const isLoading =
-    storeProfileQuery.isLoading || customerProfileQuery.isLoading || salesTrendQuery.isLoading || marketIntelligenceQuery.isLoading;
+    storeProfileQuery.isLoading ||
+    customerProfileQuery.isLoading ||
+    salesTrendQuery.isLoading ||
+    marketIntelligenceQuery.isLoading;
   const hasError =
-    storeProfileQuery.isError || customerProfileQuery.isError || salesTrendQuery.isError || marketIntelligenceQuery.isError;
+    storeProfileQuery.isError ||
+    customerProfileQuery.isError ||
+    salesTrendQuery.isError ||
+    marketIntelligenceQuery.isError;
   const storeProfile = storeProfileQuery.data;
   const customerProfile = customerProfileQuery.data;
   const salesTrend = salesTrendQuery.data;

@@ -1,10 +1,6 @@
 import { Bot } from "lucide-react";
 
-export const FloatingAiChatButton = ({
-  onClick,
-}: {
-  onClick: () => void;
-}) => (
+export const FloatingAiChatButton = ({ onClick }: { onClick: () => void }) => (
   <button
     type="button"
     onClick={onClick}

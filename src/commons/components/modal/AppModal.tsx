@@ -1,12 +1,6 @@
 import type { ReactNode } from "react";
 
-export function AppModal({
-  children,
-  onClose,
-}: {
-  children: ReactNode;
-  onClose?: () => void;
-}) {
+export function AppModal({ children, onClose }: { children: ReactNode; onClose?: () => void }) {
   return (
     <div className="fixed inset-0 z-50">
       <div

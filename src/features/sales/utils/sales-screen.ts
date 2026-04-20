@@ -56,18 +56,14 @@ export const toSalesStats = (summary?: SalesSummaryResponse) => {
   ];
 };
 
-export const toSalesWeeklyData = (
-  summary?: SalesSummaryResponse,
-): SalesWeeklyDataItem[] =>
+export const toSalesWeeklyData = (summary?: SalesSummaryResponse): SalesWeeklyDataItem[] =>
   (summary?.weekly_data ?? []).map((item) => ({
     day: item.day,
     revenue: item.revenue,
     net_revenue: item.net_revenue,
   }));
 
-export const toSalesProductData = (
-  summary?: SalesSummaryResponse,
-): SalesProductDataItem[] =>
+export const toSalesProductData = (summary?: SalesSummaryResponse): SalesProductDataItem[] =>
   (summary?.top_products ?? []).map((item) => ({
     name: item.name,
     sales: item.sales,
