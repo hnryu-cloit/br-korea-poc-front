@@ -19,24 +19,6 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "분석 구조", prompt: "RAG 출처 응답 구조를 짧게 설명해줘" },
     ],
   },
-  "/hq/coaching": {
-    title: "주문 코칭 해설",
-    subtitle: "미완료 매장 대응과 코칭 포인트를 정리합니다.",
-    quickActions: [
-      { label: "미완료 대응", prompt: "주문 미완료 매장에 어떻게 대응해야 하는지 알려줘" },
-      { label: "옵션 코칭", prompt: "전월 동요일 선택 시 주의할 점을 설명해줘" },
-      { label: "알림 발송", prompt: "긴급 알림 발송 기준과 내용을 알려줘" },
-    ],
-  },
-  "/hq/inspection": {
-    title: "생산 점검 해설",
-    subtitle: "준수율 낮은 매장 개선 방법과 코칭 포인트를 정리합니다.",
-    quickActions: [
-      { label: "개선 방안", prompt: "생산 알림 미대응 매장 개선 방법을 알려줘" },
-      { label: "찬스 로스", prompt: "찬스 로스가 높은 매장의 원인을 분석해줘" },
-      { label: "방문 점검", prompt: "본사 현장 방문 점검 체크리스트를 알려줘" },
-    ],
-  },
   "/signals": {
     title: "매출 시그널 해설",
     subtitle: "긴급 시그널 우선순위와 본사 개입 기준을 설명합니다.",

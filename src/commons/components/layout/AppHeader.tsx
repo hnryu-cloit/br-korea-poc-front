@@ -8,7 +8,8 @@ import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 const breadcrumbMap: Record<string, string[]> = {
-  "/": ["홈"],
+  "/": ["시작 페이지"],
+  "/dashboard": ["홈"],
   "/production": ["매장 운영", "생산 관리", "생산 현황"],
   "/production/status": ["매장 운영", "생산 관리", "생산 현황"],
   "/production/waste-loss": ["매장 운영", "생산 관리", "폐기 손실 현황"],
@@ -20,10 +21,14 @@ const breadcrumbMap: Record<string, string[]> = {
   "/sales/metrics": ["분석", "매장 분석", "지표 분석"],
   "/analytics": ["분석", "매장 분석", "매출 현황"],
   "/analytics/market": ["분석", "매장 분석", "상권/고객 분석"],
-  "/hq/coaching": ["본사", "주문 코칭"],
-  "/hq/inspection": ["본사", "생산 점검"],
   "/orchestration": ["본사", "시스템 현황"],
   "/signals": ["본사", "매출 시그널"],
+  "/settings": ["설정", "개요"],
+  "/settings/connectors": ["설정", "데이터 커넥터"],
+  "/settings/access": ["설정", "멤버 & 접근 제어"],
+  "/settings/audit-logs": ["설정", "대화 감사 로그"],
+  "/settings/quality-archive": ["설정", "품질 검증 아카이브"],
+  "/settings/prompts": ["설정", "프롬프트 설정"],
 };
 
 type Props = {
@@ -38,7 +43,8 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isStoreMenuOpen, setIsStoreMenuOpen] = useState(false);
   const { user, setStore } = useDemoSession();
-  const { data: stores = [] } = useGetStoresQuery();
+  const isHqAdmin = user.role === "hq_admin";
+  const { data: stores = [] } = useGetStoresQuery(!isHqAdmin);
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
 
   const handleNotificationClick = (id: number) => {
