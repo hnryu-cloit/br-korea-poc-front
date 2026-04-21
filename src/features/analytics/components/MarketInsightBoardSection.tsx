@@ -2,6 +2,7 @@ import { Clock3, Radar, Users } from "lucide-react";
 
 import type {
   CustomerProfileResponse,
+  MarketInsightItem,
   SalesTrendResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
@@ -16,6 +17,8 @@ type Props = {
   storeProfile?: StoreProfileResponse;
   customerProfile?: CustomerProfileResponse;
   salesTrend?: SalesTrendResponse;
+  aiInsights?: MarketInsightItem[];
+  source?: "ai" | "fallback";
   isLoading: boolean;
 };
 
@@ -26,6 +29,8 @@ export function MarketInsightBoardSection({
   storeProfile,
   customerProfile,
   salesTrend,
+  aiInsights,
+  source,
   isLoading,
 }: Props) {
   const competition = getCompetitionLevel(storeProfile?.peer_count ?? 0);
@@ -36,7 +41,14 @@ export function MarketInsightBoardSection({
   return (
     <section className="space-y-3">
       <div>
-        <p className="text-base font-bold text-slate-900">핵심 인사이트 보드</p>
+        <div className="flex items-center gap-2">
+          <p className="text-base font-bold text-slate-900">핵심 인사이트 보드</p>
+          {source ? (
+            <span className="rounded-md border border-slate-200 px-2 py-0.5 text-[11px] text-slate-500">
+              {source === "ai" ? "AI 기반" : "기본 분석"}
+            </span>
+          ) : null}
+        </div>
         <p className="mt-1 text-sm text-slate-500">
           상권 경쟁도와 고객·시간대 포인트를 한 번에 확인합니다.
         </p>
@@ -102,6 +114,21 @@ export function MarketInsightBoardSection({
           </article>
         </div>
       )}
+      {!isLoading && aiInsights && aiInsights.length > 0 ? (
+        <ul className="mt-3 space-y-2">
+          {aiInsights.slice(0, 3).map((item, index) => (
+            <li
+              key={`${item.title}-${index}`}
+              className="rounded-xl border border-[#d7e4ff] bg-[#f5f9ff] px-4 py-3 text-sm text-slate-700"
+            >
+              <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#2454C8] text-[11px] font-bold text-white">
+                {index + 1}
+              </span>
+              <span className="font-semibold">{item.title}</span>: {item.description}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   );
 }

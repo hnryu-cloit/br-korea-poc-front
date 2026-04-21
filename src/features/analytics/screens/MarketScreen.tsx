@@ -6,6 +6,7 @@ import {
   type AnalysisScope,
 } from "@/commons/components/analysis/AnalysisScopeFilterBar";
 import { PageHero } from "@/commons/components/page/page-layout";
+import { HQMarketOverviewSection } from "@/features/analytics/components/HQMarketOverviewSection";
 import { MarketActionGuideSection } from "@/features/analytics/components/MarketActionGuideSection";
 import { MarketCustomerSection } from "@/features/analytics/components/MarketCustomerSection";
 import { MarketInsightBoardSection } from "@/features/analytics/components/MarketInsightBoardSection";
@@ -14,6 +15,8 @@ import { MarketOverviewCardsSection } from "@/features/analytics/components/Mark
 import { MarketStoreProfileSection } from "@/features/analytics/components/MarketStoreProfileSection";
 import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { useGetAnalyticsCustomerProfileQuery } from "@/features/analytics/queries/useGetAnalyticsCustomerProfileQuery";
+import { useGetAnalyticsMarketInsightsQuery } from "@/features/analytics/queries/useGetAnalyticsMarketInsightsQuery";
+import { useGetHqAnalyticsMarketInsightsQuery } from "@/features/analytics/queries/useGetHqAnalyticsMarketInsightsQuery";
 import { useGetAnalyticsMarketIntelligenceQuery } from "@/features/analytics/queries/useGetAnalyticsMarketIntelligenceQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import { useGetAnalyticsStoreProfileQuery } from "@/features/analytics/queries/useGetAnalyticsStoreProfileQuery";
@@ -45,15 +48,40 @@ export function MarketScreen() {
     quarter: scope.quarter,
     radius_m: scope.radiusMeters,
   });
+  const marketInsightsQuery = useGetAnalyticsMarketInsightsQuery({
+    store_id: user.storeId,
+    gu: scope.gu,
+    dong: scope.dong,
+    industry: scope.industry,
+    year: Number(scope.year),
+    quarter: scope.quarter,
+    radius_m: scope.radiusMeters,
+  });
+  const hqInsightsQuery = useGetHqAnalyticsMarketInsightsQuery(
+    {
+      gu: scope.gu,
+      dong: scope.dong,
+      industry: scope.industry,
+      year: Number(scope.year),
+      quarter: scope.quarter,
+      radius_m: scope.radiusMeters,
+      limit: 30,
+    },
+    user.role === "hq_admin",
+  );
   const isLoading =
     storeProfileQuery.isLoading ||
     customerProfileQuery.isLoading ||
     salesTrendQuery.isLoading ||
-    marketIntelligenceQuery.isLoading;
+    marketIntelligenceQuery.isLoading ||
+    marketInsightsQuery.isLoading ||
+    hqInsightsQuery.isLoading;
   const hasError = marketIntelligenceQuery.isError;
   const storeProfile = storeProfileQuery.data;
   const customerProfile = customerProfileQuery.data;
   const salesTrend = salesTrendQuery.data;
+  const storeInsights = marketInsightsQuery.data;
+  const hqInsights = hqInsightsQuery.data;
 
   const heroDescription = storeProfile
     ? `${storeProfile.sido} ${storeProfile.region} · 유사 매장 ${storeProfile.peer_count}개 · 추정 매출 ${formatWonCompact(storeProfile.actual_sales_amt)}`
@@ -131,8 +159,14 @@ export function MarketScreen() {
         storeProfile={storeProfile}
         customerProfile={customerProfile}
         salesTrend={salesTrend}
+        aiInsights={storeInsights?.key_insights}
+        source={storeInsights?.source}
         isLoading={isLoading}
       />
+
+      {user.role === "hq_admin" ? (
+        <HQMarketOverviewSection data={hqInsights} isLoading={hqInsightsQuery.isLoading} />
+      ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_1.4fr]">
         <MarketStoreProfileSection data={storeProfile} isLoading={storeProfileQuery.isLoading} />
@@ -142,6 +176,8 @@ export function MarketScreen() {
       <MarketActionGuideSection
         storeProfile={storeProfile}
         customerProfile={customerProfile}
+        aiActionPlan={storeInsights?.action_plan}
+        source={storeInsights?.source}
         isLoading={isLoading}
       />
     </div>

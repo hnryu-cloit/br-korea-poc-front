@@ -294,6 +294,51 @@ export interface MarketIntelligenceResponse {
   customer_characteristics: CustomerCharacteristics;
 }
 
+export interface MarketInsightItem {
+  title: string;
+  description: string;
+  impact: "high" | "medium" | "low";
+}
+
+export interface MarketRiskWarningItem {
+  title: string;
+  description: string;
+  mitigation: string;
+}
+
+export interface MarketActionItem {
+  priority: number;
+  title: string;
+  action: string;
+  expected_effect: string;
+}
+
+export interface BranchScoreboardItem {
+  store_id: string;
+  store_name: string;
+  growth_rate: string;
+  risk_level: "high" | "medium" | "low";
+  summary: string;
+}
+
+export interface MarketInsightsResponse {
+  executive_summary: string;
+  key_insights: MarketInsightItem[];
+  risk_warnings: MarketRiskWarningItem[];
+  action_plan: MarketActionItem[];
+  branch_scoreboard: BranchScoreboardItem[];
+  report_markdown: string;
+  evidence_refs: string[];
+  audience: "store_owner" | "hq_admin";
+  source: "ai" | "fallback";
+  trace_id?: string | null;
+}
+
+export interface HQMarketInsightsResponse {
+  summary: MarketInsightsResponse;
+  branches: BranchScoreboardItem[];
+}
+
 export interface WeatherImpactCorrelation {
   metric: string;
   temperature_corr: number;

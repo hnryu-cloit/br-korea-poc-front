@@ -6,7 +6,9 @@ import type {
   CustomerProfileResponse,
   GetAnalyticsMetricsRequest,
   GetMarketIntelligenceRequest,
+  HQMarketInsightsResponse,
   MarketIntelligenceResponse,
+  MarketInsightsResponse,
   SalesTrendResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
@@ -55,6 +57,26 @@ export async function getAnalyticsSalesTrend(storeId?: string) {
 export async function getAnalyticsMarketIntelligence(params?: GetMarketIntelligenceRequest) {
   const response = await axiosInstance.get<MarketIntelligenceResponse>(
     "/api/analytics/market-intelligence",
+    {
+      params,
+    },
+  );
+  return response.data;
+}
+
+export async function getAnalyticsMarketInsights(params?: GetMarketIntelligenceRequest) {
+  const response = await axiosInstance.get<MarketInsightsResponse>(
+    "/api/analytics/market-intelligence/insights",
+    {
+      params,
+    },
+  );
+  return response.data;
+}
+
+export async function getHqAnalyticsMarketInsights(params?: GetMarketIntelligenceRequest & { limit?: number }) {
+  const response = await axiosInstance.get<HQMarketInsightsResponse>(
+    "/api/analytics/market-intelligence/insights/hq",
     {
       params,
     },
