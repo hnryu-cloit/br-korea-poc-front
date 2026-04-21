@@ -211,6 +211,12 @@ npm run build
 | `/analytics` | 매출 조회 | `/api/analytics/metrics`, `/api/audit/logs` |
 | `/analytics/market` | 상권·고객 분석 | `/api/analytics/store-profile`, `/api/analytics/customer-profile`, `/api/analytics/sales-trend`, `/api/analytics/market-intelligence`, `/api/analytics/market-intelligence/weekly-report` |
 
+## Session Update (2026-04-21, Backend-AI Interface)
+
+- 프론트 코드 변경은 없습니다.
+- backend↔ai 계약 보강으로 `sales/query`는 `store_id` 필수 계약이 강화되었습니다.
+- AI 측에 `X-Request-Id` 추적 및 공통 에러 계약이 추가되어 장애 추적성이 개선되었습니다.
+
 ### 홈 대시보드 표시 규칙
 
 - 상단 `'지금 해야 할 일'` 카드에서 `ai_reasoning`은 설명 하단 보조 문구로 표시합니다.
