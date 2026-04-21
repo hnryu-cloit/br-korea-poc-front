@@ -10,7 +10,7 @@ export function ProductionInventoryDiagnosisScreen() {
   const { user } = useDemoSession();
   const [page, setPage] = useState(1);
 
-  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "");
+  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "", page, 10);
   const apiError = inventoryStatusQuery.error as AxiosError<{ detail?: string }> | null;
   const errorMessage = apiError?.response?.data?.detail ?? null;
 

@@ -84,6 +84,7 @@ export interface ProductionSkuListParams {
 export interface ProductionRegistrationForm {
   sku_id: string;
   sku_name: string;
+  image_url?: string;
   image?: string;
   current_stock: number;
   forecast_stock_1h: number;

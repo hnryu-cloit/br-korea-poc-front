@@ -8,6 +8,7 @@ import { ProductionTableSection } from "@/features/production/components/Product
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
 import { useGetProductionSkuListQuery } from "@/features/production/queries/useGetProductionSkuListQuery";
 import { usePostProductionRegistrationMutation } from "@/features/production/queries/usePostProductionRegistrationMutation";
+import { useGetOrderingDeadlineQuery } from "@/features/ordering/queries/useGetOrderingDeadlineQuery";
 import type { ProductionSkuItem } from "@/features/production/types/production";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
@@ -25,6 +26,7 @@ export function ProductionStatusScreen() {
   });
   const skuDetailQuery = useGetProductionSkuDetailQuery(activeSkuId, user.storeId);
   const postRegistrationMutation = usePostProductionRegistrationMutation();
+  const orderingDeadlineQuery = useGetOrderingDeadlineQuery({ store_id: user.storeId });
 
   const items = skuListQuery.data?.items ?? [];
 
@@ -62,6 +64,7 @@ export function ProductionStatusScreen() {
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}
+        orderingDeadlineAt={orderingDeadlineQuery.data?.deadline}
         onChangePage={setPage}
         onOpenRegister={openRegister}
       />

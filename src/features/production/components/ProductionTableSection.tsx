@@ -1,5 +1,3 @@
-import { ImageOff } from "lucide-react";
-
 import { Pagination } from "@/commons/components/page/Pagination";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
@@ -36,11 +34,13 @@ function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
 export function ProductionTableSection({
   items,
   pagination,
+  orderingDeadlineAt,
   onChangePage,
   onOpenRegister,
 }: {
   items: ProductionSkuItem[];
   pagination?: ProductionSkuListResponse["pagination"];
+  orderingDeadlineAt?: string;
   onChangePage?: (page: number) => void;
   onOpenRegister: (sku: ProductionSkuItem) => void;
 }) {
@@ -95,7 +95,7 @@ export function ProductionTableSection({
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">00:00</td>
+                    <td className="px-6 py-4">{orderingDeadlineAt ?? "-"}</td>
                     <td className="px-6 py-4">
                       <StatusBadge status={sku.status} />
                     </td>
