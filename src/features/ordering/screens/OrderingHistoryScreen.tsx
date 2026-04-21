@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { AxiosError } from "axios";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
 import { PageTitle } from "@/commons/components/page/PageTitle";
@@ -12,10 +13,15 @@ import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 function defaultDateRange(): { from: string; to: string } {
-  const to = new Date("2026-03-10");
+  const to = new Date();
   const from = new Date(to);
   from.setDate(from.getDate() - 89);
-  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const fmt = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   return { from: fmt(from), to: fmt(to) };
 }
 
@@ -41,6 +47,12 @@ export function OrderingHistoryScreen() {
 
   const historyQuery = useGetOrderingHistoryQuery(historyParams);
   const insightsQuery = useGetOrderingHistoryInsightsQuery(historyParams);
+  const historyError = historyQuery.error as AxiosError<{ detail?: string }> | null;
+  const insightsError = insightsQuery.error as AxiosError<{ detail?: string }> | null;
+  const errorMessage =
+    historyError?.response?.data?.detail ??
+    insightsError?.response?.data?.detail ??
+    null;
 
   const orderingHistoryStats: HighlightStat[] = [
     {
@@ -63,6 +75,11 @@ export function OrderingHistoryScreen() {
   return (
     <div className="space-y-6">
       <OrderingHero />
+      {errorMessage ? (
+        <section className="rounded-[16px] border border-red-200 bg-red-50 px-5 py-3 text-sm text-red-700">
+          발주 이력 조회 오류: {errorMessage}
+        </section>
+      ) : null}
       <section className="rounded-[24px] border border-border bg-white px-6 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
         <div className="grid gap-3 md:grid-cols-5">
           <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
