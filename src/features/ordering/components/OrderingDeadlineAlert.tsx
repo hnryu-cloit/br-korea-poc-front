@@ -7,10 +7,8 @@ import { useOrderingDeadlineGroups } from "@/features/ordering/hooks/useOrdering
 import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
 
 export function OrderingDeadlineAlert({
-  deadlineAt,
   deadlineItems,
 }: {
-  deadlineAt?: string | null;
   deadlineItems?: OrderingDeadlineItem[];
 }) {
   const [activeModalDeadlineAt, setActiveModalDeadlineAt] = useState<string | null>(null);
@@ -19,18 +17,8 @@ export function OrderingDeadlineAlert({
     if (deadlineItems && deadlineItems.length > 0) {
       return deadlineItems;
     }
-    if (deadlineAt) {
-      return [
-        {
-          id: `fallback-${deadlineAt}`,
-          sku_name: "품목 정보 없음",
-          deadline_at: deadlineAt,
-          is_ordered: false,
-        },
-      ];
-    }
     return [];
-  }, [deadlineAt, deadlineItems]);
+  }, [deadlineItems]);
 
   const groups = useOrderingDeadlineGroups(normalizedItems);
   const activeGroup = useMemo(

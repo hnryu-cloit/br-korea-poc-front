@@ -8,13 +8,10 @@ import { OrderingConfirmedSummary } from "@/features/ordering/components/Orderin
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
 import { OrderingOptionsSection } from "@/features/ordering/components/OrderingOptionsSection";
-import { MOCK_ORDERING_DEADLINE_ITEMS } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
-
-const USE_ORDERING_DEADLINE_MOCK = true;
 
 export function OrderingRecommendationsScreen() {
   const location = useLocation();
@@ -86,7 +83,28 @@ export function OrderingRecommendationsScreen() {
     );
   }
 
-  const deadlineItems = USE_ORDERING_DEADLINE_MOCK ? MOCK_ORDERING_DEADLINE_ITEMS : [];
+  const deadlineItems = useMemo(
+    () => {
+      const deadlineAt = optionsQuery.data?.deadline_at;
+      if (!deadlineAt) return [];
+      const uniqueBySku = new Map<string, { id: string; sku_name: string; deadline_at: string; is_ordered: boolean }>();
+      orderingOptions.forEach((option) => {
+        option.items.forEach((item, index) => {
+          const skuKey = item.sku_id ?? item.sku_name;
+          if (!uniqueBySku.has(skuKey)) {
+            uniqueBySku.set(skuKey, {
+              id: `${option.option_id}-${skuKey}-${index}`,
+              sku_name: item.sku_name,
+              deadline_at: deadlineAt,
+              is_ordered: false,
+            });
+          }
+        });
+      });
+      return Array.from(uniqueBySku.values());
+    },
+    [optionsQuery.data?.deadline_at, orderingOptions],
+  );
 
   return (
     <div className="space-y-6">
@@ -96,10 +114,7 @@ export function OrderingRecommendationsScreen() {
       >
         <CardAiButton contextKey="ordering:options" />
       </PageTitle>
-      <OrderingDeadlineAlert
-        deadlineAt={optionsQuery.data?.deadline_at}
-        deadlineItems={deadlineItems}
-      />
+      <OrderingDeadlineAlert deadlineItems={deadlineItems} />
       <OrderingContextCards
         weather={optionsQuery.data?.weather_summary}
         trend={optionsQuery.data?.trend_summary}
