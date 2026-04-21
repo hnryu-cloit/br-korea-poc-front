@@ -330,7 +330,7 @@ export interface MarketInsightsResponse {
   report_markdown: string;
   evidence_refs: string[];
   audience: "store_owner" | "hq_admin";
-  source: "ai" | "fallback";
+  source: "ai";
   trace_id?: string | null;
 }
 

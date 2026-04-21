@@ -9,4 +9,10 @@ export const useGetAnalyticsMarketInsightsQuery = (params?: GetMarketIntelligenc
     queryKey: analyticsQueryKeys.marketInsights(params),
     queryFn: () => getAnalyticsMarketInsights(params),
     enabled: !!params?.store_id,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    refetchInterval: 45_000,
+    retry: 1,
+    retryDelay: 800,
   });

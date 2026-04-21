@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import type { AxiosError } from "axios";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
@@ -27,6 +28,14 @@ export function AnalyticsScreen() {
   });
 
   const metrics = metricsQuery.data?.items ?? [];
+  const metricsError = metricsQuery.error as AxiosError<{ detail?: string }> | null;
+  const salesTrendError = salesTrendQuery.error as AxiosError<{ detail?: string }> | null;
+  const errorMessages = [
+    metricsError?.response?.data?.detail ?? (metricsError ? "매출 지표 조회 중 오류가 발생했습니다." : null),
+    salesTrendError?.response?.data?.detail ?? (salesTrendError ? "매출 추이 조회 중 오류가 발생했습니다." : null),
+  ].filter((message): message is string => Boolean(message));
+  const uniqueErrorMessages = Array.from(new Set(errorMessages));
+
   const handleChangeDateFrom = useCallback(
     (value: string) => {
       const nextSearchParams = new URLSearchParams(searchParams);
@@ -62,6 +71,17 @@ export function AnalyticsScreen() {
         onChangeDateFrom={handleChangeDateFrom}
         onChangeDateTo={handleChangeDateTo}
       />
+
+      {uniqueErrorMessages.length > 0 ? (
+        <section className="rounded-[22px] border border-red-200 bg-red-50 px-5 py-4 text-sm">
+          <p className="font-semibold text-red-700">실데이터를 불러오지 못했습니다.</p>
+          <div className="mt-1 space-y-1 text-red-600">
+            {uniqueErrorMessages.map((message) => (
+              <p key={message}>{message}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <SalesTrendChart data={salesTrendQuery.data} isLoading={salesTrendQuery.isLoading} />
 

@@ -18,7 +18,7 @@ type Props = {
   customerProfile?: CustomerProfileResponse;
   salesTrend?: SalesTrendResponse;
   aiInsights?: MarketInsightItem[];
-  source?: "ai" | "fallback";
+  source?: "ai";
   isLoading: boolean;
 };
 
@@ -45,7 +45,7 @@ export function MarketInsightBoardSection({
           <p className="text-base font-bold text-slate-900">핵심 인사이트 보드</p>
           {source ? (
             <span className="rounded-md border border-slate-200 px-2 py-0.5 text-[11px] text-slate-500">
-              {source === "ai" ? "AI 기반" : "기본 분석"}
+              AI 기반
             </span>
           ) : null}
         </div>
