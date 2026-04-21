@@ -20,6 +20,9 @@ function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
   if (normalized.startsWith("/images/")) {
     return normalized;
   }
+  if (normalized.startsWith("images/")) {
+    return `/${normalized}`;
+  }
   if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
     return normalized;
   }
