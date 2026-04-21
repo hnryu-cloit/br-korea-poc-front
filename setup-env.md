@@ -81,3 +81,4 @@ npm run dev -- --host 0.0.0.0 --port 6003
 
 - 매출 질의 API(`POST /api/sales/query`)는 `store_id`를 필수로 전달해야 합니다.
 - 상권 화면 인사이트는 backend API(`/api/analytics/market-intelligence/insights`, `/api/analytics/market-intelligence/insights/hq`)를 사용합니다.
+- 재고 진단 화면(`/production/inventory-diagnosis`)은 백엔드 `GET /api/production/inventory-status` 응답을 사용하며, 서버 패치 이후 언패킹 오류(`expected 3, got 2`)가 발생하지 않아야 합니다.
