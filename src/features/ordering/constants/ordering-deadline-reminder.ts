@@ -1,0 +1,5 @@
+export const ORDERING_REMINDER_LEAD_MINUTES = 20;
+export const ORDERING_REMINDER_TOAST_DURATION_MS = 6000;
+export const ORDERING_REMINDER_CHECK_INTERVAL_MS = 10_000;
+export const ORDERING_REMINDER_STORAGE_KEY = "ordering-deadline-reminder:v1";
+export const ORDERING_REMINDER_DEADLINE_TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
