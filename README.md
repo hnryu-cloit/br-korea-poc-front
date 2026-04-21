@@ -175,8 +175,8 @@ npm run dev
 
 별도 `.env` 파일 없이 실행 가능합니다. 백엔드 URL을 변경해야 할 경우 아래 변수를 지정합니다.
 
-| 변수 | 기본값 | 설명 |
-|---|---|---|
+| 변수                | 기본값                  | 설명                |
+| ------------------- | ----------------------- | ------------------- |
 | `VITE_API_BASE_URL` | `http://localhost:6002` | 백엔드 API base URL |
 
 - 소진공 빅데이터 OpenAPI 인증키는 프론트가 직접 보관하지 않고 백엔드 `.env`(`br-korea-poc-backend/.env`)에서만 관리합니다.
@@ -201,15 +201,15 @@ npm run build
 
 ### 점주 화면 (`store_owner` + `hq_admin`)
 
-| 경로 | 화면 | 연동 API |
-|---|---|---|
-| `/` | 시작 페이지 (역할 선택) | 세션 역할 선택 |
-| `/dashboard` | 홈 대시보드 | `/api/home/overview` |
-| `/production` | 생산 현황 | `/api/production/overview`, `/api/production/items`, `/api/production/items/{sku_id}`, `/api/production/registrations` |
-| `/ordering` | 주문 관리 | `/api/ordering/options`, `/api/ordering/selections` |
-| `/sales` | 매출 현황 | `/api/sales/insights`, `/api/sales/query`, `/api/sales/prompts` |
-| `/analytics` | 매출 조회 | `/api/analytics/metrics`, `/api/audit/logs` |
-| `/analytics/market` | 상권·고객 분석 | `/api/analytics/store-profile`, `/api/analytics/customer-profile`, `/api/analytics/sales-trend`, `/api/analytics/market-intelligence`, `/api/analytics/market-intelligence/weekly-report` |
+| 경로                | 화면                    | 연동 API                                                                                                                                                                                  |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                 | 시작 페이지 (역할 선택) | 세션 역할 선택                                                                                                                                                                            |
+| `/dashboard`        | 홈 대시보드             | `/api/home/overview`                                                                                                                                                                      |
+| `/production`       | 생산 현황               | `/api/production/overview`, `/api/production/items`, `/api/production/items/{sku_id}`, `/api/production/registrations`                                                                    |
+| `/ordering`         | 주문 관리               | `/api/ordering/options`, `/api/ordering/selections`                                                                                                                                       |
+| `/sales`            | 매출 현황               | `/api/sales/insights`, `/api/sales/query`, `/api/sales/prompts`                                                                                                                           |
+| `/analytics`        | 매출 조회               | `/api/analytics/metrics`, `/api/audit/logs`                                                                                                                                               |
+| `/analytics/market` | 상권·고객 분석          | `/api/analytics/store-profile`, `/api/analytics/customer-profile`, `/api/analytics/sales-trend`, `/api/analytics/market-intelligence`, `/api/analytics/market-intelligence/weekly-report` |
 
 ### 홈 대시보드 표시 규칙
 

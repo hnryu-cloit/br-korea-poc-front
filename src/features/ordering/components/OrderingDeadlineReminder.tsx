@@ -3,8 +3,7 @@ import { BellRing, Clock3 } from "lucide-react";
 import { useOrderingDeadlineReminder } from "@/features/ordering/hooks/useOrderingDeadlineReminder";
 
 export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes: string[] }) {
-  const { toast, activePanelItems, confirmReminder } =
-    useOrderingDeadlineReminder(deadlineTimes);
+  const { toast, activePanelItems, confirmReminder } = useOrderingDeadlineReminder(deadlineTimes);
 
   return (
     <>
@@ -34,7 +33,9 @@ export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes: str
                     className="flex items-center justify-between rounded-lg border border-orange-100 bg-orange-50/40 px-3 py-2"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">{item.deadlineAt} 주문 마감</p>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {item.deadlineAt} 주문 마감
+                      </p>
                       <p className="text-xs text-slate-600">{item.remainingMinutes}분 남음</p>
                     </div>
                     <button

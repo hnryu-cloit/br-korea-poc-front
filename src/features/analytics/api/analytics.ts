@@ -66,13 +66,16 @@ export async function getAnalyticsWeeklyReport(params?: GetMarketIntelligenceReq
   blob: Blob;
   filename: string;
 }> {
-  const response = await axiosInstance.get<Blob>("/api/analytics/market-intelligence/weekly-report", {
-    params: {
-      ...params,
-      format: "pdf",
+  const response = await axiosInstance.get<Blob>(
+    "/api/analytics/market-intelligence/weekly-report",
+    {
+      params: {
+        ...params,
+        format: "pdf",
+      },
+      responseType: "blob",
     },
-    responseType: "blob",
-  });
+  );
   const disposition = response.headers["content-disposition"] as string | undefined;
   const matched = disposition?.match(/filename=\"?([^"]+)\"?/i);
   const filename = matched?.[1] ?? "weekly_market_report.pdf";

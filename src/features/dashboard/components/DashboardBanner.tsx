@@ -25,7 +25,9 @@ export const DashboardBanner = ({ notices }: Props) => {
     id: notice.id,
     tag: NOTICE_CATEGORY_LABEL[notice.category] ?? notice.category,
     title: notice.title,
-    description: [notice.type, `${notice.startDate} ~ ${notice.endDate}`].filter(Boolean).join(" · "),
+    description: [notice.type, `${notice.startDate} ~ ${notice.endDate}`]
+      .filter(Boolean)
+      .join(" · "),
     tagColor: notice.tone,
   }));
 

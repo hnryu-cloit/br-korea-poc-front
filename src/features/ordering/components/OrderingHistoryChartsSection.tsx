@@ -27,13 +27,20 @@ const TooltipStyle = {
   boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
 };
 
-const ChartCard = ({ title, subtitle, className = "", children }: {
+const ChartCard = ({
+  title,
+  subtitle,
+  className = "",
+  children,
+}: {
   title: string;
   subtitle?: string;
   className?: string;
   children: React.ReactNode;
 }) => (
-  <article className={`rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)] ${className}`}>
+  <article
+    className={`rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)] ${className}`}
+  >
     <div className="mb-4">
       <p className="text-sm font-bold text-slate-800">{title}</p>
       {subtitle && <p className="mt-0.5 text-xs text-slate-400">{subtitle}</p>}
@@ -46,9 +53,7 @@ const Empty = () => (
   <p className="py-8 text-center text-sm text-slate-400">표시할 데이터가 없습니다.</p>
 );
 
-const Loading = () => (
-  <p className="py-8 text-center text-sm text-slate-400">불러오는 중...</p>
-);
+const Loading = () => <p className="py-8 text-center text-sm text-slate-400">불러오는 중...</p>;
 
 export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading }: Props) {
   // 날짜별 발주량/확정량 집계

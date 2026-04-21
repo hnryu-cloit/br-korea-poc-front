@@ -158,11 +158,18 @@ export function OrderingHistoryScreen() {
                   };
                   const badgeCls = severityStyle[anomaly.severity] ?? severityStyle.low;
                   return (
-                    <li key={anomaly.id} className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-3">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${badgeCls}`}>
+                    <li
+                      key={anomaly.id}
+                      className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-3"
+                    >
+                      <span
+                        className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${badgeCls}`}
+                      >
                         {severityLabel[anomaly.severity] ?? anomaly.severity}
                       </span>
-                      <p className="mt-1.5 text-sm font-semibold text-slate-800">{anomaly.message}</p>
+                      <p className="mt-1.5 text-sm font-semibold text-slate-800">
+                        {anomaly.message}
+                      </p>
                       <p className="mt-1 text-xs text-slate-500">{anomaly.recommended_action}</p>
                     </li>
                   );
@@ -182,14 +189,24 @@ export function OrderingHistoryScreen() {
                   const pct = Math.round(item.change_ratio * 100);
                   const isUp = pct >= 0;
                   return (
-                    <li key={item.item_nm} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <li
+                      key={item.item_nm}
+                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    >
                       <div>
                         <p className="text-sm font-semibold text-slate-800">{item.item_nm}</p>
-                        <p className="text-xs text-slate-500">평균 {item.avg_ord_qty.toFixed(1)}개 → 최근 {item.latest_ord_qty}개</p>
+                        <p className="text-xs text-slate-500">
+                          평균 {item.avg_ord_qty.toFixed(1)}개 → 최근 {item.latest_ord_qty}개
+                        </p>
                       </div>
-                      <p className={`flex items-center gap-0.5 text-sm font-bold ${isUp ? "text-rose-600" : "text-blue-600"}`}>
-                        <span className="material-symbols-outlined text-[14px]">{isUp ? "arrow_upward" : "arrow_downward"}</span>
-                        {isUp ? "+" : ""}{pct}%
+                      <p
+                        className={`flex items-center gap-0.5 text-sm font-bold ${isUp ? "text-rose-600" : "text-blue-600"}`}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          {isUp ? "arrow_upward" : "arrow_downward"}
+                        </span>
+                        {isUp ? "+" : ""}
+                        {pct}%
                       </p>
                     </li>
                   );
