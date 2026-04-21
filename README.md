@@ -180,7 +180,7 @@ npm run dev
 | `VITE_API_BASE_URL` | `http://localhost:6002` | 백엔드 API base URL |
 
 - 소진공 빅데이터 OpenAPI 인증키는 프론트가 직접 보관하지 않고 백엔드 `.env`(`br-korea-poc-backend/.env`)에서만 관리합니다.
-- 상권 인텔리전스 실시간 경쟁사 데이터는 백엔드가 `EXTERNAL_API_KEY` 우선, `SBIZ_API_COMMERCIAL_MAP_KEY` 2순위, `SBIZ_API_STORE_STATUS_KEY` 3순위 fallback으로 조회합니다.
+- 상권 인텔리전스 실시간 경쟁사 데이터는 백엔드가 `EXTERNAL_API_KEY` 우선, `SBIZ_API_COMMERCIAL_MAP_KEY` 2순위, `SBIZ_API_STORE_STATUS_KEY` 3순위 대체 경로로 조회합니다.
 - `/analytics/market`의 `매장 보고서 조회` 블록은 백엔드가 반환하는 `store_reports`(소진공 11개 API 키 상태 + 현재 연동중 키)를 그대로 표시합니다.
 - `store_reports` 상태값은 `실호출 미확인/키 미설정/연동중/점검 필요`를 사용할 수 있으며, `점검 필요`는 백엔드 외부 API 실호출 실패 시 표시됩니다.
 - 실호출 상태 판정 대상 API는 백엔드 기준으로 `SNS/핫플레이스/배달분석/관광 축제/업소현황/점포당 매출액 추이`입니다.
@@ -292,3 +292,14 @@ npm run build
 ## Session Update (2026-04-21, Round 2)
 
 - 이번 라운드의 변경은 AI 서비스(`br-korea-poc-ai`)의 오케스트레이션/예외처리/컨텍스트 전달 정비이며, 프론트 코드 변경은 없습니다.
+
+## Session Update (2026-04-21, Round 3)
+
+- 주문 추천 화면에서 `USE_ORDERING_DEADLINE_MOCK` 및 `mock-ordering-deadline-items` 의존을 제거했습니다.
+- 주문 마감 알림 테이블은 주문 옵션 API(`GET /api/ordering/options`)의 실제 `items` + `deadline_at` 데이터를 기반으로 렌더링합니다.
+- 데이터가 없을 때 `품목 정보 없음` fallback 행을 강제로 생성하지 않고, 빈 상태 메시지를 표시하도록 정리했습니다.
+- 매출 질의 처리 경로 라벨을 `stub_repository`에서 `repository`로 변경해 실데이터 경로명을 일관화했습니다.
+
+## Session Update (2026-04-21, Round 3)
+
+- 이번 라운드는 AI/Backend의 analytics·ordering fallback 정리 작업이며, 프론트 코드 변경은 없습니다.
