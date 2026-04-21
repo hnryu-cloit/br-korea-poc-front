@@ -48,8 +48,8 @@ npm run dev -- --host 0.0.0.0 --port 6003
 
 상권 인텔리전스 경쟁사 조회 기준:
 - 1순위: `EXTERNAL_API_KEY`
-- fallback: `SBIZ_API_COMMERCIAL_MAP_KEY`
-- fallback2: `SBIZ_API_STORE_STATUS_KEY`
+- 2순위 대체: `SBIZ_API_COMMERCIAL_MAP_KEY`
+- 3순위 대체: `SBIZ_API_STORE_STATUS_KEY`
 
 `GET /api/analytics/market-intelligence`의 `store_reports`는 위 11개 키 설정 상태를 `실호출 미확인/키 미설정`으로 표시하며, 실제 경쟁사 조회에 사용된 소스(`EXTERNAL_API_KEY` 또는 `SBIZ_API_COMMERCIAL_MAP_KEY`/`SBIZ_API_STORE_STATUS_KEY`)는 `연동중` 상태로 표시됩니다.
 

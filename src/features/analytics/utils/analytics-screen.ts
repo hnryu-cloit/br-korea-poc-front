@@ -25,7 +25,7 @@ export const filterLogsByCategory = (logs: AuditLogEntry[], activeCategory: Quer
 };
 
 export const calculateLogStats = (logs: AuditLogEntry[]) => {
-  const sqlCount = logs.filter((log) => log.route === "stub_repository").length;
+  const sqlCount = logs.filter((log) => log.route === "repository").length;
   const sqlPct = logs.length > 0 ? Math.round((sqlCount / logs.length) * 100) : 0;
   const blockedCount = logs.filter((log) => log.route === "policy_block").length;
   return { sqlPct, blockedCount };
