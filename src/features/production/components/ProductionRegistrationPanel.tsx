@@ -14,10 +14,16 @@ function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
   if (!imageUrl) {
     return null;
   }
-  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-    return imageUrl;
+  const normalized = imageUrl.startsWith("/static/menu-images/")
+    ? imageUrl.replace("/static/menu-images/", "/images/")
+    : imageUrl;
+  if (normalized.startsWith("/images/")) {
+    return normalized;
   }
-  return `${API_BASE_URL}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return normalized;
+  }
+  return `${API_BASE_URL}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
 }
 
 export function ProductionRegistrationPanel({

@@ -119,23 +119,47 @@ export interface ProductionRegistrationResponse {
 
 export interface WasteItem {
   item_nm: string;
-  total_disuse_qty: number;
-  loss_amount: number;
+  image_url?: string | null;
+  adjusted_loss_qty: number;
+  confirmed_disuse_qty: number;
+  estimated_expiry_loss_qty: number;
+  adjusted_loss_amount: number;
+  disuse_amount: number;
+  assumed_shelf_life_days: number;
+  expiry_risk_level: "높음" | "중간" | "낮음";
 }
 
 export interface WasteSummaryResponse {
   items: WasteItem[];
-  total_loss_amount: number;
+  total_adjusted_loss_amount: number;
+  total_disuse_amount: number;
+  total_estimated_expiry_loss_qty: number;
+  summary: Record<string, string | number>;
+  highlights: Array<Record<string, string | number>>;
+  actions: string[];
+  evidence: Record<string, unknown>;
 }
 
 export interface InventoryStatusItem {
+  item_cd: string;
   item_nm: string;
+  image_url?: string | null;
   total_stock: number;
   total_sold: number;
+  total_orderable: number;
+  stock_rate: number;
+  stockout_hour?: number | null;
+  is_stockout: boolean;
+  assumed_shelf_life_days: number;
+  expiry_risk_level: "높음" | "중간" | "낮음";
   status: "과잉" | "부족" | "적정";
 }
 
 export interface InventoryStatusResponse {
+  summary: Record<string, string | number>;
+  highlights: Array<Record<string, string | number>>;
+  actions: string[];
+  evidence: Record<string, unknown>;
   items: InventoryStatusItem[];
   pagination: {
     page: number;

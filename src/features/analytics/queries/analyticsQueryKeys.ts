@@ -19,4 +19,8 @@ export const analyticsQueryKeys = {
     [...ANALYTICS_QUERY_ROOT, "sales-trend", storeId ?? "all"] as const,
   marketIntelligence: (params?: GetMarketIntelligenceRequest) =>
     [...ANALYTICS_QUERY_ROOT, "market-intelligence", params ?? {}] as const,
+  marketInsights: (params?: GetMarketIntelligenceRequest) =>
+    [...ANALYTICS_QUERY_ROOT, "market-insights", params ?? {}] as const,
+  hqMarketInsights: (params?: GetMarketIntelligenceRequest & { limit?: number }) =>
+    [...ANALYTICS_QUERY_ROOT, "hq-market-insights", params ?? {}] as const,
 };

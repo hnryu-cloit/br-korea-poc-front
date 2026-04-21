@@ -1,4 +1,5 @@
 import type {
+  MarketActionItem,
   CustomerProfileResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
@@ -7,16 +8,37 @@ import { buildMarketActionItems } from "@/features/analytics/utils/market";
 type Props = {
   storeProfile?: StoreProfileResponse;
   customerProfile?: CustomerProfileResponse;
+  aiActionPlan?: MarketActionItem[];
+  source?: "ai" | "fallback";
   isLoading: boolean;
 };
 
-export function MarketActionGuideSection({ storeProfile, customerProfile, isLoading }: Props) {
-  const actionItems = buildMarketActionItems({ storeProfile, customerProfile });
+export function MarketActionGuideSection({
+  storeProfile,
+  customerProfile,
+  aiActionPlan,
+  source,
+  isLoading,
+}: Props) {
+  const actionItems =
+    aiActionPlan && aiActionPlan.length > 0
+      ? aiActionPlan
+          .sort((a, b) => a.priority - b.priority)
+          .slice(0, 3)
+          .map((item) => `${item.title}: ${item.action}`)
+      : buildMarketActionItems({ storeProfile, customerProfile });
 
   return (
     <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="mb-4">
-        <p className="text-base font-bold text-slate-900">운영 액션 가이드</p>
+        <div className="flex items-center gap-2">
+          <p className="text-base font-bold text-slate-900">운영 액션 가이드</p>
+          {source ? (
+            <span className="rounded-md border border-slate-200 px-2 py-0.5 text-[11px] text-slate-500">
+              {source === "ai" ? "AI 기반" : "기본 분석"}
+            </span>
+          ) : null}
+        </div>
         <p className="mt-1 text-sm text-slate-500">
           상권/고객 데이터 기준으로 바로 실행할 우선 액션입니다.
         </p>

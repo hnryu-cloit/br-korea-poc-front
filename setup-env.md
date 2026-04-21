@@ -76,3 +76,8 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 상권/고객 분석 화면의 글로벌 실패 메시지는 `market-intelligence` 메인 API 실패 기준으로만 표시됩니다. `store-profile`/`customer-profile`/`sales-trend` 일부 실패는 보조 데이터 결손으로 처리됩니다.
 
 - 상권/고객 분석(`/analytics/market`)의 글로벌 실패 문구는 메인 `market-intelligence` 쿼리 실패 기준으로만 노출됩니다.
+
+## Session Note (2026-04-21)
+
+- 매출 질의 API(`POST /api/sales/query`)는 `store_id`를 필수로 전달해야 합니다.
+- 상권 화면 인사이트는 backend API(`/api/analytics/market-intelligence/insights`, `/api/analytics/market-intelligence/insights/hq`)를 사용합니다.
