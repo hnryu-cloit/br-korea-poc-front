@@ -8,5 +8,10 @@ export const useGetSalesCampaignEffectQuery = (params?: GetSalesInsightsRequest)
   useQuery({
     queryKey: salesQueryKeys.campaignEffect(params),
     queryFn: () => getSalesCampaignEffect(params),
-    staleTime: 60_000,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    refetchInterval: 45_000,
+    retry: 1,
+    retryDelay: 800,
   });

@@ -43,19 +43,13 @@ export function buildSalesOpportunityFromLiveData(params: {
   insights?: SalesInsightsResponse;
   campaignEffect?: SalesCampaignEffectResponse;
   benchmark?: SalesBenchmarkData | null;
-  fallbackPrompts?: SalesPrompt[];
-}): SalesOpportunityMock {
-  const { storeName, summary, insights, campaignEffect, benchmark, fallbackPrompts } = params;
-  const safeSummary = summary ?? {
-    data_date: null,
-    today_revenue: 0,
-    today_net_revenue: 0,
-    weekly_data: [],
-    top_products: [],
-    avg_margin_rate: 0,
-    avg_net_profit_per_item: 0,
-    estimated_today_profit: 0,
-  };
+}): SalesOpportunityMock | null {
+  const { storeName, summary, insights, campaignEffect, benchmark } = params;
+  if (!summary || !insights || !campaignEffect || !benchmark) {
+    return null;
+  }
+
+  const safeSummary = summary;
 
   const weekly = safeSummary.weekly_data;
   const recentWeekly = weekly.slice(Math.max(weekly.length - 7, 0));
@@ -138,26 +132,7 @@ export function buildSalesOpportunityFromLiveData(params: {
   const marginImpactPct =
     beforeAov > 0 ? Math.round(((afterAov - beforeAov) / beforeAov) * 100) : 0;
 
-  const benchmarkData = benchmark ?? {
-    clusterName: "유사 상권",
-    clusterSize: 1,
-    bestStoreName: "비교 매장 없음",
-    bestStoreRevenue: safeSummary.today_revenue,
-    currentStoreRevenue: safeSummary.today_revenue,
-    peerAvgRevenue: safeSummary.today_revenue,
-    currentPeakRevenue: Math.max(
-      ...safeSummary.weekly_data.map((item) => item.revenue),
-      safeSummary.today_revenue,
-    ),
-    peerPeakRevenue: Math.max(
-      ...safeSummary.weekly_data.map((item) => item.revenue),
-      safeSummary.today_revenue,
-    ),
-    currentDonutMixPct: 50,
-    peerDonutMixPct: 50,
-    currentBeverageMixPct: 50,
-    peerBeverageMixPct: 50,
-  };
+  const benchmarkData = benchmark;
 
   const dominantChannel = onlineSharePct >= offlineSharePct ? "온라인" : "오프라인";
   const opportunityPrompts: SalesPrompt[] = [
@@ -180,9 +155,8 @@ export function buildSalesOpportunityFromLiveData(params: {
     });
   }
 
-  const promptSuggestions = [...(fallbackPrompts ?? []), ...opportunityPrompts];
   const uniquePromptSuggestions = Array.from(
-    new Map(promptSuggestions.map((item) => [item.prompt, item])).values(),
+    new Map(opportunityPrompts.map((item) => [item.prompt, item])).values(),
   );
 
   return {

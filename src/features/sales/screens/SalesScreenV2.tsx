@@ -15,6 +15,7 @@ export const SalesScreenV2 = () => {
     insightSections,
     latestAssistantMessage,
     summaryData,
+    salesErrorMessages,
     insightsLoading,
     summaryLoading,
     handleChangeDateFrom,
@@ -40,6 +41,17 @@ export const SalesScreenV2 = () => {
         onChangeDateTo={handleChangeDateTo}
       />
 
+      {salesErrorMessages.length > 0 ? (
+        <section className="rounded-[22px] border border-red-200 bg-red-50 px-5 py-4 text-sm">
+          <p className="font-semibold text-red-700">실데이터를 불러오지 못했습니다.</p>
+          <div className="mt-1 space-y-1 text-red-600">
+            {salesErrorMessages.map((message) => (
+              <p key={message}>{message}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <SalesV2InsightsSection sections={insightSections} isLoading={insightsLoading} />
 
       <SalesV2ChartsSection
@@ -49,11 +61,13 @@ export const SalesScreenV2 = () => {
         dateTo={dateTo}
       />
 
-      <SalesV2OpportunitySection
-        data={opportunity}
-        activeTab={opportunityTab}
-        onChangeTab={handleChangeOpportunityTab}
-      />
+      {opportunity ? (
+        <SalesV2OpportunitySection
+          data={opportunity}
+          activeTab={opportunityTab}
+          onChangeTab={handleChangeOpportunityTab}
+        />
+      ) : null}
 
       {/* <section>
         <SalesV2ChatPanel

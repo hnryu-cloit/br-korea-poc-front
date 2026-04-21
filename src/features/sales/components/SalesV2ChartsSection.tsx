@@ -189,7 +189,7 @@ export const SalesV2ChartsSection = ({
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value: number, name: string) => [value.toLocaleString() + "원", name]}
+                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}원`, String(name)]}
                 contentStyle={CustomTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -231,7 +231,7 @@ export const SalesV2ChartsSection = ({
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value: number, name: string) => [value.toLocaleString() + "원", name]}
+                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}원`, String(name)]}
                 contentStyle={CustomTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -266,7 +266,7 @@ export const SalesV2ChartsSection = ({
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => [value.toLocaleString() + "원"]}
+                  formatter={(value) => [`${Number(value ?? 0).toLocaleString()}원`]}
                   contentStyle={CustomTooltipStyle}
                 />
               </PieChart>
@@ -323,7 +323,7 @@ export const SalesV2ChartsSection = ({
                 width={75}
               />
               <Tooltip
-                formatter={(value: number) => [value.toLocaleString() + "원", "매출"]}
+                formatter={(value) => [`${Number(value ?? 0).toLocaleString()}원`, "매출"]}
                 contentStyle={CustomTooltipStyle}
               />
               <Bar dataKey="매출" radius={[0, 6, 6, 0]}>
@@ -360,7 +360,7 @@ export const SalesV2ChartsSection = ({
                 dot={{ r: 3, fill: "#2d6bff" }}
               />
               <Tooltip
-                formatter={(value: number) => [`${value}점 / 100`]}
+                formatter={(value) => [`${Number(value ?? 0)}점 / 100`]}
                 contentStyle={CustomTooltipStyle}
               />
             </RadarChart>

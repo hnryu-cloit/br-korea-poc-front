@@ -43,8 +43,8 @@ function getMix(summary: SalesSummaryResponse) {
   const total = donutSales + beverageSales;
   if (total <= 0) {
     return {
-      donutPct: 50,
-      beveragePct: 50,
+      donutPct: 0,
+      beveragePct: 0,
     };
   }
   return {
@@ -79,13 +79,15 @@ export const useGetSalesBenchmarkQuery = (storeId?: string, dateFrom?: string, d
       const sameRegionStores = stores
         .filter((store) => store.store_id !== storeId && store.region === currentStore.region)
         .slice(0, 6);
-      const fallbackStores = stores.filter((store) => store.store_id !== storeId).slice(0, 6);
       const peerStores =
         sameClusterStores.length > 0
           ? sameClusterStores
           : sameRegionStores.length > 0
             ? sameRegionStores
-            : fallbackStores;
+            : [];
+      if (peerStores.length === 0) {
+        throw new Error("유사 비교 매장을 찾을 수 없습니다.");
+      }
       const targetStores = [currentStore, ...peerStores];
 
       const summaryList = await Promise.all(

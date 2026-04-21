@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
+import type { AxiosError } from "axios";
 
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
@@ -103,7 +104,7 @@ export const useSalesScreenV2 = () => {
   const summaryQuery = useGetSalesSummaryQuery(sharedFilters);
   const postSalesQueryMutation = usePostSalesQueryMutation(user.storeId, "sales");
 
-  const { opportunity } = useSalesOpportunityData({
+  const { opportunity, benchmarkQuery } = useSalesOpportunityData({
     storeId: user.storeId,
     storeName: user.storeName,
     summary: summaryQuery.data,
@@ -115,7 +116,7 @@ export const useSalesScreenV2 = () => {
   });
 
   const suggestedPrompts = useMemo(() => {
-    const merged = [...opportunity.promptSuggestions, ...(promptsQuery.data ?? [])];
+    const merged = [...(opportunity?.promptSuggestions ?? []), ...(promptsQuery.data ?? [])];
     const uniqueByPrompt = new Map<string, { label: string; prompt: string }>();
     for (const item of merged) {
       if (!uniqueByPrompt.has(item.prompt)) {
@@ -123,7 +124,32 @@ export const useSalesScreenV2 = () => {
       }
     }
     return Array.from(uniqueByPrompt.values()).slice(0, 10);
-  }, [opportunity.promptSuggestions, promptsQuery.data]);
+  }, [opportunity?.promptSuggestions, promptsQuery.data]);
+
+  const salesErrorMessages = useMemo(() => {
+    const summaryError = summaryQuery.error as AxiosError<{ detail?: string }> | null;
+    const insightsError = insightsQuery.error as AxiosError<{ detail?: string }> | null;
+    const campaignError = campaignEffectQuery.error as AxiosError<{ detail?: string }> | null;
+    const benchmarkError = benchmarkQuery.error as Error | null;
+
+    const messages = [
+      summaryError?.response?.data?.detail ??
+        (summaryError ? "매출 요약 실데이터 조회 중 오류가 발생했습니다." : null),
+      insightsError?.response?.data?.detail ??
+        (insightsError ? "매출 인사이트 실데이터 조회 중 오류가 발생했습니다." : null),
+      campaignError?.response?.data?.detail ??
+        (campaignError ? "캠페인 효과 실데이터 조회 중 오류가 발생했습니다." : null),
+      benchmarkError?.message ?? null,
+    ].filter((message): message is string => Boolean(message));
+
+    return Array.from(new Set(messages));
+  }, [
+    campaignEffectQuery.error,
+    benchmarkQuery.error,
+    insightsQuery.data,
+    insightsQuery.error,
+    summaryQuery.error,
+  ]);
 
   const insightSections = useMemo<SalesInsightSection[]>(() => {
     const data = insightsQuery.data;
@@ -268,6 +294,7 @@ export const useSalesScreenV2 = () => {
     suggestedPrompts,
     latestAssistantMessage,
     summaryData: summaryQuery.data,
+    salesErrorMessages,
     insightsLoading: insightsQuery.isLoading,
     summaryLoading: summaryQuery.isLoading,
     promptsLoading: promptsQuery.isLoading,
