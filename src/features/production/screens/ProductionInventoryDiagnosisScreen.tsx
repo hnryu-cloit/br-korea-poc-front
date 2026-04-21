@@ -3,11 +3,14 @@ import { PageTitle } from "@/commons/components/page/PageTitle";
 import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
 import { useGetProductionInventoryStatusQuery } from "@/features/production/queries/useGetProductionInventoryStatusQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+import type { AxiosError } from "axios";
 
 export function ProductionInventoryDiagnosisScreen() {
   const { user } = useDemoSession();
 
   const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "");
+  const apiError = inventoryStatusQuery.error as AxiosError<{ detail?: string }> | null;
+  const errorMessage = apiError?.response?.data?.detail ?? null;
 
   return (
     <div className="space-y-6">
@@ -20,6 +23,7 @@ export function ProductionInventoryDiagnosisScreen() {
       <ProductionInventoryStatusSection
         data={inventoryStatusQuery.data}
         isLoading={inventoryStatusQuery.isLoading}
+        errorMessage={errorMessage ?? undefined}
       />
     </div>
   );
