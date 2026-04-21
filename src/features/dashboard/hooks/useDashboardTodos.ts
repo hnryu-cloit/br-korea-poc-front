@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import type { DashboardTodoItem } from "@/features/dashboard/types/todo";
-import type { ScheduleTodoItem } from "@/features/dashboard/types/schedule";
+import type { DashboardTodoItem, ScheduleTodoItem } from "@/features/dashboard/types/dashboard";
 
 const STORAGE_KEY_PREFIX = "dashboard-todos-v1";
 

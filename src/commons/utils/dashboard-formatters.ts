@@ -8,7 +8,12 @@ export type DashboardStatKey =
 export const formatDashboardValueWithUnit = (value: number | string, unit?: DashboardValueUnit) => {
   if (typeof value === "number") {
     if (unit === "count") return `${value}개`;
-    if (unit === "minutes") return `${value}분`;
+    if (unit === "minutes") {
+      if (value < 60) return `${value}분`;
+      const hours = Math.floor(value / 60);
+      const minutes = value % 60;
+      return minutes === 0 ? `${hours}시간` : `${hours}시간 ${minutes}분`;
+    }
   }
   return String(value);
 };

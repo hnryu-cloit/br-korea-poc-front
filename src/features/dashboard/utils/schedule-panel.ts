@@ -3,8 +3,11 @@ import {
   SCHEDULE_EVENT_STATUS_PRIORITY,
   type ScheduleEventStatus,
 } from "@/features/dashboard/constants/schedule-panel";
-import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/schedule";
-import type { DashboardTodoItem } from "@/features/dashboard/types/todo";
+import type {
+  DashboardTodoItem,
+  ScheduleEvent,
+  ScheduleTodoItem,
+} from "@/features/dashboard/types/dashboard";
 
 type EventDateRange = {
   startDate: Date;
@@ -14,8 +17,8 @@ type EventDateRange = {
 export type ScheduleEventSummaryItem = {
   id: string;
   title: string;
-  type: ScheduleEvent["type"];
-  description: string;
+  category: ScheduleEvent["category"];
+  type: string;
   periodText: string;
   dDayText: string;
   status: ScheduleEventStatus;
@@ -179,10 +182,10 @@ export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, max
       if (!status) return null;
 
       return {
-        id: `${event.date}-${event.type}-${event.title}`,
+        id: `${event.date}-${event.category}-${event.title}`,
         title: event.title,
+        category: event.category,
         type: event.type,
-        description: event.description,
         status,
         periodText: buildPeriodText(event),
         dDayText: buildDDayText(status, selectedDate, range),
@@ -203,8 +206,8 @@ export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, max
   const normalized: ScheduleEventSummaryItem[] = withStatus.map((item) => ({
     id: item.id,
     title: item.title,
+    category: item.category,
     type: item.type,
-    description: item.description,
     status: item.status,
     periodText: item.periodText,
     dDayText: item.dDayText,

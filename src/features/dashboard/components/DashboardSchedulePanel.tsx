@@ -8,7 +8,7 @@ import {
   type SchedulePanelTab,
 } from "@/features/dashboard/constants/schedule-panel";
 import { useDashboardTodos } from "@/features/dashboard/hooks/useDashboardTodos";
-import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/schedule";
+import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/dashboard";
 import { getEventSummary } from "@/features/dashboard/utils/schedule-panel";
 
 export function DashboardSchedulePanel({

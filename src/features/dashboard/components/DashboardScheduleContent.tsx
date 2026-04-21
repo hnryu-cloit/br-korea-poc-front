@@ -8,7 +8,7 @@ import {
   SCHEDULE_PANEL_TAB_LABELS,
   type SchedulePanelTab,
 } from "@/features/dashboard/constants/schedule-panel";
-import type { DashboardTodoItem } from "@/features/dashboard/types/todo";
+import type { DashboardTodoItem } from "@/features/dashboard/types/dashboard";
 import type { ScheduleEventSummaryItem } from "@/features/dashboard/utils/schedule-panel";
 
 export function DashboardScheduleContent({
@@ -110,9 +110,9 @@ export function DashboardScheduleContent({
                 >
                   <div className="shrink-0 pt-0.5">
                     <span
-                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.type] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}
+                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.category] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}
                     >
-                      {SCHEDULE_EVENT_TYPE_LABEL[event.type] ?? event.type}
+                      {SCHEDULE_EVENT_TYPE_LABEL[event.category] ?? event.category}
                     </span>
                   </div>
                   <div className="flex-1">
