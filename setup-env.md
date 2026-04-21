@@ -82,3 +82,45 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 매출 질의 API(`POST /api/sales/query`)는 `store_id`를 필수로 전달해야 합니다.
 - 상권 화면 인사이트는 backend API(`/api/analytics/market-intelligence/insights`, `/api/analytics/market-intelligence/insights/hq`)를 사용합니다.
 - 재고 진단 화면(`/production/inventory-diagnosis`)은 백엔드 `GET /api/production/inventory-status` 응답을 사용하며, 서버 패치 이후 언패킹 오류(`expected 3, got 2`)가 발생하지 않아야 합니다.
+
+## Session Note (2026-04-22)
+
+- `/production/waste-loss`, `/production/inventory-diagnosis` 응답 지연 완화를 위해 프론트 쿼리 캐시 정책을 조정했습니다.
+  - `staleTime: 60초`, `gcTime: 5분`, `refetchOnWindowFocus: false`
+  - 재고 진단 쿼리는 페이지 상태(`page`)를 실제 API 호출에 연결해 페이지네이션 동작을 정합화했습니다.
+- 로컬 확인 기준 URL
+  - `http://localhost:6003/production/waste-loss`
+  - `http://localhost:6003/production/inventory-diagnosis`
+
+## Session Note (2026-04-22, analytics no-fallback)
+
+- `/analytics` 화면에서 사용하는 `GET /api/analytics/metrics`, `GET /api/analytics/sales-trend`는 fallback 데이터 대신 오류를 반환하도록 backend 정책이 변경되었습니다.
+- `store_id`가 유효하지 않으면 metrics API는 422를 반환합니다.
+
+## Session Note (2026-04-22, sales metrics no-fallback)
+
+- `/sales/metrics`는 fallback 수치 조합을 사용하지 않습니다.
+- `GET /api/sales/summary`, `GET /api/sales/insights`, `GET /api/sales/campaign-effect` 실데이터가 없거나 오류이면 화면 상단에 오류 배너가 표시되고 기회영역 카드는 렌더링하지 않습니다.
+
+## Session Note (2026-04-22, ordering history insights RAG)
+
+- `/ordering/history` 이상징후 섹션은 `GET /api/ordering/history/insights` 결과를 사용합니다.
+- 해당 API는 backend(6002)와 ai service가 함께 실행되어야 하며, AI 미기동 시 502가 반환됩니다.
+
+## Session Note (2026-04-22, production status deadline display)
+
+- `/production/status`의 `주문 마감 시간`은 고정값이 아니라 `GET /api/ordering/deadline` 응답값으로 렌더링됩니다.
+- backend(6002)가 미기동이면 해당 컬럼은 `-`로 표시되고 다른 조회도 실패할 수 있습니다.
+
+## Session Note (2026-04-22, analytics/sales RAG+Gemini no-fallback)
+
+- `/analytics/market` 인사이트 응답은 `source="ai"`만 허용하며 fallback 응답을 사용하지 않습니다.
+- `/sales/metrics`의 추천 질문/인사이트/캠페인 서술형은 backend+ai service 연동이 필요하며, AI 실패 시 오류로 반환됩니다.
+- 프론트 쿼리 정책은 UI 변경 없이 `45초` 폴링(`market insights`, `sales summary/insights/campaign/prompts`)으로 백그라운드 갱신을 반영합니다.
+
+## Session Note (2026-04-22, QA 병렬 회차)
+
+- QA 기준 자동 점검은 아래 명령으로 실행했습니다.
+  - `br-korea-poc-front`: `npm test`
+  - `br-korea-poc-backend`: `PYTHONPATH=. pytest -q tests/test_system_integration.py tests/test_health.py::test_sales_prompts tests/test_health.py::test_ordering_selection_save`
+  - `br-korea-poc-ai`: `pytest -q tests/test_quality_scenarios.py::test_data_extraction_total_sales_intent tests/test_quality_scenarios.py::test_data_extraction_peak_hours_intent tests/test_quality_scenarios.py::test_data_extraction_top_items_intent tests/test_quality_scenarios.py::test_data_extraction_profitability_standard_margin`
