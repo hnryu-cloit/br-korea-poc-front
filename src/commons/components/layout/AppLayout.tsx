@@ -6,6 +6,8 @@ import { AppHeader } from "@/commons/components/layout/AppHeader";
 import { AppSidebar } from "@/commons/components/layout/AppSidebar";
 import { SessionExpiryGuard } from "@/commons/components/session/SessionExpiryGuard";
 import { FloatingAiChatProvider } from "@/commons/contexts/FloatingAiChatProvider";
+import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
+import { MOCK_ORDERING_DEADLINE_TIMES } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { useGetNotificationsQuery } from "@/features/notifications/queries/useGetNotificationsQuery";
 
 export function AppLayout() {
@@ -39,6 +41,9 @@ export function AppLayout() {
           </main>
         </div>
         {!isStartPage ? <FloatingAiChat /> : null}
+        {!isStartPage ? (
+          <OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />
+        ) : null}
         {!isStartPage ? <SessionExpiryGuard /> : null}
       </div>
     </FloatingAiChatProvider>

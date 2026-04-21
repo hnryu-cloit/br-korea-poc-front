@@ -59,7 +59,10 @@ export function OrderingRecommendationsScreen() {
     () => orderingOptions.find((option) => option.option_id === effectiveSelectedOptionId) ?? null,
     [effectiveSelectedOptionId, orderingOptions],
   );
-
+  const deadlineItems = useMemo(
+    () => (USE_ORDERING_DEADLINE_MOCK ? MOCK_ORDERING_DEADLINE_ITEMS : []),
+    [],
+  );
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
     setSubmitError(null);
@@ -85,8 +88,6 @@ export function OrderingRecommendationsScreen() {
       </div>
     );
   }
-
-  const deadlineItems = USE_ORDERING_DEADLINE_MOCK ? MOCK_ORDERING_DEADLINE_ITEMS : [];
 
   return (
     <div className="space-y-6">
