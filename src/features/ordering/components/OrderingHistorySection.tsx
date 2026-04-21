@@ -137,39 +137,62 @@ export function OrderingHistorySection({ data, isLoading }: Props) {
               <p className="mb-3 text-sm font-bold text-slate-800">
                 {selectedItem.item_nm}
                 {selectedItem.ord_grp_nm ? (
-                  <span className="ml-2 text-xs font-normal text-slate-400">{selectedItem.ord_grp_nm}</span>
+                  <span className="ml-2 text-xs font-normal text-slate-400">
+                    {selectedItem.ord_grp_nm}
+                  </span>
                 ) : null}
               </p>
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center">
                   <p className="text-[10px] text-slate-400">발주량</p>
-                  <p className="mt-1 text-base font-bold text-slate-800">{selectedItem.ord_qty ?? "-"}개</p>
+                  <p className="mt-1 text-base font-bold text-slate-800">
+                    {selectedItem.ord_qty ?? "-"}개
+                  </p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center">
                   <p className="text-[10px] text-slate-400">확정량</p>
-                  <p className="mt-1 text-base font-bold text-slate-800">{selectedItem.confrm_qty ?? "-"}개</p>
+                  <p className="mt-1 text-base font-bold text-slate-800">
+                    {selectedItem.confrm_qty ?? "-"}개
+                  </p>
                 </div>
-                <div className={`rounded-xl border px-3 py-2.5 text-center ${
-                  selectedItem.ord_qty && selectedItem.confrm_qty != null &&
-                  Math.round((Math.abs(selectedItem.confrm_qty - selectedItem.ord_qty) / Math.max(selectedItem.ord_qty, 1)) * 100) >= 30
-                    ? "border-red-200 bg-red-50"
-                    : "border-slate-200 bg-white"
-                }`}>
+                <div
+                  className={`rounded-xl border px-3 py-2.5 text-center ${
+                    selectedItem.ord_qty &&
+                    selectedItem.confrm_qty != null &&
+                    Math.round(
+                      (Math.abs(selectedItem.confrm_qty - selectedItem.ord_qty) /
+                        Math.max(selectedItem.ord_qty, 1)) *
+                        100,
+                    ) >= 30
+                      ? "border-red-200 bg-red-50"
+                      : "border-slate-200 bg-white"
+                  }`}
+                >
                   <p className="text-[10px] text-slate-400">괴리율</p>
-                  <p className={`mt-1 text-base font-bold ${
-                    selectedItem.ord_qty && selectedItem.confrm_qty != null &&
-                    Math.round((Math.abs(selectedItem.confrm_qty - selectedItem.ord_qty) / Math.max(selectedItem.ord_qty, 1)) * 100) >= 30
-                      ? "text-red-600"
-                      : "text-slate-800"
-                  }`}>
-                    {selectedItem.ord_qty && selectedItem.ord_qty > 0 && selectedItem.confrm_qty != null
+                  <p
+                    className={`mt-1 text-base font-bold ${
+                      selectedItem.ord_qty &&
+                      selectedItem.confrm_qty != null &&
+                      Math.round(
+                        (Math.abs(selectedItem.confrm_qty - selectedItem.ord_qty) /
+                          Math.max(selectedItem.ord_qty, 1)) *
+                          100,
+                      ) >= 30
+                        ? "text-red-600"
+                        : "text-slate-800"
+                    }`}
+                  >
+                    {selectedItem.ord_qty &&
+                    selectedItem.ord_qty > 0 &&
+                    selectedItem.confrm_qty != null
                       ? `${Math.round((Math.abs(selectedItem.confrm_qty - selectedItem.ord_qty) / selectedItem.ord_qty) * 100)}%`
                       : "-"}
                   </p>
                 </div>
               </div>
               <p className="mt-3 text-xs text-slate-500">
-                {selectedItem.is_auto ? "자동 발주" : "수동 발주"} · 납품일 {selectedItem.dlv_dt ?? "-"}
+                {selectedItem.is_auto ? "자동 발주" : "수동 발주"} · 납품일{" "}
+                {selectedItem.dlv_dt ?? "-"}
               </p>
             </div>
           ) : null}

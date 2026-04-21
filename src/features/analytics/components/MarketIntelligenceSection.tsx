@@ -17,8 +17,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
     data?.customer_characteristics.regular_customer_ratio == null;
   const unavailableVisitTrait =
     !data?.customer_characteristics.top_age_group || !data?.customer_characteristics.top_visit_time;
-  const unavailableReasons = (data?.data_sources ?? []).filter((source) =>
-    source.includes("미식별") || source.includes("미제공"),
+  const unavailableReasons = (data?.data_sources ?? []).filter(
+    (source) => source.includes("미식별") || source.includes("미제공"),
   );
 
   return (
@@ -26,7 +26,9 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-semibold tracking-[0.08em] text-[#2c61d6]">상권 인텔리전스</p>
-          <h3 className="mt-1 text-lg font-bold text-slate-900">반경 {data?.radius_km ?? 3}km 상권·고객 종합 분석</h3>
+          <h3 className="mt-1 text-lg font-bold text-slate-900">
+            반경 {data?.radius_km ?? 3}km 상권·고객 종합 분석
+          </h3>
         </div>
         <p className="text-xs text-slate-500">업종·매출·인구·지역현황·고객특성 실데이터 기준</p>
       </div>
@@ -48,9 +50,14 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                 <p className="text-xs font-semibold text-slate-700">최근 업소수 변화추이</p>
                 <div className="mt-2 space-y-2">
                   {data.industry_analysis.business_count_trend.map((point) => (
-                    <div key={point.period} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-xs text-slate-600">
+                    <div
+                      key={point.period}
+                      className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-xs text-slate-600"
+                    >
                       <span>{point.period}</span>
-                      <span className="font-semibold text-slate-900">{point.business_count.toLocaleString()}개</span>
+                      <span className="font-semibold text-slate-900">
+                        {point.business_count.toLocaleString()}개
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -59,9 +66,14 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                 <p className="text-xs font-semibold text-slate-700">5년 업력현황</p>
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">
                   {data.industry_analysis.business_age_5y.map((item) => (
-                    <div key={item.bucket} className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600">
+                    <div
+                      key={item.bucket}
+                      className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600"
+                    >
                       <p>{item.bucket}</p>
-                      <p className="mt-1 text-sm font-semibold text-slate-900">{item.business_count.toLocaleString()}개</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {item.business_count.toLocaleString()}개
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -76,10 +88,15 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                 <p className="text-xs font-semibold text-slate-700">매출건수 및 월평균 매출추이</p>
                 <div className="mt-2 space-y-2">
                   {data.sales_analysis.monthly_sales_trend.map((point) => (
-                    <div key={point.period} className="grid grid-cols-3 rounded-lg bg-white px-3 py-2 text-xs text-slate-600">
+                    <div
+                      key={point.period}
+                      className="grid grid-cols-3 rounded-lg bg-white px-3 py-2 text-xs text-slate-600"
+                    >
                       <span>{point.period}</span>
                       <span className="text-center">{point.sales_count.toLocaleString()}건</span>
-                      <span className="text-right font-semibold text-slate-900">{formatWonCompact(point.sales_amount)}</span>
+                      <span className="text-right font-semibold text-slate-900">
+                        {formatWonCompact(point.sales_amount)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -87,15 +104,21 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
               <div className="grid gap-2 sm:grid-cols-1">
                 <div className="rounded-xl bg-white px-3 py-2">
                   <p className="text-[11px] text-slate-500">월 평균 매출</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{formatWonCompact(data.sales_analysis.monthly_average_sales)}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                    {formatWonCompact(data.sales_analysis.monthly_average_sales)}
+                  </p>
                 </div>
                 <div className="rounded-xl bg-white px-3 py-2">
                   <p className="text-[11px] text-slate-500">월 추정매출</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{formatWonCompact(data.estimated_sales_summary.monthly_estimated_sales)}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                    {formatWonCompact(data.estimated_sales_summary.monthly_estimated_sales)}
+                  </p>
                 </div>
                 <div className="rounded-xl bg-white px-3 py-2">
                   <p className="text-[11px] text-slate-500">주말 매출 비중</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{data.estimated_sales_summary.weekend_ratio.toFixed(1)}%</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                    {data.estimated_sales_summary.weekend_ratio.toFixed(1)}%
+                  </p>
                 </div>
               </div>
             </div>
@@ -108,24 +131,39 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                 <p className="text-xs font-semibold text-slate-700">유동·주거·직장 인구 추이</p>
                 <div className="mt-2 space-y-2">
                   {data.population_analysis.population_trend.map((point) => (
-                    <div key={point.period} className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600">
+                    <div
+                      key={point.period}
+                      className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600"
+                    >
                       <p className="font-semibold text-slate-800">{point.period}</p>
-                      <p className="mt-1">유동 {point.floating_population.toLocaleString()}명 · 주거 {point.residential_population.toLocaleString()}명 · 직장 {point.worker_population.toLocaleString()}명</p>
+                      <p className="mt-1">
+                        유동 {point.floating_population.toLocaleString()}명 · 주거{" "}
+                        {point.residential_population.toLocaleString()}명 · 직장{" "}
+                        {point.worker_population.toLocaleString()}명
+                      </p>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-700">주거/직장 인구 소득소비(추정)</p>
+                <p className="text-xs font-semibold text-slate-700">
+                  주거/직장 인구 소득소비(추정)
+                </p>
                 <div className="mt-2 space-y-2">
                   {data.population_analysis.income_consumption.map((item) => (
                     <div key={item.segment}>
                       <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
                         <span>{item.segment}</span>
-                        <span>{item.estimated_customers.toLocaleString()}명 · {item.sales_share_ratio.toFixed(1)}%</span>
+                        <span>
+                          {item.estimated_customers.toLocaleString()}명 ·{" "}
+                          {item.sales_share_ratio.toFixed(1)}%
+                        </span>
                       </div>
                       <div className="h-2 rounded-full bg-slate-100">
-                        <div className="h-2 rounded-full bg-[linear-gradient(90deg,#285ed3_0%,#5aa3ff_100%)]" style={{ width: `${item.sales_share_ratio}%` }} />
+                        <div
+                          className="h-2 rounded-full bg-[linear-gradient(90deg,#285ed3_0%,#5aa3ff_100%)]"
+                          style={{ width: `${item.sales_share_ratio}%` }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -140,25 +178,37 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             <div className="mt-3 grid gap-2 md:grid-cols-4">
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">세대수(추정)</p>
-                <p className="mt-1 text-sm font-semibold text-slate-900">{data.regional_status.household_count.toLocaleString()}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {data.regional_status.household_count.toLocaleString()}
+                </p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">공동주택(추정)</p>
-                <p className="mt-1 text-sm font-semibold text-slate-900">{data.regional_status.apartment_household_count.toLocaleString()}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {data.regional_status.apartment_household_count.toLocaleString()}
+                </p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">주요시설 수(프록시)</p>
-                <p className="mt-1 text-sm font-semibold text-slate-900">{data.regional_status.major_facilities_count.toLocaleString()}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {data.regional_status.major_facilities_count.toLocaleString()}
+                </p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">교통 접근지수(프록시)</p>
-                <p className="mt-1 text-sm font-semibold text-slate-900">{data.regional_status.transport_access_index.toFixed(1)}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {data.regional_status.transport_access_index.toFixed(1)}
+                </p>
               </div>
             </div>
             <div className="mt-3 space-y-2">
               {data.estimated_residence_regions.map((region) => (
-                <div key={region.region_name} className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600">
-                  {region.region_name} · {region.share_ratio.toFixed(1)}% · {region.estimated_customers.toLocaleString()}명
+                <div
+                  key={region.region_name}
+                  className="rounded-lg bg-white px-3 py-2 text-xs text-slate-600"
+                >
+                  {region.region_name} · {region.share_ratio.toFixed(1)}% ·{" "}
+                  {region.estimated_customers.toLocaleString()}명
                 </div>
               ))}
             </div>
@@ -170,7 +220,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">남/여 비율</p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">
-                  남 {formatPercent(data.customer_characteristics.male_ratio)} / 여 {formatPercent(data.customer_characteristics.female_ratio)}
+                  남 {formatPercent(data.customer_characteristics.male_ratio)} / 여{" "}
+                  {formatPercent(data.customer_characteristics.female_ratio)}
                 </p>
               </div>
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
@@ -181,7 +232,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                   신규/단골 비율
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">
-                  신규 {formatPercent(data.customer_characteristics.new_customer_ratio)} / 단골 {formatPercent(data.customer_characteristics.regular_customer_ratio)}
+                  신규 {formatPercent(data.customer_characteristics.new_customer_ratio)} / 단골{" "}
+                  {formatPercent(data.customer_characteristics.regular_customer_ratio)}
                 </p>
                 {unavailableCustomerRatio ? (
                   <p className="mt-1 text-[11px] text-amber-700">
@@ -197,7 +249,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
                   주요 방문 특성
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">
-                  {data.customer_characteristics.top_age_group ?? "미제공"} · {data.customer_characteristics.top_visit_time ?? "미제공"}
+                  {data.customer_characteristics.top_age_group ?? "미제공"} ·{" "}
+                  {data.customer_characteristics.top_visit_time ?? "미제공"}
                 </p>
                 {unavailableVisitTrait ? (
                   <p className="mt-1 text-[11px] text-amber-700">

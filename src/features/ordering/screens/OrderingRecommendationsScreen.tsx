@@ -102,7 +102,7 @@ export function OrderingRecommendationsScreen() {
         deadlineItems={deadlineItems}
       />
       <OrderingContextCards
-        weather={optionsQuery.data?.weather_summary}
+        weather={optionsQuery.data?.weather}
         trend={optionsQuery.data?.trend_summary}
       />
       <OrderingOptionsSection

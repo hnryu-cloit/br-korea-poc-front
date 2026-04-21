@@ -104,12 +104,17 @@ export const SalesV2ChartsSection = ({
 
   // Radar: 핵심 지표 (0–100 정규화)
   const netRatio =
-    todayRevenue > 0 ? Math.min(100, Math.round((summary!.today_net_revenue / todayRevenue) * 100)) : 0;
+    todayRevenue > 0
+      ? Math.min(100, Math.round((summary!.today_net_revenue / todayRevenue) * 100))
+      : 0;
   const profitRatio =
     todayRevenue > 0 ? Math.min(100, Math.round((todayProfit / todayRevenue) * 100)) : 0;
   const marginScore = Math.min(100, Math.round((summary?.avg_margin_rate ?? 0) * 100));
   const diversityScore = Math.min(100, topProducts.length * 17);
-  const unitScore = Math.min(100, Math.round(((summary?.avg_net_profit_per_item ?? 0) / 8_000) * 100));
+  const unitScore = Math.min(
+    100,
+    Math.round(((summary?.avg_net_profit_per_item ?? 0) / 8_000) * 100),
+  );
   const radarData = [
     { subject: "마진율", value: marginScore },
     { subject: "순매출 비율", value: netRatio },
@@ -306,7 +311,11 @@ export const SalesV2ChartsSection = ({
               margin={{ top: 4, right: 16, left: 4, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-              <XAxis type="number" tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
+              <XAxis
+                type="number"
+                tickFormatter={fmtWon}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
+              />
               <YAxis
                 type="category"
                 dataKey="name"
@@ -382,9 +391,14 @@ export const SalesV2ChartsSection = ({
             <div className="mt-3 flex flex-wrap gap-3">
               {treemapData.map((item, i) => (
                 <div key={item.name} className="flex items-center gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: PALETTE[i % PALETTE.length] }} />
+                  <div
+                    className="h-2.5 w-2.5 rounded-sm"
+                    style={{ backgroundColor: PALETTE[i % PALETTE.length] }}
+                  />
                   <span className="text-xs text-slate-600">{item.name}</span>
-                  <span className="text-xs font-semibold text-slate-800">{fmtWon(item.size)}원</span>
+                  <span className="text-xs font-semibold text-slate-800">
+                    {fmtWon(item.size)}원
+                  </span>
                 </div>
               ))}
             </div>

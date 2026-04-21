@@ -3,13 +3,11 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
-import {
-  formatDashboardValueWithUnit,
-  parseDashboardHighlight,
-} from "@/commons/utils/dashboard-formatters";
+import { formatDashboardValueWithUnit } from "@/commons/utils/dashboard-formatters";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import type { SalesQueryResponse } from "@/features/sales/types/sales";
+import { formatUpdatedAt } from "@/commons/utils/format-updated-at";
 
 const domainAccentClassMap: Record<DashboardSummaryCard["domain"], string> = {
   production: "bg-[#eef4ff] text-[#2454C8] border-[#cdddfc]",
@@ -33,10 +31,32 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
   const [lastHistoryId, setLastHistoryId] = useState<string>("");
   const postSalesQueryMutation = usePostSalesQueryMutation(undefined, card.domain);
 
-  const parsedHighlights = useMemo(
-    () => card.highlights_text.map(parseDashboardHighlight),
-    [card.highlights_text],
-  );
+  const highlightLines = useMemo(() => {
+    return card.highlights
+      .map((highlight) => {
+        if (card.domain === "production" && highlight.type === "production_item") {
+          const name = highlight.name ?? "상품";
+          const current = typeof highlight.current === "number" ? `${highlight.current}개` : "-";
+          const forecast = typeof highlight.forecast === "number" ? `${highlight.forecast}개` : "-";
+          const recommended =
+            typeof highlight.recommended === "number" ? `${highlight.recommended}개` : "-";
+          const depletionTime = highlight.depletion_time ?? "-";
+          return `${name} · 현재 ${current} / 예측 ${forecast} · 권장 ${recommended} · 소진 ${formatUpdatedAt(depletionTime)}`;
+        }
+
+        if (card.domain === "ordering" && highlight.type === "ordering_summary") {
+          const status = highlight.recommended_selected ? "추천안 선택 완료" : "검토 필요";
+          return `주문 상태 · ${status} · 추천안 ${highlight.ordering_option_count ?? 0}개 · 최근 7일 선택 ${highlight.recent_selection_count_7d ?? 0}건`;
+        }
+
+        if (card.domain === "sales" && highlight.type === "sales_summary") {
+          return `운영 상태 ${highlight.status_label ?? "-"} · 위험 SKU ${highlight.production_danger_count ?? 0}개 · 주문 선택 ${highlight.ordering_selection_total ?? 0}건`;
+        }
+
+        return null;
+      })
+      .filter((item): item is string => Boolean(item));
+  }, [card.domain, card.highlights]);
 
   const runPrompt = async (prompt: string) => {
     if (!prompt.trim() || postSalesQueryMutation.isPending) return;
@@ -167,15 +187,9 @@ export function SummaryCardBody({ card }: { card: DashboardSummaryCard }) {
 
       <section>
         <ul className="list-disc space-y-2 pl-5">
-          {parsedHighlights.map((highlight) => (
-            <li
-              key={`${highlight.title}-${highlight.detail ?? ""}`}
-              className="text-sm text-slate-700 marker:text-slate-400"
-            >
-              <p className="font-semibold text-slate-800">{highlight.title}</p>
-              {highlight.detail ? (
-                <p className="mt-1 text-xs leading-5 text-slate-500">{highlight.detail}</p>
-              ) : null}
+          {highlightLines.map((line) => (
+            <li key={line} className="text-sm text-slate-700 marker:text-slate-400">
+              <p className="font-semibold text-slate-800">{line}</p>
             </li>
           ))}
         </ul>

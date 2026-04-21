@@ -2,7 +2,7 @@ import type { TileArgs } from "react-calendar";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
-import type { ScheduleEvent } from "@/features/dashboard/types/schedule";
+import type { ScheduleEvent } from "@/features/dashboard/types/dashboard";
 import { hasEventOnDate } from "@/features/dashboard/utils/schedule-panel";
 
 export function DashboardScheduleCalendar({

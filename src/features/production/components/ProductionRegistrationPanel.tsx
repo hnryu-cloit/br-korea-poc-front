@@ -4,7 +4,10 @@ import type {
 } from "@/features/production/types/production";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(/\/$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
+  /\/$/,
+  "",
+);
 const MENU_PLACEHOLDER_IMAGE = "/images/menu-placeholder.svg";
 
 function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
@@ -89,7 +92,9 @@ export function ProductionRegistrationPanel({
             <div className="min-w-0">
               <p className="truncate text-lg font-bold text-slate-900">{detail.sku_name}</p>
               {!detailImageUrl ? (
-                <p className="mt-0.5 text-xs font-medium text-slate-400">상품이미지 준비중입니다.</p>
+                <p className="mt-0.5 text-xs font-medium text-slate-400">
+                  상품이미지 준비중입니다.
+                </p>
               ) : null}
             </div>
           </div>

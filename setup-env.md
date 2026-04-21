@@ -47,6 +47,7 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - `SBIZ_API_SIMPLE_ANALYSIS_KEY`
 
 상권 인텔리전스 경쟁사 조회 기준:
+
 - 1순위: `EXTERNAL_API_KEY`
 - 2순위 대체: `SBIZ_API_COMMERCIAL_MAP_KEY`
 - 3순위 대체: `SBIZ_API_STORE_STATUS_KEY`

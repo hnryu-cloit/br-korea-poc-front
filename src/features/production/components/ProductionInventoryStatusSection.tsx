@@ -1,3 +1,4 @@
+import { Pagination } from "@/commons/components/page/Pagination";
 import type {
   InventoryStatusItem,
   InventoryStatusResponse,
@@ -6,6 +7,7 @@ import type {
 type Props = {
   data?: InventoryStatusResponse;
   isLoading: boolean;
+  onChangePage?: (page: number) => void;
 };
 
 const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
@@ -14,7 +16,10 @@ const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
   적정: "bg-green-50 text-green-600 border border-green-200",
 };
 
-export function ProductionInventoryStatusSection({ data, isLoading }: Props) {
+export function ProductionInventoryStatusSection({ data, isLoading, onChangePage }: Props) {
+  const totalPages = data?.pagination?.total_pages ?? 1;
+  const currentPage = data?.pagination?.page ?? 1;
+
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       {isLoading ? (
@@ -55,6 +60,9 @@ export function ProductionInventoryStatusSection({ data, isLoading }: Props) {
           </table>
         </div>
       )}
+      {data?.pagination ? (
+        <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
+      ) : null}
     </section>
   );
 }

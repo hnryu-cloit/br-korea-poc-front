@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CarouselBannerItem } from "@/commons/components/carousel/InPageCarousel";
-import type { ScheduleNotice } from "../types/schedule";
+import type { ScheduleNotice } from "@/features/dashboard/types/dashboard";
 
 interface Props {
   notices: ScheduleNotice[];
@@ -14,12 +14,20 @@ const TAG_CLASS: Record<string, string> = {
   rose: "bg-rose-100 text-rose-700",
 };
 
+const NOTICE_CATEGORY_LABEL: Record<ScheduleNotice["category"], string> = {
+  campaign: "캠페인",
+  telecom: "할인",
+  notice: "공지",
+};
+
 export const DashboardBanner = ({ notices }: Props) => {
   const noticeBanners: CarouselBannerItem[] = notices.map((notice) => ({
     id: notice.id,
-    tag: notice.tag,
+    tag: NOTICE_CATEGORY_LABEL[notice.category] ?? notice.category,
     title: notice.title,
-    description: notice.description,
+    description: [notice.type, `${notice.startDate} ~ ${notice.endDate}`]
+      .filter(Boolean)
+      .join(" · "),
     tagColor: notice.tone,
   }));
 

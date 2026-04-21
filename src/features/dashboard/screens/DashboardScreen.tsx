@@ -16,16 +16,16 @@ export function DashboardPage() {
     store_id: user.storeId,
     business_date: now,
   };
-  const overviewQuery = useGetDashboardOverviewQuery(params);
-  const scheduleQuery = useGetHomeScheduleQuery(user.storeId);
+  const { data: overviewData, isLoading: overviewLoading } = useGetDashboardOverviewQuery(params);
+  const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(user.storeId);
 
-  const stats = overviewQuery.data?.stats ?? [];
-  const cards = overviewQuery.data?.cards ?? [];
-  const isInitialLoading = overviewQuery.isLoading && !overviewQuery.data;
+  const stats = overviewData?.stats ?? [];
+  const cards = overviewData?.cards ?? [];
+  const isInitialLoading = (overviewLoading && !overviewData) || (scheduleLoading && !scheduleData);
 
   return (
     <div className="space-y-6">
-      <DashboardHero updatedAt={overviewQuery.data?.updated_at} />
+      <DashboardHero updatedAt={overviewData?.updated_at} />
 
       {isInitialLoading ? (
         <DashboardLoadingSkeleton />
@@ -33,12 +33,12 @@ export function DashboardPage() {
         <>
           <DashboardSchedulePanel
             storeId={user.storeId}
-            events={scheduleQuery.data?.events ?? []}
-            todos={scheduleQuery.data?.todos ?? []}
-            updatedAt={scheduleQuery.data?.updated_at}
-            isLoading={scheduleQuery.isLoading}
+            events={scheduleData?.events ?? []}
+            todos={scheduleData?.todos ?? []}
+            updatedAt={scheduleData?.updated_at}
+            isLoading={scheduleLoading}
           />
-          <DashboardBanner notices={scheduleQuery.data?.notices ?? []} />
+          <DashboardBanner notices={scheduleData?.notices ?? []} />
           <DashboardStatsTiles stats={stats} />
           <SummaryCardsSection cards={cards} />
         </>
