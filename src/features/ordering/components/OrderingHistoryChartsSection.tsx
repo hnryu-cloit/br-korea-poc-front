@@ -119,7 +119,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value: number, name: string) => [`${value.toLocaleString()}개`, name]}
+                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}개`, String(name)]}
                 contentStyle={TooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -159,7 +159,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} allowDecimals={false} />
               <Tooltip
-                formatter={(value: number, name: string) => [`${value}건`, name]}
+                formatter={(value, name) => [`${Number(value ?? 0)}건`, String(name)]}
                 contentStyle={TooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -196,7 +196,10 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
                 width={78}
               />
               <Tooltip
-                formatter={(value: number) => [`${value > 0 ? "+" : ""}${value}%`, "변화율"]}
+                formatter={(value) => {
+                  const ratio = Number(value ?? 0);
+                  return [`${ratio > 0 ? "+" : ""}${ratio}%`, "변화율"];
+                }}
                 contentStyle={TooltipStyle}
               />
               <Bar dataKey="변화율" radius={[0, 6, 6, 0]}>

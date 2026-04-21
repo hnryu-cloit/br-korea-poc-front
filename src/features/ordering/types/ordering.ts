@@ -193,6 +193,9 @@ export interface OrderingHistoryInsightsResponse {
   kpis: OrderingHistoryInsightKpi[];
   anomalies: OrderingAnomalyItem[];
   top_changed_items: OrderingChangedItem[];
+  sources?: string[];
+  retrieved_contexts?: string[];
+  confidence?: number | null;
 }
 
 // GET /api/ordering/selections/summary

@@ -97,10 +97,7 @@ export function OrderingRecommendationsScreen() {
       >
         <CardAiButton contextKey="ordering:options" />
       </PageTitle>
-      <OrderingDeadlineAlert
-        deadlineAt={optionsQuery.data?.deadline_at}
-        deadlineItems={deadlineItems}
-      />
+      <OrderingDeadlineAlert deadlineItems={deadlineItems} />
       <OrderingContextCards
         weather={optionsQuery.data?.weather}
         trend={optionsQuery.data?.trend_summary}

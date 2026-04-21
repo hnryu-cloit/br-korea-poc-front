@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import type { AxiosError } from "axios";
 
 import { StatsGrid } from "@/commons/components/page/page-layout";
-import { PageTitle } from "@/commons/components/page/PageTitle";
 import type { HighlightStat } from "@/commons/constants/page-content";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { OrderingHero } from "@/features/ordering/components/OrderingHero";
