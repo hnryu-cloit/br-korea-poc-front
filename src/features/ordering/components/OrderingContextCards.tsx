@@ -1,11 +1,31 @@
 import dayjs from "dayjs";
 import { Calendar, CloudRain, TrendingUp } from "lucide-react";
+import type { OrderingWeather } from "@/features/ordering/types/ordering";
 import "dayjs/locale/ko";
 dayjs.locale("ko");
 
 interface Props {
-  weather?: string;
+  weather?: OrderingWeather | null;
   trend?: string;
+}
+
+function formatWeather(weather?: OrderingWeather | null) {
+  if (!weather) return "-";
+
+  const maxTemperature =
+    weather.max_temperature_c === null || weather.max_temperature_c === undefined
+      ? "-"
+      : `${weather.max_temperature_c}도`;
+  const minTemperature =
+    weather.min_temperature_c === null || weather.min_temperature_c === undefined
+      ? "-"
+      : `${weather.min_temperature_c}도`;
+  const precipitationProbability =
+    weather.precipitation_probability === null || weather.precipitation_probability === undefined
+      ? "-"
+      : `${weather.precipitation_probability}%`;
+
+  return `${weather.region} ${weather.forecast_date} 예보 · ${weather.weather_type}, 최고 ${maxTemperature} / 최저 ${minTemperature}, 강수확률 ${precipitationProbability}`;
 }
 
 export function OrderingContextCards({ weather, trend }: Props) {
@@ -25,7 +45,7 @@ export function OrderingContextCards({ weather, trend }: Props) {
           <CloudRain className="h-7 w-7 text-slate-500" />
           <div>
             <p className="text-sm text-slate-500">날씨 예보</p>
-            <p className="font-bold text-slate-900">{weather ?? "-"}</p>
+            <p className="font-bold text-slate-900">{formatWeather(weather)}</p>
           </div>
         </div>
       </article>

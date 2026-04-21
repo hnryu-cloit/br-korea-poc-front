@@ -27,13 +27,22 @@ export interface OrderingOption {
   items: OrderingOptionItemLine[]; // 품목별 주문 라인
 }
 
+export interface OrderingWeather {
+  region: string; // 기준 매장 지역
+  forecast_date: string; // 예보 날짜(YYYY-MM-DD)
+  weather_type: string; // 날씨 유형 라벨
+  max_temperature_c?: number | null; // 최고 기온
+  min_temperature_c?: number | null; // 최저 기온
+  precipitation_probability?: number | null; // 강수확률
+}
+
 export interface OrderingOptionsResponse {
   deadline_minutes: number; // 주문 마감까지 남은 시간(분)
   deadline_at?: string; // 주문 마감 시각(없을 수 있음)
   notification_entry: boolean; // 알림 진입 여부(응답 반영값)
   purpose_text: string; // 화면 목적 안내 문구
   caution_text: string; // 점주 최종결정 안내 문구
-  weather_summary?: string; // 날씨 요약
+  weather?: OrderingWeather | null; // 구조화된 날씨 정보
   trend_summary?: string; // 최근 트렌드 요약
   business_date?: string; // 기준 영업일
   options: OrderingOption[]; // 추천안 목록
