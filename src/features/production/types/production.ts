@@ -42,7 +42,7 @@ export type ProductionStatus = "danger" | "warning" | "safe";
 export interface ProductionSkuItem {
   sku_id: string;
   sku_name: string;
-  image?: string;
+  image_url?: string;
   current_stock: number;
   forecast_stock_1h: number;
   avg_first_production_qty_4w: number;
@@ -137,4 +137,10 @@ export interface InventoryStatusItem {
 
 export interface InventoryStatusResponse {
   items: InventoryStatusItem[];
+  pagination: {
+    page: number;
+    page_size: number;
+    total_items: number;
+    total_pages: number;
+  };
 }

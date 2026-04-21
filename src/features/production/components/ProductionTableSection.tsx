@@ -1,5 +1,6 @@
 import { ImageOff } from "lucide-react";
 
+import { Pagination } from "@/commons/components/page/Pagination";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type {
@@ -36,7 +37,6 @@ export function ProductionTableSection({
 }) {
   const totalPages = pagination?.total_pages ?? 1;
   const currentPage = pagination?.page ?? 1;
-  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
@@ -71,9 +71,6 @@ export function ProductionTableSection({
                     key={sku.sku_id}
                     className={`border-b border-border/30 last:border-0 ${sku.status === "danger" ? "bg-red-50/30" : "hover:bg-[#f8fbff]"}`}
                   >
-                    <td className="px-6 py-4">
-                      <StatusBadge status={sku.status} />
-                    </td>
                     <td className="px-4 py-4 font-semibold text-slate-800">
                       <div className="flex items-center gap-3">
                         <img
@@ -86,13 +83,12 @@ export function ProductionTableSection({
                         />
                         <div className="min-w-0">
                           <div className="truncate">{sku.sku_name}</div>
-                          {!imageUrl ? (
-                            <p className="mt-0.5 text-[11px] font-medium text-slate-400">
-                              상품이미지 준비중입니다.
-                            </p>
-                          ) : null}
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-4">00:00</td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={sku.status} />
                     </td>
                     <td className="px-4 py-4">
                       <div className="font-bold text-slate-900">
@@ -135,27 +131,6 @@ export function ProductionTableSection({
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex flex-nowrap gap-1.5 whitespace-nowrap">
-                        {(sku.tags ?? []).map((tag) => (
-                          <span
-                            key={`${sku.sku_id}-${tag}`}
-                            className={`whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-bold ${
-                              tag === "속도↑"
-                                ? "border border-orange-200 bg-orange-50 text-orange-600"
-                                : tag === "재료"
-                                  ? "border border-yellow-200 bg-yellow-50 text-yellow-700"
-                                  : "border border-[#dbe6fb] bg-[#edf4ff] text-[#2454C8]"
-                            }`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="mt-2 whitespace-nowrap text-[11px] leading-4 text-slate-400">
-                        {sku.alert_message ?? "-"}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -181,38 +156,7 @@ export function ProductionTableSection({
         </table>
       </div>
       {pagination ? (
-        <div className="flex items-center justify-center border-t border-border/50 px-6 py-4">
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => onChangePage?.(currentPage - 1)}
-              disabled={currentPage <= 1}
-              className="px-2 py-1 text-sm font-semibold text-slate-700 transition-colors hover:text-[#2454C8] disabled:cursor-not-allowed disabled:text-slate-300"
-            >
-              {"<"}
-            </button>
-            {pageNumbers.map((page) => (
-              <button
-                key={page}
-                type="button"
-                onClick={() => onChangePage?.(page)}
-                className={`px-1.5 py-1 text-sm font-semibold transition-colors ${
-                  page === currentPage ? "text-[#2454C8]" : "text-slate-700 hover:text-[#2454C8]"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => onChangePage?.(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-              className="px-2 py-1 text-sm font-semibold text-slate-700 transition-colors hover:text-[#2454C8] disabled:cursor-not-allowed disabled:text-slate-300"
-            >
-              {">"}
-            </button>
-          </div>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
       ) : null}
     </section>
   );

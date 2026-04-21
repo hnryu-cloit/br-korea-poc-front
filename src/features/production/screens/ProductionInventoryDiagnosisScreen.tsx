@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { PageTitle } from "@/commons/components/page/PageTitle";
 import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
@@ -6,8 +7,9 @@ import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function ProductionInventoryDiagnosisScreen() {
   const { user } = useDemoSession();
+  const [page, setPage] = useState(1);
 
-  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "");
+  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(user.storeId ?? "", page, 10);
 
   return (
     <div className="space-y-6">
@@ -20,6 +22,7 @@ export function ProductionInventoryDiagnosisScreen() {
       <ProductionInventoryStatusSection
         data={inventoryStatusQuery.data}
         isLoading={inventoryStatusQuery.isLoading}
+        onChangePage={setPage}
       />
     </div>
   );
