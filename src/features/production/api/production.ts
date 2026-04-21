@@ -46,10 +46,10 @@ export const getProductionWasteSummary = async (storeId: string) => {
   return response.data;
 };
 
-export const getProductionInventoryStatus = async (storeId: string, page = 1, pageSize = 10) => {
+export const getProductionInventoryStatus = async (storeId: string) => {
   const response = await axiosInstance.get<InventoryStatusResponse>(
     "/api/production/inventory-status",
-    { params: { store_id: storeId, page, page_size: pageSize } },
+    { params: { store_id: storeId } },
   );
   return response.data;
 };

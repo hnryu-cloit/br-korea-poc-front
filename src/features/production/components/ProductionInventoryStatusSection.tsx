@@ -29,7 +29,8 @@ function resolveImageUrl(imageUrl?: string | null): string {
   return imageUrl;
 }
 
-export function ProductionInventoryStatusSection({ data, isLoading, onChangePage }: Props) {
+export function ProductionInventoryStatusSection(props: Props) {
+  const { data, isLoading, onChangePage, errorMessage } = props;
   const totalPages = data?.pagination?.total_pages ?? 1;
   const currentPage = data?.pagination?.page ?? 1;
 
