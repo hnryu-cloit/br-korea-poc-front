@@ -8,4 +8,8 @@ export const productionQueryKeys = {
     [...productionQueryKeys.skuListAll(), params ?? {}] as const,
   skuDetail: (skuId: string, storeId: string) =>
     [...productionQueryKeys.all, "sku-detail", skuId, storeId] as const,
+  inventoryStatus: (storeId: string, page: number, pageSize: number) =>
+    [...productionQueryKeys.all, "inventory-status", storeId, page, pageSize] as const,
+  waste: (storeId: string) =>
+    [...productionQueryKeys.all, "waste", storeId] as const,
 };

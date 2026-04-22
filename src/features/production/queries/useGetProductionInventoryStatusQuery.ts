@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getProductionInventoryStatus } from "@/features/production/api/production";
+import { productionQueryKeys } from "@/features/production/queries/productionQueryKeys";
 
 export const useGetProductionInventoryStatusQuery = (storeId: string, page = 1, pageSize = 10) =>
   useQuery({
-    queryKey: ["production-inventory-status", storeId, page, pageSize],
+    queryKey: productionQueryKeys.inventoryStatus(storeId, page, pageSize),
     queryFn: () => getProductionInventoryStatus(storeId, page, pageSize),
     enabled: !!storeId,
     staleTime: 60 * 1000,
