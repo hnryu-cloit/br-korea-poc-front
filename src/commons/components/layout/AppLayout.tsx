@@ -4,6 +4,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import { FloatingAiChat } from "@/commons/components/chat/FloatingAiChat";
 import { AppHeader } from "@/commons/components/layout/AppHeader";
 import { AppSidebar } from "@/commons/components/layout/AppSidebar";
+import { FloatingScrollTopButton } from "@/commons/components/page/FloatingScrollTopButton";
+import { ScrollToTopOnRouteChange } from "@/commons/components/page/ScrollToTopOnRouteChange";
 import { SessionExpiryGuard } from "@/commons/components/session/SessionExpiryGuard";
 import { FloatingAiChatProvider } from "@/commons/contexts/FloatingAiChatProvider";
 import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
@@ -21,6 +23,7 @@ export function AppLayout() {
 
   return (
     <FloatingAiChatProvider>
+      <ScrollToTopOnRouteChange />
       <div className="min-h-screen bg-background text-foreground">
         {!isStartPage ? (
           <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -41,6 +44,7 @@ export function AppLayout() {
             </div>
           </main>
         </div>
+        {!isStartPage ? <FloatingScrollTopButton /> : null}
         {!isStartPage ? <FloatingAiChat /> : null}
         {!isStartPage ? (
           <OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />
