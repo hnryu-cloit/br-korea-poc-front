@@ -1,5 +1,3 @@
-export type DashboardUrgency = "urgent" | "important" | "recommended";
-export type DashboardActionType = "production" | "ordering" | "sales";
 export type DashboardDomain = "production" | "ordering" | "sales";
 
 export interface DashboardOverviewRequest {
@@ -16,24 +14,6 @@ export interface DashboardStatItem {
   value: number | string;
   unit?: "count" | "minutes";
   tone: "danger" | "primary" | "success" | "default";
-}
-
-export interface DashboardPriorityAction {
-  id: string;
-  type: DashboardActionType;
-  urgency: DashboardUrgency;
-  badge_label: string;
-  title: string;
-  description: string;
-  cta: {
-    label: string;
-    path: string;
-  };
-  focus_section?: string;
-  related_sku_id?: string;
-  ai_reasoning?: string;
-  confidence_score?: number;
-  is_finished_good: boolean;
 }
 
 export interface DashboardHighlightItem {

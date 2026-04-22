@@ -3,11 +3,7 @@ import {
   SCHEDULE_EVENT_STATUS_PRIORITY,
   type ScheduleEventStatus,
 } from "@/features/dashboard/constants/schedule-panel";
-import type {
-  DashboardTodoItem,
-  ScheduleEvent,
-  ScheduleTodoItem,
-} from "@/features/dashboard/types/dashboard";
+import type { ScheduleEvent } from "@/features/dashboard/types/dashboard";
 
 type EventDateRange = {
   startDate: Date;
@@ -31,25 +27,11 @@ export function formatCalendarDate(date: Date): string {
   return `${year}${month}${day}`;
 }
 
-export function formatKoreanDate(date: Date): string {
-  return date.toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-  });
-}
-
 export function formatSelectedDateHeadline(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}.${month}.${day} 기준`;
-}
-
-export function formatScheduleDate(yyyymmdd: string): string {
-  if (yyyymmdd.length !== 8) return yyyymmdd;
-  return `${yyyymmdd.slice(4, 6)}/${yyyymmdd.slice(6, 8)}`;
 }
 
 function parseCompactDate(yyyymmdd: string): Date {
@@ -161,17 +143,6 @@ export function selectEventsByDate(
 ): ScheduleEvent[] {
   const selectedKey = formatCalendarDate(date);
   return events.filter((event) => event.date === selectedKey).slice(0, limit);
-}
-
-export function getTodoSummary<T extends ScheduleTodoItem | DashboardTodoItem>(
-  todos: T[],
-  maxVisible: number,
-) {
-  return {
-    visibleTodos: todos.slice(0, maxVisible),
-    hiddenCount: Math.max(todos.length - maxVisible, 0),
-    totalCount: todos.length,
-  };
 }
 
 export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, maxVisible?: number) {

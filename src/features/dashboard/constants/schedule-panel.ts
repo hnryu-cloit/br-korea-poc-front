@@ -6,8 +6,6 @@ export const SCHEDULE_PANEL_TAB_LABELS: Record<SchedulePanelTab, string> = {
   schedule: "주요 일정",
 };
 
-export const SCHEDULE_MAX_VISIBLE_TODOS = 4;
-export const SCHEDULE_MAX_VISIBLE_EVENTS = 3;
 export const SCHEDULE_ENDING_SOON_THRESHOLD_DAYS = 3;
 
 export const SCHEDULE_EVENT_TYPE_STYLE: Record<string, string> = {
