@@ -1,27 +1,31 @@
-import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
-import { summaryCardIconMap } from "@/features/dashboard/components/dashboard-style";
+import { OrderingSummaryCardBody } from "@/features/dashboard/components/OrderingSummaryCardBody";
+import { ProductionSummaryCardBody } from "@/features/dashboard/components/ProductionSummaryCardBody";
+import { SalesSummaryCardBody } from "@/features/dashboard/components/SalesSummaryCardBody";
 import { SummaryCard } from "@/features/dashboard/components/SummaryCard";
-import { SummaryCardBody } from "@/features/dashboard/components/SummaryCardBody";
+import { SUMMARY_CARD_ICON_MAP } from "@/features/dashboard/constants/summary-card";
+import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
+
+const summaryCardBodyMap = {
+  production: <ProductionSummaryCardBody />,
+  ordering: <OrderingSummaryCardBody />,
+  sales: <SalesSummaryCardBody />,
+} as const;
 
 export function SummaryCardsSection({ cards }: { cards: DashboardSummaryCard[] }) {
   return (
     <section className="grid gap-5 xl:grid-cols-3">
       {cards.map((card) => {
-        const Icon = summaryCardIconMap[card.domain];
+        const iconSrc = SUMMARY_CARD_ICON_MAP[card.domain];
+
         return (
           <SummaryCard
             key={card.domain}
-            domain={card.domain}
-            icon={<Icon className="h-5 w-5 text-[#2454C8]" />}
+            icon={<img src={iconSrc} alt="" className="h-5 w-5" />}
             title={card.title}
-            description={card.description}
-            statusLabel={card.status_label}
-            deadlineMinutes={card.deadline_minutes}
-            deliveryScheduled={card.delivery_scheduled}
-            to={card.cta.path}
-            cta={card.cta.label}
+            pathname={card.cta.path}
+            recommendedQuestions={card.prompts.slice(0, 3)}
           >
-            <SummaryCardBody card={card} />
+            {summaryCardBodyMap[card.domain]}
           </SummaryCard>
         );
       })}

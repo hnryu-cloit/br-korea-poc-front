@@ -29,7 +29,7 @@ export function DashboardScreen() {
         updatedAt={scheduleData?.updated_at}
         isLoading={scheduleLoading && !scheduleData}
       />
-      <div className="p-[32px_24px]">
+      <div className="p-[32px_24px] flex flex-col gap-6">
         <DashboardAlertSummary />
         <SummaryCardsSection cards={cards} />
       </div>
