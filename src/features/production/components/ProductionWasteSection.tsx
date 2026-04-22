@@ -49,7 +49,10 @@ export function ProductionWasteSection({ data, isLoading, errorMessage }: Props)
             <div className="rounded-2xl border border-red-100 bg-red-50 px-5 py-4">
               <p className="text-xs text-red-700">보정 로스 금액</p>
               <p className="text-xl font-bold text-red-600">
-                {data.total_adjusted_loss_amount.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}원
+                {data.total_adjusted_loss_amount.toLocaleString("ko-KR", {
+                  maximumFractionDigits: 0,
+                })}
+                원
               </p>
             </div>
             <div className="rounded-2xl border border-orange-100 bg-orange-50 px-5 py-4">
@@ -61,7 +64,10 @@ export function ProductionWasteSection({ data, isLoading, errorMessage }: Props)
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
               <p className="text-xs text-slate-700">가설 유통기한 손실 수량</p>
               <p className="text-xl font-bold text-slate-800">
-                {data.total_estimated_expiry_loss_qty.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
+                {data.total_estimated_expiry_loss_qty.toLocaleString("ko-KR", {
+                  maximumFractionDigits: 0,
+                })}
+                개
               </p>
             </div>
           </div>
@@ -82,10 +88,14 @@ export function ProductionWasteSection({ data, isLoading, errorMessage }: Props)
                 </div>
                 <div className="flex items-center gap-4 text-right">
                   <span className="text-sm text-slate-500">
-                    보정 {item.adjusted_loss_qty.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
+                    보정{" "}
+                    {item.adjusted_loss_qty.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}개
                   </span>
                   <span className="text-sm font-semibold text-red-600 min-w-[80px]">
-                    {item.adjusted_loss_amount.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}원
+                    {item.adjusted_loss_amount.toLocaleString("ko-KR", {
+                      maximumFractionDigits: 0,
+                    })}
+                    원
                   </span>
                 </div>
               </li>
@@ -95,7 +105,9 @@ export function ProductionWasteSection({ data, isLoading, errorMessage }: Props)
           <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
             <p className="text-xs font-bold text-blue-700">근거</p>
             <p className="mt-1 text-sm text-blue-900">
-              {String((data.evidence.summary_reason as string) || "D+1 보정 로스와 실폐기를 분리 집계")}
+              {String(
+                (data.evidence.summary_reason as string) || "D+1 보정 로스와 실폐기를 분리 집계",
+              )}
             </p>
             {typeof data.evidence.ai_summary === "string" && data.evidence.ai_summary.length > 0 ? (
               <p className="mt-2 text-sm text-slate-800">{data.evidence.ai_summary as string}</p>
@@ -105,7 +117,9 @@ export function ProductionWasteSection({ data, isLoading, errorMessage }: Props)
                 인용 근거: {(data.evidence.ai_citations as string[]).join(", ")}
               </p>
             ) : null}
-            <p className="mt-1 text-xs text-blue-700">출처: core_stock_rate, raw_inventory_extract</p>
+            <p className="mt-1 text-xs text-blue-700">
+              출처: core_stock_rate, raw_inventory_extract
+            </p>
           </div>
         </div>
       )}

@@ -63,15 +63,21 @@ export function ProductionInventoryStatusSection(props: Props) {
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs text-slate-500">부족 품목</p>
-              <p className="text-xl font-bold text-red-600">{Number(data.summary.shortage_count || 0)}개</p>
+              <p className="text-xl font-bold text-red-600">
+                {Number(data.summary.shortage_count || 0)}개
+              </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs text-slate-500">과잉 품목</p>
-              <p className="text-xl font-bold text-orange-600">{Number(data.summary.excess_count || 0)}개</p>
+              <p className="text-xl font-bold text-orange-600">
+                {Number(data.summary.excess_count || 0)}개
+              </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs text-slate-500">평균 재고율</p>
-              <p className="text-xl font-bold text-slate-900">{Number(data.summary.avg_stock_rate || 0).toFixed(2)}</p>
+              <p className="text-xl font-bold text-slate-900">
+                {Number(data.summary.avg_stock_rate || 0).toFixed(2)}
+              </p>
             </div>
           </div>
 
@@ -90,7 +96,10 @@ export function ProductionInventoryStatusSection(props: Props) {
               </thead>
               <tbody>
                 {data.items.map((item) => (
-                  <tr key={`${item.item_cd}-${item.item_nm}`} className="border-b border-border/30 last:border-0">
+                  <tr
+                    key={`${item.item_cd}-${item.item_nm}`}
+                    className="border-b border-border/30 last:border-0"
+                  >
                     <td className="px-6 py-4 font-semibold text-slate-800">
                       <div className="flex items-center gap-3">
                         <img
@@ -104,9 +113,15 @@ export function ProductionInventoryStatusSection(props: Props) {
                         <span>{item.item_nm}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-700">{item.total_orderable.toLocaleString("ko-KR")}개</td>
-                    <td className="px-6 py-4 text-slate-700">{item.total_sold.toLocaleString("ko-KR")}개</td>
-                    <td className="px-6 py-4 text-slate-700">{item.total_stock.toLocaleString("ko-KR")}개</td>
+                    <td className="px-6 py-4 text-slate-700">
+                      {item.total_orderable.toLocaleString("ko-KR")}개
+                    </td>
+                    <td className="px-6 py-4 text-slate-700">
+                      {item.total_sold.toLocaleString("ko-KR")}개
+                    </td>
+                    <td className="px-6 py-4 text-slate-700">
+                      {item.total_stock.toLocaleString("ko-KR")}개
+                    </td>
                     <td className="px-6 py-4 text-slate-700">{item.stock_rate.toFixed(2)}</td>
                     <td className="px-6 py-4 text-slate-700">{item.assumed_shelf_life_days}일</td>
                     <td className="px-6 py-4">

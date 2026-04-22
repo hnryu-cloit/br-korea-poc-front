@@ -119,7 +119,10 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}개`, String(name)]}
+                formatter={(value, name) => [
+                  `${Number(value ?? 0).toLocaleString()}개`,
+                  String(name),
+                ]}
                 contentStyle={TooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />

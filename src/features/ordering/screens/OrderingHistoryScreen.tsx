@@ -49,9 +49,7 @@ export function OrderingHistoryScreen() {
   const historyError = historyQuery.error as AxiosError<{ detail?: string }> | null;
   const insightsError = insightsQuery.error as AxiosError<{ detail?: string }> | null;
   const errorMessage =
-    historyError?.response?.data?.detail ??
-    insightsError?.response?.data?.detail ??
-    null;
+    historyError?.response?.data?.detail ?? insightsError?.response?.data?.detail ?? null;
 
   const orderingHistoryStats: HighlightStat[] = [
     {

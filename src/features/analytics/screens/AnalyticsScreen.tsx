@@ -31,8 +31,10 @@ export function AnalyticsScreen() {
   const metricsError = metricsQuery.error as AxiosError<{ detail?: string }> | null;
   const salesTrendError = salesTrendQuery.error as AxiosError<{ detail?: string }> | null;
   const errorMessages = [
-    metricsError?.response?.data?.detail ?? (metricsError ? "매출 지표 조회 중 오류가 발생했습니다." : null),
-    salesTrendError?.response?.data?.detail ?? (salesTrendError ? "매출 추이 조회 중 오류가 발생했습니다." : null),
+    metricsError?.response?.data?.detail ??
+      (metricsError ? "매출 지표 조회 중 오류가 발생했습니다." : null),
+    salesTrendError?.response?.data?.detail ??
+      (salesTrendError ? "매출 추이 조회 중 오류가 발생했습니다." : null),
   ].filter((message): message is string => Boolean(message));
   const uniqueErrorMessages = Array.from(new Set(errorMessages));
 

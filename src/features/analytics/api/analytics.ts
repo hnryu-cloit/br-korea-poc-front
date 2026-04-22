@@ -74,7 +74,9 @@ export async function getAnalyticsMarketInsights(params?: GetMarketIntelligenceR
   return response.data;
 }
 
-export async function getHqAnalyticsMarketInsights(params?: GetMarketIntelligenceRequest & { limit?: number }) {
+export async function getHqAnalyticsMarketInsights(
+  params?: GetMarketIntelligenceRequest & { limit?: number },
+) {
   const response = await axiosInstance.get<HQMarketInsightsResponse>(
     "/api/analytics/market-intelligence/insights/hq",
     {
