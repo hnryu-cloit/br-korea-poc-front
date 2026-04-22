@@ -2,6 +2,8 @@ import type { TileArgs } from "react-calendar";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
+import donutBrown from "@/assets/donut-brown.svg";
+import donutPink from "@/assets/donut-pink.svg";
 import type { ScheduleEvent } from "@/features/dashboard/types/dashboard";
 import { hasEventOnDate } from "@/features/dashboard/utils/schedule-panel";
 
@@ -33,7 +35,13 @@ export function DashboardScheduleCalendar({
 
   return (
     <div className="lg:col-span-1">
-      <div className="[&_.react-calendar]:w-full [&_.react-calendar]:border-0 [&_.react-calendar]:bg-transparent [&_.react-calendar__navigation__label]:font-semibold [&_.react-calendar__tile--active]:rounded-xl [&_.react-calendar__tile--active]:bg-[#2454C8] [&_.react-calendar__tile--active]:text-white [&_.react-calendar__tile--now]:rounded-xl [&_.react-calendar__tile--now]:bg-[#edf4ff] [&_.react-calendar__month-view__weekdays]:text-[11px] [&_.react-calendar__month-view__weekdays]:font-semibold [&_.react-calendar__month-view__weekdays]:text-slate-400">
+      <div
+        className="[&_.react-calendar]:w-full [&_.react-calendar]:border-0 [&_.react-calendar]:bg-transparent [&_.react-calendar__navigation__label]:font-semibold [&_.react-calendar__tile--now]:rounded-xl [&_.react-calendar__tile--now]:bg-[#edf4ff] [&_.react-calendar__month-view__weekdays]:text-[11px] [&_.react-calendar__month-view__weekdays]:font-semibold [&_.react-calendar__month-view__weekdays]:text-slate-400"
+        style={{
+          ["--calendar-active-date-bg" as string]: `url("${donutPink}")`,
+          ["--calendar-today-date-bg" as string]: `url("${donutBrown}")`,
+        }}
+      >
         <Calendar
           value={selectedDate}
           locale="ko-KR"
@@ -44,6 +52,7 @@ export function DashboardScheduleCalendar({
           }}
           calendarType="gregory"
           tileClassName={tileClassName}
+          formatDay={(_locale, date) => date.toLocaleString("en", { day: "numeric" })}
         />
       </div>
     </div>

@@ -31,7 +31,7 @@ export function DashboardSchedulePanel({
   const eventSummary = getEventSummary(events, selectedDate, SCHEDULE_MAX_VISIBLE_EVENTS);
 
   return (
-    <section className="h-[350px] overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+    <section className="rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="grid h-full gap-6 p-6 lg:grid-cols-3">
         <DashboardScheduleCalendar
           selectedDate={selectedDate}
