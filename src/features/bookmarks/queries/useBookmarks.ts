@@ -12,7 +12,7 @@ export function useGetBookmarksQuery(storeId?: string, type?: BookmarkType) {
   });
 }
 
-export function useAddBookmarkMutation() {
+export function usePostBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: AddBookmarkRequest) => postBookmark(body),
@@ -22,7 +22,7 @@ export function useAddBookmarkMutation() {
   });
 }
 
-export function useRemoveBookmarkMutation() {
+export function useDeleteBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: { store_id?: string; type: BookmarkType; ref_id: string }) =>
