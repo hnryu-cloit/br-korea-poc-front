@@ -8,5 +8,6 @@ export function useGetDashboardOverviewQuery(params: DashboardOverviewRequest) {
   return useQuery({
     queryKey: dashboardQueryKeys.overview(params),
     queryFn: () => getDashboardOverview(params),
+    staleTime: 5 * 60 * 1000,
   });
 }
