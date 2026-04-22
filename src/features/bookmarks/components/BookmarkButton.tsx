@@ -1,10 +1,8 @@
 import { Heart } from "lucide-react";
 
-import {
-  useDeleteBookmarkMutation,
-  useGetBookmarksQuery,
-  usePostBookmarkMutation,
-} from "@/features/bookmarks/queries/useBookmarks";
+import { useDeleteBookmarkMutation } from "@/features/bookmarks/queries/useDeleteBookmarkMutation";
+import { useGetBookmarksQuery } from "@/features/bookmarks/queries/useGetBookmarksQuery";
+import { usePostBookmarkMutation } from "@/features/bookmarks/queries/usePostBookmarkMutation";
 import type { BookmarkType } from "@/features/bookmarks/types/bookmarks";
 
 export function BookmarkButton({

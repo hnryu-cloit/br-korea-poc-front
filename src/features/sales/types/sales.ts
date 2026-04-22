@@ -216,6 +216,15 @@ export interface SalesQueryComparison {
   metrics: SalesComparisonMetric[]; // 비교 지표 목록
 }
 
+export interface ExplainabilityPayload {
+  status: "pending" | "ready" | "failed";
+  trace_id: string;
+  actions: string[];
+  evidence: string[];
+  updated_at: string;
+  error_reason?: string | null;
+}
+
 export interface CreateSalesQueryResponse {
   text: string; // 사용자에게 보여줄 자연어 답변 본문
   actions: string[]; // 실행 가능한 권장 액션 목록
@@ -325,4 +334,5 @@ export interface SalesQueryResponse extends CreateSalesQueryResponse {
   semantic_logic?: string;
   sources?: string[];
   visual_data?: SalesVisualData | null;
+  explainability?: ExplainabilityPayload | null;
 }

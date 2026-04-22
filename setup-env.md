@@ -27,7 +27,9 @@ npm run dev -- --host 0.0.0.0 --port 6003
 ```
 
 - 백엔드 base URL은 `VITE_API_BASE_URL` 환경변수로 지정할 수 있습니다.
-- 기본 `.env.example`에는 `VITE_DEFAULT_STORE_ID=POC_012`이 포함되어 있어, 초기 접속 시 온라인/할인 KPI 검증이 가능한 점포 기준으로 조회합니다.
+- 기본 환경값은 `VITE_DEFAULT_STORE_ID=POC_010`으로 설정되어 초기 점포가 `POC 010`으로 고정됩니다.
+- 기준 일시 기본값은 `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`입니다. (UI에서 변경 가능)
+- 매출 질의는 1차 응답 이후 `GET /api/explainability/{trace_id}` 폴링으로 액션/근거가 후속 갱신됩니다.
 - 소진공 빅데이터 OpenAPI 인증키는 프론트에서 직접 사용하지 않습니다. `br-korea-poc-backend/.env`에만 설정합니다.
 
 ## 백엔드 API 키 연동 메모
@@ -71,7 +73,7 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 상권/고객 분석 화면은 `업종 분석`, `매출 분석`, `인구 분석`, `지역현황`, `고객특성` 5개 블록으로 구성되며, 원천 데이터 미제공 항목은 `미제공`으로 표시됩니다.
 - 고객 식별 컬럼이 백엔드 원천 테이블에 추가되면 신규/단골 비율은 백엔드 자동탐지 템플릿으로 계산되어 프론트에 자동 반영됩니다.
 - `ordering/history`는 `store_id`를 필수로 전달하며, 누락/오입력은 백엔드에서 4xx로 반환됩니다. QA 검증 시 `VITE_DEFAULT_STORE_ID`를 실제 `masked_stor_cd` 값으로 설정해 사용하세요.
-- 기본 `.env.example`은 `VITE_DEFAULT_STORE_ID=POC_012`를 사용합니다. 해당 점포는 최근 온라인 주문/할인결제 데이터가 있어 KPI 재현 확인에 유리합니다.
+- 기본값은 `VITE_DEFAULT_STORE_ID=POC_010`, `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`를 사용합니다.
 
 - 상권/고객 분석 화면의 글로벌 실패 메시지는 `market-intelligence` 메인 API 실패 기준으로만 표시됩니다. `store-profile`/`customer-profile`/`sales-trend` 일부 실패는 보조 데이터 결손으로 처리됩니다.
 
@@ -124,3 +126,10 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - `br-korea-poc-front`: `npm test`
   - `br-korea-poc-backend`: `PYTHONPATH=. pytest -q tests/test_system_integration.py tests/test_health.py::test_sales_prompts tests/test_health.py::test_ordering_selection_save`
   - `br-korea-poc-ai`: `pytest -q tests/test_quality_scenarios.py::test_data_extraction_total_sales_intent tests/test_quality_scenarios.py::test_data_extraction_peak_hours_intent tests/test_quality_scenarios.py::test_data_extraction_top_items_intent tests/test_quality_scenarios.py::test_data_extraction_profitability_standard_margin`
+
+## Session Note (2026-04-22, Settings Page v3)
+
+- 본사 역할(`hq_admin`) 선택 후 진입하는 `/settings` 메인 화면이 `Settings Page v3` 구조로 개편되었습니다.
+- 로컬 확인 경로
+  - `http://localhost:5173/` → `본사` 선택 → `/settings`
+  - 직접 진입: `http://localhost:5173/settings`

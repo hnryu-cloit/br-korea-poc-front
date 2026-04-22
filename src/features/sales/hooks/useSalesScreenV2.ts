@@ -4,6 +4,7 @@ import type { AxiosError } from "axios";
 
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
+import { getExplainability } from "@/features/sales/api/sales";
 import { getDefaultSalesDateRange } from "@/features/sales/constants/sales-date-range";
 import {
   SALES_OPPORTUNITY_DEFAULT_TAB,
@@ -211,10 +212,11 @@ export const useSalesScreenV2 = () => {
       setInput("");
       try {
         const response = await postSalesQueryMutation.mutateAsync(text);
+        const assistantMessageId = nextMessageId();
         setMessages((current) => [
           ...current,
           {
-            id: nextMessageId(),
+            id: assistantMessageId,
             role: "assistant",
             text: response.text,
             evidence: response.evidence,
@@ -226,6 +228,36 @@ export const useSalesScreenV2 = () => {
             blocked: response.blocked,
           },
         ]);
+        const explainability = response.explainability;
+        if (
+          explainability?.trace_id &&
+          explainability.status === "pending" &&
+          !response.blocked
+        ) {
+          const maxAttempts = 6;
+          for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+            await new Promise((resolve) => setTimeout(resolve, 450));
+            try {
+              const detail = await getExplainability(explainability.trace_id);
+              if (detail.status === "ready" || detail.status === "failed") {
+                setMessages((current) =>
+                  current.map((message) =>
+                    message.id === assistantMessageId
+                      ? {
+                          ...message,
+                          actions: detail.actions?.length ? detail.actions : message.actions,
+                          evidence: detail.evidence?.length ? detail.evidence : message.evidence,
+                        }
+                      : message,
+                  ),
+                );
+                break;
+              }
+            } catch {
+              break;
+            }
+          }
+        }
       } catch {
         setMessages((current) => [
           ...current,

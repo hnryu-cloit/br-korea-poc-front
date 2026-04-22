@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { AlertCircle, Download } from "lucide-react";
 
+import { useMarketScreen } from "@/features/analytics/hooks/useMarketScreen";
+
 import {
   AnalysisScopeFilterBar,
   type AnalysisScope,
-} from "@/commons/components/analysis/AnalysisScopeFilterBar";
+} from "@/features/analytics/components/AnalysisScopeFilterBar";
 import { PageHero } from "@/commons/components/page/page-layout";
 import { HQMarketOverviewSection } from "@/features/analytics/components/HQMarketOverviewSection";
 import { MarketActionGuideSection } from "@/features/analytics/components/MarketActionGuideSection";
@@ -20,13 +22,11 @@ import { useGetHqAnalyticsMarketInsightsQuery } from "@/features/analytics/queri
 import { useGetAnalyticsMarketIntelligenceQuery } from "@/features/analytics/queries/useGetAnalyticsMarketIntelligenceQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import { useGetAnalyticsStoreProfileQuery } from "@/features/analytics/queries/useGetAnalyticsStoreProfileQuery";
-import { getAnalyticsWeeklyReport } from "@/features/analytics/api/analytics";
 import { formatWonCompact } from "@/features/analytics/utils/market";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function MarketScreen() {
   const { user } = useDemoSession();
-  const [isDownloading, setIsDownloading] = useState(false);
   const [scope, setScope] = useState<AnalysisScope>({
     gu: "전체",
     dong: "전체",
@@ -83,35 +83,11 @@ export function MarketScreen() {
   const storeInsights = marketInsightsQuery.data;
   const hqInsights = hqInsightsQuery.data;
 
+  const { isDownloading, handleDownloadWeeklyReport } = useMarketScreen(scope, user.storeId);
+
   const heroDescription = storeProfile
     ? `${storeProfile.sido} ${storeProfile.region} · 유사 매장 ${storeProfile.peer_count}개 · 추정 매출 ${formatWonCompact(storeProfile.actual_sales_amt)}`
     : "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.";
-
-  const handleDownloadWeeklyReport = async () => {
-    if (isDownloading) return;
-    setIsDownloading(true);
-    try {
-      const { blob, filename } = await getAnalyticsWeeklyReport({
-        store_id: user.storeId,
-        gu: scope.gu,
-        dong: scope.dong,
-        industry: scope.industry,
-        year: Number(scope.year),
-        quarter: scope.quarter,
-        radius_m: scope.radiusMeters,
-      });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = filename;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(url);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">

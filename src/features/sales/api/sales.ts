@@ -10,6 +10,7 @@ import type {
   SalesPrompt,
   SalesQueryResponse,
   SalesSummaryResponse,
+  ExplainabilityPayload,
 } from "@/features/sales/types/sales";
 
 const appendOperationalFilters = (params: URLSearchParams, filters?: GetSalesInsightsRequest) => {
@@ -145,5 +146,10 @@ export const getSalesCampaignEffect = async (
       params: Object.fromEntries(query.entries()),
     },
   );
+  return response.data;
+};
+
+export const getExplainability = async (traceId: string): Promise<ExplainabilityPayload> => {
+  const response = await axiosInstance.get<ExplainabilityPayload>(`/api/explainability/${traceId}`);
   return response.data;
 };
