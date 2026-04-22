@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import type { DashboardTodoItem, ScheduleTodoItem } from "@/features/dashboard/types/dashboard";
+import { formatCalendarDate } from "@/features/dashboard/utils/schedule-panel";
 
 const STORAGE_KEY_PREFIX = "dashboard-todos-v1";
 
@@ -32,9 +33,13 @@ const sanitizeTodos = (raw: unknown, sourceTodos: DashboardTodoItem[]): Dashboar
   }));
 };
 
-export function useDashboardTodos(storeId?: string, baseTodos: ScheduleTodoItem[] = []) {
+export function useDashboardTodos(
+  storeId?: string,
+  selectedDate?: Date,
+  baseTodos: ScheduleTodoItem[] = [],
+) {
   const [, setVersion] = useState(0);
-  const storageKey = buildStorageKey(storeId);
+  const storageKey = `${buildStorageKey(storeId)}:${formatCalendarDate(selectedDate ?? new Date())}`;
   const sourceTodos: DashboardTodoItem[] = baseTodos.map(toDashboardTodo);
 
   const readTodos = (key: string): DashboardTodoItem[] => {

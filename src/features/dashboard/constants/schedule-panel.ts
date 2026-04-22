@@ -1,7 +1,8 @@
-export type SchedulePanelTab = "todo" | "schedule";
+export type SchedulePanelTab = "pending" | "completed" | "schedule";
 
 export const SCHEDULE_PANEL_TAB_LABELS: Record<SchedulePanelTab, string> = {
-  todo: "오늘 할일",
+  pending: "선택된 날짜 할 일",
+  completed: "완료된 할 일",
   schedule: "주요 일정",
 };
 

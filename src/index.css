@@ -156,6 +156,9 @@
 }
 
 /* 캘린더 css */
+.react-calendar {
+  border: none !important;
+}
 
 .react-calendar__navigation__label__labelText {
   font-weight: 700;

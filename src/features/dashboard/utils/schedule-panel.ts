@@ -174,7 +174,7 @@ export function getTodoSummary<T extends ScheduleTodoItem | DashboardTodoItem>(
   };
 }
 
-export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, maxVisible: number) {
+export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, maxVisible?: number) {
   const withStatus = events
     .map((event) => {
       const range = toEventDateRange(event);
@@ -214,8 +214,8 @@ export function getEventSummary(events: ScheduleEvent[], selectedDate: Date, max
   }));
 
   return {
-    visibleEvents: normalized.slice(0, maxVisible),
-    hiddenCount: Math.max(normalized.length - maxVisible, 0),
+    visibleEvents: typeof maxVisible === "number" ? normalized.slice(0, maxVisible) : normalized,
+    hiddenCount: typeof maxVisible === "number" ? Math.max(normalized.length - maxVisible, 0) : 0,
     totalCount: normalized.length,
   };
 }

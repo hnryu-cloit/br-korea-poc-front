@@ -1,11 +1,11 @@
 import { CheckCircle2, Circle } from "lucide-react";
 
 import {
+  SCHEDULE_PANEL_TAB_LABELS,
   SCHEDULE_EVENT_STATUS_LABEL,
   SCHEDULE_EVENT_STATUS_STYLE,
   SCHEDULE_EVENT_TYPE_LABEL,
   SCHEDULE_EVENT_TYPE_STYLE,
-  SCHEDULE_PANEL_TAB_LABELS,
   type SchedulePanelTab,
 } from "@/features/dashboard/constants/schedule-panel";
 import type { DashboardTodoItem } from "@/features/dashboard/types/dashboard";
@@ -14,134 +14,166 @@ import type { ScheduleEventSummaryItem } from "@/features/dashboard/utils/schedu
 export function DashboardScheduleContent({
   activeTab,
   onChangeTab,
-  todos,
+  incompleteTodos,
+  completedTodos,
   toggleTodo,
-  hiddenTodoCount,
   scheduleEvents,
-  hiddenEventCount,
   isLoading,
-  onClickTodoMore,
-  onClickEventMore,
 }: {
   activeTab: SchedulePanelTab;
   onChangeTab: (tab: SchedulePanelTab) => void;
-  todos: DashboardTodoItem[];
+  incompleteTodos: DashboardTodoItem[];
+  completedTodos: DashboardTodoItem[];
   toggleTodo: (id: string) => void;
-  hiddenTodoCount: number;
   scheduleEvents: ScheduleEventSummaryItem[];
-  hiddenEventCount: number;
   isLoading: boolean;
-  onClickTodoMore: () => void;
-  onClickEventMore: () => void;
+}) {
+  const visibleTodos = activeTab === "pending" ? incompleteTodos : completedTodos;
+  const pendingCount = incompleteTodos.length;
+  const completedCount = completedTodos.length;
+  const scheduleCount = scheduleEvents.length;
+
+  return (
+    <div className="flex h-full min-h-0 flex-col overflow-hidden lg:col-span-2">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#FAF4F2CC]">
+        <div className="overflow-x-auto border-b border-[rgba(99,107,116,0.3)]">
+          <div className="flex min-w-max items-stretch">
+            <TodoTab
+              isActive={activeTab === "pending"}
+              label={SCHEDULE_PANEL_TAB_LABELS.pending}
+              count={pendingCount}
+              onClick={() => onChangeTab("pending")}
+            />
+            <TodoTab
+              isActive={activeTab === "completed"}
+              label={SCHEDULE_PANEL_TAB_LABELS.completed}
+              count={completedCount}
+              onClick={() => onChangeTab("completed")}
+            />
+            <TodoTab
+              isActive={activeTab === "schedule"}
+              label={SCHEDULE_PANEL_TAB_LABELS.schedule}
+              count={scheduleCount}
+              onClick={() => onChangeTab("schedule")}
+            />
+          </div>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-[12px_20px]">
+          {activeTab === "schedule" ? (
+            isLoading ? (
+              <p className="text-sm text-slate-400">일정 불러오는 중...</p>
+            ) : scheduleEvents.length === 0 ? (
+              <p className="mt-2 text-sm text-[#8A7A73]">선택한 날짜의 일정이 없습니다.</p>
+            ) : (
+              <ul className="flex flex-col">
+                {scheduleEvents.map((event) => (
+                  <li
+                    key={event.id}
+                    className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3"
+                  >
+                    <div className="shrink-0 pt-0.5">
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.category] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}
+                      >
+                        {SCHEDULE_EVENT_TYPE_LABEL[event.category] ?? event.category}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-800">{event.title}</p>
+                      <p className="mt-0.5 text-xs text-slate-500">{event.periodText}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-xs font-bold text-[#2454C8]">{event.dDayText}</p>
+                      <span
+                        className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${SCHEDULE_EVENT_STATUS_STYLE[event.status]}`}
+                      >
+                        {SCHEDULE_EVENT_STATUS_LABEL[event.status]}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )
+          ) : (
+            <>
+              <ul className="flex flex-col">
+                {visibleTodos.map((todo) => (
+                  <li key={todo.id}>
+                    <button
+                      type="button"
+                      onClick={() => toggleTodo(todo.id)}
+                      className={`flex w-full items-center gap-3 border-b px-4 py-3 text-left transition-colors ${
+                        todo.done
+                          ? "border-[#E9D6CE] hover:bg-[#FFF1EA]"
+                          : "border-[#E9D6CE] hover:bg-[#FFD9C7]/50"
+                      }`}
+                    >
+                      {todo.done ? (
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-[#B34816]" />
+                      ) : (
+                        <Circle className="h-4 w-4 shrink-0 text-[#D7B7A9]" />
+                      )}
+                      <span
+                        className={`text-base ${
+                          todo.done ? "text-[#9F8D86] line-through" : "font-medium text-[#3E342F]"
+                        }`}
+                      >
+                        {todo.label}
+                      </span>
+                      {todo.recurring ? (
+                        <span className="ml-auto shrink-0 text-sm font-bold text-orange-500">
+                          반복하기
+                        </span>
+                      ) : null}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {visibleTodos.length === 0 ? (
+                <p className="mt-2 text-sm text-[#8A7A73]">
+                  {activeTab === "pending"
+                    ? "선택한 날짜에 완료되지 않은 할 일이 없습니다."
+                    : "선택한 날짜에 완료된 할 일이 없습니다."}
+                </p>
+              ) : null}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TodoTab({
+  isActive,
+  label,
+  count,
+  onClick,
+}: {
+  isActive: boolean;
+  label: string;
+  count: number;
+  onClick: () => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col lg:col-span-2">
-      <div className="mb-4 flex items-center gap-1">
-        {(Object.keys(SCHEDULE_PANEL_TAB_LABELS) as SchedulePanelTab[]).map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => onChangeTab(tab)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-              activeTab === tab
-                ? "bg-[#1f4dbb] text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            {SCHEDULE_PANEL_TAB_LABELS[tab]}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === "todo" ? (
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <ul className="space-y-2">
-            {todos.map((todo) => (
-              <li key={todo.id}>
-                <button
-                  type="button"
-                  onClick={() => toggleTodo(todo.id)}
-                  className="flex w-full items-center gap-3 rounded-2xl border border-border/50 bg-[#f8fbff] px-4 py-3 text-left transition-colors hover:bg-[#eef4ff]"
-                >
-                  {todo.done ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
-                  ) : (
-                    <Circle className="h-4 w-4 shrink-0 text-slate-300" />
-                  )}
-                  <span
-                    className={`text-sm ${todo.done ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}
-                  >
-                    {todo.label}
-                  </span>
-                  {todo.recurring ? (
-                    <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-500">
-                      반복
-                    </span>
-                  ) : null}
-                </button>
-              </li>
-            ))}
-          </ul>
-          {todos.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-400">현재 체크리스트 데이터가 없습니다.</p>
-          ) : null}
-          {hiddenTodoCount > 0 ? (
-            <button
-              type="button"
-              onClick={onClickTodoMore}
-              className="mt-3 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
-            >
-              +{hiddenTodoCount}개 더보기
-            </button>
-          ) : null}
-        </div>
-      ) : (
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          {isLoading ? (
-            <p className="text-sm text-slate-400">일정 불러오는 중...</p>
-          ) : scheduleEvents.length === 0 ? (
-            <p className="text-sm text-slate-400">선택한 날짜의 일정이 없습니다.</p>
-          ) : (
-            <ul className="space-y-2">
-              {scheduleEvents.map((event) => (
-                <li
-                  key={event.id}
-                  className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3"
-                >
-                  <div className="shrink-0 pt-0.5">
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${SCHEDULE_EVENT_TYPE_STYLE[event.category] ?? SCHEDULE_EVENT_TYPE_STYLE.notice}`}
-                    >
-                      {SCHEDULE_EVENT_TYPE_LABEL[event.category] ?? event.category}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">{event.title}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">{event.periodText}</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-xs font-bold text-[#2454C8]">{event.dDayText}</p>
-                    <span
-                      className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${SCHEDULE_EVENT_STATUS_STYLE[event.status]}`}
-                    >
-                      {SCHEDULE_EVENT_STATUS_LABEL[event.status]}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-          {hiddenEventCount > 0 ? (
-            <button
-              type="button"
-              onClick={onClickEventMore}
-              className="mt-3 text-xs font-semibold text-[#2454C8] hover:text-[#1d44a8]"
-            >
-              +{hiddenEventCount}개 더보기
-            </button>
-          ) : null}
-        </div>
-      )}
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative flex h-10 items-center gap-1 px-4 pb-1 pt-1 text-base font-bold whitespace-nowrap transition-colors ${
+        isActive
+          ? "text-[#B34816] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#B34816]"
+          : "text-[#1D293D] hover:text-[#B34816]"
+      }`}
+    >
+      <span>{label}</span>
+      <span
+        className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-[7px] text-sm leading-none ${
+          isActive ? "bg-[#FFB38FB3] text-[#653818]" : "bg-[#E2E8F0] text-[#6B6B6B]"
+        }`}
+      >
+        {count}
+      </span>
+    </button>
   );
 }
