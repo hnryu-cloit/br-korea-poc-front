@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { formatDashboardStatValue } from "@/commons/utils/dashboard-formatters";
+import { formatDashboardStatValue } from "@/features/dashboard/utils/dashboard-formatters";
 
 import type { DashboardStatItem } from "@/features/dashboard/types/dashboard";
 

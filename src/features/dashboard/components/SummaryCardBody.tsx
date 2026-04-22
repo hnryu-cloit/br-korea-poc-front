@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { appendDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
-import { formatDashboardValueWithUnit } from "@/commons/utils/dashboard-formatters";
+import { formatDashboardValueWithUnit } from "@/features/dashboard/utils/dashboard-formatters";
 import { usePostSalesQueryMutation } from "@/features/sales/queries/usePostSalesQueryMutation";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 import type { SalesQueryResponse } from "@/features/sales/types/sales";
