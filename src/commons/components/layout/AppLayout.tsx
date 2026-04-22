@@ -34,7 +34,7 @@ export function AppLayout() {
         ) : null}
         <div className={`min-h-screen flex flex-col ${isStartPage ? "" : "lg:ml-64"}`}>
           <main
-            className={`mx-auto w-full flex-1 lg:max-w-none ${isStartPage && "flex min-h-screen items-center justify-center py-6"} ${isDashboardPage ? "pt-[68px] pb-0" : "px-5 md:px-8 lg:px-10 pb-14 pt-[96px]"}`}
+            className={`mx-auto w-full flex-1 lg:max-w-none ${isStartPage && "flex min-h-screen items-center justify-center py-6"} ${isDashboardPage ? "pt-[68px] pb-0 bg-[#FDFAF9]" : "px-5 md:px-8 lg:px-10 pb-14 pt-[96px]"}`}
           >
             <div className="mx-auto w-full max-w-[1280px]">
               <Outlet />

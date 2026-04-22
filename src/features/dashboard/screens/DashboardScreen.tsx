@@ -1,4 +1,3 @@
-import { DashboardHero } from "@/features/dashboard/components/DashboardHero";
 import { DashboardLoadingSkeleton } from "@/features/dashboard/components/DashboardLoadingSkeleton";
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
 import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
@@ -7,7 +6,7 @@ import { useGetDashboardOverviewQuery } from "@/features/dashboard/queries/useDa
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
-import { DashboardBanner } from "@/features/dashboard/components/DashboardBanner";
+import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
 
 export function DashboardScreen() {
   const { user } = useDemoSession();
@@ -24,8 +23,7 @@ export function DashboardScreen() {
 
   return (
     <div className="space-y-6">
-      <DashboardHero updatedAt={overviewData?.updated_at} />
-
+      <DashboardNotices notices={scheduleData?.notices ?? []} />
       <DashboardSchedulePanel
         storeId={user.storeId}
         events={scheduleData?.events ?? []}
@@ -33,8 +31,6 @@ export function DashboardScreen() {
         updatedAt={scheduleData?.updated_at}
         isLoading={scheduleLoading && !scheduleData}
       />
-      <DashboardBanner notices={scheduleData?.notices ?? []} />
-
       {overviewLoading && !overviewData ? (
         <DashboardLoadingSkeleton />
       ) : (
