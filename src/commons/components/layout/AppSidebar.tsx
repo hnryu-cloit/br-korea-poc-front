@@ -14,7 +14,6 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const { user } = useDemoSession();
   const currentRole = user.role;
-  const roleHomePath = currentRole === "hq_admin" ? "/orchestration" : "/dashboard";
   const visibleSections = menuSections.filter(
     (section) => !section.roles || section.roles.includes(currentRole),
   );
@@ -23,7 +22,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
 
   const SidebarContent = (
     <div className="flex w-full flex-col p-5 h-full">
-      <NavLink to={roleHomePath} onClick={onClose} className="mb-6 inline-flex items-center px-1">
+      <NavLink to="/" onClick={onClose} className="mb-6 inline-flex items-center px-1">
         <img src={Logo} alt="AgentGo" className="h-7 w-auto" />
       </NavLink>
 

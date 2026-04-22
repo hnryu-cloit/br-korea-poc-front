@@ -39,11 +39,15 @@ export function AppLayout({ reminder }: Props) {
           className={`min-h-screen flex flex-col ${isStartPage || isHqSettingsRoute ? "" : "lg:ml-64"}`}
         >
           <main
-            className={`mx-auto w-full flex-1 ${isHqSettingsRoute ? "px-3 py-3 md:px-5 md:py-4" : "px-5 md:px-8 lg:max-w-none lg:px-10"} ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : isHqSettingsRoute ? "" : "pb-14 pt-[96px]"}`}
+            className={`w-full flex-1 ${isHqSettingsRoute ? "p-0" : "mx-auto px-5 md:px-8 lg:max-w-none lg:px-10"} ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : isHqSettingsRoute ? "" : "pb-14 pt-[96px]"}`}
           >
-            <div className={`mx-auto w-full ${isHqSettingsRoute ? "" : "max-w-[1280px]"}`}>
+            {isHqSettingsRoute ? (
               <Outlet />
-            </div>
+            ) : (
+              <div className="mx-auto w-full max-w-[1280px]">
+                <Outlet />
+              </div>
+            )}
           </main>
         </div>
         {!isStartPage && !isHqSettingsRoute ? <FloatingAiChat /> : null}

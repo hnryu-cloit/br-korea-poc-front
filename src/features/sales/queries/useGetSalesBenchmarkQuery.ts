@@ -86,24 +86,30 @@ export const useGetSalesBenchmarkQuery = (storeId?: string, dateFrom?: string, d
             ? sameRegionStores
             : [];
       if (peerStores.length === 0) {
-        throw new Error("유사 비교 매장을 찾을 수 없습니다.");
+        return null;
       }
       const targetStores = [currentStore, ...peerStores];
 
-      const summaryList = await Promise.all(
-        targetStores.map(
-          async (store): Promise<StoreSummary> => ({
-            storeId: store.store_id,
-            storeName: store.store_name,
-            region: store.region,
-            summary: await getSalesSummary({
+      const summaryResults = await Promise.all(
+        targetStores.map(async (store): Promise<StoreSummary | null> => {
+          try {
+            const summary = await getSalesSummary({
               store_id: store.store_id,
               date_from: dateFrom,
               date_to: dateTo,
-            }),
-          }),
-        ),
+            });
+            return {
+              storeId: store.store_id,
+              storeName: store.store_name,
+              region: store.region,
+              summary,
+            };
+          } catch {
+            return null;
+          }
+        }),
       );
+      const summaryList = summaryResults.filter((item): item is StoreSummary => Boolean(item));
 
       const currentSummary = summaryList.find((item) => item.storeId === storeId);
       if (!currentSummary) return null;

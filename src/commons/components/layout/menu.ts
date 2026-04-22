@@ -58,14 +58,6 @@ export const menuSections: MenuSection[] = [
       },
     ],
   },
-  {
-    section: "본사",
-    roles: ["hq_admin"],
-    items: [
-      { to: "/signals", label: "매출 시그널", icon: "monitoring" },
-      { to: "/settings", label: "시스템 설정", icon: "shield_lock" },
-    ],
-  },
 ];
 
 export const routeDescriptions: Record<string, string> = {
@@ -91,5 +83,4 @@ export const routeDescriptions: Record<string, string> = {
   "/settings/audit-logs": "질의 처리 경로와 차단 이력을 추적합니다.",
   "/settings/quality-archive": "Agent별 품질 점수와 검증 이슈를 보관합니다.",
   "/settings/notices": "시스템 운영 공지를 관리합니다.",
-  "/signals": "전국 매장 매출 이상 신호를 확인합니다.",
 };

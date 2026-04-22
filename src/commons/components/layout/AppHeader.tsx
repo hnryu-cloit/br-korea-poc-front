@@ -21,7 +21,6 @@ const breadcrumbMap: Record<string, string[]> = {
   "/sales/metrics": ["분석", "매장 분석", "지표 분석"],
   "/analytics": ["분석", "매장 분석", "매출 현황"],
   "/analytics/market": ["분석", "매장 분석", "상권/고객 분석"],
-  "/signals": ["본사", "매출 시그널"],
   "/settings": ["본사", "시스템 설정", "Agent 레지스트리"],
   "/settings/orchestration": ["본사", "시스템 설정", "오케스트레이션"],
   "/settings/connectors": ["본사", "시스템 설정", "데이터 커넥터"],

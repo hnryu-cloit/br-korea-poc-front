@@ -133,3 +133,54 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 로컬 확인 경로
   - `http://localhost:5173/` → `본사` 선택 → `/settings`
   - 직접 진입: `http://localhost:5173/settings`
+
+## Session Note (2026-04-23, sidebar logo navigation)
+
+- 사이드바 상단 `AgentGo Biz` 로고 클릭 시 현재 역할 홈이 아니라 역할 선택 대문(`/`)으로 이동합니다.
+- 로컬 확인 경로
+  - `http://localhost:5173/dashboard` 또는 `http://localhost:5173/settings` 진입
+  - 사이드바 로고 클릭
+  - `http://localhost:5173/`에서 점주/본사 선택 카드 노출 확인
+
+## Session Note (2026-04-23, settings v3 shell alignment)
+
+- `/settings` 화면의 셸(UI 프레임)을 제공 기준 HTML(`설정 v3 – Biz Dunkin' 관리자`) 구조에 맞춰 정렬했습니다.
+  - 상단 `Biz DUNKIN' / 시스템 설정` 헤더 바
+  - 좌측 216px 설정 내비(그룹 라벨/active/hover/pill 톤)
+  - 메인 배경/보더/간격 토큰 정합
+- 로컬 확인 경로
+  - `http://localhost:5173/settings`
+  - `http://localhost:5173/settings/orchestration`
+  - `http://localhost:5173/settings/prompts`
+
+## Session Note (2026-04-23, settings v3 full panel refactor)
+
+- `/settings`의 내부 패널과 모달을 제공 원본 HTML(`설정 v3 – Biz Dunkin' 관리자`) 기준으로 재작성했습니다.
+  - 패널: Agent 레지스트리, 오케스트레이션, 데이터 커넥터, RBAC, AI 프롬프트, 골든 쿼리, 감사 로그, 품질, 공지사항
+  - 모달: 신규 Agent, Agent 설정, 라우팅 규칙, 권한 매트릭스, 멤버 초대, 테스트 콘솔, 임베딩 스케줄/즉시 실행, 공지 상세
+- 로컬 확인 경로
+  - `http://localhost:5173/settings`
+  - 좌측 메뉴 전환으로 각 패널 UI 확인
+  - 프롬프트/골든쿼리/감사로그에서 입력·필터 인터랙션 확인
+
+## Session Note (2026-04-23, vibe coding guide alignment)
+
+- settings 패널 컴포넌트에서 상태/필터/목업 데이터 로직을 분리해 `VIBE_CODING_GUIDE`의 역할 분리 원칙을 보강했습니다.
+  - 상태/필터 훅: `useAuditPanel`, `useRbacPanel`, `useGoldenQueriesPanel`, `usePromptTestConsole`
+  - 목업 데이터 통합: `src/features/admin/orchestration/mockdata/mock-orchestration.ts`
+- 확인 명령
+  - `cd br-korea-poc-front && npm run build`
+
+## Session Note (2026-04-23, sales metrics partial-data recovery)
+
+- `/sales/metrics`에서 `GET /api/sales/insights`가 일부 섹션 데이터 부족이어도 백엔드는 404 대신 부분 응답(점검 섹션 포함)을 반환합니다.
+- 벤치마킹(`useGetSalesBenchmarkQuery`)은 비교군 부재 또는 일부 비교 매장 요약 조회 실패 시 에러를 던지지 않고 `null`로 처리합니다.
+- 기본 점포 `POC_010`에서도 요약 차트/인사이트 카드가 함께 표시되는지 확인하세요.
+
+## Session Note (2026-04-23, signals route removed)
+
+- `/signals` 라우트는 제거되었습니다.
+- 사이드바에서는 `본사` 섹션의 `매출 시그널`, `시스템 설정` 메뉴를 표시하지 않습니다.
+- 확인 경로
+  - `http://localhost:6003/dashboard` 진입 후 사이드바 확인
+  - 직접 진입 `http://localhost:6003/signals` 시 라우트 미정의 상태 확인
