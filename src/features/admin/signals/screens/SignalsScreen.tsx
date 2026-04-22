@@ -1,17 +1,12 @@
 import { Bell } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
 import { PageHero } from "@/commons/components/page/page-layout";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
-import { getSignals } from "@/features/admin/signals/api/signals";
+import { useGetSignalsQuery } from "@/features/admin/signals/queries/useGetSignalsQuery";
 import { SignalsCardsSection } from "@/features/admin/signals/components/SignalsCardsSection";
 
-export function SignalsPage() {
-  const signalsQuery = useQuery({
-    queryKey: ["signals"],
-    queryFn: getSignals,
-    refetchInterval: 30_000,
-  });
+export function SignalsScreen() {
+  const signalsQuery = useGetSignalsQuery();
 
   const signals = signalsQuery.data?.items ?? [];
   const highCount = signalsQuery.data?.high_count ?? 0;
