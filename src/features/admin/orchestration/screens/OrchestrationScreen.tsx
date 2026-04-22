@@ -49,7 +49,7 @@ function getQueryFromMetadata(entry: AuditLogEntry): string {
   return entry.message;
 }
 
-export function OrchestrationPage() {
+export function OrchestrationScreen() {
   const location = useLocation();
   const isSettingsRoute = location.pathname.startsWith("/settings");
   const [activeTab, setActiveTab] = useState<TwinTab>(isSettingsRoute ? "prompt" : "logs");
