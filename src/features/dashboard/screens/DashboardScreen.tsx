@@ -1,12 +1,11 @@
-import { DashboardLoadingSkeleton } from "@/features/dashboard/components/DashboardLoadingSkeleton";
+import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
-import { DashboardStatsTiles } from "@/features/dashboard/components/DashboardStatsTiles";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
+import { DashboardAlertSummary } from "@/features/dashboard/components/DashboardAlertSummary";
 import { useGetDashboardOverviewQuery } from "@/features/dashboard/queries/useDashboardOverviewQuery";
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
-import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
 
 export function DashboardScreen() {
   const { user } = useDemoSession();
@@ -15,14 +14,13 @@ export function DashboardScreen() {
     store_id: user.storeId,
     business_date: now,
   };
-  const { data: overviewData, isLoading: overviewLoading } = useGetDashboardOverviewQuery(params);
+  const { data: overviewData } = useGetDashboardOverviewQuery(params);
   const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(user.storeId);
 
-  const stats = overviewData?.stats ?? [];
   const cards = overviewData?.cards ?? [];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col">
       <DashboardNotices notices={scheduleData?.notices ?? []} />
       <DashboardSchedulePanel
         storeId={user.storeId}
@@ -31,14 +29,10 @@ export function DashboardScreen() {
         updatedAt={scheduleData?.updated_at}
         isLoading={scheduleLoading && !scheduleData}
       />
-      {overviewLoading && !overviewData ? (
-        <DashboardLoadingSkeleton />
-      ) : (
-        <>
-          <DashboardStatsTiles stats={stats} />
-          <SummaryCardsSection cards={cards} />
-        </>
-      )}
+      <div className="p-[32px_24px]">
+        <DashboardAlertSummary />
+        <SummaryCardsSection cards={cards} />
+      </div>
     </div>
   );
 }
