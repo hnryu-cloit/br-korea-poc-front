@@ -8,4 +8,5 @@ export const useGetOrderingSelectionSummaryQuery = (params?: OrderingSelectionSu
   useQuery({
     queryKey: orderingQueryKeys.selectionSummary(params),
     queryFn: () => getOrderingSelectionSummary(params),
+    staleTime: 2 * 60 * 1000,
   });

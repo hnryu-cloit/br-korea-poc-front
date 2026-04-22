@@ -8,4 +8,5 @@ export const useGetOrderingAlertsQuery = (params?: OrderingAlertsParams) =>
   useQuery({
     queryKey: orderingQueryKeys.alerts(params),
     queryFn: () => getOrderingAlerts(params),
+    staleTime: 60 * 1000,
   });

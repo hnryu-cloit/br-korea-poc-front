@@ -8,6 +8,7 @@ export function useGetBookmarksQuery(storeId?: string, type?: BookmarkType) {
   return useQuery({
     queryKey: bookmarkQueryKeys.list(storeId, type),
     queryFn: () => getBookmarks(storeId, type),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

@@ -8,4 +8,5 @@ export const useGetAnalyticsCustomerProfileQuery = (storeId: string) =>
     queryKey: analyticsQueryKeys.customerProfile(storeId),
     queryFn: () => getAnalyticsCustomerProfile(storeId),
     enabled: !!storeId,
+    staleTime: 5 * 60 * 1000,
   });

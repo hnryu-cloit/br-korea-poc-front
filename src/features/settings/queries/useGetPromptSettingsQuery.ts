@@ -7,4 +7,5 @@ export const useGetPromptSettingsQuery = () =>
   useQuery({
     queryKey: settingsQueryKeys.prompt(),
     queryFn: getPromptSettings,
+    staleTime: 10 * 60 * 1000,
   });
