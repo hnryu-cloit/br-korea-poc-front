@@ -7,9 +7,9 @@ import { useGetDashboardOverviewQuery } from "@/features/dashboard/queries/useDa
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
-import { DashboardBanner } from "../components/DashboardBanner";
+import { DashboardBanner } from "@/features/dashboard/components/DashboardBanner";
 
-export function DashboardPage() {
+export function DashboardScreen() {
   const { user } = useDemoSession();
   const now = dayjs(new Date()).format("YYYY-MM-DD");
   const params = {
@@ -21,24 +21,24 @@ export function DashboardPage() {
 
   const stats = overviewData?.stats ?? [];
   const cards = overviewData?.cards ?? [];
-  const isInitialLoading = (overviewLoading && !overviewData) || (scheduleLoading && !scheduleData);
 
   return (
     <div className="space-y-6">
       <DashboardHero updatedAt={overviewData?.updated_at} />
 
-      {isInitialLoading ? (
+      <DashboardSchedulePanel
+        storeId={user.storeId}
+        events={scheduleData?.events ?? []}
+        todos={scheduleData?.todos ?? []}
+        updatedAt={scheduleData?.updated_at}
+        isLoading={scheduleLoading && !scheduleData}
+      />
+      <DashboardBanner notices={scheduleData?.notices ?? []} />
+
+      {overviewLoading && !overviewData ? (
         <DashboardLoadingSkeleton />
       ) : (
         <>
-          <DashboardSchedulePanel
-            storeId={user.storeId}
-            events={scheduleData?.events ?? []}
-            todos={scheduleData?.todos ?? []}
-            updatedAt={scheduleData?.updated_at}
-            isLoading={scheduleLoading}
-          />
-          <DashboardBanner notices={scheduleData?.notices ?? []} />
           <DashboardStatsTiles stats={stats} />
           <SummaryCardsSection cards={cards} />
         </>

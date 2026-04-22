@@ -1,4 +1,4 @@
-import { DashboardPage as DashboardScreen } from "@/features/dashboard/screens/DashboardScreen";
+import { DashboardScreen } from "@/features/dashboard/screens/DashboardScreen";
 
 export function DashboardPage() {
   return <DashboardScreen />;
