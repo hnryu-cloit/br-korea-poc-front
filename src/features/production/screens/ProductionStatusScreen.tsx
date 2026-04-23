@@ -54,13 +54,8 @@ export function ProductionStatusScreen() {
   };
 
   return (
-    <div className="space-y-6">
-      <PageTitle
-        title="상품별 생산 현황"
-        description="현재 재고, 1시간 후 예측, 4주 평균 생산 패턴을 기준으로 상품별 생산 우선순위를 확인합니다."
-      >
-        <CardAiButton contextKey="production:stock-risk" />
-      </PageTitle>
+    <div>
+      <h2 className="text-[#41352E] text-[24px] font-bold mb-8">상품 생산 현황</h2>
       <ProductionTableSection
         items={items}
         pagination={skuListQuery.data?.pagination}

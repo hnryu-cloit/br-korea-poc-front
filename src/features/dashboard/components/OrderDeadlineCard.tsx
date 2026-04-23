@@ -4,7 +4,11 @@ import { DashboardAlertCard } from "@/features/dashboard/components/DashboardAle
 import type { DashboardOrderDeadline } from "@/features/dashboard/types/dashboard";
 import { formatOrderDeadlineDisplay } from "@/features/dashboard/utils/dashboard-alerts";
 
-export function OrderDeadlineCard({ orderDeadline }: { orderDeadline: DashboardOrderDeadline | null }) {
+export function OrderDeadlineCard({
+  orderDeadline,
+}: {
+  orderDeadline: DashboardOrderDeadline | null;
+}) {
   const [now, setNow] = useState(() => new Date());
   const display = formatOrderDeadlineDisplay(orderDeadline, now);
 

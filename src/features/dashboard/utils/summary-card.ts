@@ -45,7 +45,9 @@ export function buildOrderingDeadlineDescription(
   return `주문 마감 ${hours}시간 ${minutes}분 전`;
 }
 
-export function buildSalesSummaryTrendPanels(salesOverview: DashboardSalesOverview): SalesSummaryTrendPanel[] {
+export function buildSalesSummaryTrendPanels(
+  salesOverview: DashboardSalesOverview,
+): SalesSummaryTrendPanel[] {
   const panelByKey: Record<SalesSummaryTrendKey, SalesSummaryTrendPanel> = {
     currentHour: {
       key: "currentHour",

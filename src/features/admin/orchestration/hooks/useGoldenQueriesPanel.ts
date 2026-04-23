@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 
-import {
-  MOCK_INITIAL_GOLDEN_QUERIES,
-} from "@/features/admin/orchestration/mockdata/mock-orchestration";
+import { MOCK_INITIAL_GOLDEN_QUERIES } from "@/features/admin/orchestration/mockdata/mock-orchestration";
 import type { GoldenQuery } from "@/features/admin/orchestration/mockdata/mock-orchestration";
 import type { OrchestrationAgent } from "@/features/admin/orchestration/types/orchestration";
 

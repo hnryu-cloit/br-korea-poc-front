@@ -1,6 +1,19 @@
-import { Bot, Bell, Database, FileText, GitBranch, KeyRound, Shield, Sparkles, Star } from "lucide-react";
+import {
+  Bot,
+  Bell,
+  Database,
+  FileText,
+  GitBranch,
+  KeyRound,
+  Shield,
+  Sparkles,
+  Star,
+} from "lucide-react";
 
-import type { PromptDomainKey, SettingsPanelKey } from "@/features/admin/orchestration/types/orchestration";
+import type {
+  PromptDomainKey,
+  SettingsPanelKey,
+} from "@/features/admin/orchestration/types/orchestration";
 
 export const POLICY_ITEMS = [
   { label: "민감정보 마스킹", description: "매출, 손익, 생산량 원본 → 집계값 또는 차단" },

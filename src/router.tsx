@@ -18,7 +18,11 @@ import { SalesMetricsPage } from "@/pages/sales/SalesMetricsPage";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout reminder={<OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />} />,
+    element: (
+      <AppLayout
+        reminder={<OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />}
+      />
+    ),
     children: [
       { index: true, element: <RoleSelectionPage /> },
       { path: "dashboard", element: <DashboardPage /> },

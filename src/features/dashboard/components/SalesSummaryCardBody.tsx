@@ -70,10 +70,7 @@ function SalesMiniChart({ panel }: { panel: SalesSummaryTrendPanel }) {
             }}
           />
           <XAxis dataKey="label" hide />
-          <YAxis
-            hide
-            domain={[0, (dataMax: number) => Math.max(Math.round(dataMax * 1.18), 1)]}
-          />
+          <YAxis hide domain={[0, (dataMax: number) => Math.max(Math.round(dataMax * 1.18), 1)]} />
           <Tooltip content={<SalesMiniChartTooltip />} cursor={false} />
           <Area
             type="monotone"

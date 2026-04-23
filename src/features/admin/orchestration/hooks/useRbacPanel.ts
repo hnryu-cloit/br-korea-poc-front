@@ -10,7 +10,8 @@ export function useRbacPanel() {
   const filteredMembers = useMemo(() => {
     const q = searchText.trim().toLowerCase();
     return MOCK_RBAC_MEMBERS.filter((member) => {
-      const matchedSearch = q.length === 0 || `${member.name} ${member.email}`.toLowerCase().includes(q);
+      const matchedSearch =
+        q.length === 0 || `${member.name} ${member.email}`.toLowerCase().includes(q);
       const matchedRole = roleFilter === "" || member.role === roleFilter;
       return matchedSearch && matchedRole;
     });

@@ -229,11 +229,7 @@ export const useSalesScreenV2 = () => {
           },
         ]);
         const explainability = response.explainability;
-        if (
-          explainability?.trace_id &&
-          explainability.status === "pending" &&
-          !response.blocked
-        ) {
+        if (explainability?.trace_id && explainability.status === "pending" && !response.blocked) {
           const maxAttempts = 6;
           for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
             await new Promise((resolve) => setTimeout(resolve, 450));
