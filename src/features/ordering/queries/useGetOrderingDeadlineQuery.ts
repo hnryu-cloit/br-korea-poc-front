@@ -8,4 +8,5 @@ export const useGetOrderingDeadlineQuery = (params?: OrderingDeadlineParams) =>
   useQuery({
     queryKey: orderingQueryKeys.deadline(params),
     queryFn: () => getOrderingDeadline(params),
+    staleTime: 2 * 60 * 1000,
   });

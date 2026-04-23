@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
@@ -8,14 +9,17 @@ import { FloatingScrollTopButton } from "@/commons/components/page/FloatingScrol
 import { ScrollToTopOnRouteChange } from "@/commons/components/page/ScrollToTopOnRouteChange";
 import { SessionExpiryGuard } from "@/commons/components/session/SessionExpiryGuard";
 import { FloatingAiChatProvider } from "@/commons/contexts/FloatingAiChatProvider";
-import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
-import { MOCK_ORDERING_DEADLINE_TIMES } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { useGetNotificationsQuery } from "@/features/notifications/queries/useGetNotificationsQuery";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
-export function AppLayout() {
+type Props = { reminder?: ReactNode };
+
+export function AppLayout({ reminder }: Props) {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useDemoSession();
   const isStartPage = location.pathname === "/";
+  const isHqSettingsRoute = user.role === "hq_admin" && location.pathname.startsWith("/settings");
   const notificationsQuery = useGetNotificationsQuery();
   const notifications = notificationsQuery.data?.items ?? [];
   const unreadCount = notificationsQuery.data?.unread_count ?? 0;
@@ -25,31 +29,35 @@ export function AppLayout() {
     <FloatingAiChatProvider>
       <ScrollToTopOnRouteChange />
       <div className="min-h-screen bg-background text-foreground">
-        {!isStartPage ? (
+        {!isStartPage && !isHqSettingsRoute ? (
           <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         ) : null}
-        {!isStartPage ? (
+        {!isStartPage && !isHqSettingsRoute ? (
           <AppHeader
             onMenuToggle={() => setSidebarOpen((v) => !v)}
             notifications={notifications}
             unreadCount={unreadCount}
           />
         ) : null}
-        <div className={`min-h-screen flex flex-col ${isStartPage ? "" : "lg:ml-64"}`}>
+        <div
+          className={`min-h-screen flex flex-col ${isStartPage || isHqSettingsRoute ? "" : "lg:ml-64"}`}
+        >
           <main
-            className={`mx-auto w-full flex-1 lg:max-w-none ${isStartPage && "flex min-h-screen items-center justify-center py-6"} ${isDashboardPage ? "pt-[68px] pb-0 bg-[#FDFAF9]" : "px-5 md:px-8 lg:px-10 pb-14 pt-[96px]"}`}
+            className={`mx-auto w-full flex-1 lg:max-w-none ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : ""} ${isHqSettingsRoute ? "p-0" : isDashboardPage ? "pt-[68px] pb-0 bg-[#FDFAF9]" : "px-5 md:px-8 lg:px-10 pb-14 pt-[96px]"}`}
           >
-            <div className="mx-auto w-full max-w-[1280px]">
+            {isHqSettingsRoute ? (
               <Outlet />
-            </div>
+            ) : (
+              <div className="mx-auto w-full max-w-[1280px]">
+                <Outlet />
+              </div>
+            )}
           </main>
         </div>
-        {!isStartPage ? <FloatingScrollTopButton /> : null}
-        {!isStartPage ? <FloatingAiChat /> : null}
-        {!isStartPage ? (
-          <OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />
-        ) : null}
-        {!isStartPage ? <SessionExpiryGuard /> : null}
+        {!isStartPage && !isHqSettingsRoute ? <FloatingScrollTopButton /> : null}
+        {!isStartPage && !isHqSettingsRoute ? <FloatingAiChat /> : null}
+        {!isStartPage && !isHqSettingsRoute ? reminder : null}
+        {!isStartPage && !isHqSettingsRoute ? <SessionExpiryGuard /> : null}
       </div>
     </FloatingAiChatProvider>
   );

@@ -8,4 +8,5 @@ export const useGetAnalyticsMetricsQuery = (params?: GetAnalyticsMetricsRequest)
   useQuery({
     queryKey: analyticsQueryKeys.metrics(params),
     queryFn: () => getAnalyticsMetrics(params),
+    staleTime: 5 * 60 * 1000,
   });

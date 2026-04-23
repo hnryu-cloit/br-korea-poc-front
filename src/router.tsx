@@ -1,6 +1,8 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { AppLayout } from "@/commons/components/layout/AppLayout";
+import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
+import { MOCK_ORDERING_DEADLINE_TIMES } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { MarketPage } from "@/pages/MarketPage";
@@ -12,17 +14,11 @@ import { ProductionStatusPage } from "@/pages/production/ProductionStatusPage";
 import { ProductionWasteLossPage } from "@/pages/production/ProductionWasteLossPage";
 import { RoleSelectionPage } from "@/pages/RoleSelectionPage";
 import { SalesMetricsPage } from "@/pages/sales/SalesMetricsPage";
-import { SettingsAccessControlPage } from "@/pages/SettingsAccessControlPage";
-import { SettingsAuditLogsPage } from "@/pages/SettingsAuditLogsPage";
-import { SettingsConnectorsPage } from "@/pages/SettingsConnectorsPage";
-import { SettingsPage } from "@/pages/SettingsPage";
-import { SettingsQualityArchivePage } from "@/pages/SettingsQualityArchivePage";
-import { SignalsPage } from "@/pages/SignalsPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element: <AppLayout reminder={<OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />} />,
     children: [
       { index: true, element: <RoleSelectionPage /> },
       { path: "dashboard", element: <DashboardPage /> },
@@ -38,13 +34,15 @@ export const router = createBrowserRouter([
       { path: "analytics", element: <AnalyticsPage /> },
       { path: "analytics/market", element: <MarketPage /> },
       { path: "orchestration", element: <Navigate to="/settings" replace /> },
-      { path: "signals", element: <SignalsPage /> },
       { path: "settings", element: <OrchestrationPage /> },
-      { path: "settings/connectors", element: <SettingsConnectorsPage /> },
-      { path: "settings/access", element: <SettingsAccessControlPage /> },
-      { path: "settings/audit-logs", element: <SettingsAuditLogsPage /> },
-      { path: "settings/quality-archive", element: <SettingsQualityArchivePage /> },
-      { path: "settings/prompts", element: <SettingsPage /> },
+      { path: "settings/orchestration", element: <OrchestrationPage /> },
+      { path: "settings/connectors", element: <OrchestrationPage /> },
+      { path: "settings/access", element: <OrchestrationPage /> },
+      { path: "settings/prompts", element: <OrchestrationPage /> },
+      { path: "settings/golden-queries", element: <OrchestrationPage /> },
+      { path: "settings/audit-logs", element: <OrchestrationPage /> },
+      { path: "settings/quality-archive", element: <OrchestrationPage /> },
+      { path: "settings/notices", element: <OrchestrationPage /> },
     ],
   },
 ]);

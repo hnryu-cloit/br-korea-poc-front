@@ -8,4 +8,5 @@ export const useGetOrderingSelectionHistoryQuery = (params?: OrderingSelectionHi
   useQuery({
     queryKey: orderingQueryKeys.selectionHistory(params),
     queryFn: () => getOrderingSelectionHistory(params),
+    staleTime: 5 * 60 * 1000,
   });

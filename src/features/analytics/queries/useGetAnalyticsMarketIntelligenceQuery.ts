@@ -9,4 +9,5 @@ export const useGetAnalyticsMarketIntelligenceQuery = (params?: GetMarketIntelli
     queryKey: analyticsQueryKeys.marketIntelligence(params),
     queryFn: () => getAnalyticsMarketIntelligence(params),
     enabled: !!params?.store_id,
+    staleTime: 5 * 60 * 1000,
   });

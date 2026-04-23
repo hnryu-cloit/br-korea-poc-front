@@ -1,7 +1,7 @@
 import { useMemo, useState, type PropsWithChildren } from "react";
 
 import type { DemoRole } from "@/commons/components/layout/menu";
-import { sessionUser, type SessionUser } from "@/features/session/constants/session-user";
+import { sessionDefaults, sessionUser, type SessionUser } from "@/features/session/constants/session-user";
 import { DemoSessionContext } from "@/features/session/context/demo-session-context";
 import { SESSION_KEYS } from "@/lib/sessionStore";
 
@@ -40,12 +40,25 @@ function loadInitialUser(): SessionUser {
   return base;
 }
 
+function loadInitialReferenceDateTime(): string {
+  if (typeof window === "undefined") {
+    return sessionDefaults.referenceDateTime;
+  }
+  return (
+    window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME) ?? sessionDefaults.referenceDateTime
+  );
+}
+
 export function DemoSessionProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<SessionUser>(loadInitialUser);
+  const [referenceDateTime, setReferenceDateTimeState] = useState<string>(
+    loadInitialReferenceDateTime,
+  );
 
   const value = useMemo(
     () => ({
       user,
+      referenceDateTime,
       setRole: (role: DemoRole) => {
         if (typeof window !== "undefined") {
           window.localStorage.setItem(SESSION_KEYS.BYPASS_ROLE, role);
@@ -69,8 +82,21 @@ export function DemoSessionProvider({ children }: PropsWithChildren) {
           initials: getInitials(storeName),
         }));
       },
+      setReferenceDateTime: (nextReferenceDateTime: string) => {
+        const normalized = nextReferenceDateTime || sessionDefaults.referenceDateTime;
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(SESSION_KEYS.REFERENCE_DATETIME, normalized);
+        }
+        setReferenceDateTimeState(normalized);
+      },
+      resetReferenceDateTime: () => {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(SESSION_KEYS.REFERENCE_DATETIME, sessionDefaults.referenceDateTime);
+        }
+        setReferenceDateTimeState(sessionDefaults.referenceDateTime);
+      },
     }),
-    [user],
+    [referenceDateTime, user],
   );
 
   return <DemoSessionContext.Provider value={value}>{children}</DemoSessionContext.Provider>;

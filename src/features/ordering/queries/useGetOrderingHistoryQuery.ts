@@ -9,4 +9,5 @@ export const useGetOrderingHistoryQuery = (params?: OrderingHistoryParams) =>
     queryKey: orderingQueryKeys.history(params),
     queryFn: () => getOrderingHistory(params),
     enabled: !!params?.store_id,
+    staleTime: 5 * 60 * 1000,
   });

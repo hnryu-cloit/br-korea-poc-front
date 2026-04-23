@@ -8,4 +8,5 @@ export const useGetProductionSkuDetailQuery = (skuId: string | null, storeId: st
     queryKey: productionQueryKeys.skuDetail(skuId ?? "", storeId ?? ""),
     queryFn: () => getProductionSkuDetail(skuId ?? "", storeId ?? ""),
     enabled: Boolean(skuId) && Boolean(storeId),
+    staleTime: 2 * 60 * 1000,
   });

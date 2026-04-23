@@ -9,4 +9,5 @@ export const useGetOrderingHistoryInsightsQuery = (params?: OrderingHistoryParam
     queryKey: orderingQueryKeys.historyInsights(params),
     queryFn: () => getOrderingHistoryInsights(params),
     enabled: !!params?.store_id,
+    staleTime: 5 * 60 * 1000,
   });

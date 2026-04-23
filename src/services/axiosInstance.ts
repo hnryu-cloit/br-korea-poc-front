@@ -1,7 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 import { clearTokens, getAccessToken } from "@/lib/tokenManager";
-import { getSessionRole } from "@/lib/sessionStore";
+import { getSessionReferenceDateTime, getSessionRole, getSessionStoreId } from "@/lib/sessionStore";
 import { emitSessionExpired } from "@/commons/utils/session-expiry";
 import type { CommonError } from "@/services/type";
 
@@ -28,6 +28,14 @@ axiosInstance.interceptors.request.use(
     }
 
     config.headers["X-User-Role"] = getSessionRole();
+    const sessionStoreId = getSessionStoreId();
+    const sessionReferenceDateTime = getSessionReferenceDateTime();
+    if (sessionStoreId) {
+      config.headers["X-Store-Id"] = sessionStoreId;
+    }
+    if (sessionReferenceDateTime) {
+      config.headers["X-Reference-Datetime"] = sessionReferenceDateTime;
+    }
 
     return config;
   },

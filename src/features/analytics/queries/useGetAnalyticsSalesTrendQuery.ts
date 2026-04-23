@@ -7,4 +7,5 @@ export const useGetAnalyticsSalesTrendQuery = (storeId?: string) =>
   useQuery({
     queryKey: analyticsQueryKeys.salesTrend(storeId),
     queryFn: () => getAnalyticsSalesTrend(storeId),
+    staleTime: 5 * 60 * 1000,
   });

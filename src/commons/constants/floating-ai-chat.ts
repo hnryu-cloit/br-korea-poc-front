@@ -19,15 +19,6 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
       { label: "분석 구조", prompt: "RAG 출처 응답 구조를 짧게 설명해줘" },
     ],
   },
-  "/signals": {
-    title: "매출 시그널 해설",
-    subtitle: "긴급 시그널 우선순위와 본사 개입 기준을 설명합니다.",
-    quickActions: [
-      { label: "긴급 대응", prompt: "긴급 시그널 중 가장 먼저 대응해야 할 것은?" },
-      { label: "배달 감소", prompt: "배달 급감 시그널에 본사가 할 수 있는 조치를 알려줘" },
-      { label: "리타겟팅", prompt: "T-day 재방문율 시그널을 마케팅에 활용하는 방법은?" },
-    ],
-  },
   "/production": {
     title: "생산 관리 해설",
     subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",

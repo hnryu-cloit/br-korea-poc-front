@@ -1,10 +1,8 @@
 import { Heart } from "lucide-react";
 
-import {
-  useAddBookmarkMutation,
-  useGetBookmarksQuery,
-  useRemoveBookmarkMutation,
-} from "@/features/bookmarks/queries/useBookmarks";
+import { useDeleteBookmarkMutation } from "@/features/bookmarks/queries/useDeleteBookmarkMutation";
+import { useGetBookmarksQuery } from "@/features/bookmarks/queries/useGetBookmarksQuery";
+import { usePostBookmarkMutation } from "@/features/bookmarks/queries/usePostBookmarkMutation";
 import type { BookmarkType } from "@/features/bookmarks/types/bookmarks";
 
 export function BookmarkButton({
@@ -19,8 +17,8 @@ export function BookmarkButton({
   storeId?: string;
 }) {
   const { data } = useGetBookmarksQuery(storeId, type);
-  const addMutation = useAddBookmarkMutation();
-  const removeMutation = useRemoveBookmarkMutation();
+  const addMutation = usePostBookmarkMutation();
+  const removeMutation = useDeleteBookmarkMutation();
 
   const isBookmarked = data?.items.some((b) => b.ref_id === refId) ?? false;
 

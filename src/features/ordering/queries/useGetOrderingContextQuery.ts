@@ -8,4 +8,5 @@ export const useGetOrderingContextQuery = (notificationId: number | null) =>
     queryKey: orderingQueryKeys.context(notificationId ?? -1),
     queryFn: () => getOrderingContext({ notification_id: notificationId ?? -1 }),
     enabled: notificationId !== null,
+    staleTime: 5 * 60 * 1000,
   });

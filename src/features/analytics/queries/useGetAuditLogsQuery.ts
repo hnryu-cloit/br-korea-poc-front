@@ -8,4 +8,5 @@ export const useGetAuditLogsQuery = (params: GetAuditLogsRequest) =>
   useQuery({
     queryKey: analyticsQueryKeys.auditLogs(params),
     queryFn: () => getAuditLogs(params.domain, params.limit),
+    staleTime: 5 * 60 * 1000,
   });

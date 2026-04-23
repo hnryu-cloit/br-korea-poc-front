@@ -27,7 +27,9 @@ npm run dev -- --host 0.0.0.0 --port 6003
 ```
 
 - 백엔드 base URL은 `VITE_API_BASE_URL` 환경변수로 지정할 수 있습니다.
-- 기본 `.env.example`에는 `VITE_DEFAULT_STORE_ID=POC_012`이 포함되어 있어, 초기 접속 시 온라인/할인 KPI 검증이 가능한 점포 기준으로 조회합니다.
+- 기본 환경값은 `VITE_DEFAULT_STORE_ID=POC_010`으로 설정되어 초기 점포가 `POC 010`으로 고정됩니다.
+- 기준 일시 기본값은 `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`입니다. (UI에서 변경 가능)
+- 매출 질의는 1차 응답 이후 `GET /api/explainability/{trace_id}` 폴링으로 액션/근거가 후속 갱신됩니다.
 - 소진공 빅데이터 OpenAPI 인증키는 프론트에서 직접 사용하지 않습니다. `br-korea-poc-backend/.env`에만 설정합니다.
 
 ## 백엔드 API 키 연동 메모
@@ -71,7 +73,7 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 상권/고객 분석 화면은 `업종 분석`, `매출 분석`, `인구 분석`, `지역현황`, `고객특성` 5개 블록으로 구성되며, 원천 데이터 미제공 항목은 `미제공`으로 표시됩니다.
 - 고객 식별 컬럼이 백엔드 원천 테이블에 추가되면 신규/단골 비율은 백엔드 자동탐지 템플릿으로 계산되어 프론트에 자동 반영됩니다.
 - `ordering/history`는 `store_id`를 필수로 전달하며, 누락/오입력은 백엔드에서 4xx로 반환됩니다. QA 검증 시 `VITE_DEFAULT_STORE_ID`를 실제 `masked_stor_cd` 값으로 설정해 사용하세요.
-- 기본 `.env.example`은 `VITE_DEFAULT_STORE_ID=POC_012`를 사용합니다. 해당 점포는 최근 온라인 주문/할인결제 데이터가 있어 KPI 재현 확인에 유리합니다.
+- 기본값은 `VITE_DEFAULT_STORE_ID=POC_010`, `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`를 사용합니다.
 
 - 상권/고객 분석 화면의 글로벌 실패 메시지는 `market-intelligence` 메인 API 실패 기준으로만 표시됩니다. `store-profile`/`customer-profile`/`sales-trend` 일부 실패는 보조 데이터 결손으로 처리됩니다.
 
@@ -124,3 +126,61 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - `br-korea-poc-front`: `npm test`
   - `br-korea-poc-backend`: `PYTHONPATH=. pytest -q tests/test_system_integration.py tests/test_health.py::test_sales_prompts tests/test_health.py::test_ordering_selection_save`
   - `br-korea-poc-ai`: `pytest -q tests/test_quality_scenarios.py::test_data_extraction_total_sales_intent tests/test_quality_scenarios.py::test_data_extraction_peak_hours_intent tests/test_quality_scenarios.py::test_data_extraction_top_items_intent tests/test_quality_scenarios.py::test_data_extraction_profitability_standard_margin`
+
+## Session Note (2026-04-22, Settings Page v3)
+
+- 본사 역할(`hq_admin`) 선택 후 진입하는 `/settings` 메인 화면이 `Settings Page v3` 구조로 개편되었습니다.
+- 로컬 확인 경로
+  - `http://localhost:5173/` → `본사` 선택 → `/settings`
+  - 직접 진입: `http://localhost:5173/settings`
+
+## Session Note (2026-04-23, sidebar logo navigation)
+
+- 사이드바 상단 `AgentGo Biz` 로고 클릭 시 현재 역할 홈이 아니라 역할 선택 대문(`/`)으로 이동합니다.
+- 로컬 확인 경로
+  - `http://localhost:5173/dashboard` 또는 `http://localhost:5173/settings` 진입
+  - 사이드바 로고 클릭
+  - `http://localhost:5173/`에서 점주/본사 선택 카드 노출 확인
+
+## Session Note (2026-04-23, settings v3 shell alignment)
+
+- `/settings` 화면의 셸(UI 프레임)을 제공 기준 HTML(`설정 v3 – Biz Dunkin' 관리자`) 구조에 맞춰 정렬했습니다.
+  - 상단 `Biz DUNKIN' / 시스템 설정` 헤더 바
+  - 좌측 216px 설정 내비(그룹 라벨/active/hover/pill 톤)
+  - 메인 배경/보더/간격 토큰 정합
+- 로컬 확인 경로
+  - `http://localhost:5173/settings`
+  - `http://localhost:5173/settings/orchestration`
+  - `http://localhost:5173/settings/prompts`
+
+## Session Note (2026-04-23, settings v3 full panel refactor)
+
+- `/settings`의 내부 패널과 모달을 제공 원본 HTML(`설정 v3 – Biz Dunkin' 관리자`) 기준으로 재작성했습니다.
+  - 패널: Agent 레지스트리, 오케스트레이션, 데이터 커넥터, RBAC, AI 프롬프트, 골든 쿼리, 감사 로그, 품질, 공지사항
+  - 모달: 신규 Agent, Agent 설정, 라우팅 규칙, 권한 매트릭스, 멤버 초대, 테스트 콘솔, 임베딩 스케줄/즉시 실행, 공지 상세
+- 로컬 확인 경로
+  - `http://localhost:5173/settings`
+  - 좌측 메뉴 전환으로 각 패널 UI 확인
+  - 프롬프트/골든쿼리/감사로그에서 입력·필터 인터랙션 확인
+
+## Session Note (2026-04-23, vibe coding guide alignment)
+
+- settings 패널 컴포넌트에서 상태/필터/목업 데이터 로직을 분리해 `VIBE_CODING_GUIDE`의 역할 분리 원칙을 보강했습니다.
+  - 상태/필터 훅: `useAuditPanel`, `useRbacPanel`, `useGoldenQueriesPanel`, `usePromptTestConsole`
+  - 목업 데이터 통합: `src/features/admin/orchestration/mockdata/mock-orchestration.ts`
+- 확인 명령
+  - `cd br-korea-poc-front && npm run build`
+
+## Session Note (2026-04-23, sales metrics partial-data recovery)
+
+- `/sales/metrics`에서 `GET /api/sales/insights`가 일부 섹션 데이터 부족이어도 백엔드는 404 대신 부분 응답(점검 섹션 포함)을 반환합니다.
+- 벤치마킹(`useGetSalesBenchmarkQuery`)은 비교군 부재 또는 일부 비교 매장 요약 조회 실패 시 에러를 던지지 않고 `null`로 처리합니다.
+- 기본 점포 `POC_010`에서도 요약 차트/인사이트 카드가 함께 표시되는지 확인하세요.
+
+## Session Note (2026-04-23, signals route removed)
+
+- `/signals` 라우트는 제거되었습니다.
+- 사이드바에서는 `본사` 섹션의 `매출 시그널`, `시스템 설정` 메뉴를 표시하지 않습니다.
+- 확인 경로
+  - `http://localhost:6003/dashboard` 진입 후 사이드바 확인
+  - 직접 진입 `http://localhost:6003/signals` 시 라우트 미정의 상태 확인

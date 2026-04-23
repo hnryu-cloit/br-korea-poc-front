@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Bell, ChevronDown, Menu, X } from "lucide-react";
+import { Bell, ChevronDown, Clock3, Menu, RotateCcw, X } from "lucide-react";
 
 import { formatCount } from "@/commons/utils/format-count";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
@@ -21,13 +21,15 @@ const breadcrumbMap: Record<string, string[]> = {
   "/sales/metrics": ["분석", "매장 분석", "지표 분석"],
   "/analytics": ["분석", "매장 분석", "매출 현황"],
   "/analytics/market": ["분석", "매장 분석", "상권/고객 분석"],
-  "/signals": ["본사", "매출 시그널"],
-  "/settings": ["본사", "시스템 설정"],
-  "/settings/connectors": ["설정", "데이터 커넥터"],
-  "/settings/access": ["설정", "멤버 & 접근 제어"],
-  "/settings/audit-logs": ["설정", "대화 감사 로그"],
-  "/settings/quality-archive": ["설정", "품질 검증 아카이브"],
-  "/settings/prompts": ["설정", "프롬프트 설정"],
+  "/settings": ["본사", "시스템 설정", "Agent 레지스트리"],
+  "/settings/orchestration": ["본사", "시스템 설정", "오케스트레이션"],
+  "/settings/connectors": ["본사", "시스템 설정", "데이터 커넥터"],
+  "/settings/access": ["본사", "시스템 설정", "RBAC & 접근 제어"],
+  "/settings/prompts": ["본사", "시스템 설정", "AI 프롬프트 설정"],
+  "/settings/golden-queries": ["본사", "시스템 설정", "골든 쿼리 관리"],
+  "/settings/audit-logs": ["본사", "시스템 설정", "대화 감사 로그"],
+  "/settings/quality-archive": ["본사", "시스템 설정", "품질 검증 아카이브"],
+  "/settings/notices": ["본사", "시스템 설정", "공지사항"],
 };
 
 type Props = {
@@ -41,7 +43,9 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isStoreMenuOpen, setIsStoreMenuOpen] = useState(false);
-  const { user, setStore } = useDemoSession();
+  const [isReferenceMenuOpen, setIsReferenceMenuOpen] = useState(false);
+  const { user, setStore, referenceDateTime, setReferenceDateTime, resetReferenceDateTime } =
+    useDemoSession();
   const isHqAdmin = user.role === "hq_admin";
   const { data: stores = [] } = useGetStoresQuery(!isHqAdmin);
   const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
@@ -102,6 +106,68 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsReferenceMenuOpen((v) => !v)}
+              className="flex h-[42px] w-[230px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed]"
+              aria-label="기준 일자 및 시간 설정"
+            >
+              <div className="flex items-center gap-2">
+                <div className="grid size-7 place-items-center rounded-lg bg-[#EEF4FF] text-[#2454C8]">
+                  <Clock3 className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 text-left">
+                  <p className="text-[11px] leading-tight text-slate-500">기준 일자 및 시간</p>
+                  <p className="truncate text-[12px] font-semibold leading-tight text-slate-800">
+                    {referenceDateTime.replace("T", " ")}
+                  </p>
+                </div>
+              </div>
+              <ChevronDown
+                className={`h-4 w-4 text-slate-400 transition-transform ${isReferenceMenuOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {isReferenceMenuOpen ? (
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 z-40 cursor-default"
+                  onClick={() => setIsReferenceMenuOpen(false)}
+                  aria-label="기준 일시 메뉴 닫기"
+                />
+                <div className="absolute right-0 top-12 z-50 w-[290px] overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_rgba(31,77,187,0.16)]">
+                  <div className="border-b border-border/70 px-4 py-3">
+                    <p className="text-xs font-semibold text-slate-500">데이터 검증 기준</p>
+                  </div>
+                  <div className="space-y-3 px-4 py-3">
+                    <label className="space-y-1.5">
+                      <span className="text-xs font-medium text-slate-600">기준 일시</span>
+                      <input
+                        type="datetime-local"
+                        value={referenceDateTime}
+                        onChange={(event) => setReferenceDateTime(event.target.value)}
+                        className="w-full rounded-lg border border-[#d5def0] bg-white px-2.5 py-2 text-sm text-slate-700 outline-none transition-colors focus:border-[#9ab8ef]"
+                      />
+                    </label>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-[11px] text-slate-500">기본값: 3월 5일 00:00</p>
+                      <button
+                        type="button"
+                        onClick={resetReferenceDateTime}
+                        className="inline-flex items-center gap-1 rounded-md border border-[#d5def0] px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-[#bfd1ed] hover:text-slate-800"
+                      >
+                        <RotateCcw className="h-3 w-3" />
+                        초기화
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : null}
+          </div>
+
           <div className="relative">
             <button
               type="button"
