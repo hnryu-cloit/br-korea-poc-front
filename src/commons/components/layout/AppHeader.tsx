@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Clock3, Menu, RotateCcw, X } from "lucide-react";
 
 import bizLogo from "@/assets/biz_logo.png";
@@ -9,31 +9,6 @@ import type { ApiNotification } from "@/features/notifications/types/notificatio
 import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
-const breadcrumbMap: Record<string, string[]> = {
-  "/": ["시작 페이지"],
-  "/dashboard": ["홈"],
-  "/production": ["매장 운영", "생산 관리", "생산 현황"],
-  "/production/status": ["매장 운영", "생산 관리", "생산 현황"],
-  "/production/waste-loss": ["매장 운영", "생산 관리", "폐기 손실 현황"],
-  "/production/inventory-diagnosis": ["매장 운영", "생산 관리", "재고 수준 진단"],
-  "/ordering": ["매장 운영", "주문 관리", "주문 추천안 비교"],
-  "/ordering/recommendations": ["매장 운영", "주문 관리", "주문 추천안 비교"],
-  "/ordering/history": ["매장 운영", "주문 관리", "발주 이력"],
-  "/sales": ["분석", "매장 분석", "지표 분석"],
-  "/sales/metrics": ["분석", "매장 분석", "지표 분석"],
-  "/analytics": ["분석", "매장 분석", "매출 현황"],
-  "/analytics/market": ["분석", "매장 분석", "상권/고객 분석"],
-  "/settings": ["본사", "시스템 설정", "Agent 레지스트리"],
-  "/settings/orchestration": ["본사", "시스템 설정", "오케스트레이션"],
-  "/settings/connectors": ["본사", "시스템 설정", "데이터 커넥터"],
-  "/settings/access": ["본사", "시스템 설정", "RBAC & 접근 제어"],
-  "/settings/prompts": ["본사", "시스템 설정", "AI 프롬프트 설정"],
-  "/settings/golden-queries": ["본사", "시스템 설정", "골든 쿼리 관리"],
-  "/settings/audit-logs": ["본사", "시스템 설정", "대화 감사 로그"],
-  "/settings/quality-archive": ["본사", "시스템 설정", "품질 검증 아카이브"],
-  "/settings/notices": ["본사", "시스템 설정", "공지사항"],
-};
-
 type Props = {
   onMenuToggle: () => void;
   notifications: ApiNotification[];
@@ -41,7 +16,6 @@ type Props = {
 };
 
 export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
-  const location = useLocation();
   const navigate = useNavigate();
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isStoreMenuOpen, setIsStoreMenuOpen] = useState(false);
@@ -50,7 +24,6 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
     useDemoSession();
   const isHqAdmin = user.role === "hq_admin";
   const { data: stores = [] } = useGetStoresQuery(!isHqAdmin);
-  const crumbs = breadcrumbMap[location.pathname] ?? ["통합 운영 대시보드"];
 
   useEffect(() => {
     if (stores.length === 0) {

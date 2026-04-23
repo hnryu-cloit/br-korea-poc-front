@@ -23,7 +23,6 @@ export function AppLayout({ reminder }: Props) {
   const notificationsQuery = useGetNotificationsQuery();
   const notifications = notificationsQuery.data?.items ?? [];
   const unreadCount = notificationsQuery.data?.unread_count ?? 0;
-  const isDashboardPage = location.pathname === "/dashboard";
 
   return (
     <FloatingAiChatProvider>

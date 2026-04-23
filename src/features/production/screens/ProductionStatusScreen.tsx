@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-import { CardAiButton } from "@/commons/components/chat/CardAiButton";
 import { AppModal } from "@/commons/components/modal/AppModal";
-import { PageTitle } from "@/commons/components/page/PageTitle";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
 import { useGetProductionSkuDetailQuery } from "@/features/production/queries/useGetProductionSkuDetailQuery";
@@ -19,7 +17,11 @@ export function ProductionStatusScreen() {
   const [qty, setQty] = useState("48");
   const [page, setPage] = useState(1);
 
-  const skuListQuery = useGetProductionSkuListQuery({
+  const {
+    data: skuListData,
+    isFetching: skuListFetching,
+    isLoading: skuListLoading,
+  } = useGetProductionSkuListQuery({
     page,
     page_size: 10,
     store_id: user.storeId,
@@ -28,7 +30,7 @@ export function ProductionStatusScreen() {
   const postRegistrationMutation = usePostProductionRegistrationMutation();
   const orderingDeadlineQuery = useGetOrderingDeadlineQuery({ store_id: user.storeId });
 
-  const items = skuListQuery.data?.items ?? [];
+  const items = skuListData?.items ?? [];
 
   const openRegister = (sku: ProductionSkuItem) => {
     setActiveSku(sku);
@@ -58,10 +60,11 @@ export function ProductionStatusScreen() {
       <h2 className="text-[#41352E] text-[24px] font-bold mb-8">상품 생산 현황</h2>
       <ProductionTableSection
         items={items}
-        pagination={skuListQuery.data?.pagination}
+        pagination={skuListData?.pagination}
         orderingDeadlineAt={orderingDeadlineQuery.data?.deadline}
         onChangePage={setPage}
         onOpenRegister={openRegister}
+        loading={skuListLoading || skuListFetching}
       />
       {activeSku ? (
         <AppModal onClose={closeRegister}>

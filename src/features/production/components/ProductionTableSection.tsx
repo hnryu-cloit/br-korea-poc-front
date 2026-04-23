@@ -38,12 +38,14 @@ export function ProductionTableSection({
   orderingDeadlineAt,
   onChangePage,
   onOpenRegister,
+  loading,
 }: {
   items: ProductionSkuItem[];
   pagination?: ProductionSkuListResponse["pagination"];
   orderingDeadlineAt?: string;
   onChangePage?: (page: number) => void;
   onOpenRegister: (sku: ProductionSkuItem) => void;
+  loading?: boolean;
 }) {
   const totalPages = pagination?.total_pages ?? 1;
   const currentPage = pagination?.page ?? 1;
@@ -73,9 +75,21 @@ export function ProductionTableSection({
               </tr>
             </thead>
             <tbody>
-              {items.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-16 text-center text-sm text-slate-400">
+                  <td
+                    colSpan={9}
+                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                  >
+                    SKU 데이터를 불러오는 중입니다.
+                  </td>
+                </tr>
+              ) : items.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={9}
+                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                  >
                     표시할 SKU 데이터가 없습니다.
                   </td>
                 </tr>
