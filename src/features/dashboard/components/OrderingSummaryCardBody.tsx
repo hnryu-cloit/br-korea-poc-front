@@ -40,7 +40,7 @@ export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSumma
             to="/ordering"
             className="flex h-[32px] items-center justify-center rounded-[4px] border border-pink-500 p-[2px_12px] text-sm font-bold text-pink-500"
           >
-            바로가기
+            상품 전체보기
           </Link>
         }
       >

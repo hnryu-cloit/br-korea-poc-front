@@ -5,7 +5,8 @@ import type {
 } from "@/features/dashboard/types/dashboard";
 import type {
   OrderingSummarySuggestionDisplay,
-  SalesSummaryDisplayItem,
+  SalesSummaryTrendKey,
+  SalesSummaryTrendPanel,
 } from "@/features/dashboard/types/summary-card";
 
 export function buildOrderingSummarySuggestion(
@@ -44,27 +45,38 @@ export function buildOrderingDeadlineDescription(
   return `주문 마감 ${hours}시간 ${minutes}분 전`;
 }
 
-export function buildSalesSummaryItems(
+export function buildSalesSummaryTrendPanels(
   salesOverview: DashboardSalesOverview,
-): SalesSummaryDisplayItem[] {
-  return [
-    {
-      name: "이번달 매출",
-      sales: salesOverview.monthly_sales,
-      previousSales: salesOverview.last_month_sales,
-      comparisonLabel: "지난달",
+): SalesSummaryTrendPanel[] {
+  const panelByKey: Record<SalesSummaryTrendKey, SalesSummaryTrendPanel> = {
+    currentHour: {
+      key: "currentHour",
+      name: "현재 시간 매출",
+      sales: salesOverview.current_hour_sales,
+      previousSales: salesOverview.last_month_same_hour_avg_sales,
+      comparisonLabel: "지난달 같은 시간 평균",
+      chartLabel: "최근 6시간",
+      chartData: salesOverview.current_hour_sales_points,
     },
-    {
+    today: {
+      key: "today",
       name: "오늘 매출",
       sales: salesOverview.today_sales,
       previousSales: salesOverview.last_month_same_weekday_avg_sales,
       comparisonLabel: "지난달 같은 요일 평균",
+      chartLabel: "최근 6일",
+      chartData: salesOverview.today_sales_points,
     },
-    {
-      name: "현재 시간대 매출",
-      sales: salesOverview.current_hour_sales,
-      previousSales: salesOverview.last_month_same_hour_avg_sales,
-      comparisonLabel: "지난달 같은 시간 평균",
+    monthly: {
+      key: "monthly",
+      name: "이번달 매출",
+      sales: salesOverview.monthly_sales,
+      previousSales: salesOverview.last_month_sales,
+      comparisonLabel: "지난달",
+      chartLabel: "최근 6개월",
+      chartData: salesOverview.monthly_sales_points,
     },
-  ];
+  };
+
+  return [panelByKey.currentHour, panelByKey.today, panelByKey.monthly];
 }

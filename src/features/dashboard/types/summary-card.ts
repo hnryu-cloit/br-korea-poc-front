@@ -4,6 +4,7 @@ import type {
   DashboardOrderingDeadlineItem,
   DashboardProductionSummaryItem,
   DashboardSalesOverview,
+  DashboardSalesTrendPoint,
 } from "@/features/dashboard/types/dashboard";
 
 export interface SummaryCardProps {
@@ -45,11 +46,16 @@ export interface OrderingSummarySuggestionDisplay {
   ctaPath: string;
 }
 
-export interface SalesSummaryDisplayItem {
+export type SalesSummaryTrendKey = "currentHour" | "today" | "monthly";
+
+export interface SalesSummaryTrendPanel {
+  key: SalesSummaryTrendKey;
   name: string;
   sales: number;
   previousSales: number;
   comparisonLabel: string;
+  chartLabel: string;
+  chartData: DashboardSalesTrendPoint[];
 }
 
 export type SummaryCardProductionItem = DashboardProductionSummaryItem;

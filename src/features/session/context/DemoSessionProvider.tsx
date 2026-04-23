@@ -1,7 +1,11 @@
 import { useMemo, useState, type PropsWithChildren } from "react";
 
 import type { DemoRole } from "@/commons/components/layout/menu";
-import { sessionDefaults, sessionUser, type SessionUser } from "@/features/session/constants/session-user";
+import {
+  sessionDefaults,
+  sessionUser,
+  type SessionUser,
+} from "@/features/session/constants/session-user";
 import { DemoSessionContext } from "@/features/session/context/demo-session-context";
 import { SESSION_KEYS } from "@/lib/sessionStore";
 
@@ -45,7 +49,8 @@ function loadInitialReferenceDateTime(): string {
     return sessionDefaults.referenceDateTime;
   }
   return (
-    window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME) ?? sessionDefaults.referenceDateTime
+    window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME) ??
+    sessionDefaults.referenceDateTime
   );
 }
 
@@ -91,7 +96,10 @@ export function DemoSessionProvider({ children }: PropsWithChildren) {
       },
       resetReferenceDateTime: () => {
         if (typeof window !== "undefined") {
-          window.localStorage.setItem(SESSION_KEYS.REFERENCE_DATETIME, sessionDefaults.referenceDateTime);
+          window.localStorage.setItem(
+            SESSION_KEYS.REFERENCE_DATETIME,
+            sessionDefaults.referenceDateTime,
+          );
         }
         setReferenceDateTimeState(sessionDefaults.referenceDateTime);
       },

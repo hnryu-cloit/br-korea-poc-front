@@ -39,9 +39,9 @@ export const postProductionRegistration = async (payload: ProductionRegistration
   return response.data;
 };
 
-export const getProductionWasteSummary = async (storeId: string) => {
+export const getProductionWasteSummary = async (storeId: string, page = 1, pageSize = 10) => {
   const response = await axiosInstance.get<WasteSummaryResponse>("/api/production/waste-summary", {
-    params: { store_id: storeId },
+    params: { store_id: storeId, page, page_size: pageSize },
   });
   return response.data;
 };

@@ -25,7 +25,8 @@ const INITIAL_FORM = Object.fromEntries(
 
 export const useOrchestrationScreen = () => {
   const [form, setForm] = useState<Record<PromptDomainKey, PromptDomainForm>>(INITIAL_FORM);
-  const [savedForm, setSavedForm] = useState<Record<PromptDomainKey, PromptDomainForm>>(INITIAL_FORM);
+  const [savedForm, setSavedForm] =
+    useState<Record<PromptDomainKey, PromptDomainForm>>(INITIAL_FORM);
   const [activeAgent, setActiveAgent] = useState<PromptDomainKey>("production");
   const [activeModal, setActiveModal] = useState<SettingsModalKey | null>(null);
   const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);

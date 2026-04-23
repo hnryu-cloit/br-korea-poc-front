@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { CardAiButton } from "@/commons/components/chat/CardAiButton";
-import { PageTitle } from "@/commons/components/page/PageTitle";
 import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
@@ -91,17 +89,12 @@ export function OrderingRecommendationsScreen() {
 
   return (
     <div className="space-y-6">
-      <PageTitle
-        title="주문 관리"
-        description="주문 누락 방지를 목적으로 추천 3안을 비교합니다. 예측과 권고는 최소 범위로 제공하며 최종 의사결정은 점주가 수행합니다."
-      >
-        <CardAiButton contextKey="ordering:options" />
-      </PageTitle>
-      <OrderingDeadlineAlert deadlineItems={deadlineItems} />
+      <h2 className="text-[#41352E] text-[24px] font-bold mb-8">주문 관리</h2>
       <OrderingContextCards
         weather={optionsQuery.data?.weather}
         trend={optionsQuery.data?.trend_summary}
       />
+      <OrderingDeadlineAlert deadlineItems={deadlineItems} />
       <OrderingOptionsSection
         options={orderingOptions}
         selectedOptionId={effectiveSelectedOptionId}

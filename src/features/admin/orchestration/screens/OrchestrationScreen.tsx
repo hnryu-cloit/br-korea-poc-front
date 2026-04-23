@@ -1,8 +1,6 @@
 import { useLocation } from "react-router-dom";
 
-import {
-  PATH_PANEL_MAP,
-} from "@/features/admin/orchestration/constants/orchestration";
+import { PATH_PANEL_MAP } from "@/features/admin/orchestration/constants/orchestration";
 import { AgentsPanel } from "@/features/admin/orchestration/components/AgentsPanel";
 import { AuditPanelV3 } from "@/features/admin/orchestration/components/AuditPanelV3";
 import { ConnectorsPanelV3 } from "@/features/admin/orchestration/components/ConnectorsPanelV3";
@@ -62,12 +60,7 @@ export function OrchestrationScreen() {
     if (activePanel === "audit") return <AuditPanelV3 />;
     if (activePanel === "quality") return <QualityPanelV3 />;
     if (activePanel === "notices")
-      return (
-        <NoticesPanel
-          onOpenModal={setActiveModal}
-          onSelectNotice={setSelectedNotice}
-        />
-      );
+      return <NoticesPanel onOpenModal={setActiveModal} onSelectNotice={setSelectedNotice} />;
     return null;
   };
 

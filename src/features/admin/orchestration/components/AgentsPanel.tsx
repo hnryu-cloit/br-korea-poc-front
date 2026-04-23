@@ -70,10 +70,18 @@ export function AgentsPanel({ onOpenModal }: Props) {
           <p>배포된 Agent 현황 관리 · 신규 Agent 생성 · 버전 배포</p>
         </div>
         <div className="pgh-r">
-          <button type="button" className="btn btn-g btn-sm" onClick={() => onOpenModal("sync-log")}>
+          <button
+            type="button"
+            className="btn btn-g btn-sm"
+            onClick={() => onOpenModal("sync-log")}
+          >
             배포 이력
           </button>
-          <button type="button" className="btn btn-p btn-sm" onClick={() => onOpenModal("new-agent")}>
+          <button
+            type="button"
+            className="btn btn-p btn-sm"
+            onClick={() => onOpenModal("new-agent")}
+          >
             + 신규 Agent 생성
           </button>
         </div>
@@ -94,9 +102,7 @@ export function AgentsPanel({ onOpenModal }: Props) {
           <div className="mv text-[15px]">
             v3.2<span className="text-[11px]"> 생산관리</span>
           </div>
-          <div className="ms mt-1 text-[11px] text-[var(--t3)]">
-            2026-04-18 14:20
-          </div>
+          <div className="ms mt-1 text-[11px] text-[var(--t3)]">2026-04-18 14:20</div>
         </div>
         <div className="metric">
           <div className="ml">오늘 총 호출</div>
@@ -139,14 +145,13 @@ export function AgentsPanel({ onOpenModal }: Props) {
               ? "text-[var(--teal)]"
               : "text-[var(--amber)]";
           return (
-            <div
-              key={card.id}
-              className={`card mb-0 ${card.urgent ? "border-[#ffcece]" : ""}`}
-            >
+            <div key={card.id} className={`card mb-0 ${card.urgent ? "border-[#ffcece]" : ""}`}>
               <div className="mb-[10px] flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-[7px]">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-[8px] ${iconBoxClass}`}>
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-[8px] ${iconBoxClass}`}
+                    >
                       <span className={`material-symbols-outlined text-[16px] ${iconColorClass}`}>
                         {idx === 0 ? "grid_view" : idx === 1 ? "receipt_long" : "show_chart"}
                       </span>
@@ -172,9 +177,7 @@ export function AgentsPanel({ onOpenModal }: Props) {
 
               <div
                 className={`mb-[10px] rounded-[7px] px-[10px] py-2 ${
-                  card.urgent
-                    ? "border border-[#FFCECE] bg-[var(--red-lt)]"
-                    : "bg-[var(--bg)]"
+                  card.urgent ? "border border-[#FFCECE] bg-[var(--red-lt)]" : "bg-[var(--bg)]"
                 }`}
               >
                 <div className="mb-1 flex justify-between">

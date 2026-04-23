@@ -1,10 +1,19 @@
+import balanceIcon from "@/assets/balance.svg";
+import boxIcon from "@/assets/box.svg";
+import chartIcon from "@/assets/chart.svg";
+import chefIcon from "@/assets/chef.svg";
+import dashboardIcon from "@/assets/dashboard.svg";
+import deleteIcon from "@/assets/delete.svg";
+import historyIcon from "@/assets/history.svg";
+import mapIcon from "@/assets/map.svg";
+import receiptIcon from "@/assets/receipt.svg";
+
 export type DemoRole = "hq_admin" | "store_owner";
 
 export type MenuItem = {
   to: string;
   label: string;
   icon: string;
-  children?: MenuItem[];
 };
 
 export type MenuSection = {
@@ -15,47 +24,33 @@ export type MenuSection = {
 
 export const menuSections: MenuSection[] = [
   {
-    items: [{ to: "/dashboard", label: "홈", icon: "home" }],
+    roles: ["store_owner", "hq_admin"],
+    items: [{ to: "/dashboard", label: "홈", icon: dashboardIcon }],
   },
   {
-    section: "매장 운영",
+    section: "생산",
     roles: ["store_owner", "hq_admin"],
     items: [
-      {
-        to: "/production",
-        label: "생산 관리",
-        icon: "bakery_dining",
-        children: [
-          { to: "/production/status", label: "생산 현황", icon: "bakery_dining" },
-          { to: "/production/waste-loss", label: "폐기 손실 현황", icon: "delete" },
-          { to: "/production/inventory-diagnosis", label: "재고 수준 진단", icon: "inventory_2" },
-        ],
-      },
-      {
-        to: "/ordering",
-        label: "주문 관리",
-        icon: "shopping_cart",
-        children: [
-          { to: "/ordering/recommendations", label: "주문 추천안 비교", icon: "shopping_cart" },
-          { to: "/ordering/history", label: "발주 이력", icon: "history" },
-        ],
-      },
+      { to: "/production/status", label: "생산 현황", icon: chefIcon },
+      { to: "/production/waste-loss", label: "폐기 손실", icon: deleteIcon },
+      { to: "/production/inventory-diagnosis", label: "재고 진단", icon: boxIcon },
     ],
   },
   {
-    section: "분석",
+    section: "주문",
     roles: ["store_owner", "hq_admin"],
     items: [
-      {
-        to: "/analytics",
-        label: "매장 분석",
-        icon: "analytics",
-        children: [
-          { to: "/analytics", label: "매출 현황", icon: "analytics" },
-          { to: "/sales/metrics", label: "지표 분석", icon: "query_stats" },
-          { to: "/analytics/market", label: "상권/고객 분석", icon: "store" },
-        ],
-      },
+      { to: "/ordering/recommendations", label: "주문 관리", icon: receiptIcon },
+      { to: "/ordering/history", label: "발주 이력", icon: historyIcon },
+    ],
+  },
+  {
+    section: "매장 분석",
+    roles: ["store_owner", "hq_admin"],
+    items: [
+      { to: "/analytics", label: "매출 현황", icon: chartIcon },
+      { to: "/sales/metrics", label: "손익 분석", icon: balanceIcon },
+      { to: "/analytics/market", label: "상권 분석", icon: mapIcon },
     ],
   },
 ];
@@ -76,11 +71,11 @@ export const routeDescriptions: Record<string, string> = {
   "/analytics/market": "우리 매장 상권 특성과 주요 고객 유형을 확인합니다.",
   "/settings": "배포된 Agent 현황과 시스템 설정을 통합 관리합니다.",
   "/settings/orchestration": "멀티 에이전트 라우팅 파이프라인과 핸드오프 규칙을 관리합니다.",
-  "/settings/connectors": "데이터 커넥터 상태와 스키마 동기화 이력을 점검합니다.",
+  "/settings/connectors": "데이터 커넥터 상태와 스키마 동기화를 점검합니다.",
   "/settings/access": "역할 기반 접근 통제와 멤버 권한을 관리합니다.",
-  "/settings/prompts": "도메인별 AI 시스템 지시문과 추천 질문을 관리합니다.",
-  "/settings/golden-queries": "자주 사용되는 질의를 배치 임베딩하여 빠른 응답을 제공합니다.",
+  "/settings/prompts": "도메인별 AI 프롬프트를 관리합니다.",
+  "/settings/golden-queries": "자주 쓰는 질의를 관리합니다.",
   "/settings/audit-logs": "질의 처리 경로와 차단 이력을 추적합니다.",
-  "/settings/quality-archive": "Agent별 품질 점수와 검증 이슈를 보관합니다.",
+  "/settings/quality-archive": "Agent별 품질 검증 이슈를 보관합니다.",
   "/settings/notices": "시스템 운영 공지를 관리합니다.",
 };

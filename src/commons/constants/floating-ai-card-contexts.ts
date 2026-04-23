@@ -18,7 +18,7 @@ export const floatingAiCardContexts: Record<FloatingAiCardContextKey, FloatingAi
     cardTitle: "재고 수준 진단",
     quickActions: [
       { label: "부족 품목 확인", prompt: "재고 부족 품목은 얼마나 빨리 채워야 해?" },
-      { label: "과잉 품목 대응", prompt: "재고 과잉 품목은 어떻게 처리하면 좋아?" },
+      { label: "여유 품목 대응", prompt: "재고 여유 품목은 어떻게 처리하면 좋아?" },
       { label: "적정 수준은?", prompt: "적정 재고 기준은 어떻게 잡는 게 좋아?" },
     ],
   },

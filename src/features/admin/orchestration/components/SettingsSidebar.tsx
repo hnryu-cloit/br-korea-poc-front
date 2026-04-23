@@ -32,9 +32,7 @@ export function SettingsSidebar({ activePanel }: Props) {
                   <Icon className="settings-v3-nav-item-icon" />
                   <span className="truncate">{item.label}</span>
                   {item.pill ? (
-                    <span
-                      className={`settings-v3-nav-pill ${item.pillTone ?? ""}`}
-                    >
+                    <span className={`settings-v3-nav-pill ${item.pillTone ?? ""}`}>
                       {item.pill}
                     </span>
                   ) : null}

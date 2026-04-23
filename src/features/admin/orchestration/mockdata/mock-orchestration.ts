@@ -29,7 +29,13 @@ export const MOCK_RECOMMENDED_GOLDEN_QUERIES: Array<{
 export const MOCK_INITIAL_GOLDEN_QUERIES: GoldenQuery[] = [
   { id: "gq-1", query: "지금 생산해야 할 품목은?", agent: "생산관리", hits: 68, embedded: true },
   { id: "gq-2", query: "오늘 추천 주문량은?", agent: "주문관리", hits: 55, embedded: true },
-  { id: "gq-3", query: "이번 주 폐기량이 높은 제품은?", agent: "생산관리", hits: 42, embedded: true },
+  {
+    id: "gq-3",
+    query: "이번 주 폐기량이 높은 제품은?",
+    agent: "생산관리",
+    hits: 42,
+    embedded: true,
+  },
   { id: "gq-4", query: "마진이 낮은 상품은?", agent: "매출관리", hits: 38, embedded: true },
   { id: "gq-5", query: "공급사별 납기 현황은?", agent: "주문관리", hits: 21, embedded: false },
 ];
@@ -48,10 +54,42 @@ export const MOCK_NOTICES: NoticeItem[] = [
 ];
 
 export const MOCK_AUDIT_LOGS = [
-  { id: "AUD-001", occurredAt: "10:14", actor: "hq_admin", domain: "signals", route: "SQL + 정책필터", result: "허용", resultClass: "bg-emerald-100 text-emerald-700" },
-  { id: "AUD-002", occurredAt: "10:05", actor: "store_owner", domain: "sales", route: "AI + 근거요약", result: "허용", resultClass: "bg-emerald-100 text-emerald-700" },
-  { id: "AUD-003", occurredAt: "09:57", actor: "store_owner", domain: "sales", route: "민감질의 차단", result: "차단", resultClass: "bg-red-100 text-red-700" },
-  { id: "AUD-004", occurredAt: "09:43", actor: "hq_admin", domain: "hq/inspection", route: "API 조회", result: "허용", resultClass: "bg-emerald-100 text-emerald-700" },
+  {
+    id: "AUD-001",
+    occurredAt: "10:14",
+    actor: "hq_admin",
+    domain: "signals",
+    route: "SQL + 정책필터",
+    result: "허용",
+    resultClass: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    id: "AUD-002",
+    occurredAt: "10:05",
+    actor: "store_owner",
+    domain: "sales",
+    route: "AI + 근거요약",
+    result: "허용",
+    resultClass: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    id: "AUD-003",
+    occurredAt: "09:57",
+    actor: "store_owner",
+    domain: "sales",
+    route: "민감질의 차단",
+    result: "차단",
+    resultClass: "bg-red-100 text-red-700",
+  },
+  {
+    id: "AUD-004",
+    occurredAt: "09:43",
+    actor: "hq_admin",
+    domain: "hq/inspection",
+    route: "API 조회",
+    result: "허용",
+    resultClass: "bg-emerald-100 text-emerald-700",
+  },
 ];
 
 export const MOCK_AUDIT_ROWS: AuditRow[] = [

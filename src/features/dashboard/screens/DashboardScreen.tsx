@@ -22,7 +22,7 @@ export function DashboardScreen() {
   const { data: summaryCardsData } = useGetDashboardSummaryCardsQuery(params);
 
   return (
-    <div className="flex flex-col p-6 gap-6">
+    <div className="flex flex-col gap-6">
       <DashboardNotices notices={noticesData?.items ?? []} />
       <DashboardSchedulePanel
         storeId={user.storeId}
