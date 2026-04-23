@@ -1,10 +1,12 @@
-import { List, X } from "lucide-react";
+import { ExternalLinkIcon, List, X } from "lucide-react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { useState } from "react";
 
 import { AppModal } from "@/commons/components/modal/AppModal";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
+import aiPencilIcon from "@/assets/ai-pencil.svg";
+import dayjs from "dayjs";
 
 export function OrderingOptionCard({
   option,
@@ -16,7 +18,7 @@ export function OrderingOptionCard({
   onSelect: () => void;
 }) {
   const [isItemsModalOpen, setIsItemsModalOpen] = useState(false);
-  const maxVisibleItems = 10;
+  const maxVisibleItems = 6;
   const orderedItems = option.items.filter((item) => item.quantity > 0);
   const visibleItems = orderedItems.slice(0, maxVisibleItems);
   const remainingItems = orderedItems.slice(maxVisibleItems);
@@ -30,89 +32,57 @@ export function OrderingOptionCard({
     setIsItemsModalOpen(true);
   };
 
-  return (
+  const cardContent = (
     <article
-      className={`relative rounded-[28px] border bg-white px-6 py-6 shadow-[0_12px_30px_rgba(16,32,51,0.06)] transition-all ${
+      className={`relative rounded-[8px] p-6 w-[360px] ${
         selected
-          ? "border-[#2454C8] ring-1 ring-[#2454C8]/20"
-          : "border-border hover:border-[#bfd1ed]"
+          ? "border border-t-4 border-transparent [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(90deg,#FF6E00_0%,#DA1884_100%)_border-box]"
+          : "border-[#DADADA] bg-white"
       }`}
     >
       <button type="button" className="w-full text-left" onClick={onSelect}>
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-lg font-bold text-slate-900">{option.title}</p>
-            <p className="mt-1 text-xs font-semibold text-slate-400">{option.basis}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xl font-bold text-brown-700">{option.title}</p>
+            <p className="text-md text-brown-700">
+              ({dayjs(option.basis).format("MM월 DD일 • ddd요일")})
+            </p>
           </div>
-          {option.recommended ? (
-            <span className="rounded-full bg-[#2454C8] px-3 py-1 text-xs font-bold text-white">
-              AI 추천
-            </span>
-          ) : null}
         </div>
 
-        <p className="mt-3 text-sm leading-6 text-slate-500">{option.description}</p>
-
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 flex flex-col gap-2">
           {visibleItems.map((item) => (
             <div
               key={`${option.option_id}-${item.sku_name}`}
-              className="flex items-center justify-between rounded-2xl bg-[#f8fbff] px-3 py-2.5 text-sm"
+              className="flex items-center justify-between rounded-[8px] bg-[#DADADA]/40 px-3 py-2 text-sm"
             >
-              <span className="text-slate-600">{item.sku_name}</span>
-              <span className="font-bold text-slate-800">
+              <span className="text-[#653819]">{item.sku_name}</span>
+              <span className="font-bold text-orange-500">
                 {formatCountWithUnit(item.quantity, "개")}
               </span>
             </div>
           ))}
         </div>
         {hiddenItemCount > 0 ? (
-          <div className="mt-2">
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={handleOpenItemsModal}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  handleOpenItemsModal(event);
-                }
-              }}
-              className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-[#2454C8] hover:text-[#1f46a8]"
-            >
-              <List className="h-3.5 w-3.5" />
-              {`나머지 ${hiddenItemCount}개 주문 추천 상품 확인하기`}
+          <button
+            type="button"
+            onClick={handleOpenItemsModal}
+            className="border border-pink-500 text-pink-500 text-sm font-bold rounded-[4px] h-8 p-[2px_12px] flex items-center gap-[6px]"
+          >
+            상품 전체 보기
+            <ExternalLinkIcon className="h-[18px] text-pink-700" />
+          </button>
+        ) : null}
+
+        <div className="mt-10 rounded-[8px] border border-[#FFB38F] bg-[#FFD9C7]/10 px-4 py-3 flex flex-col gap-2">
+          <div className="flex w-full items-center justify-between">
+            <span className="bg-[linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] bg-clip-text text-[14px] leading-5 font-bold text-transparent">
+              Ai 추천 근거
             </span>
+            <img src={aiPencilIcon} alt="" className="h-5 w-5 shrink-0" />
           </div>
-        ) : null}
-
-        <div className="mt-4 rounded-2xl bg-[#edf4ff] px-4 py-4">
-          <p className="text-xs font-bold text-[#2454C8]">추천 근거</p>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{option.reasoning_text}</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {option.reasoning_metrics.map((metric) => (
-              <div key={metric.key} className="rounded-2xl bg-white px-3 py-3">
-                <p className="text-[11px] font-semibold text-slate-400">{metric.key}</p>
-                <p className="mt-1 text-sm font-bold text-slate-900">{metric.value}</p>
-              </div>
-            ))}
-          </div>
+          <p className=" text-sm leading-5 text-[#41352E] px-2">{option.reasoning_text}</p>
         </div>
-
-        {option.special_factors.length ? (
-          <div className="mt-4">
-            <p className="text-xs font-bold text-slate-500">예외 변수 반영</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {option.special_factors.map((factor) => (
-                <span
-                  key={factor}
-                  className="rounded-full border border-[#dce4f3] bg-[#f7faff] px-3 py-1 text-[11px] font-semibold text-slate-600"
-                >
-                  {factor}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </button>
       {isItemsModalOpen ? (
         <AppModal onClose={() => setIsItemsModalOpen(false)}>
@@ -152,4 +122,6 @@ export function OrderingOptionCard({
       ) : null}
     </article>
   );
+
+  return cardContent;
 }

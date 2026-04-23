@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { OrderingConfirmSection } from "@/features/ordering/components/OrderingConfirmSection";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
@@ -99,14 +98,10 @@ export function OrderingRecommendationsScreen() {
         options={orderingOptions}
         selectedOptionId={effectiveSelectedOptionId}
         onSelectOption={setSelectedOptionId}
+        onConfirm={handleConfirm}
+        isSubmitting={postOrderingSelectionMutation.isPending}
+        errorMessage={submitError}
       />
-      {selectedOption ? (
-        <OrderingConfirmSection
-          onConfirm={handleConfirm}
-          isSubmitting={postOrderingSelectionMutation.isPending}
-          errorMessage={submitError}
-        />
-      ) : null}
     </div>
   );
 }
