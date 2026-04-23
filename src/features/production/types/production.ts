@@ -165,7 +165,7 @@ export interface InventoryStatusItem {
   is_stockout: boolean;
   assumed_shelf_life_days: number;
   expiry_risk_level: "높음" | "중간" | "낮음";
-  status: "과잉" | "부족" | "적정";
+  status: "여유" | "부족" | "적정";
 }
 
 export interface InventoryStatusResponse {

@@ -1,3 +1,4 @@
+import ProductDefaultImage from "@/assets/default_product_img.svg";
 import { Pagination } from "@/commons/components/page/Pagination";
 import type {
   InventoryStatusItem,
@@ -12,12 +13,11 @@ type Props = {
 };
 
 const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
-  과잉: "bg-orange-50 text-orange-600 border border-orange-200",
-  부족: "bg-red-50 text-red-600 border border-red-200",
-  적정: "bg-green-50 text-green-600 border border-green-200",
+  여유: "bg-white text-[#00BBA7] border border-[#00BBA7]",
+  부족: "bg-white text-[#FF671F] border border-[#FF671F]",
+  적정: "bg-white text-[#2B7FFF] border border-[#2B7FFF]",
 };
 
-const MENU_PLACEHOLDER_IMAGE = "/images/menu-placeholder.svg";
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
   /\/$/,
   "",
@@ -25,7 +25,7 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:600
 
 function resolveImageUrl(imageUrl?: string | null): string {
   if (!imageUrl) {
-    return MENU_PLACEHOLDER_IMAGE;
+    return ProductDefaultImage;
   }
   const normalized = imageUrl.startsWith("/static/menu-images/")
     ? imageUrl.replace("/static/menu-images/", "/images/")
@@ -48,115 +48,103 @@ export function ProductionInventoryStatusSection(props: Props) {
   const currentPage = data?.pagination?.page ?? 1;
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      {isLoading ? (
-        <div className="px-6 py-8 text-sm text-slate-400">조회 중...</div>
-      ) : errorMessage ? (
-        <div className="space-y-2 px-6 py-8 text-sm">
-          <p className="font-semibold text-red-600">재고 진단 데이터를 불러오지 못했습니다.</p>
-          <p className="text-slate-500">{errorMessage}</p>
-        </div>
-      ) : !data || data.items.length === 0 ? (
-        <div className="px-6 py-8 text-sm text-slate-400">재고 데이터가 없습니다.</div>
-      ) : (
-        <div className="space-y-5 p-6">
-          <div className="grid gap-3 md:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs text-slate-500">부족 품목</p>
-              <p className="text-xl font-bold text-red-600">
-                {Number(data.summary.shortage_count || 0)}개
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs text-slate-500">과잉 품목</p>
-              <p className="text-xl font-bold text-orange-600">
-                {Number(data.summary.excess_count || 0)}개
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs text-slate-500">평균 재고율</p>
-              <p className="text-xl font-bold text-slate-900">
-                {Number(data.summary.avg_stock_rate || 0).toFixed(2)}
-              </p>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[940px] whitespace-nowrap text-sm">
-              <thead>
-                <tr className="border-b border-border/40 bg-[#f8fbff] text-left">
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">품목명</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">판매가능</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">판매</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">재고량</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">재고율</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">가설 유통기한</th>
-                  <th className="px-6 py-3 text-xs font-bold text-slate-500">상태</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map((item) => (
-                  <tr
-                    key={`${item.item_cd}-${item.item_nm}`}
-                    className="border-b border-border/30 last:border-0"
+    <section className="overflow-hidden">
+      <div className="flex flex-col gap-10">
+        <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
+          <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
+            <thead>
+              <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
+                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
+                  품목명
+                </th>
+                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                  현재 개수
+                </th>
+                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                  판매 개수
+                </th>
+                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                  상태
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
-                    <td className="px-6 py-4 font-semibold text-slate-800">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={resolveImageUrl(item.image_url)}
-                          alt={item.item_nm}
-                          className="h-10 w-10 shrink-0 rounded-lg border border-border/60 object-cover"
-                          onError={(event) => {
-                            event.currentTarget.src = MENU_PLACEHOLDER_IMAGE;
-                          }}
-                        />
-                        <span>{item.item_nm}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">
-                      {item.total_orderable.toLocaleString("ko-KR")}개
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">
-                      {item.total_sold.toLocaleString("ko-KR")}개
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">
-                      {item.total_stock.toLocaleString("ko-KR")}개
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">{item.stock_rate.toFixed(2)}</td>
-                    <td className="px-6 py-4 text-slate-700">{item.assumed_shelf_life_days}일</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${STATUS_STYLE[item.status]}`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
-            <p className="text-xs font-bold text-blue-700">근거</p>
-            <p className="mt-1 text-sm text-blue-900">
-              {String((data.evidence.summary_reason as string) || "재고율/품절시간 기반 진단")}
-            </p>
-            {typeof data.evidence.ai_summary === "string" && data.evidence.ai_summary.length > 0 ? (
-              <p className="mt-2 text-sm text-slate-800">{data.evidence.ai_summary as string}</p>
-            ) : null}
-            {Array.isArray(data.evidence.ai_citations) && data.evidence.ai_citations.length > 0 ? (
-              <p className="mt-1 text-xs text-slate-600">
-                인용 근거: {(data.evidence.ai_citations as string[]).join(", ")}
-              </p>
-            ) : null}
-            <p className="mt-1 text-xs text-blue-700">출처: core_stock_rate, core_stockout_time</p>
-          </div>
+                    재고 현황 데이터를 불러오는 중입니다.
+                  </td>
+                </tr>
+              ) : errorMessage ? (
+                <tr>
+                  <td colSpan={3} className="bg-white px-6 py-16 text-center text-sm text-red-500">
+                    {errorMessage}
+                  </td>
+                </tr>
+              ) : data?.items.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                  >
+                    표시할 재고 현황 데이터가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                data?.items.map((sku) => {
+                  const imageUrl = resolveImageUrl(sku.image_url);
+                  const displayImageUrl = imageUrl ?? ProductDefaultImage;
+                  return (
+                    <tr
+                      key={sku.item_nm}
+                      className="bg-white border-b border-[#DADADAS] text-brown-700 text-sm font-regular"
+                    >
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={displayImageUrl}
+                            alt={sku.item_nm}
+                            className="h-10 w-10 shrink-0 object-cover"
+                            onError={(event) => {
+                              event.currentTarget.src = ProductDefaultImage;
+                            }}
+                          />
+                          <div className="min-w-0">
+                            <div className="">{sku.item_nm}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {sku.total_stock.toLocaleString("ko-KR")}개
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {sku.total_sold.toLocaleString("ko-KR")}개
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-1 font-bold ${STATUS_STYLE[sku.status]}`}
+                        >
+                          {sku.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
-      {data?.pagination ? (
-        <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
-      ) : null}
+        {data?.pagination ? (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onChangePage={onChangePage}
+          />
+        ) : null}
+      </div>
     </section>
   );
 }
