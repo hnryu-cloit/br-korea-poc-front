@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Clock3, Menu, RotateCcw, X } from "lucide-react";
 
+import bizLogo from "@/assets/biz_logo.png";
+import dunkinLogo from "@/assets/dunkin_logo.png";
 import { formatCount } from "@/commons/utils/format-count";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
 import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
@@ -70,39 +72,23 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 h-[68px] border-b border-border bg-white/90 backdrop-blur-sm lg:left-[126px]">
-      <div className="flex h-full items-center justify-between px-5 md:px-8">
-        <div className="flex items-center gap-3">
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            onClick={onMenuToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce4f3] bg-[#f7faff] text-slate-500 transition-colors hover:border-[#bfd1ed] hover:text-slate-700 lg:hidden"
-            aria-label="메뉴 열기"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
+    <header className="fixed left-0 right-0 top-0 z-50 h-[52px] border-b border-[#DADADA] bg-white px-4">
+      <div className="flex h-full items-center justify-between">
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce4f3] bg-[#f7faff] text-slate-500 transition-colors hover:border-[#bfd1ed] hover:text-slate-700 lg:hidden"
+          aria-label="메뉴 열기"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
 
-          <div className="flex items-center gap-2">
-            {crumbs.map((crumb, index) => (
-              <span key={crumb} className="flex items-center gap-2">
-                {index > 0 && (
-                  <span className="material-symbols-outlined text-[16px] text-slate-300">
-                    chevron_right
-                  </span>
-                )}
-                <span
-                  className={
-                    index === crumbs.length - 1
-                      ? "text-base font-semibold text-slate-800"
-                      : "text-sm font-medium text-slate-400"
-                  }
-                >
-                  {crumb}
-                </span>
-              </span>
-            ))}
-          </div>
+        {/** Logo */}
+        <div className="flex items-center gap-2">
+          <img src={bizLogo} alt="BR Korea" className="h-4.5" />
+          <div className="w-[2px] h-[16px] bg-[#DADADA]" />
+          <img src={dunkinLogo} alt="Dunkin" className="h-4" />
         </div>
 
         <div className="flex items-center gap-3">

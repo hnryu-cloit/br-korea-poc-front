@@ -79,7 +79,7 @@ export function AppSidebar({ isOpen, onClose }: Props) {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 z-50 hidden h-full w-[126px] border-r border-[#F1E8E3] bg-white lg:flex">
+      <aside className="fixed left-0 top-[52px] z-30 hidden h-full w-[126px] border-r border-[#DADADA] bg-white lg:flex">
         {SidebarContent}
       </aside>
 
