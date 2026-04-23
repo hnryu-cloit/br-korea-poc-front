@@ -1,4 +1,10 @@
 import type { ReactNode } from "react";
+import type {
+  DashboardOrderDeadline,
+  DashboardOrderingDeadlineItem,
+  DashboardProductionSummaryItem,
+  DashboardSalesOverview,
+} from "@/features/dashboard/types/dashboard";
 
 export interface SummaryCardProps {
   icon: ReactNode;
@@ -20,21 +26,32 @@ export interface SummaryCardListItemProps {
   description: string;
 }
 
-export interface ProductionSummaryItem {
-  name: string;
-  count: number;
-  forecast: number;
+export interface DashboardAlertCardProps {
+  children: ReactNode;
+  actionLabel: string;
+  actionPath: string;
 }
 
-export interface OrderingSummaryDeadlineItem {
-  name: string;
-  deadline: string;
-  remainingText: string;
+export interface OrderDeadlineDisplay extends DashboardOrderDeadline {
+  currentTimeLabel: string;
+  deadlineTimeLabel: string;
+  remainingTimeLabel: string;
 }
 
-export interface SalesSummaryItem {
+export interface OrderingSummarySuggestionDisplay {
+  title: string;
+  detailPrefix: string;
+  detailSuffix: string;
+  ctaPath: string;
+}
+
+export interface SalesSummaryDisplayItem {
   name: string;
   sales: number;
   previousSales: number;
   comparisonLabel: string;
 }
+
+export type SummaryCardProductionItem = DashboardProductionSummaryItem;
+export type SummaryCardOrderingDeadlineItem = DashboardOrderingDeadlineItem;
+export type SummaryCardSalesOverview = DashboardSalesOverview;

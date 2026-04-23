@@ -1,5 +1,5 @@
 import {
-  DASHBOARD_NOTICE_ACCENT_BY_TONE,
+  DASHBOARD_NOTICE_ACCENT_BY_TAG,
   DASHBOARD_NOTICES_MAX_VISIBLE,
 } from "@/features/dashboard/constants/dashboard-notices";
 import type { ScheduleNotice } from "@/features/dashboard/types/dashboard";
@@ -8,13 +8,14 @@ import type {
   NoticeAccent,
 } from "@/features/dashboard/types/dashboard-notices";
 
-export function getNoticeAccent(tone: ScheduleNotice["tone"]): NoticeAccent | null {
-  return DASHBOARD_NOTICE_ACCENT_BY_TONE[tone] ?? null;
+export function getNoticeAccent(tag: ScheduleNotice["tag"]): NoticeAccent | null {
+  return DASHBOARD_NOTICE_ACCENT_BY_TAG[tag] ?? null;
 }
 
 export function resolveDashboardNotices(notices: ScheduleNotice[]): DashboardNoticeItem[] {
   return notices.slice(0, DASHBOARD_NOTICES_MAX_VISIBLE).map((notice) => ({
     ...notice,
-    accent: getNoticeAccent(notice.tone),
+    title: notice.name,
+    accent: getNoticeAccent(notice.tag),
   }));
 }

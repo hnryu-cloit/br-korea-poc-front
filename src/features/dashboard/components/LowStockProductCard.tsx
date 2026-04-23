@@ -1,13 +1,15 @@
 import { DashboardAlertCard } from "@/features/dashboard/components/DashboardAlertCard";
-import type { Product } from "./DashboardAlertSummary";
+import type { DashboardLowStockProduct } from "@/features/dashboard/types/dashboard";
 
 interface Props {
-  products: Product[];
+  products: DashboardLowStockProduct[];
 }
 
 export const LowStockProductCard = ({ products }: Props) => {
+  const actionPath = products[0]?.cta_path ?? "/";
+
   return (
-    <DashboardAlertCard actionLabel="상품 자세히 보기">
+    <DashboardAlertCard actionLabel="상품 자세히 보기" actionPath={actionPath}>
       <>
         <span className="text-md font-bold text-[#0F172B]">품절 임박 상품</span>
         <div className="flex min-w-0 w-full items-center gap-[8px] overflow-hidden">
@@ -28,7 +30,7 @@ export const LowStockProductCard = ({ products }: Props) => {
 };
 
 interface ItemsProps {
-  product: Product;
+  product: DashboardLowStockProduct;
   hasDivider: boolean;
 }
 
@@ -45,7 +47,9 @@ const Item = ({ product, hasDivider }: ItemsProps) => {
       >
         {product.name}
       </span>
-      <span className="shrink-0 text-[18px] font-bold text-brown-700">{product.count}개</span>
+      <span className="shrink-0 text-[18px] font-bold text-brown-700">
+        {product.remaining_stock}개
+      </span>
     </div>
   );
 };

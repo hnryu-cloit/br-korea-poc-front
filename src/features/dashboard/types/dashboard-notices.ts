@@ -7,5 +7,6 @@ export type NoticeAccent = {
 };
 
 export type DashboardNoticeItem = ScheduleNotice & {
+  title: string;
   accent: NoticeAccent | null;
 };

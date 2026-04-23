@@ -11,7 +11,7 @@ export function DashboardNotices({ notices }: Props) {
   const hasNotices = visibleNotices.length > 0;
 
   return (
-    <section className="rounded-[8px] border border-[#DADADA] bg-white m-[24px] p-[16px] flex flex-col gap-[12px] max-h-[218px]">
+    <section className="rounded-[8px] border border-[#DADADA] bg-white p-[16px] flex flex-col gap-[12px] max-h-[218px]">
       <h2 className="text-[18px] leading-[29.88px] font-bold text-brown-700">공지사항</h2>
 
       {hasNotices ? (

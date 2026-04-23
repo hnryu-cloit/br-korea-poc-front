@@ -1,10 +1,11 @@
-import type { DashboardOverviewRequest } from "@/features/dashboard/types/dashboard";
+import type { DashboardHomeRequest } from "@/features/dashboard/types/dashboard";
 
 export const dashboardQueryKeys = {
   all: ["dashboard"] as const,
-  overview: (params: DashboardOverviewRequest) =>
-    [...dashboardQueryKeys.all, "overview", params] as const,
-  cards: (params: DashboardOverviewRequest) =>
-    [...dashboardQueryKeys.all, "cards", params] as const,
-  schedule: (storeId: string) => [...dashboardQueryKeys.all, "schedule", storeId] as const,
+  notices: (params: DashboardHomeRequest) => [...dashboardQueryKeys.all, "notices", params] as const,
+  schedule: (params: DashboardHomeRequest) =>
+    [...dashboardQueryKeys.all, "schedule", params] as const,
+  alerts: (params: DashboardHomeRequest) => [...dashboardQueryKeys.all, "alerts", params] as const,
+  summaryCards: (params: DashboardHomeRequest) =>
+    [...dashboardQueryKeys.all, "summary-cards", params] as const,
 };
