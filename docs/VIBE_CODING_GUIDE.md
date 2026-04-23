@@ -54,7 +54,10 @@
 
 예시:
 
-- `getDashboardOverview`
+- `getDashboardNotices`
+- `getHomeSchedule`
+- `getDashboardAlerts`
+- `getDashboardSummaryCards`
 - `getNotifications`
 - `postSalesQuery`
 - `postProductionRegistration`
