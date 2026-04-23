@@ -1,6 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
 
-import Logo from "@/assets/logo.svg";
 import { menuSections } from "@/commons/components/layout/menu";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { cn } from "@/lib/utils";
@@ -10,6 +9,11 @@ type Props = {
   onClose: () => void;
 };
 
+const DEFAULT_ICON_FILTER =
+  "brightness(0) saturate(100%) invert(20%) sepia(26%) saturate(1452%) hue-rotate(342deg) brightness(90%) contrast(89%)";
+const ACTIVE_ICON_FILTER =
+  "brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(3662%) hue-rotate(348deg) brightness(103%) contrast(102%)";
+
 export function AppSidebar({ isOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const { user } = useDemoSession();
@@ -17,126 +21,68 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const visibleSections = menuSections.filter(
     (section) => !section.roles || section.roles.includes(currentRole),
   );
+
   const isRouteActive = (to: string) =>
-    to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(`${to}/`);
+    to === "/dashboard"
+      ? pathname === "/dashboard"
+      : pathname === to || pathname.startsWith(`${to}/`);
 
   const SidebarContent = (
-    <div className="flex w-full flex-col p-5 h-full">
-      <NavLink to="/" onClick={onClose} className="mb-6 inline-flex items-center px-1">
-        <img src={Logo} alt="AgentGo" className="h-7 w-auto" />
-      </NavLink>
-
-      <nav className="scrollbar-hide flex-1 space-y-6 overflow-y-auto pb-6">
-        {visibleSections.map((section, sectionIndex) => {
-          const hasActive = section.items.some((item) => {
-            const selfActive = isRouteActive(item.to);
-            const childActive = item.children?.some((child) => pathname === child.to) ?? false;
-            return selfActive || childActive;
-          });
-
-          return (
-            <div key={section.section ?? sectionIndex} className="space-y-1.5">
+    <div className="flex h-full w-full flex-col px-4 py-3">
+      <nav className="scrollbar-hide flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-6">
+          {visibleSections.map((section, sectionIndex) => (
+            <div key={section.section ?? sectionIndex} className="flex flex-col gap-1">
               {section.section ? (
-                <div className="px-3 py-1">
-                  <span
-                    className={cn(
-                      "text-[10px] font-bold uppercase tracking-[0.12em]",
-                      hasActive ? "text-primary" : "text-slate-400",
-                    )}
-                  >
-                    {section.section}
-                  </span>
-                </div>
+                <p className="text-[12px] font-bold text-[#716862]">{section.section}</p>
               ) : null}
 
-              <div
-                className={cn("space-y-0.5", section.section ? "relative ml-1 pl-2" : undefined)}
-              >
+              <div className="flex flex-col gap-1">
                 {section.items.map((item) => {
-                  const parentActive =
-                    isRouteActive(item.to) ||
-                    (item.children?.some((child) => pathname === child.to) ?? false);
+                  const isActive = isRouteActive(item.to);
 
                   return (
-                    <div key={item.to} className="space-y-1">
-                      <NavLink
-                        to={item.to}
-                        onClick={onClose}
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      onClick={onClose}
+                      className={cn(
+                        "flex items-center gap-2 rounded-[4px] px-2 py-[14px]",
+                        isActive ? "bg-[#FAF4F2]" : "bg-transparent",
+                      )}
+                    >
+                      <img
+                        src={item.icon}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-[18px] w-[18px] shrink-0"
+                        style={{ filter: isActive ? ACTIVE_ICON_FILTER : DEFAULT_ICON_FILTER }}
+                      />
+                      <span
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-all",
-                          parentActive
-                            ? "bg-[#EDF3FF] text-[#2454C8]"
-                            : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-900",
+                          "whitespace-nowrap text-[14px] font-bold text-[#41352E]",
+                          isActive ? "text-[#FF671F]" : "text-[#41352E]",
                         )}
                       >
-                        {parentActive ? (
-                          <div className="absolute left-[-9px] top-1/4 h-1/2 w-1 rounded-r-full bg-[#2454C8]" />
-                        ) : null}
-                        <span
-                          className={cn(
-                            "material-symbols-outlined text-[20px] transition-colors",
-                            parentActive
-                              ? "text-[#2454C8]"
-                              : "text-slate-400 group-hover:text-slate-600",
-                          )}
-                        >
-                          {item.icon}
-                        </span>
-                        <span className={parentActive ? "font-bold" : "font-medium"}>
-                          {item.label}
-                        </span>
-                      </NavLink>
-
-                      {item.children?.length ? (
-                        <div className="ml-9 space-y-0.5 border-l border-slate-100 pl-3">
-                          {item.children.map((child) => {
-                            const childActive = pathname === child.to;
-                            return (
-                              <NavLink
-                                key={child.to}
-                                to={child.to}
-                                end
-                                onClick={onClose}
-                                className={cn(
-                                  "block rounded-lg px-2.5 py-1.5 text-[13px] transition-colors",
-                                  childActive
-                                    ? "bg-[#EDF3FF] font-semibold text-[#2454C8]"
-                                    : "text-slate-500 hover:bg-[#F7FAFF] hover:text-slate-800",
-                                )}
-                              >
-                                {child.label}
-                              </NavLink>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
+                        {item.label}
+                      </span>
+                    </NavLink>
                   );
                 })}
               </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </nav>
-
-      <div className="border-t border-border/60 pt-4 text-center">
-        <p className="text-[10px] leading-relaxed text-slate-400">
-          © 2026 ITCEN CLOIT
-          <br />
-          All rights reserved
-        </p>
-      </div>
     </div>
   );
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="fixed left-0 top-0 hidden h-full w-64 border-r border-border bg-white shadow-sm z-50 lg:flex">
+      <aside className="fixed left-0 top-0 z-50 hidden h-full w-[126px] border-r border-[#F1E8E3] bg-white lg:flex">
         {SidebarContent}
       </aside>
 
-      {/* Mobile overlay */}
       {isOpen ? (
         <button
           type="button"
@@ -146,10 +92,9 @@ export function AppSidebar({ isOpen, onClose }: Props) {
         />
       ) : null}
 
-      {/* Mobile drawer */}
       <aside
         className={cn(
-          "fixed left-0 top-0 h-full w-72 border-r border-border bg-white shadow-xl z-50 transition-transform duration-300 lg:hidden",
+          "fixed left-0 top-0 z-50 h-full w-[126px] border-r border-[#F1E8E3] bg-white shadow-xl transition-transform duration-300 lg:hidden",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >

@@ -40,7 +40,7 @@ export function AppLayout({ reminder }: Props) {
           />
         ) : null}
         <div
-          className={`min-h-screen flex flex-col ${isStartPage || isHqSettingsRoute ? "" : "lg:ml-64"}`}
+          className={`min-h-screen flex flex-col ${isStartPage || isHqSettingsRoute ? "" : "lg:ml-[126px]"}`}
         >
           <main
             className={`mx-auto w-full flex-1 lg:max-w-none ${isStartPage ? "flex min-h-screen items-center justify-center py-6" : ""} ${isHqSettingsRoute ? "p-0" : isDashboardPage ? "pt-[68px] pb-0 bg-[#FDFAF9]" : "px-5 md:px-8 lg:px-10 pb-14 pt-[96px]"}`}

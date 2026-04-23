@@ -70,7 +70,7 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 h-[68px] border-b border-border bg-white/90 backdrop-blur-sm lg:left-64">
+    <header className="fixed left-0 right-0 top-0 z-30 h-[68px] border-b border-border bg-white/90 backdrop-blur-sm lg:left-[126px]">
       <div className="flex h-full items-center justify-between px-5 md:px-8">
         <div className="flex items-center gap-3">
           {/* Mobile hamburger */}
