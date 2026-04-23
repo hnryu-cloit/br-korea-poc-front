@@ -108,6 +108,12 @@ export interface DashboardOrderingDeadlineItem {
 }
 
 /** 손익분석 카드에서 사용하는 매출 비교 데이터 묶음입니다. */
+export interface DashboardSalesTrendPoint {
+  label: string;
+  value: number;
+}
+
+/** 손익분석 카드에서 사용하는 매출 비교 데이터 묶음입니다. */
 export interface DashboardSalesOverview {
   monthly_sales: number;
   today_sales: number;
@@ -115,6 +121,9 @@ export interface DashboardSalesOverview {
   last_month_sales: number;
   last_month_same_weekday_avg_sales: number;
   last_month_same_hour_avg_sales: number;
+  monthly_sales_points: DashboardSalesTrendPoint[];
+  today_sales_points: DashboardSalesTrendPoint[];
+  current_hour_sales_points: DashboardSalesTrendPoint[];
 }
 
 /** Summary 카드 공통 베이스 필드입니다. */
