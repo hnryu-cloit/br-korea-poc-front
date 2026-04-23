@@ -130,15 +130,27 @@ export interface WasteItem {
   expiry_risk_level: "높음" | "중간" | "낮음";
 }
 
+export interface WasteMonthlyTopItem {
+  item_nm: string;
+  confirmed_disuse_qty: number;
+}
+
 export interface WasteSummaryResponse {
   items: WasteItem[];
   total_adjusted_loss_amount: number;
   total_disuse_amount: number;
   total_estimated_expiry_loss_qty: number;
+  monthly_top_items?: WasteMonthlyTopItem[];
   summary: Record<string, string | number>;
   highlights: Array<Record<string, string | number>>;
   actions: string[];
   evidence: Record<string, unknown>;
+  pagination?: {
+    page: number;
+    page_size: number;
+    total_items: number;
+    total_pages: number;
+  };
 }
 
 export interface InventoryStatusItem {
