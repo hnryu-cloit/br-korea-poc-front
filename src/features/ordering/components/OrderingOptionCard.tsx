@@ -60,9 +60,7 @@ export function OrderingOptionCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
             <p className="text-xl font-bold text-brown-700">{option.title}</p>
-            <p className="text-md text-brown-700">
-              ({formatOptionBasis(option.basis)})
-            </p>
+            <p className="text-md text-brown-700">({formatOptionBasis(option.basis)})</p>
           </div>
         </div>
 
