@@ -53,7 +53,7 @@ export function RoleSelectionPage() {
   };
 
   return (
-    <section className="min-h-[calc(100vh-52px)] bg-[#F9F9F9] px-6 py-[72px]">
+    <section className="bg-[#F9F9F9] px-6 py-[72px]">
       <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-10 xl:flex-row xl:items-start xl:justify-center xl:gap-[120px]">
         {roleCards.map((card) => (
           <article

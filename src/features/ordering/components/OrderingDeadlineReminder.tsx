@@ -14,9 +14,8 @@ export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes?: st
     const fromApi = deadlineQuery.data?.deadline;
     return fromApi ? [fromApi] : [];
   }, [deadlineQuery.data?.deadline, deadlineTimes]);
-  const { toast, activePanelItems, confirmReminder } = useOrderingDeadlineReminder(
-    effectiveDeadlineTimes,
-  );
+  const { toast, activePanelItems, confirmReminder } =
+    useOrderingDeadlineReminder(effectiveDeadlineTimes);
 
   return (
     <>

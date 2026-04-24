@@ -467,18 +467,22 @@ npm run build
 
 - 본사 관점 질의셋(`golden-queries-hq-as-owner.csv`)이 기존 점주 질의셋과 의미 중복 0건 기준으로 전면 재작성되었습니다.
 - 프론트 코드 변경은 없으며, 시연용 질의 자산의 품질 조건(무중복) 반영 사실만 기록합니다.
+
 ## Session Update (2026-04-23, HQ query simplification)
 
 - 본사 관점 질문셋이 초기 시연용으로 짧고 쉬운 문장으로 단순화되었습니다.
 - 프론트 코드 변경은 없으며 시연 질의 자산 문구 품질 개선 사항만 반영합니다.
+
 ## Session Update (2026-04-23, HQ query tone simplification)
 
 - 본사 시연용 질문셋이 더 짧은 현장 말투로 개편되었습니다.
 - 프론트 코드 변경 없이 데이터셋 문구 개선 사항만 반영합니다.
+
 ## Session Update (2026-04-23, HQ query concrete values)
 
 - 시연용 HQ 골든쿼리의 SQL이 바인딩 변수 대신 실값 예시로 교체되었습니다.
 - 프론트 코드 변경은 없고 데이터셋 사용성 개선 사항만 반영합니다.
+
 ## Session Update (2026-04-23, HQ query columns split)
 
 - HQ 골든쿼리 CSV가 일반화/예시 SQL 2열 구조로 개편되었습니다.

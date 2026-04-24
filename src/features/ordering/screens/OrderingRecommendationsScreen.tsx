@@ -54,41 +54,38 @@ export function OrderingRecommendationsScreen() {
     () => orderingOptions.find((option) => option.option_id === effectiveSelectedOptionId) ?? null,
     [effectiveSelectedOptionId, orderingOptions],
   );
-  const deadlineItems = useMemo(
-    () => {
-      const fromApi = optionsQuery.data?.deadline_items ?? [];
-      if (fromApi.length > 0) {
-        return fromApi;
-      }
+  const deadlineItems = useMemo(() => {
+    const fromApi = optionsQuery.data?.deadline_items ?? [];
+    if (fromApi.length > 0) {
+      return fromApi;
+    }
 
-      const candidates: OrderingDeadlineItem[] = [];
-      const seen = new Set<string>();
-      orderingOptions.forEach((option) => {
-        option.items.forEach((item) => {
-          const note = String(item.note ?? "");
-          const matched = note.match(/마감\s*([0-2]?\d:[0-5]\d)/);
-          if (!matched) {
-            return;
-          }
-          const [hour, minute] = matched[1].split(":");
-          const normalizedDeadline = `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
-          const key = (item.sku_id ?? "").trim() || item.sku_name.trim();
-          if (!key || seen.has(key)) {
-            return;
-          }
-          seen.add(key);
-          candidates.push({
-            id: key,
-            sku_name: item.sku_name,
-            deadline_at: normalizedDeadline,
-            is_ordered: false,
-          });
+    const candidates: OrderingDeadlineItem[] = [];
+    const seen = new Set<string>();
+    orderingOptions.forEach((option) => {
+      option.items.forEach((item) => {
+        const note = String(item.note ?? "");
+        const matched = note.match(/마감\s*([0-2]?\d:[0-5]\d)/);
+        if (!matched) {
+          return;
+        }
+        const [hour, minute] = matched[1].split(":");
+        const normalizedDeadline = `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
+        const key = (item.sku_id ?? "").trim() || item.sku_name.trim();
+        if (!key || seen.has(key)) {
+          return;
+        }
+        seen.add(key);
+        candidates.push({
+          id: key,
+          sku_name: item.sku_name,
+          deadline_at: normalizedDeadline,
+          is_ordered: false,
         });
       });
-      return candidates;
-    },
-    [optionsQuery.data?.deadline_items, orderingOptions],
-  );
+    });
+    return candidates;
+  }, [optionsQuery.data?.deadline_items, orderingOptions]);
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
     setSubmitError(null);
