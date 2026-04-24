@@ -48,7 +48,9 @@ export function ProductionRegistrationPanel({
     <section className="rounded-[28px] border border-[#dbe6fb] bg-white shadow-[0_18px_36px_rgba(16,32,51,0.08)]">
       <div className="flex items-center justify-between p-6 border-b border-[#CAD5E2]">
         <p className="text-[#1E1E1E] font-semibold text-2xl">{detail.sku_name} 생산하기</p>
-        <X className="text-[#45556C] h-4 w-4" />
+        <button onClick={onClose}>
+          <X className="text-[#45556C] h-4 w-4" />
+        </button>
       </div>
       <div className="flex flex-col gap-4 p-6">
         <div className="rounded-[16px] border border-[#FB2C36] bg-[#FEF2F24D] p-4 flex flex-col gap-3">
