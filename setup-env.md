@@ -244,3 +244,24 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - 기본 기준일시: `2026-03-05 09:00 (KST)`
   - UI에서 기준 일자/시간 변경 후 동일 질문 재실행으로 데이터 검증을 수행합니다.
 - `golden-queries-new-02.csv`는 파생 질문 포함 112건으로 확장되었습니다.
+
+## Session Note (2026-04-25, settings logo alignment)
+
+- `/settings` 상단 로고를 점주 유입 헤더와 동일 자산(`biz_logo.png`, `dunkin_logo.png`)으로 통일했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+- 로컬 확인 경로: `http://localhost:6003/settings`
+
+## Session Note (2026-04-25, production table JSX tag fix)
+
+- `src/features/production/components/ProductionTableSection.tsx`의 JSX 닫는 태그 불일치를 수정해 dev 서버 파싱 오류를 해소했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, dashboard alert summary prop type fix)
+
+- `DashboardScreen`의 `DashboardAlertSummary` prop 타입 불일치를 정리했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings logo click navigation)
+
+- `/settings` 상단 로고 클릭 시 역할 선택 페이지(`/`)로 이동합니다.
+- 실행 커맨드/환경변수 변경은 없습니다.

@@ -516,3 +516,27 @@ npm run build
 - 백엔드 문서 자산 `../br-korea-poc-backend/docs/golden-queries-new-02.csv`가 추가되었습니다.
   - 기준일시 UI/Action+Evidence 요구를 포함한 시연용 질문셋이며, 프론트 코드 변경 없이 설정/검증 참조 자산으로 연동합니다.
 - `golden-queries-new-02.csv`는 파생 질문 포함 총 112건으로 확장되었습니다.
+
+## Session Update (2026-04-25, settings logo alignment)
+
+- `/settings` 상단 로고를 점주 유입 시 헤더와 동일한 자산(`biz_logo.png`, `dunkin_logo.png`)으로 통일했습니다.
+- 변경 파일: `src/features/admin/orchestration/screens/OrchestrationScreen.tsx`
+- 로컬 확인: `http://localhost:6003/settings`
+
+## Session Update (2026-04-25, production table JSX tag fix)
+
+- `ProductionTableSection`의 깨진 JSX 닫는 태그(`span/div` 불일치)를 정리해 Vite pre-transform 오류를 해소했습니다.
+- 변경 파일: `src/features/production/components/ProductionTableSection.tsx`
+- 참고: `npm run build` 기준 현재 잔여 오류는 `DashboardScreen`의 `referenceDateTime` prop 타입 불일치 1건입니다.
+
+## Session Update (2026-04-25, dashboard alert summary prop type fix)
+
+- `DashboardScreen`에서 `DashboardAlertSummary`로 전달하던 미사용 `referenceDateTime` prop을 제거해 타입 오류를 해소했습니다.
+- 변경 파일: `src/features/dashboard/screens/DashboardScreen.tsx`
+- 검증: `npm run build` 통과
+
+## Session Update (2026-04-25, settings logo click navigation)
+
+- `/settings` 상단 로고 클릭 시 `"/"`(본사/점주 역할 선택 화면)으로 이동하도록 링크를 연결했습니다.
+- 변경 파일: `src/features/admin/orchestration/screens/OrchestrationScreen.tsx`
+- 검증: `npm run build` 통과
