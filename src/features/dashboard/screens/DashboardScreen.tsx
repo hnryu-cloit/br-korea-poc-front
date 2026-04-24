@@ -10,11 +10,12 @@ import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
 
 export function DashboardScreen() {
-  const { user } = useDemoSession();
-  const now = dayjs(new Date()).format("YYYY-MM-DD");
+  const { user, referenceDateTime } = useDemoSession();
+  const businessDate = dayjs(referenceDateTime).format("YYYY-MM-DD");
+  const selectedDate = dayjs(referenceDateTime).toDate();
   const params = {
     store_id: user.storeId,
-    business_date: now,
+    business_date: businessDate,
   };
   const { data: noticesData } = useGetDashboardNoticesQuery(params);
   const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(params);
@@ -27,7 +28,9 @@ export function DashboardScreen() {
       <DashboardSchedulePanel
         storeId={user.storeId}
         events={scheduleData?.calendar_events ?? []}
+        scheduleEvents={scheduleData?.daily_events ?? []}
         todos={scheduleData?.todos ?? []}
+        selectedDate={selectedDate}
         isLoading={scheduleLoading && !scheduleData}
       />
       <div className="flex flex-col gap-6">
@@ -43,6 +46,7 @@ export function DashboardScreen() {
         <DashboardAlertSummary
           lowStockProducts={alertsData?.low_stock_products ?? []}
           orderDeadline={alertsData?.order_deadline ?? null}
+          referenceDateTime={referenceDateTime}
         />
         <SummaryCardsSection
           cards={summaryCardsData?.cards ?? []}
