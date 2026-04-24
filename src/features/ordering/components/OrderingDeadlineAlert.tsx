@@ -26,7 +26,7 @@ export function OrderingDeadlineAlert({
             <table className="w-full min-w-[960px] table-fixed border-collapse">
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C7]/50">
-                  {TABLE_HEADERS.map((header, index) => (
+                  {TABLE_HEADERS.map((header) => (
                     <th
                       key={header}
                       className="px-4 py-2.5 text-left text-sm font-bold leading-7 text-[#653819]"

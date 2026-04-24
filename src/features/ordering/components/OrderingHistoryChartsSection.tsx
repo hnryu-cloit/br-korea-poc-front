@@ -39,11 +39,11 @@ const ChartCard = ({
   children: React.ReactNode;
 }) => (
   <article
-    className={`rounded-[24px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)] ${className}`}
+    className={`rounded-[6px] border border-border bg-white px-5 py-5 shadow-[0_10px_24px_rgba(16,32,51,0.06)] ${className}`}
   >
-    <div className="mb-4">
-      <p className="text-sm font-bold text-slate-800">{title}</p>
-      {subtitle && <p className="mt-0.5 text-xs text-slate-400">{subtitle}</p>}
+    <div className="flex items-center gap-1">
+      <p className="text-sm font-bold text-[#1C1C1E]">{title}</p>
+      {subtitle && <p className="text-xs text-[#6C6C70]">{subtitle}</p>}
     </div>
     {children}
   </article>
@@ -70,13 +70,12 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([day, v]) => ({ day, ...v }));
 
-  // 날짜별 자동/수동 건수
-  const typeMap = new Map<string, { 자동: number; 수동: number }>();
+  // 날짜별 수동 건수
+  const typeMap = new Map<string, { 수동: number }>();
   for (const item of items) {
     const day = item.dlv_dt ?? "미정";
     const prev = typeMap.get(day) ?? { 자동: 0, 수동: 0 };
     typeMap.set(day, {
-      자동: prev.자동 + (item.is_auto ? 1 : 0),
       수동: prev.수동 + (item.is_auto ? 0 : 1),
     });
   }
@@ -149,8 +148,8 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
         )}
       </ChartCard>
 
-      {/* 차트 2: 날짜별 자동/수동 건수 */}
-      <ChartCard title="날짜별 자동 / 수동 발주 건수" subtitle="is_auto 기준 스택">
+      {/* 차트 2: 날짜별 수동 건수 */}
+      <ChartCard title="날짜별 수동 발주 건수" subtitle="is_auto 기준 스택">
         {isLoading ? (
           <Loading />
         ) : typeByDay.length === 0 ? (
@@ -165,9 +164,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
                 formatter={(value, name) => [`${Number(value ?? 0)}건`, String(name)]}
                 contentStyle={TooltipStyle}
               />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="자동" stackId="s" fill="#2d6bff" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="수동" stackId="s" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="수동" stackId="s" fill="#ED8CC280" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
@@ -207,7 +204,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
               />
               <Bar dataKey="변화율" radius={[0, 6, 6, 0]}>
                 {changedBar.map((entry, i) => (
-                  <Cell key={i} fill={entry.변화율 >= 0 ? "#f43f5e" : "#2d6bff"} />
+                  <Cell key={i} fill={entry.변화율 >= 0 ? "#FF8D57B2" : "#2d6bff"} />
                 ))}
               </Bar>
             </BarChart>

@@ -6,7 +6,7 @@ import type {
   ProductionSkuListResponse,
 } from "@/features/production/types/production";
 import ProductDefaultImage from "@/assets/default_product_img.svg";
-import arrow_down from "@/assets/down.svg";
+import arrow_down from "@/assets/arrow_red.svg";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
   /\/$/,

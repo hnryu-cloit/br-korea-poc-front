@@ -1,22 +1,16 @@
 import type { OrderingHistoryInsightsResponse } from "@/features/ordering/types/ordering";
+import arrow_red from "@/assets/arrow_red.svg";
+import arrow_blue from "@/assets/arrow_blue.svg";
 
 type Props = {
   data: OrderingHistoryInsightsResponse | undefined;
   isLoading: boolean;
 };
 
-const KPI_TONE_CLASS: Record<string, string> = {
-  primary: "bg-blue-50 text-blue-800 border-blue-100",
-  warning: "bg-amber-50 text-amber-800 border-amber-100",
-  danger: "bg-red-50 text-red-800 border-red-100",
-  success: "bg-emerald-50 text-emerald-800 border-emerald-100",
-  default: "bg-slate-50 text-slate-800 border-slate-200",
-};
-
 const SEVERITY_STYLE: Record<string, string> = {
-  high: "bg-red-50 text-red-700 border border-red-200",
-  medium: "bg-amber-50 text-amber-700 border border-amber-200",
-  low: "bg-blue-50 text-blue-700 border border-blue-200",
+  high: "border-[#FB2C36] text-[#FB2C36]",
+  medium: "border-[#00BBA7] text-[#00BBA7]",
+  low: "border-[#FF671F] text-[#FF671F]",
 };
 
 const SEVERITY_LABEL: Record<string, string> = {
@@ -25,14 +19,11 @@ const SEVERITY_LABEL: Record<string, string> = {
   low: "낮음",
 };
 
-export function OrderingHistoryInsightsSection({ data, isLoading }: Props) {
+export function OrderingHistoryInsightsSection({ data }: Props) {
   return (
-    <section className="rounded-[24px] border border-border bg-white px-6 py-6 shadow-[0_10px_24px_rgba(16,32,51,0.06)]">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">이상징후 분석</h2>
-        <span className="text-xs text-slate-500">자동 탐지</span>
-      </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-4">
+    <section className="rounded-[6px] border border-[#DADADA] bg-white p-2 flex flex-col gap-2">
+      <h2 className="text-sm font-bold text-black">이상징후 분석</h2>
+      {/* <div className="border border-[#DADADA] px-2 h-20 rounded-[6px]">
         {(data?.kpis ?? []).map((kpi) => {
           const cls = KPI_TONE_CLASS[kpi.tone] ?? KPI_TONE_CLASS.default;
           return (
@@ -42,72 +33,62 @@ export function OrderingHistoryInsightsSection({ data, isLoading }: Props) {
             </article>
           );
         })}
-      </div>
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <article className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <p className="text-sm font-bold text-slate-800">이상징후</p>
-          {isLoading ? (
-            <p className="mt-2 text-sm text-slate-400">불러오는 중...</p>
-          ) : (data?.anomalies ?? []).length === 0 ? (
-            <p className="mt-2 text-sm text-slate-400">특이 이상징후가 없습니다.</p>
-          ) : (
-            <ul className="mt-3 space-y-2">
-              {(data?.anomalies ?? []).map((anomaly) => {
-                const badgeCls = SEVERITY_STYLE[anomaly.severity] ?? SEVERITY_STYLE.low;
-                return (
-                  <li
-                    key={anomaly.id}
-                    className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-3"
-                  >
+      </div> */}
+      <div className="grid gap-2 lg:grid-cols-2">
+        <article className="rounded-[8px] border border-[#DADADA] bg-white p-6">
+          <p className="text-2xl font-bold text-brown-700">이상징후</p>
+          <div className="h-[1px] bg-[#D9D9D9] mt-4 mb-6" />
+          <ul className="flex flex-col gap-2">
+            {(data?.anomalies ?? []).map((anomaly) => {
+              const badgeCls = SEVERITY_STYLE[anomaly.severity] ?? SEVERITY_STYLE.low;
+              return (
+                <li
+                  key={anomaly.id}
+                  className="rounded-[8px] border border-[#DADADA] bg-white p-4 flex flex-col gap-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-md font-bold text-[#2E2520]">{anomaly.message}</p>
                     <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${badgeCls}`}
+                      className={`inline-block rounded-[24px] px-2 py-1 text-sm font-bold border ${badgeCls}`}
                     >
                       {SEVERITY_LABEL[anomaly.severity] ?? anomaly.severity}
                     </span>
-                    <p className="mt-1.5 text-sm font-semibold text-slate-800">{anomaly.message}</p>
-                    <p className="mt-1 text-xs text-slate-500">{anomaly.recommended_action}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                  </div>
+                  <p className="text-sm text-[#653819]">{anomaly.recommended_action}</p>
+                </li>
+              );
+            })}
+          </ul>
         </article>
-        <article className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <p className="text-sm font-bold text-slate-800">주요 변동 품목</p>
-          {isLoading ? (
-            <p className="mt-2 text-sm text-slate-400">불러오는 중...</p>
-          ) : (data?.top_changed_items ?? []).length === 0 ? (
-            <p className="mt-2 text-sm text-slate-400">변동 품목이 없습니다.</p>
-          ) : (
-            <ul className="mt-3 space-y-2">
-              {(data?.top_changed_items ?? []).map((item) => {
-                const pct = Math.round(item.change_ratio * 100);
-                const isUp = pct >= 0;
-                return (
-                  <li
-                    key={item.item_nm}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">{item.item_nm}</p>
-                      <p className="text-xs text-slate-500">
-                        평균 {item.avg_ord_qty.toFixed(1)}개 → 최근 {item.latest_ord_qty}개
-                      </p>
+        <article className="rounded-[8px] border border-[#DADADA] bg-white p-6">
+          <p className="text-2xl font-bold text-brown-700">주요 변동 품목</p>
+          <div className="h-[1px] bg-[#D9D9D9] mt-4 mb-6" />{" "}
+          <ul className="flex flex-col gap-2">
+            {(data?.top_changed_items ?? []).map((item) => {
+              const pct = Math.round(item.change_ratio * 100);
+              const isUp = pct >= 0;
+              return (
+                <li
+                  key={item.item_nm}
+                  className="rounded-[8px] border border-[#DADADA] bg-white p-4 flex flex-col gap-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-md font-bold text-[#2E2520]">{item.item_nm}</p>
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={isUp ? arrow_red : arrow_blue}
+                        className={`${isUp ? "rotate-180" : "rotate-0"}`}
+                      />
+                      <span className="text-brown-700 font-bold text-md">{pct}%</span>
                     </div>
-                    <p
-                      className={`flex items-center gap-0.5 text-sm font-bold ${isUp ? "text-rose-600" : "text-blue-600"}`}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        {isUp ? "arrow_upward" : "arrow_downward"}
-                      </span>
-                      {isUp ? "+" : ""}
-                      {pct}%
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                  </div>
+                  <p className="text-sm text-[#653819] text-right">
+                    평균 {item.avg_ord_qty.toFixed(1)}개 → 최근 {item.latest_ord_qty}개
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
         </article>
       </div>
     </section>
