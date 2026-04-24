@@ -45,6 +45,7 @@ export interface OrderingOptionsResponse {
   weather?: OrderingWeather | null; // 구조화된 날씨 정보
   trend_summary?: string; // 최근 트렌드 요약
   business_date?: string; // 기준 영업일
+  deadline_items?: OrderingDeadlineItem[];
   options: OrderingOption[]; // 추천안 목록
 }
 

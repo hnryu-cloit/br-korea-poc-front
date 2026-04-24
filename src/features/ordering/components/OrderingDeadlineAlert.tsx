@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+
 import { Pagination } from "@/commons/components/page/Pagination";
 import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
 
@@ -12,11 +14,25 @@ export function OrderingDeadlineAlert({
 }: {
   deadlineItems?: OrderingDeadlineItem[];
 }) {
+  const pageSize = 5;
+  const items = deadlineItems ?? [];
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [items.length]);
+
+  const pagedItems = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return items.slice(start, start + pageSize);
+  }, [currentPage, items]);
+
   return (
     <section className="overflow-hidden rounded-[6px] border border-t-4 border-[#FFD9C7] bg-white p-6">
       <h3 className="text-md font-bold leading-9 text-black mb-4">주문 마감 임박 (1시간 이내)</h3>
 
-      {deadlineItems?.length === 0 ? (
+      {items.length === 0 ? (
         <div className="px-6 py-10 text-[18px] font-medium text-[#655770]">
           주문 마감이 임박한 상품이 없습니다.
         </div>
@@ -39,7 +55,7 @@ export function OrderingDeadlineAlert({
                 </tr>
               </thead>
               <tbody>
-                {deadlineItems?.map((item) => (
+                {pagedItems.map((item) => (
                   <tr key={item.id} className="border-b border-[#D4D4D4] last:border-b-0">
                     <td className="px-3 py-2 text-md leading-7 text-brown-700">{item.sku_name}</td>
                     <td className="px-3 py-2 text-md leading-7 text-brown-700">
@@ -58,9 +74,9 @@ export function OrderingDeadlineAlert({
             </table>
           </div>
           <Pagination
-            currentPage={1}
-            totalPages={10}
-            onChangePage={(page: number) => console.log(page)}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onChangePage={setCurrentPage}
           />
         </>
       )}

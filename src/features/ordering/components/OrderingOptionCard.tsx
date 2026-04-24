@@ -8,6 +8,14 @@ import { formatCountWithUnit } from "@/commons/utils/format-count";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 import dayjs from "dayjs";
 
+function formatOptionBasis(basis: string) {
+  const parsed = dayjs(basis);
+  if (parsed.isValid()) {
+    return parsed.format("MM월 DD일");
+  }
+  return basis;
+}
+
 export function OrderingOptionCard({
   option,
   selected,
@@ -53,7 +61,7 @@ export function OrderingOptionCard({
           <div className="flex items-center gap-2">
             <p className="text-xl font-bold text-brown-700">{option.title}</p>
             <p className="text-md text-brown-700">
-              ({dayjs(option.basis).format("MM월 DD일 • ddd요일")})
+              ({formatOptionBasis(option.basis)})
             </p>
           </div>
         </div>

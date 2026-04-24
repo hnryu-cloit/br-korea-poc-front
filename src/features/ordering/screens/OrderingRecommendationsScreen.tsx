@@ -5,13 +5,10 @@ import { OrderingConfirmedSummary } from "@/features/ordering/components/Orderin
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
 import { OrderingOptionsSection } from "@/features/ordering/components/OrderingOptionsSection";
-import { MOCK_ORDERING_DEADLINE_ITEMS } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
-
-const USE_ORDERING_DEADLINE_MOCK = true;
 
 export function OrderingRecommendationsScreen() {
   const location = useLocation();
@@ -57,8 +54,8 @@ export function OrderingRecommendationsScreen() {
     [effectiveSelectedOptionId, orderingOptions],
   );
   const deadlineItems = useMemo(
-    () => (USE_ORDERING_DEADLINE_MOCK ? MOCK_ORDERING_DEADLINE_ITEMS : []),
-    [],
+    () => optionsQuery.data?.deadline_items ?? [],
+    [optionsQuery.data?.deadline_items],
   );
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;
@@ -90,6 +87,7 @@ export function OrderingRecommendationsScreen() {
     <div className="space-y-6">
       <h2 className="text-[#41352E] text-[24px] font-bold mb-8">주문 관리</h2>
       <OrderingContextCards
+        businessDate={optionsQuery.data?.business_date}
         weather={optionsQuery.data?.weather}
         trend={optionsQuery.data?.trend_summary}
       />
