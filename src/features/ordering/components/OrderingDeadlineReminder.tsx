@@ -1,9 +1,22 @@
 import { BellRing, Clock3 } from "lucide-react";
+import { useMemo } from "react";
 
 import { useOrderingDeadlineReminder } from "@/features/ordering/hooks/useOrderingDeadlineReminder";
+import { useGetOrderingDeadlineQuery } from "@/features/ordering/queries/useGetOrderingDeadlineQuery";
 
-export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes: string[] }) {
-  const { toast, activePanelItems, confirmReminder } = useOrderingDeadlineReminder(deadlineTimes);
+export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes?: string[] } = {}) {
+  const deadlineQuery = useGetOrderingDeadlineQuery();
+  const effectiveDeadlineTimes = useMemo(() => {
+    const fromProps = (deadlineTimes ?? []).filter(Boolean);
+    if (fromProps.length > 0) {
+      return fromProps;
+    }
+    const fromApi = deadlineQuery.data?.deadline;
+    return fromApi ? [fromApi] : [];
+  }, [deadlineQuery.data?.deadline, deadlineTimes]);
+  const { toast, activePanelItems, confirmReminder } = useOrderingDeadlineReminder(
+    effectiveDeadlineTimes,
+  );
 
   return (
     <>

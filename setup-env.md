@@ -118,6 +118,16 @@ npm run dev -- --host 0.0.0.0 --port 6003
 
 - `/analytics/market` 인사이트 응답은 `source="ai"`만 허용하며 fallback 응답을 사용하지 않습니다.
 - `/sales/metrics`의 추천 질문/인사이트/캠페인 서술형은 backend+ai service 연동이 필요하며, AI 실패 시 오류로 반환됩니다.
+
+## Session Note (2026-04-24, ordering deadline items contract)
+
+- `/ordering/recommendations`의 `주문 마감 임박` 테이블은 backend `deadline_items` 응답을 우선 사용합니다.
+- `deadline_items`가 비어있는 경우에만 `item.note`에서 `마감 HH:mm`를 파싱해 fallback 렌더링합니다.
+
+## Session Note (2026-04-24, backend load schema backfill)
+
+- backend `load` 컨테이너 실패 이슈 대응으로 `store_clusters` 컬럼 보강 마이그레이션이 추가되었습니다.
+- 프론트 실행 방식(`npm run dev`, `VITE_API_BASE_URL`) 변경은 없습니다.
 - 프론트 쿼리 정책은 UI 변경 없이 `45초` 폴링(`market insights`, `sales summary/insights/campaign/prompts`)으로 백그라운드 갱신을 반영합니다.
 
 ## Session Note (2026-04-22, QA 병렬 회차)
@@ -142,6 +152,18 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - 사이드바 로고 클릭
   - `http://localhost:5173/`에서 점주/본사 선택 카드 노출 확인
 
+## Session Note (2026-04-24, 신규 유통기한/납품일 데이터 반영)
+
+- 주문관리 화면은 mock 마감 데이터 대신 backend 실데이터(`GET /api/ordering/options`, `GET /api/ordering/deadline`)를 사용합니다.
+- backend에 `resource/06. 유통기한 및 납품일/*.xlsx` 신규 적재가 추가되었습니다.
+  - migration: `0019_create_order_arrival_schedule.sql`, `0020_create_product_shelf_life.sql`
+  - 주문 마감 fallback은 납품 스케줄 데이터(`raw_order_arrival_schedule`)를 우선 참조합니다.
+  - 생산 유통기한 fallback은 SKU 유통기한 데이터(`raw_product_shelf_life`)를 우선 참조합니다.
+- 프론트 실행 방식은 동일합니다.
+  - `npm run dev` + `VITE_API_BASE_URL` 백엔드 연결만 유지하면 됩니다.
+  - 주문관리 응답(`GET /api/ordering/options`) item note에 마감/도착/유통기한 정보가 추가될 수 있습니다.
+  - 발주이력 응답(`GET /api/ordering/history`) explainability 근거에 신규 데이터 소스가 포함됩니다.
+
 ## Session Note (2026-04-23, settings v3 shell alignment)
 
 - `/settings` 화면의 셸(UI 프레임)을 제공 기준 HTML(`설정 v3 – Biz Dunkin' 관리자`) 구조에 맞춰 정렬했습니다.
@@ -152,6 +174,22 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - `http://localhost:5173/settings`
   - `http://localhost:5173/settings/orchestration`
   - `http://localhost:5173/settings/prompts`
+
+## Session Note (2026-04-23, store-owner golden queries)
+
+- 점주 관점 골든쿼리 데이터셋이 신규 추가되었습니다.
+  - 파일: `../docs/golden-queries-store-owner.csv`
+  - 컬럼: `에이전트,질문,평가항목,가용여부,가용 데이터,테이블/컬럼,가정/갭,실제 쿼리,예상 답변`
+  - 건수: 총 200건 (`생산관리Agent 67 / 주문관리Agent 67 / 매출관리Agent 66`)
+- 쿼리 문법은 PostgreSQL 기준이며, 점포 스코프는 `:store_id` 파라미터를 사용합니다.
+
+## Session Note (2026-04-23, store-owner golden queries expansion)
+
+- 같은 파일에 점주 추가 질문 200건을 더 반영해 총 400건으로 확장했습니다.
+- 추가 200건 구성
+  - 연결형 추천질문 160건(80%)
+  - 신규 확장질문 40건(20%)
+- 에이전트 표기는 `생산 관리`, `주문 관리`, `매출 관리` 띄어쓰기 기준으로 통일했습니다.
 
 ## Session Note (2026-04-23, settings v3 full panel refactor)
 
@@ -184,3 +222,19 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 확인 경로
   - `http://localhost:6003/dashboard` 진입 후 사이드바 확인
   - 직접 진입 `http://localhost:6003/signals` 시 라우트 미정의 상태 확인
+
+## Session Note (2026-04-24, 실행 방식 점검)
+
+- 프론트 실행 방식은 기존과 동일합니다.
+  - `npm install`
+  - `npm run dev` (기본 포트 `5173`)
+- 이번 세션 변경은 백엔드 문서 자산(`golden-queries-new.csv`) 컬럼 구조 정비이며, 프론트 실행 커맨드/환경변수는 추가 변경이 없습니다.
+
+## Session Note (2026-04-24, 요건 기반 골든쿼리 신규셋)
+
+- 실행 커맨드/환경변수 변경은 없습니다.
+- 검증용 질문 자산 `../br-korea-poc-backend/docs/golden-queries-new-02.csv`가 추가되었습니다.
+  - 기본 점포: `POC_010`
+  - 기본 기준일시: `2026-03-05 09:00 (KST)`
+  - UI에서 기준 일자/시간 변경 후 동일 질문 재실행으로 데이터 검증을 수행합니다.
+- `golden-queries-new-02.csv`는 파생 질문 포함 112건으로 확장되었습니다.

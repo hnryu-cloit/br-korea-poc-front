@@ -32,6 +32,9 @@ export function OrderingConfirmedSummary({ option }: { option: OrderingOption })
                   <p className="mt-1 text-lg font-bold text-slate-900">
                     {formatCountWithUnit(item.quantity, "개")}
                   </p>
+                  {item.note ? (
+                    <p className="mt-2 text-xs leading-5 text-slate-500">{item.note}</p>
+                  ) : null}
                 </div>
               ))}
             </div>

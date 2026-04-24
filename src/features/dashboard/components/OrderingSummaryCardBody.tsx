@@ -45,9 +45,9 @@ export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSumma
         }
       >
         <div className="flex flex-col gap-1">
-          {card.deadline_products.map((item) => (
+          {card.deadline_products.map((item, index) => (
             <SummaryCardListItem
-              key={item.name}
+              key={`${item.name}-${index}`}
               title={item.name}
               value={`${item.deadline_time} 마감`}
               description={buildOrderingDeadlineDescription(item)}
