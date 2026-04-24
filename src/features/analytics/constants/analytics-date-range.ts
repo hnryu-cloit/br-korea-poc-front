@@ -15,3 +15,24 @@ export const getDefaultAnalyticsDateRange = () => {
     dateTo: formatLocalDate(toDate),
   };
 };
+
+export const getCurrentWeekDateRange = () => {
+  const toDate = new Date();
+  const fromDate = new Date(toDate);
+  fromDate.setDate(toDate.getDate() - toDate.getDay() + 1);
+
+  return {
+    dateFrom: formatLocalDate(fromDate),
+    dateTo: formatLocalDate(toDate),
+  };
+};
+
+export const getCurrentMonthDateRange = () => {
+  const toDate = new Date();
+  const fromDate = new Date(toDate.getFullYear(), toDate.getMonth(), 1);
+
+  return {
+    dateFrom: formatLocalDate(fromDate),
+    dateTo: formatLocalDate(toDate),
+  };
+};

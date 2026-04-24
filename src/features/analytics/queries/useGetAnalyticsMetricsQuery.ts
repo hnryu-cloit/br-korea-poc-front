@@ -4,9 +4,10 @@ import { getAnalyticsMetrics } from "@/features/analytics/api/analytics";
 import { analyticsQueryKeys } from "@/features/analytics/queries/analyticsQueryKeys";
 import type { GetAnalyticsMetricsRequest } from "@/features/analytics/types/analytics";
 
-export const useGetAnalyticsMetricsQuery = (params?: GetAnalyticsMetricsRequest) =>
+export const useGetAnalyticsMetricsQuery = (params?: GetAnalyticsMetricsRequest, enabled = true) =>
   useQuery({
     queryKey: analyticsQueryKeys.metrics(params),
     queryFn: () => getAnalyticsMetrics(params),
+    enabled,
     staleTime: 5 * 60 * 1000,
   });

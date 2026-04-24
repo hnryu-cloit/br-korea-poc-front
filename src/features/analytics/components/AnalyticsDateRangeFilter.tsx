@@ -1,44 +1,37 @@
+function DateField({ value, disabled = false }: { value: string; disabled?: boolean }) {
+  return (
+    <label className="relative block">
+      <input
+        type="date"
+        value={value}
+        disabled={disabled}
+        readOnly
+        className="h-8 w-full rounded-[4px] border border-[#DADADA] bg-white p-[6px_12px] text-sm font-medium text-[#45556C] outline-none transition-colors [color-scheme:light] focus:border-[#653819] disabled:cursor-not-allowed disabled:bg-[#F5F5F5] disabled:text-[#A8A8A8]"
+      />
+    </label>
+  );
+}
+
 export const AnalyticsDateRangeFilter = ({
   dateFrom,
   dateTo,
-  onChangeDateFrom,
-  onChangeDateTo,
 }: {
   dateFrom: string;
   dateTo: string;
-  onChangeDateFrom: (value: string) => void;
-  onChangeDateTo: (value: string) => void;
 }) => {
   return (
-    <section className="rounded-[24px] border border-border bg-white px-5 py-4 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-sm font-bold text-slate-800">조회 기간</p>
-          <p className="mt-1 text-xs text-slate-400">
-            선택 기간과 직전 동기간을 비교해 지표를 계산합니다.
-          </p>
+    <section className="rounded-[16px] border border-[#DADADA] bg-white px-6 py-5">
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-black">시작일</p>
+          <DateField value={dateFrom} disabled />
         </div>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <label className="space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500">시작일</span>
-            <input
-              type="date"
-              value={dateFrom}
-              max={dateTo}
-              onChange={(event) => onChangeDateFrom(event.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 text-sm text-slate-700 focus:border-primary focus:outline-none"
-            />
-          </label>
-          <label className="space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500">종료일</span>
-            <input
-              type="date"
-              value={dateTo}
-              min={dateFrom}
-              onChange={(event) => onChangeDateTo(event.target.value)}
-              className="h-10 w-full rounded-xl border border-[#dce4f3] bg-[#f7faff] px-3 text-sm text-slate-700 focus:border-primary focus:outline-none"
-            />
-          </label>
+
+        <div className="text-sm text-black">~</div>
+
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-black">종료일</p>
+          <DateField value={dateTo} disabled />
         </div>
       </div>
     </section>

@@ -5,6 +5,7 @@ import type {
   AuditLogListResponse,
   CustomerProfileResponse,
   GetAnalyticsMetricsRequest,
+  GetAnalyticsSalesTrendRequest,
   GetMarketIntelligenceRequest,
   HQMarketInsightsResponse,
   MarketIntelligenceResponse,
@@ -47,9 +48,9 @@ export async function getAnalyticsCustomerProfile(storeId: string) {
   return response.data;
 }
 
-export async function getAnalyticsSalesTrend(storeId?: string) {
+export async function getAnalyticsSalesTrend(params?: GetAnalyticsSalesTrendRequest) {
   const response = await axiosInstance.get<SalesTrendResponse>("/api/analytics/sales-trend", {
-    params: storeId ? { store_id: storeId } : undefined,
+    params,
   });
   return response.data;
 }
