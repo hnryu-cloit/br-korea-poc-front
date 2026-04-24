@@ -130,6 +130,27 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 프론트 실행 방식(`npm run dev`, `VITE_API_BASE_URL`) 변경은 없습니다.
 - 프론트 쿼리 정책은 UI 변경 없이 `45초` 폴링(`market insights`, `sales summary/insights/campaign/prompts`)으로 백그라운드 갱신을 반영합니다.
 
+## Session Note (2026-04-24, ordering recommendation logic uplift)
+
+- 프론트 UI 디자인 변경 없이 주문 추천 데이터만 고도화되었습니다.
+- `/api/ordering/options`의 옵션 수량/근거 지표는 서버에서 `최근 7일 판매추세 + 현재 재고 + 유통기한 리스크`를 반영해 계산됩니다.
+- 로컬 확인 URL
+  - `http://localhost:6003/ordering/recommendations`
+
+## Session Note (2026-04-24, ordering refactor follow-up)
+
+- 주문 추천 로직 리팩토링은 backend/ai 레이어에서 수행되었고 프론트 실행 방식 변경은 없습니다.
+- `Gemini`는 근거 문장만 반영되고 수량/지표는 서버 계산값이 유지됩니다.
+
+## Session Note (2026-04-24, settings connectors DB baseline)
+
+- `http://localhost:6003/settings/connectors` 화면이 시스템 DB 객체 카드 목록으로 확장되었습니다.
+  - 기존 Settings v3 톤앤매너는 유지하고 카드 반복 구조로 보강했습니다.
+  - 계층 기준: `Raw 23`, `Core 4`, `운영 3` (총 30 객체 카드 표시)
+  - 대표 테이블 예시: `raw_daily_store_item`, `core_daily_item_sales`, `audit_logs`
+- 실행 방식은 동일합니다.
+  - `npm run dev -- --host 0.0.0.0 --port 6003`
+
 ## Session Note (2026-04-22, QA 병렬 회차)
 
 - QA 기준 자동 점검은 아래 명령으로 실행했습니다.
@@ -238,3 +259,16 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - 기본 기준일시: `2026-03-05 09:00 (KST)`
   - UI에서 기준 일자/시간 변경 후 동일 질문 재실행으로 데이터 검증을 수행합니다.
 - `golden-queries-new-02.csv`는 파생 질문 포함 112건으로 확장되었습니다.
+
+## Session Note (2026-04-24, golden query hybrid routing)
+
+- 프론트 실행 방식은 변경 없습니다.
+  - `npm run dev`
+  - `VITE_API_BASE_URL`로 backend 주소 지정
+- backend+ai에서 골든쿼리 우선 매칭이 추가되어도 프론트 호출 계약은 동일합니다.
+- 필요 시 `/api/sales/query` 응답의 `agent_trace.matched_query_id`, `agent_trace.match_score`를 디버깅용으로 확인할 수 있습니다.
+
+## Session Note (2026-04-24, golden query paraphrase handling)
+
+- 프론트 실행 방식은 변경 없습니다.
+- 골든쿼리 매칭은 서버에서 패턴 기반으로 처리되므로, 사용자 질문 문구가 CSV 질문과 완전히 같지 않아도 동일 의도로 처리될 수 있습니다.
