@@ -1,15 +1,20 @@
 import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { SummaryCardProps } from "@/features/dashboard/types/summary-card";
 
 export function SummaryCard({
   icon,
   title,
+  captionKey,
   pathname,
   recommendedQuestions,
   children,
 }: SummaryCardProps) {
+  const caption = captionKey ? FIELD_CAPTIONS[captionKey] : null;
+
   return (
     <article className="rounded-[8px] border border-[#DADADA] bg-white p-6">
       <div className="flex items-center gap-[4px]">
@@ -17,6 +22,7 @@ export function SummaryCard({
         <h2 className="text-[24px] leading-[1.66] font-semibold tracking-[-0.02em] text-brown-700">
           {title}
         </h2>
+        {caption && <InfoPopover caption={caption} side="bottom" align="left" />}
       </div>
 
       <div className="mt-4 border-t border-[#DADADA] pt-5">
