@@ -14,6 +14,15 @@ export interface GetAnalyticsMetricsRequest {
   date_to?: string; // 조회 종료일
 }
 
+export type AnalyticsSalesTrendCompareMode = "prev_week" | "prev_month";
+
+export interface GetAnalyticsSalesTrendRequest {
+  store_id?: string;
+  date_from?: string;
+  date_to?: string;
+  compare_mode?: AnalyticsSalesTrendCompareMode;
+}
+
 export interface GetMarketIntelligenceRequest {
   store_id?: string;
   gu?: string;
@@ -37,6 +46,7 @@ export interface AnalyticsMetricItem {
 
 export interface GetAnalyticsMetricsResponse {
   items: AnalyticsMetricItem[]; // 지표 카드 목록
+  selected_period_total_sales?: number;
 }
 
 /**
@@ -110,8 +120,8 @@ export interface CustomerProfileResponse {
 
 export interface SalesTrendPoint {
   day: number;
-  this_month: number | null;
-  last_month: number | null;
+  current_period: number | null;
+  comparison_period: number | null;
   projection: number | null;
 }
 
@@ -124,19 +134,26 @@ export interface SalesTrendInsightChip {
 export interface DowPoint {
   dow: number;
   label: string;
-  this_month_avg: number;
-  last_month_avg: number;
+  current_period_avg: number;
+  comparison_period_avg: number;
 }
 
 export interface HourPoint {
   hour: number;
-  this_month_avg: number;
-  last_month_avg: number;
+  current_period_avg: number;
+  comparison_period_avg: number;
 }
 
 export interface SalesTrendResponse {
   headline: string;
   headline_trend: "up" | "down" | "flat";
+  compare_mode: AnalyticsSalesTrendCompareMode;
+  date_from: string;
+  date_to: string;
+  comparison_date_from: string | null;
+  comparison_date_to: string | null;
+  selected_period_total_sales: number;
+  comparison_period_total_sales: number;
   points: SalesTrendPoint[];
   insight_chips: SalesTrendInsightChip[];
   dow_points: DowPoint[];

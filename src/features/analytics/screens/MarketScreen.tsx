@@ -38,7 +38,7 @@ export function MarketScreen() {
 
   const storeProfileQuery = useGetAnalyticsStoreProfileQuery(user.storeId);
   const customerProfileQuery = useGetAnalyticsCustomerProfileQuery(user.storeId);
-  const salesTrendQuery = useGetAnalyticsSalesTrendQuery(user.storeId);
+  const salesTrendQuery = useGetAnalyticsSalesTrendQuery({ store_id: user.storeId });
   const marketIntelligenceQuery = useGetAnalyticsMarketIntelligenceQuery({
     store_id: user.storeId,
     gu: scope.gu,
@@ -129,7 +129,12 @@ export function MarketScreen() {
         isLoading={marketIntelligenceQuery.isLoading}
       />
 
-      <SalesTrendChart data={salesTrend} isLoading={salesTrendQuery.isLoading} />
+      <SalesTrendChart
+        data={salesTrend}
+        isLoading={salesTrendQuery.isLoading}
+        compareMode={salesTrend?.compare_mode ?? "prev_month"}
+        onChangeCompareMode={() => {}}
+      />
 
       <MarketInsightBoardSection
         storeProfile={storeProfile}

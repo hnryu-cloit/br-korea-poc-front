@@ -99,14 +99,14 @@ export function getCompetitionLevel(peerCount: number): {
 
 export function getTopHourLabels(points: HourPoint[], limit = 3): string[] {
   return [...points]
-    .sort((a, b) => b.this_month_avg - a.this_month_avg)
+    .sort((a, b) => b.current_period_avg - a.current_period_avg)
     .slice(0, limit)
     .map((point) => `${point.hour}시`);
 }
 
 export function getTopDowLabels(points: DowPoint[], limit = 2): string[] {
   return [...points]
-    .sort((a, b) => b.this_month_avg - a.this_month_avg)
+    .sort((a, b) => b.current_period_avg - a.current_period_avg)
     .slice(0, limit)
     .map((point) => point.label);
 }
