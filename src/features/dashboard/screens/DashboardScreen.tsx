@@ -48,7 +48,6 @@ export function DashboardScreen() {
         <DashboardAlertSummary
           lowStockProducts={alertsData?.low_stock_products ?? []}
           orderDeadline={alertsData?.order_deadline ?? null}
-          referenceDateTime={referenceDateTime}
         />
         <SummaryCardsSection
           cards={summaryCardsData?.cards ?? []}

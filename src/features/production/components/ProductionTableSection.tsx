@@ -131,9 +131,9 @@ export function ProductionTableSection({
                           <div className="min-w-0">
                             <div className="text-[#41352E] text-md font-regular">
                               {sku.sku_name}
-                            </span>
-                          </span>
-                        </span>
+                            </div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">{orderingDeadlineAt ?? "-"}</td>
                       <td className="px-6 py-4">
@@ -142,7 +142,7 @@ export function ProductionTableSection({
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.current_stock, "개")}
-                        </span>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <span className="text-brown-700">
@@ -152,24 +152,24 @@ export function ProductionTableSection({
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.avg_first_production_qty_4w, "개")}
-                        </span>
+                        </div>
                         <div className="text-xs text-slate-400">
                           {sku.avg_first_production_time_4w} 생산
-                        </span>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.avg_second_production_qty_4w, "개")}
-                        </span>
+                        </div>
                         <div className="text-xs text-slate-400">
                           {sku.avg_second_production_time_4w} 생산
-                        </span>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-brown-700 text-md flex items-center gap-2">
                           <img src={arrow_down} alt="Arrow Down" />
                           <span>{sku.chance_loss_saving_pct}%</span>
-                        </span>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export function ProductionTableSection({
                           >
                             {sku.can_produce === false ? "생산 불가" : "생산하기"}
                           </button>
-                        </span>
+                        </div>
                       </td>
                     </tr>
                   );
