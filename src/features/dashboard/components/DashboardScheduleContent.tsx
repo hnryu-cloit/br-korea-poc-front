@@ -45,16 +45,16 @@ export function DashboardScheduleContent({
               onClick={() => onChangeTab("pending")}
             />
             <TodoTab
-              isActive={activeTab === "completed"}
-              label={SCHEDULE_PANEL_TAB_LABELS.completed}
-              count={completedCount}
-              onClick={() => onChangeTab("completed")}
-            />
-            <TodoTab
               isActive={activeTab === "schedule"}
               label={SCHEDULE_PANEL_TAB_LABELS.schedule}
               count={scheduleCount}
               onClick={() => onChangeTab("schedule")}
+            />
+            <TodoTab
+              isActive={activeTab === "completed"}
+              label={SCHEDULE_PANEL_TAB_LABELS.completed}
+              count={completedCount}
+              onClick={() => onChangeTab("completed")}
             />
           </div>
         </div>
@@ -64,7 +64,7 @@ export function DashboardScheduleContent({
             isLoading ? (
               <p className="text-sm text-slate-400">일정 불러오는 중...</p>
             ) : scheduleEvents.length === 0 ? (
-              <p className="mt-2 text-sm text-[#8A7A73]">선택한 날짜의 일정이 없습니다.</p>
+              <p className="mt-2 text-sm text-[#8A7A73]">선택한 날짜에 주요 일정이 없습니다.</p>
             ) : (
               <ul className="flex flex-col">
                 {scheduleEvents.map((event) => (

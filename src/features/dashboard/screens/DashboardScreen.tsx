@@ -16,14 +16,21 @@ export function DashboardScreen() {
     store_id: user.storeId,
     business_date: now,
   };
-  const { data: noticesData } = useGetDashboardNoticesQuery(params);
+  const {
+    data: noticesData,
+    isLoading: noticesLoading,
+    isFetching: noticesFetching,
+  } = useGetDashboardNoticesQuery(params);
   const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(params);
   const { data: alertsData } = useGetDashboardAlertsQuery(params);
   const { data: summaryCardsData } = useGetDashboardSummaryCardsQuery(params);
 
   return (
     <div className="flex flex-col gap-6">
-      <DashboardNotices notices={noticesData?.items ?? []} />
+      <DashboardNotices
+        notices={noticesData?.items ?? []}
+        isLoading={noticesLoading || noticesFetching}
+      />
       <DashboardSchedulePanel
         storeId={user.storeId}
         events={scheduleData?.calendar_events ?? []}
