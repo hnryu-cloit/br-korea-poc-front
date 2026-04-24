@@ -1,13 +1,23 @@
+import { Bell, ChevronDown, Clock3, Menu, RotateCcw, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, ChevronDown, Clock3, Menu, RotateCcw, X } from "lucide-react";
 
 import bizLogo from "@/assets/biz_logo.png";
 import dunkinLogo from "@/assets/dunkin_logo.png";
 import { formatCount } from "@/commons/utils/format-count";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
-import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+import { useGetStoresQuery } from "@/features/stores/queries/useGetStoresQuery";
+import type { Store } from "@/features/stores/types/stores";
+
+const avatarBackgroundColor = ["#FFE2E2", "#DFF2FE", "#F1F5F9", "#CBFBF1", "#E0E7FF", "#FEF3C6"];
+
+function getStoreAvatarBackgroundColor(store: Pick<Store, "store_id" | "store_name">) {
+  if (!store) return "#FFE2E2";
+  const seed = `${store.store_id}:${store.store_name}`;
+  const hash = Array.from(seed).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return avatarBackgroundColor[hash % avatarBackgroundColor.length];
+}
 
 type Props = {
   onMenuToggle: () => void;
@@ -20,6 +30,7 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isStoreMenuOpen, setIsStoreMenuOpen] = useState(false);
   const [isReferenceMenuOpen, setIsReferenceMenuOpen] = useState(false);
+  const [storeSearchTerm, setStoreSearchTerm] = useState("");
   const { user, setStore, referenceDateTime, setReferenceDateTime, resetReferenceDateTime } =
     useDemoSession();
   const isHqAdmin = user.role === "hq_admin";
@@ -43,6 +54,16 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
     if (!item?.link_to) return;
     navigate(item.link_to, { state: item.link_state ?? undefined });
   };
+
+  const normalizedStoreSearchTerm = storeSearchTerm.trim().toLowerCase();
+  const filteredStores = stores.filter((store) => {
+    if (!normalizedStoreSearchTerm) {
+      return true;
+    }
+
+    const haystack = [store.store_name, store.store_id, store.sido].join(" ").toLowerCase();
+    return haystack.includes(normalizedStoreSearchTerm);
+  });
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 h-[52px] border-b border-[#DADADA] bg-white px-4">
@@ -210,26 +231,24 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
             <button
               type="button"
               onClick={() => setIsStoreMenuOpen((v) => !v)}
-              className="flex h-[42px] w-[220px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed] sm:w-[250px] md:w-[270px]"
+              className="flex h-[42px] w-[200px] items-center justify-between rounded-[12px] border border-[#DADADA] bg-white py-0.5 px-3"
               aria-label="점포 전환"
             >
-              <div className="size-[28px] overflow-hidden rounded-full border border-[#CCDAF0] bg-[linear-gradient(135deg,#316BFF_0%,#4AA2FF_100%)] text-white">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={user.name} className="size-full object-cover" />
-                ) : (
-                  <div className="grid size-full place-items-center text-[12px] font-bold">
-                    {user.initials}
-                  </div>
-                )}
-              </div>
-              <div className="mx-2 flex-1 truncate text-left">
-                <p className="truncate text-[13px] font-semibold leading-tight text-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="h-8 w-8 rounded-full text-[#1D293D] text-sm leading-8"
+                  style={{ backgroundColor: getStoreAvatarBackgroundColor(stores[0]) }}
+                >
+                  {user.initials}
+                  {/* {stores[0].store_name.charAt(0)} */}
+                </div>
+                <p className="text-sm font-bold text-[#314158]">
                   {user.storeName}
+                  {/* {stores[0].store_name} */}
                 </p>
-                <p className="truncate text-[11px] leading-tight text-slate-500">{user.storeId}</p>
               </div>
               <ChevronDown
-                className={`h-4 w-4 text-slate-400 transition-transform ${isStoreMenuOpen ? "rotate-180" : ""}`}
+                className={`h-4 w-4 text-[#653819] transition-transform ${isStoreMenuOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -238,44 +257,61 @@ export function AppHeader({ onMenuToggle, notifications, unreadCount }: Props) {
                 <button
                   type="button"
                   className="fixed inset-0 z-40 cursor-default"
-                  onClick={() => setIsStoreMenuOpen(false)}
+                  onClick={() => {
+                    setIsStoreMenuOpen(false);
+                    setStoreSearchTerm("");
+                  }}
                   aria-label="점포 메뉴 닫기"
                 />
-                <div className="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_rgba(31,77,187,0.16)]">
-                  <div className="border-b border-border/70 px-4 py-3">
-                    <p className="text-xs font-semibold text-slate-500">점포 선택</p>
+                <div className="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-[4px] border border-border bg-white">
+                  <div className="px-4 py-3">
+                    <label className="relative block" htmlFor="store-search">
+                      <input
+                        id="store-search"
+                        type="text"
+                        placeholder="검색"
+                        value={storeSearchTerm}
+                        onChange={(event) => setStoreSearchTerm(event.target.value)}
+                        className="h-8 w-full rounded-xl border border-[#DADADA] bg-white py-1 px-5 text-sm text-[#1D293D] outline-none placeholder:text-[#716862]"
+                      />
+                      <Search
+                        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#716862]"
+                        strokeWidth={2}
+                      />
+                    </label>
                   </div>
-                  <div className="max-h-72 overflow-y-auto py-1">
-                    {stores.map((store) => (
-                      <button
-                        key={store.store_id}
-                        type="button"
-                        onClick={() => {
-                          setStore(store.store_id, `${store.store_name}점`);
-                          setIsStoreMenuOpen(false);
-                        }}
-                        className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#eef4ff] ${
-                          user.storeId === store.store_id ? "bg-[#f0f5ff]" : ""
-                        }`}
-                      >
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EEF4FF] text-[11px] font-bold text-[#2454C8]">
-                          {store.store_name.charAt(0)}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-[13px] font-semibold text-slate-800">
-                            {store.store_name}점
-                          </p>
-                          <p className="text-[11px] text-slate-400">
-                            {store.sido} · {store.store_id}
-                          </p>
-                        </div>
-                        {user.storeId === store.store_id ? (
-                          <span className="material-symbols-outlined text-[16px] text-[#2454C8]">
-                            check
-                          </span>
-                        ) : null}
-                      </button>
-                    ))}
+                  <div className="max-h-72 overflow-y-auto flex flex-col px-4">
+                    {filteredStores.length === 0 ? (
+                      <div className="px-2 py-6 text-center text-sm text-[#716862]">
+                        검색 결과가 없습니다.
+                      </div>
+                    ) : (
+                      filteredStores.map((store) => (
+                        <button
+                          key={store.store_id}
+                          type="button"
+                          onClick={() => {
+                            setStore(store.store_id, `${store.store_name}점`);
+                            setIsStoreMenuOpen(false);
+                            setStoreSearchTerm("");
+                          }}
+                          className={`flex gap-2.5 px-2 py-1 rounded-[4px] hover:bg-[#D0CDCB4D] ${user.storeId === store.store_id && "bg-[#D0CDCB4D]"}`}
+                        >
+                          <div
+                            className="h-8 w-8 rounded-full text-[#1D293D] text-sm leading-8"
+                            style={{ backgroundColor: getStoreAvatarBackgroundColor(store) }}
+                          >
+                            {store.store_name.charAt(0)}
+                          </div>
+                          <div className="flex flex-col items-start">
+                            <p className="text-sm font-bold text-brown-700">{store.store_name}점</p>
+                            <p className="text-sm text-[#716862]">
+                              {store.sido} · {store.store_id}
+                            </p>
+                          </div>
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               </>

@@ -33,7 +33,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { to: "/production/status", label: "생산 현황", icon: chefIcon },
       { to: "/production/waste-loss", label: "폐기 손실", icon: deleteIcon },
-      { to: "/production/inventory-diagnosis", label: "재고 진단", icon: boxIcon },
+      { to: "/production/inventory-diagnosis", label: "재고 현황", icon: boxIcon },
     ],
   },
   {
