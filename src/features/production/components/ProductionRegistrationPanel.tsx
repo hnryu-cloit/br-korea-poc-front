@@ -1,33 +1,11 @@
+import arrow_red from "@/assets/arrow_red.svg";
 import type {
   ProductionRegistrationForm,
   ProductionSkuItem,
 } from "@/features/production/types/production";
-import { formatCountWithUnit } from "@/commons/utils/format-count";
+import { X } from "lucide-react";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
-  /\/$/,
-  "",
-);
-const MENU_PLACEHOLDER_IMAGE = "/images/menu-placeholder.svg";
-
-function toAbsoluteImageUrl(imageUrl?: string | null): string | null {
-  if (!imageUrl) {
-    return null;
-  }
-  const normalized = imageUrl.startsWith("/static/menu-images/")
-    ? imageUrl.replace("/static/menu-images/", "/images/")
-    : imageUrl;
-  if (normalized.startsWith("/images/")) {
-    return normalized;
-  }
-  if (normalized.startsWith("images/")) {
-    return `/${normalized}`;
-  }
-  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
-    return normalized;
-  }
-  return `${API_BASE_URL}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
-}
+const TABLE_HEADS = ["현재 재고", "1시간 동안 판매될 예상 갯수", "예상 품절 시간"];
 
 export function ProductionRegistrationPanel({
   activeSku,
@@ -65,123 +43,96 @@ export function ProductionRegistrationPanel({
     material_alert: activeSku.material_alert,
     material_alert_message: activeSku.material_alert_message,
   };
-  const detailImageUrl = toAbsoluteImageUrl(detail.image_url);
-  const displayImageUrl = detailImageUrl ?? MENU_PLACEHOLDER_IMAGE;
 
   return (
-    <section className="rounded-[28px] border border-[#dbe6fb] bg-white px-6 py-6 shadow-[0_18px_36px_rgba(16,32,51,0.08)]">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-lg font-bold text-slate-900">생산 등록</p>
-          <p className="mt-1 text-sm text-slate-500">
-            추천 수량은 4주 평균 생산 패턴을 기준으로 계산했습니다.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-3 py-2 text-sm font-semibold text-slate-600"
-        >
-          닫기
-        </button>
+    <section className="rounded-[28px] border border-[#dbe6fb] bg-white shadow-[0_18px_36px_rgba(16,32,51,0.08)]">
+      <div className="flex items-center justify-between p-6 border-b border-[#CAD5E2]">
+        <p className="text-[#1E1E1E] font-semibold text-2xl">{detail.sku_name} 생산하기</p>
+        <X className="text-[#45556C] h-4 w-4" />
       </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
-          <p className="text-xs font-bold text-slate-400">품목</p>
-          <div className="mt-2 flex items-center gap-3">
-            <img
-              src={displayImageUrl}
-              alt={detail.sku_name}
-              className="h-14 w-14 shrink-0 rounded-xl border border-border/60 object-cover"
-              onError={(event) => {
-                event.currentTarget.src = MENU_PLACEHOLDER_IMAGE;
-              }}
+      <div className="flex flex-col gap-4 p-6">
+        <div className="rounded-[16px] border border-[#FB2C36] bg-[#FEF2F24D] p-4 flex flex-col gap-3">
+          <p className="text-[#FB2C36] text-sm">
+            ⚠️ 1시간 이내 품절 위험 상품입니다. 즉시 생산여부를 확인하세요.
+          </p>
+          <div className="border border-[#DADADAS] w-[70%]">
+            <table className="borer border-[#DADADA] rounded-[4px] w-full">
+              <thead>
+                <tr className="border-b border-[#DADADA] bg-[#FFD9C780] text-left">
+                  {TABLE_HEADS.map((el) => (
+                    <th key={el} className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
+                      {el}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="text-brown-700 bg-white text-md">
+                  <td className="px-4 py-3">{detail.current_stock}개</td>
+                  <td className="px-4 py-3">{detail.forecast_stock_1h}개</td>
+                  <td className="px-4 py-3">1시간 이내</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="bg-[#F8FAFC] rounded-[12px] p-4 flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <p className="text-brown-700 font-bold text-md">생산수량</p>
+            <input
+              type="number"
+              value={qty}
+              onChange={(event) => onChangeQty(event.target.value)}
+              className="rounded-[4px] px-3 py-1.5 text-[#1D293D] text-sm border border-[#CAD5E2] bg-white w-[50%]"
             />
-            <div className="min-w-0">
-              <p className="truncate text-lg font-bold text-slate-900">{detail.sku_name}</p>
-              {!detailImageUrl ? (
-                <p className="mt-0.5 text-xs font-medium text-slate-400">
-                  상품이미지 준비중입니다.
+          </div>
+          <div className="rounded-[16px] bg-white p-4 flex flex-col gap-4 shadow-[0px_2px_4px_0px_rgba(50,56,62,0.08)]">
+            <div className="flex items-center gap-2">
+              <div className="w-fit rounded-[24px] border-[1px] border-transparent bg-[linear-gradient(#fff,#fff),linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] [background-origin:border-box] [background-clip:padding-box,border-box] px-6 py-1">
+                <span className="bg-gradient-to-b from-[#FF6E00] to-[#DA1884] bg-clip-text text-sm font-bold text-transparent">
+                  추천 수량 : {detail.recommended_qty}개
+                </span>
+              </div>
+            </div>
+            <div className="border border-[#DADADA] px-6 py-3 flex items-stretch gap-6 rounded-[8px] w-fit">
+              <div className="flex flex-col gap-4 text-brown-700 text-md">
+                <p className="font-bold text-sm">
+                  최근 4주 1차 생산량 ({activeSku.avg_first_production_time_4w}AM)
                 </p>
-              ) : null}
+                <p>평균 {activeSku.avg_first_production_qty_4w}개</p>
+              </div>
+
+              <div className="w-[1px] self-stretch bg-[#DADADA]" />
+
+              <div className="flex flex-col gap-4 text-brown-700 text-md">
+                <p className="font-bold text-sm">
+                  최근 4주 2차 생산량 ({activeSku.avg_second_production_time_4w}PM)
+                </p>
+                <p>평균 {activeSku.avg_second_production_qty_4w}개</p>
+              </div>
             </div>
           </div>
-          {detail.tags?.length ? (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {detail.tags.map((tag) => (
-                <span
-                  key={`${detail.sku_id}-${tag}`}
-                  className={`rounded-full px-2 py-1 text-[11px] font-bold ${
-                    tag === "속도↑"
-                      ? "border border-orange-200 bg-orange-50 text-orange-600"
-                      : tag === "재료"
-                        ? "border border-yellow-200 bg-yellow-50 text-yellow-700"
-                        : "border border-[#dbe6fb] bg-[#edf4ff] text-[#2454C8]"
-                  }`}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          ) : null}
         </div>
-        <div className="rounded-2xl bg-[#f8fbff] px-4 py-4">
-          <p className="text-xs font-bold text-slate-400">생산 수량</p>
-          <input
-            type="number"
-            value={qty}
-            onChange={(event) => onChangeQty(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#dce4f3] bg-white px-4 py-3 text-base font-semibold text-slate-800 outline-none focus:border-[#2454C8]"
-          />
-          <p className="mt-2 text-xs text-slate-500">
-            추천 수량 {formatCountWithUnit(detail.recommended_qty, "개")} · 4주 평균 1차 생산 기준
-          </p>
-        </div>
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-4">
-          <p className="text-xs font-bold text-red-500">현재 재고 / 1시간 후 예측</p>
-          <p className="mt-1 text-sm text-red-700">
-            {formatCountWithUnit(detail.current_stock, "개")} →{" "}
-            {formatCountWithUnit(detail.forecast_stock_1h, "개")} 예상
-          </p>
-          {detail.predicted_stockout_time ? (
-            <p className="mt-2 text-xs text-red-500">
-              예상 품절 시각 {detail.predicted_stockout_time}
-            </p>
-          ) : null}
-        </div>
-        <div className="rounded-2xl border border-[#dbe6fb] bg-[#edf4ff] px-4 py-4">
-          <p className="text-xs font-bold text-[#2454C8]">찬스 로스 감소 효과</p>
-          <p className="mt-1 text-sm text-slate-700">
-            지금 생산 시 {detail.chance_loss_saving_pct}% 감소 예상
-          </p>
-          <p className="mt-2 text-xs text-slate-500">{detail.chance_loss_basis_text}</p>
-          {detail.sales_velocity ? (
-            <p className="mt-2 text-xs text-slate-500">
-              현재 판매 속도 {detail.sales_velocity.toFixed(1)}배
-            </p>
-          ) : null}
+        <div className="border border-[#00D492] rounded-[16px] p-4 bg-[#F0FDFA] flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <p className="text-brown-700 font-bold text-sm">지금 생산 시, 찬스 로스 감소 효과</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <img src={arrow_red} className="" />
+            <p className="text-brown-700 text-md">{detail.chance_loss_saving_pct}% 감소 예상</p>
+            {detail.sales_velocity && (
+              <p className="border border-[#00BBA7] bg-white text-[#00BBA7] text-sm rounded-[24px] px-2 py-1">
+                현재 판매 속도 {detail.sales_velocity.toFixed(1)}배
+              </p>
+            )}
+          </div>
         </div>
       </div>
-
-      {detail.alert_message ? (
-        <div className="mt-4 rounded-2xl border border-[#dbe6fb] bg-[#f8fbff] px-4 py-4 text-sm text-slate-700">
-          {detail.alert_message}
-        </div>
-      ) : null}
-
-      {detail.material_alert ? (
-        <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
-          {detail.material_alert_message ??
-            "재료 부족 경고가 있습니다. 생산 등록 전에 재료 주문 상태를 함께 확인하세요."}
-        </div>
-      ) : null}
-
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="px-[22px] py-[14px] flex justify-end gap-4">
         <button
           type="button"
           onClick={onClose}
-          className="rounded-2xl border border-[#dce4f3] bg-[#f7faff] px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-[#eef4ff] hover:text-[#2454C8]"
+          className="h-10 px-4 py-1 rounded-[4px] border border-[#CAD5E2] text-[#1D293D] font-bold text-sm"
         >
           취소
         </button>
@@ -189,9 +140,9 @@ export function ProductionRegistrationPanel({
           type="button"
           onClick={onSubmit}
           disabled={detail.can_produce === false || isSubmitting}
-          className="rounded-2xl bg-[#2454C8] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#1d44a8]"
+          className=" h-10 px-4 py-1 rounded-[4px] bg-[#1447E6] text-white font-bold text-sm"
         >
-          {detail.can_produce === false ? "생산 불가" : isSubmitting ? "등록 중..." : "생산 등록"}
+          {detail.can_produce === false ? "생산 불가" : "생산하기"}
         </button>
       </div>
     </section>

@@ -8,6 +8,15 @@ import type {
 import ProductDefaultImage from "@/assets/default_product_img.svg";
 import arrow_down from "@/assets/arrow_red.svg";
 
+const TABLE_HEADS = [
+  "품목명",
+  "재고 상태",
+  "현재 재고",
+  "1시간 후 예측 재고",
+  "찬스 로스 절감",
+  "",
+];
+
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
   /\/$/,
   "",
@@ -57,21 +66,11 @@ export function ProductionTableSection({
           <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
             <thead>
               <tr className="border-b border-[#DADADA] bg-[#FFD9C780] text-left">
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">품목명</th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819]">주문 마감 시간</th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819]">상태</th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">현재 재고</th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  1시간 후 예측 재고
-                </th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  4주 평균 1차 생산량
-                </th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  4주 평균 2차 생산량
-                </th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">찬스 로스 절감</th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]"></th>
+                {TABLE_HEADS.map((el) => (
+                  <th key={el} className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
+                    {el}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -119,7 +118,6 @@ export function ProductionTableSection({
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">{orderingDeadlineAt ?? "-"}</td>
                       <td className="px-6 py-4">
                         <StatusBadge status={sku.status} />
                       </td>
@@ -133,22 +131,7 @@ export function ProductionTableSection({
                           {formatCountWithUnit(sku.forecast_stock_1h, "개")}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="text-brown-700">
-                          {formatCountWithUnit(sku.avg_first_production_qty_4w, "개")}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          {sku.avg_first_production_time_4w} 생산
-                        </div>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="text-brown-700">
-                          {formatCountWithUnit(sku.avg_second_production_qty_4w, "개")}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          {sku.avg_second_production_time_4w} 생산
-                        </div>
-                      </td>
+
                       <td className="px-4 py-4">
                         <div className="text-brown-700 text-md flex items-center gap-2">
                           <img src={arrow_down} alt="Arrow Down" />
@@ -161,13 +144,6 @@ export function ProductionTableSection({
                             type="button"
                             onClick={() => onOpenRegister(sku)}
                             disabled={sku.can_produce === false}
-                            // className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${
-                            //   sku.can_produce === false
-                            //     ? "cursor-not-allowed bg-slate-100 text-slate-400"
-                            //     : sku.status === "danger"
-                            //       ? "bg-[#2454C8] text-white hover:bg-[#1d44a8]"
-                            //       : "border border-[#dce4f3] bg-[#f7faff] text-slate-700 hover:bg-[#eef4ff] hover:text-[#2454C8]"
-                            // }`}
                             className="bg-orange-500 text-[14px] rounded-[4px] p-[2px_12px] font-bold text-white h-8"
                           >
                             {sku.can_produce === false ? "생산 불가" : "생산하기"}
