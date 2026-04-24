@@ -540,3 +540,28 @@ npm run build
 - `/settings` 상단 로고 클릭 시 `"/"`(본사/점주 역할 선택 화면)으로 이동하도록 링크를 연결했습니다.
 - 변경 파일: `src/features/admin/orchestration/screens/OrchestrationScreen.tsx`
 - 검증: `npm run build` 통과
+
+## Session Update (2026-04-25, settings typography size alignment)
+
+- `/settings`(`settings-v3`)의 글자/헤더 크기를 점주 화면 톤에 맞춰 상향 조정했습니다.
+  - 헤더 높이: `48px -> 52px`
+  - 내비/페이지 타이틀/카드 메타 폰트 크기 상향
+- 변경 파일: `src/index.css`
+- 검증: `npm run build` 통과
+
+## Session Update (2026-04-25, settings sidebar design-system alignment)
+
+- `/settings` 사이드바(`settings-v3-nav`)의 텍스트/버튼 토큰을 점주 공통 사이드바 디자인 시스템과 동일 기준으로 정렬했습니다.
+  - 섹션 라벨: `12px bold #716862`
+  - 메뉴 아이템: `14px bold #41352E`, active `#FF671F`
+  - 메뉴 버튼 배경: active/hover `#FAF4F2`
+  - 아이콘 크기: `18px`
+- 레이아웃 구조(폭/배치)는 변경하지 않았습니다.
+- 변경 파일: `src/index.css`
+- 검증: `npm run build` 통과
+
+## Session Update (2026-04-25, settings sidebar design-system alignment rollback)
+
+- 요청에 따라 `/settings` 사이드바 디자인시스템 정렬 스타일을 직전 상태로 롤백했습니다.
+- 변경 파일: `src/index.css`
+- 검증: `npm run build` 통과

@@ -265,3 +265,19 @@ npm run dev -- --host 0.0.0.0 --port 6003
 
 - `/settings` 상단 로고 클릭 시 역할 선택 페이지(`/`)로 이동합니다.
 - 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings typography size alignment)
+
+- `/settings` 화면의 전반적인 글자/헤더 사이즈를 점주 화면 기준에 맞게 상향 조정했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings sidebar design-system alignment)
+
+- `/settings` 사이드바 텍스트/버튼 토큰을 점주 공통 사이드바 기준으로 정렬했습니다.
+- 레이아웃 구조 변경 없이 스타일 토큰만 조정했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings sidebar design-system alignment rollback)
+
+- `/settings` 사이드바 토큰 정렬 스타일 변경을 직전 상태로 되돌렸습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
