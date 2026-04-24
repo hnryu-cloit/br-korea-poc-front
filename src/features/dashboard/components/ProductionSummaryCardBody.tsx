@@ -20,9 +20,9 @@ export function ProductionSummaryCardBody({
       }
     >
       <div className="flex flex-col gap-1">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <SummaryCardListItem
-            key={item.name}
+            key={`${item.name}-${index}`}
             title={item.name}
             value={`${item.current_stock}개`}
             description={`Ai 예측: 다음 1시간 동안 약 ${item.predicted_consumption_1h}개 소진 예상`}
