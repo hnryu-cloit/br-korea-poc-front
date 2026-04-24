@@ -1,11 +1,14 @@
+import { useState } from "react";
+
+import type { AxiosError } from "axios";
+
+import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { FifoLotSection } from "@/features/production/components/FifoLotSection";
 import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
 import { useGetFifoLotSummaryQuery } from "@/features/production/queries/useGetFifoLotSummaryQuery";
 import { useGetProductionInventoryStatusQuery } from "@/features/production/queries/useGetProductionInventoryStatusQuery";
 import type { FifoLotType } from "@/features/production/types/production";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-import type { AxiosError } from "axios";
-import { useState } from "react";
 
 export function ProductionInventoryDiagnosisScreen() {
   const { user } = useDemoSession();
@@ -29,7 +32,10 @@ export function ProductionInventoryDiagnosisScreen() {
   return (
     <div className="space-y-12">
       <section className="space-y-6">
-        <h2 className="text-[#41352E] text-[24px] font-bold">현재 재고 현황</h2>
+        <div>
+          <h2 className="text-[#41352E] text-[24px] font-bold">현재 재고 현황</h2>
+          <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["production:inventory"].subtitle}</p>
+        </div>
         <ProductionInventoryStatusSection
           data={inventoryStatusQuery.data}
           isLoading={inventoryStatusQuery.isLoading}

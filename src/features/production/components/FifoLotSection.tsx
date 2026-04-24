@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
 import type {
   FifoLotItem,
@@ -68,8 +70,18 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">유통기한</th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">입고 수량</th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">소진 수량</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">폐기 수량</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">잔여 수량</th>
+              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                <span className="inline-flex items-center gap-1">
+                  <span>폐기 수량</span>
+                  <InfoPopover caption={FIELD_CAPTIONS["fifo:wasted_qty"]} side="bottom" align="right" />
+                </span>
+              </th>
+              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                <span className="inline-flex items-center gap-1">
+                  <span>잔여 수량</span>
+                  <InfoPopover caption={FIELD_CAPTIONS["fifo:active_remaining"]} side="bottom" align="right" />
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>

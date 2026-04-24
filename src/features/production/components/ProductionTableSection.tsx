@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
@@ -62,15 +64,29 @@ export function ProductionTableSection({
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819]">상태</th>
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">현재 재고</th>
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  1시간 후 예측 재고
+                  <span className="inline-flex items-center gap-1">
+                    <span>1시간 후 예측 재고</span>
+                    <InfoPopover caption={FIELD_CAPTIONS["production:forecast_1h"]} side="bottom" align="left" />
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  4주 평균 1차 생산량
+                  <span className="inline-flex items-center gap-1">
+                    <span>4주 평균 1차 생산량</span>
+                    <InfoPopover caption={FIELD_CAPTIONS["production:avg_first_prod_4w"]} side="bottom" align="left" />
+                  </span>
                 </th>
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
-                  4주 평균 2차 생산량
+                  <span className="inline-flex items-center gap-1">
+                    <span>4주 평균 2차 생산량</span>
+                    <InfoPopover caption={FIELD_CAPTIONS["production:avg_second_prod_4w"]} side="bottom" align="left" />
+                  </span>
                 </th>
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">찬스 로스 절감</th>
+                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">
+                  <span className="inline-flex items-center gap-1">
+                    <span>찬스 로스 절감</span>
+                    <InfoPopover caption={FIELD_CAPTIONS["production:chance_loss"]} side="bottom" align="left" />
+                  </span>
+                </th>
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]"></th>
               </tr>
             </thead>
@@ -115,9 +131,9 @@ export function ProductionTableSection({
                           <div className="min-w-0">
                             <div className="text-[#41352E] text-md font-regular">
                               {sku.sku_name}
-                            </div>
-                          </div>
-                        </div>
+                            </span>
+                          </span>
+                        </span>
                       </td>
                       <td className="px-6 py-4">{orderingDeadlineAt ?? "-"}</td>
                       <td className="px-6 py-4">
@@ -126,7 +142,7 @@ export function ProductionTableSection({
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.current_stock, "개")}
-                        </div>
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <span className="text-brown-700">
@@ -136,24 +152,24 @@ export function ProductionTableSection({
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.avg_first_production_qty_4w, "개")}
-                        </div>
+                        </span>
                         <div className="text-xs text-slate-400">
                           {sku.avg_first_production_time_4w} 생산
-                        </div>
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-brown-700">
                           {formatCountWithUnit(sku.avg_second_production_qty_4w, "개")}
-                        </div>
+                        </span>
                         <div className="text-xs text-slate-400">
                           {sku.avg_second_production_time_4w} 생산
-                        </div>
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-brown-700 text-md flex items-center gap-2">
                           <img src={arrow_down} alt="Arrow Down" />
                           <span>{sku.chance_loss_saving_pct}%</span>
-                        </div>
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
@@ -172,7 +188,7 @@ export function ProductionTableSection({
                           >
                             {sku.can_produce === false ? "생산 불가" : "생산하기"}
                           </button>
-                        </div>
+                        </span>
                       </td>
                     </tr>
                   );
