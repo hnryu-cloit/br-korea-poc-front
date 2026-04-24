@@ -43,7 +43,7 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
       </div>
 
       <div className="g4 mb-[12px]">
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">등록된 골든 쿼리</div>
           <div className="mv">
             {goldenQueries.length}
@@ -53,7 +53,7 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
             <span className="b bg">3개 Agent</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">오늘 캐시 히트율</div>
           <div className="mv">
             38<span>%</span>
@@ -62,14 +62,14 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
             <span className="b bb">▲ 5% 전주</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">마지막 배치 임베딩</div>
           <div className="mv text-[15px]">
             02:00<span className="text-[11px]"> KST</span>
           </div>
           <div className="ms text-[11px] text-[var(--t3)]">2026-04-22 · 소요 4m22s</div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">다음 배치 예정</div>
           <div className="mv text-[15px]">
             02:00<span className="text-[11px]"> KST</span>

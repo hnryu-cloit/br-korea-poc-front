@@ -27,7 +27,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
       </div>
 
       <div className="g4 mb-[12px]">
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">전체 커넥터</div>
           <div className="mv">
             3<span>개</span>
@@ -36,7 +36,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
             <span className="b bgy">정형 2 · 비정형 1</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">정상 (Healthy)</div>
           <div className="mv">
             2<span>개</span>
@@ -45,7 +45,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
             <span className="b bg">동기화 완료</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">경고 (Warning)</div>
           <div className="mv">
             1<span>개</span>
@@ -54,7 +54,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
             <span className="b ba">지연 1건</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">마지막 동기화</div>
           <div className="mv text-[15px]">
             09:10<span> KST</span>
