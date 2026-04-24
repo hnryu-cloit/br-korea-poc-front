@@ -24,6 +24,7 @@ function defaultDateRange(): { from: string; to: string } {
 export function OrderingHistoryScreen() {
   const { user } = useDemoSession();
   const { from: defaultFrom, to: defaultTo } = defaultDateRange();
+  const [currentPage, setCurrentPage] = useState(1);
   const [dateFrom, setDateFrom] = useState(defaultFrom);
   const [dateTo, setDateTo] = useState(defaultTo);
   const [itemName, setItemName] = useState("");
@@ -36,7 +37,31 @@ export function OrderingHistoryScreen() {
   const historyParams = useMemo(
     () => ({
       store_id: user.storeId,
-      limit: 100,
+      page: currentPage,
+      page_size: 10,
+      date_from: appliedFilters.dateFrom || undefined,
+      date_to: appliedFilters.dateTo || undefined,
+      item_nm: appliedFilters.itemName || undefined,
+    }),
+    [user.storeId, appliedFilters, currentPage],
+  );
+
+  const historyChartParams = useMemo(
+    () => ({
+      store_id: user.storeId,
+      page: 1,
+      page_size: 100,
+      date_from: appliedFilters.dateFrom || undefined,
+      date_to: appliedFilters.dateTo || undefined,
+      item_nm: appliedFilters.itemName || undefined,
+    }),
+    [user.storeId, appliedFilters],
+  );
+
+  const insightsParams = useMemo(
+    () => ({
+      store_id: user.storeId,
+      limit: 200,
       date_from: appliedFilters.dateFrom || undefined,
       date_to: appliedFilters.dateTo || undefined,
       item_nm: appliedFilters.itemName || undefined,
@@ -45,9 +70,11 @@ export function OrderingHistoryScreen() {
   );
 
   const historyQuery = useGetOrderingHistoryQuery(historyParams);
-  const insightsQuery = useGetOrderingHistoryInsightsQuery(historyParams);
+  const historyChartQuery = useGetOrderingHistoryQuery(historyChartParams);
+  const insightsQuery = useGetOrderingHistoryInsightsQuery(insightsParams);
 
   const onConfirm = () => {
+    setCurrentPage(1);
     setAppliedFilters({
       dateFrom,
       dateTo,
@@ -68,15 +95,20 @@ export function OrderingHistoryScreen() {
         onConfirm={onConfirm}
       />
       <OrderingHistoryChartsSection
-        items={historyQuery.data?.items ?? []}
+        items={historyChartQuery.data?.items ?? []}
         topChangedItems={insightsQuery.data?.top_changed_items ?? []}
-        isLoading={historyQuery.isLoading || insightsQuery.isLoading}
+        isLoading={historyChartQuery.isLoading || insightsQuery.isLoading}
       />
       <OrderingHistoryInsightsSection
         data={insightsQuery.data}
         isLoading={insightsQuery.isLoading}
       />
-      <OrderingHistorySection data={historyQuery.data} isLoading={historyQuery.isLoading} />
+      <OrderingHistorySection
+        data={historyQuery.data}
+        isLoading={historyQuery.isLoading}
+        currentPage={currentPage}
+        onChangePage={setCurrentPage}
+      />
     </div>
   );
 }

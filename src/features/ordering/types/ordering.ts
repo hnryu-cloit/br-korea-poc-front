@@ -145,6 +145,8 @@ export interface OrderingDeadlineItem {
 export interface OrderingHistoryParams {
   store_id?: string;
   limit?: number;
+  page?: number;
+  page_size?: number;
   date_from?: string;
   date_to?: string;
   item_nm?: string;
@@ -165,6 +167,9 @@ export interface OrderingHistoryResponse {
   auto_rate: number;
   manual_rate: number;
   total_count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
 }
 
 export interface OrderingHistoryInsightKpi {
