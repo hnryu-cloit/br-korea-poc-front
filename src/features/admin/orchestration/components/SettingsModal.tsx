@@ -45,17 +45,18 @@ export function SettingsModal({ activeModal, selectedNotice, onClose }: Props) {
             <label className="sub text-[11px] font-bold">담당 도메인</label>
             <select className="sel w-full">
               <option>신규 도메인 정의</option>
-              <option>생산관리 (확장)</option>
-              <option>주문관리 (확장)</option>
-              <option>매출관리 (확장)</option>
+              <option>생산관리</option>
+              <option>주문관리</option>
+              <option>매출관리</option>
             </select>
           </div>
           <div>
             <label className="sub text-[11px] font-bold">기반 LLM 모델</label>
             <select className="sel w-full">
-              <option>Claude 3.5 Sonnet</option>
-              <option>Claude 3 Haiku</option>
-              <option>GPT-4o</option>
+              <option>Gemini 3.1 Pro</option>
+              <option>Gemini 3 Flash</option>
+              <option>Claude 4.6 Sonnet</option>
+              <option>Claude 4.7 Opus</option>
             </select>
           </div>
         </div>
