@@ -1,7 +1,7 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { Pagination } from "@/commons/components/page/Pagination";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { OrderingHistoryResponse } from "@/features/ordering/types/ordering";
-
-const TABLE_HEADERS = ["납품일", "품목명", "발주량", "확정량", "괴리율"] as const;
 
 type Props = {
   data?: OrderingHistoryResponse;
@@ -32,7 +32,7 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C7]/50">
-                  {TABLE_HEADERS.map((header) => (
+                  {(["납품일", "품목명", "발주량", "확정량"] as const).map((header) => (
                     <th
                       key={header}
                       className="px-4 py-2.5 text-left text-sm font-bold leading-7 text-[#653819]"
@@ -42,6 +42,12 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
                       </div>
                     </th>
                   ))}
+                  <th className="px-4 py-2.5 text-left text-sm font-bold leading-7 text-[#653819]">
+                    <span className="inline-flex items-center gap-1">
+                      <span>괴리율</span>
+                      <InfoPopover caption={FIELD_CAPTIONS["ordering:gap_rate"]} side="bottom" align="left" />
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

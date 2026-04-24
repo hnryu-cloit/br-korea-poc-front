@@ -25,11 +25,19 @@ export function SummaryCardsSection({
             <SalesSummaryCardBody card={card} />
           );
 
+        const captionKey =
+          card.domain === "production"
+            ? "dashboard:production_summary"
+            : card.domain === "ordering"
+              ? "dashboard:ordering_summary"
+              : "dashboard:sales_summary";
+
         return (
           <SummaryCard
             key={card.domain}
             icon={<img src={iconSrc} alt="" className="h-5 w-5" />}
             title={card.title}
+            captionKey={captionKey}
             pathname={card.cta_path}
             recommendedQuestions={card.recommended_questions.slice(0, 3)}
           >

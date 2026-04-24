@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { AppModal } from "@/commons/components/modal/AppModal";
 import { ProductionRegistrationPanel } from "@/features/production/components/ProductionRegistrationPanel";
 import { ProductionTableSection } from "@/features/production/components/ProductionTableSection";
@@ -57,7 +58,10 @@ export function ProductionStatusScreen() {
 
   return (
     <div>
-      <h2 className="text-[#41352E] text-[24px] font-bold mb-8">상품 생산 현황</h2>
+      <div className="mb-8">
+        <h2 className="text-[#41352E] text-[24px] font-bold">상품 생산 현황</h2>
+        <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["production:status"].subtitle}</p>
+      </div>
       <ProductionTableSection
         items={items}
         pagination={skuListData?.pagination}
