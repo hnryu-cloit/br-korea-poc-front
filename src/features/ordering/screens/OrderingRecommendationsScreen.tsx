@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { OrderingConfirmedSummary } from "@/features/ordering/components/OrderingConfirmedSummary";
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
@@ -117,7 +118,10 @@ export function OrderingRecommendationsScreen() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-[#41352E] text-[24px] font-bold mb-8">주문 관리</h2>
+      <div className="mb-8">
+        <h2 className="text-[#41352E] text-[24px] font-bold">주문 관리</h2>
+        <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["ordering:recommendations"].subtitle}</p>
+      </div>
       <OrderingContextCards
         businessDate={optionsQuery.data?.business_date}
         weather={optionsQuery.data?.weather}

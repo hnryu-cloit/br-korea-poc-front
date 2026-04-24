@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { AnalyticsDateRangeFilter } from "@/features/analytics/components/AnalyticsDateRangeFilter";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
 import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
@@ -76,7 +77,10 @@ export function AnalyticsScreen() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-[#41352E] text-[24px] font-bold mb-8">매출 현황</h2>
+      <div className="mb-8">
+        <h2 className="text-[#41352E] text-[24px] font-bold">매출 현황</h2>
+        <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["analytics:sales"].subtitle}</p>
+      </div>
 
       <div className="grid gap-6 xl:grid-cols-[729fr_525fr] h-[104px]">
         <AnalyticsDateRangeFilter dateFrom={dateFrom} dateTo={dateTo} />
