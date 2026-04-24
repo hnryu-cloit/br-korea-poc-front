@@ -67,7 +67,10 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
                 </tr>
               ) : errorMessage ? (
                 <tr>
-                  <td colSpan={3} className="bg-white px-6 py-16 text-center text-sm text-red-500">
+                  <td
+                    colSpan={3}
+                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
+                  >
                     {errorMessage}
                   </td>
                 </tr>
