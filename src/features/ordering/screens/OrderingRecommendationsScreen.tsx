@@ -9,6 +9,7 @@ import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCount
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
+import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
 
 export function OrderingRecommendationsScreen() {
   const location = useLocation();
@@ -54,8 +55,39 @@ export function OrderingRecommendationsScreen() {
     [effectiveSelectedOptionId, orderingOptions],
   );
   const deadlineItems = useMemo(
-    () => optionsQuery.data?.deadline_items ?? [],
-    [optionsQuery.data?.deadline_items],
+    () => {
+      const fromApi = optionsQuery.data?.deadline_items ?? [];
+      if (fromApi.length > 0) {
+        return fromApi;
+      }
+
+      const candidates: OrderingDeadlineItem[] = [];
+      const seen = new Set<string>();
+      orderingOptions.forEach((option) => {
+        option.items.forEach((item) => {
+          const note = String(item.note ?? "");
+          const matched = note.match(/마감\s*([0-2]?\d:[0-5]\d)/);
+          if (!matched) {
+            return;
+          }
+          const [hour, minute] = matched[1].split(":");
+          const normalizedDeadline = `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
+          const key = (item.sku_id ?? "").trim() || item.sku_name.trim();
+          if (!key || seen.has(key)) {
+            return;
+          }
+          seen.add(key);
+          candidates.push({
+            id: key,
+            sku_name: item.sku_name,
+            deadline_at: normalizedDeadline,
+            is_ordered: false,
+          });
+        });
+      });
+      return candidates;
+    },
+    [optionsQuery.data?.deadline_items, orderingOptions],
   );
   const handleConfirm = async () => {
     if (!effectiveSelectedOptionId || postOrderingSelectionMutation.isPending) return;

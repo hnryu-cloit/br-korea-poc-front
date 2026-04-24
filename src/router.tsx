@@ -2,7 +2,6 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { AppLayout } from "@/commons/components/layout/AppLayout";
 import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
-import { MOCK_ORDERING_DEADLINE_TIMES } from "@/features/ordering/data/mock-ordering-deadline-items";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { MarketPage } from "@/pages/MarketPage";
@@ -20,7 +19,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <AppLayout
-        reminder={<OrderingDeadlineReminder deadlineTimes={[...MOCK_ORDERING_DEADLINE_TIMES]} />}
+        reminder={<OrderingDeadlineReminder />}
       />
     ),
     children: [
