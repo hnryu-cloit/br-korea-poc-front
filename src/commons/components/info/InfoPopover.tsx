@@ -10,6 +10,76 @@ type Props = {
 };
 
 const POPOVER_WIDTH = 288; // w-72
+const BULLET_PATTERN = /^([•·*])\s*(.*)$/;
+const DASH_PATTERN = /^([-–])\s+(.*)$/;
+
+type ParsedLine =
+  | { kind: "bullet"; indent: number; text: string }
+  | { kind: "dash"; indent: number; text: string }
+  | { kind: "text"; text: string };
+
+function parseCaptionLines(raw: string): ParsedLine[] {
+  return raw.split("\n").map<ParsedLine>((rawLine) => {
+    const leading = rawLine.match(/^(\s*)/)?.[1] ?? "";
+    const indent = leading.length;
+    const trimmed = rawLine.slice(indent);
+    const bulletMatch = trimmed.match(BULLET_PATTERN);
+    if (bulletMatch) {
+      return { kind: "bullet", indent, text: bulletMatch[2] };
+    }
+    const dashMatch = trimmed.match(DASH_PATTERN);
+    if (dashMatch) {
+      return { kind: "dash", indent, text: dashMatch[2] };
+    }
+    return { kind: "text", text: rawLine };
+  });
+}
+
+function CaptionBody({ raw, mono = false }: { raw: string; mono?: boolean }) {
+  const lines = parseCaptionLines(raw);
+  const baseClass = mono
+    ? "font-mono text-[12px] leading-relaxed text-slate-700"
+    : "text-[13px] leading-relaxed text-slate-600";
+
+  return (
+    <div className={`flex flex-col gap-1 ${baseClass}`}>
+      {lines.map((line, idx) => {
+        if (line.kind === "bullet") {
+          return (
+            <div
+              key={idx}
+              className="flex gap-1.5"
+              style={{ paddingLeft: `${line.indent * 4}px` }}
+            >
+              <span className="shrink-0 text-slate-400">•</span>
+              <span className="flex-1 break-words">{line.text}</span>
+            </div>
+          );
+        }
+        if (line.kind === "dash") {
+          return (
+            <div
+              key={idx}
+              className="flex gap-1.5"
+              style={{ paddingLeft: `${line.indent * 4 + 12}px` }}
+            >
+              <span className="shrink-0 text-slate-400">–</span>
+              <span className="flex-1 break-words">{line.text}</span>
+            </div>
+          );
+        }
+        if (!line.text.trim()) {
+          return <div key={idx} className="h-1" />;
+        }
+        return (
+          <p key={idx} className="break-words">
+            {line.text}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export function InfoPopover({ caption, side = "bottom", align = "left" }: Props) {
   const iconRef = useRef<HTMLSpanElement>(null);
@@ -50,7 +120,7 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
                   전제 및 가정
                 </p>
-                <p className="text-[13px] leading-relaxed text-slate-600">{caption.assumption}</p>
+                <CaptionBody raw={caption.assumption} />
               </div>
             )}
             {caption.formula && (
@@ -58,16 +128,16 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
                   수식
                 </p>
-                <code className="block rounded bg-[#f8f8f8] px-2 py-1 font-mono text-[12px] leading-relaxed text-slate-700">
-                  {caption.formula}
-                </code>
+                <div className="rounded bg-[#f8f8f8] px-2 py-1.5">
+                  <CaptionBody raw={caption.formula} mono />
+                </div>
               </div>
             )}
             <div>
               <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
                 설명
               </p>
-              <p className="text-[13px] leading-relaxed text-slate-600">{caption.description}</p>
+              <CaptionBody raw={caption.description} />
             </div>
           </div>,
           document.body,
