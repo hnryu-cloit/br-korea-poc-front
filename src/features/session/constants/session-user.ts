@@ -20,7 +20,7 @@ function getDefaultReferenceDateTime(): string {
 const DEFAULT_DEMO_ROLE =
   (import.meta.env.VITE_DEFAULT_DEMO_ROLE as DemoRole | undefined) ?? "store_owner";
 const DEFAULT_STORE_ID = import.meta.env.VITE_DEFAULT_STORE_ID ?? "POC_010";
-const DEFAULT_STORE_NAME = import.meta.env.VITE_DEFAULT_STORE_NAME ?? "POC 010";
+const DEFAULT_STORE_NAME = import.meta.env.VITE_DEFAULT_STORE_NAME ?? "강서구 01점";
 const DEFAULT_USER_NAME = import.meta.env.VITE_DEFAULT_USER_NAME ?? DEFAULT_STORE_NAME;
 const DEFAULT_USER_EMAIL = import.meta.env.VITE_DEFAULT_USER_EMAIL ?? "demo@store.local";
 const DEFAULT_USER_INITIAL = DEFAULT_USER_NAME.charAt(0) || "점";

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 import { FloatingAiChat } from "@/commons/components/chat/FloatingAiChat";
-import { AppHeader } from "@/commons/components/layout/AppHeader";
+import { Header } from "@/commons/components/layout/header/Header";
 import { AppSidebar } from "@/commons/components/layout/AppSidebar";
 import { FloatingScrollTopButton } from "@/commons/components/page/FloatingScrollTopButton";
 import { ScrollToTopOnRouteChange } from "@/commons/components/page/ScrollToTopOnRouteChange";
@@ -32,7 +32,7 @@ export function AppLayout({ reminder }: Props) {
           <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         ) : null}
         {!isStartPage && !isHqSettingsRoute ? (
-          <AppHeader
+          <Header
             onMenuToggle={() => setSidebarOpen((v) => !v)}
             notifications={notifications}
             unreadCount={unreadCount}
