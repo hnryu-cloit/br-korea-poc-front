@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { OrderingHistoryChartsSection } from "@/features/ordering/components/OrderingHistoryChartsSection";
@@ -9,22 +9,45 @@ import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
-function defaultDateRange(): { from: string; to: string } {
-  const to = new Date();
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getOrderingHistoryDateRange(referenceDateTime: string): { from: string; to: string } {
+  const referenceDate = new Date(referenceDateTime);
+  if (Number.isNaN(referenceDate.getTime())) {
+    const fallback = new Date();
+    const to = new Date(fallback);
+    to.setDate(to.getDate() - 1);
+    const from = new Date(to);
+    from.setDate(from.getDate() - 6);
+
+    return {
+      from: formatLocalDate(from),
+      to: formatLocalDate(to),
+    };
+  }
+
+  const to = new Date(referenceDate);
+  to.setDate(to.getDate() - 1);
   const from = new Date(to);
-  from.setDate(from.getDate() - 89);
-  const fmt = (d: Date) => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  from.setDate(from.getDate() - 6);
+
+  return {
+    from: formatLocalDate(from),
+    to: formatLocalDate(to),
   };
-  return { from: fmt(from), to: fmt(to) };
 }
 
 export function OrderingHistoryScreen() {
-  const { user } = useDemoSession();
-  const { from: defaultFrom, to: defaultTo } = defaultDateRange();
+  const { user, referenceDateTime } = useDemoSession();
+  const { from: defaultFrom, to: defaultTo } = useMemo(
+    () => getOrderingHistoryDateRange(referenceDateTime),
+    [referenceDateTime],
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFrom, setDateFrom] = useState(defaultFrom);
   const [dateTo, setDateTo] = useState(defaultTo);
@@ -34,6 +57,17 @@ export function OrderingHistoryScreen() {
     dateTo: defaultTo,
     itemName: "",
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setDateFrom(defaultFrom);
+    setDateTo(defaultTo);
+    setAppliedFilters((current) => ({
+      ...current,
+      dateFrom: defaultFrom,
+      dateTo: defaultTo,
+    }));
+  }, [defaultFrom, defaultTo]);
 
   const historyParams = useMemo(
     () => ({
