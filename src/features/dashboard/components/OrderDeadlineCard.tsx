@@ -3,6 +3,8 @@ import { RotateCw } from "lucide-react";
 import { DashboardAlertCard } from "@/features/dashboard/components/DashboardAlertCard";
 import type { DashboardOrderDeadline } from "@/features/dashboard/types/dashboard";
 import { formatOrderDeadlineDisplay } from "@/features/dashboard/utils/dashboard-alerts";
+import dayjs from "dayjs";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function OrderDeadlineCard({
   orderDeadline,
@@ -11,6 +13,7 @@ export function OrderDeadlineCard({
 }) {
   const [now, setNow] = useState(() => new Date());
   const display = formatOrderDeadlineDisplay(orderDeadline, now);
+  const { referenceDateTime } = useDemoSession();
 
   if (!display) {
     return (
@@ -30,7 +33,10 @@ export function OrderDeadlineCard({
       <>
         <div className="flex gap-[12px] items-center">
           <span className="text-md font-bold text-[#0F172B]">발주 마감</span>
-          <span className="text-md text-[#314158]">현재 시간: {display.currentTimeLabel}</span>
+          {/* <span className="text-md text-[#314158]">현재 시간: {display.currentTimeLabel}</span> */}
+          <span className="text-md text-[#314158]">
+            현재 시간 {dayjs(referenceDateTime).format("A hh:mm")}
+          </span>
         </div>
         <div className="flex items-center gap-[8px]">
           <div className="text-[24px] text-orange-500 font-semibold flex gap-[8px] items-center">
