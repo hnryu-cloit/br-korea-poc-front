@@ -135,7 +135,7 @@ export function ProductionTableSection({
                       <td className="px-4 py-4">
                         <div className="text-brown-700 text-md flex items-center gap-2">
                           <img src={arrow_down} alt="Arrow Down" />
-                          <span>{sku.chance_loss_saving_pct}%</span>
+                          <span>{sku.chance_loss_saving_pct.toLocaleString("ko-kr")}원</span>
                         </div>
                       </td>
                       <td className="px-4 py-4">

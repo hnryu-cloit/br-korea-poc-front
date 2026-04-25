@@ -117,11 +117,13 @@ export function ProductionRegistrationPanel({
         </div>
         <div className="border border-[#00D492] rounded-[16px] p-4 bg-[#F0FDFA] flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <p className="text-brown-700 font-bold text-sm">지금 생산 시, 찬스 로스 감소 효과</p>
+            <p className="text-brown-700 font-bold text-sm">지금 생산 시, 찬스 로스 절감 효과</p>
           </div>
           <div className="flex items-center gap-2">
             <img src={arrow_red} className="" />
-            <p className="text-brown-700 text-md">{detail.chance_loss_saving_pct}% 감소 예상</p>
+            <p className="text-brown-700 text-md">
+              {detail.chance_loss_saving_pct.toLocaleString("ko-kr")}원 절감 예상
+            </p>
             {detail.sales_velocity && (
               <p className="border border-[#00BBA7] bg-white text-[#00BBA7] text-sm rounded-[24px] px-2 py-1">
                 현재 판매 속도 {detail.sales_velocity.toFixed(1)}배
