@@ -4,6 +4,7 @@ import type {
   GetSalesPromptsResponse,
   GetSalesPromptsRequest,
   GetSalesInsightsRequest,
+  MenuInsightsResponse,
   SalesInsightsResponse,
   SalesInsightSection,
   SalesCampaignEffectResponse,
@@ -152,6 +153,17 @@ export const getSalesInsights = async (
   }
 
   return payload as SalesInsightsResponse;
+};
+
+export const getSalesMenuInsights = async (
+  filters?: GetSalesInsightsRequest,
+): Promise<MenuInsightsResponse> => {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  const response = await axiosInstance.get<MenuInsightsResponse>("/api/sales/menu-insights", {
+    params: Object.fromEntries(query.entries()),
+  });
+  return response.data;
 };
 
 export const getSalesCampaignEffect = async (

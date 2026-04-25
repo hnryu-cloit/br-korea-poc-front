@@ -22,6 +22,8 @@ export const salesQueryKeys = {
     [...SALES_QUERY_ROOT, "prompts", params ?? {}] as const,
   insights: (params?: GetSalesInsightsRequest) =>
     [...SALES_QUERY_ROOT, "insights", params ?? {}] as const,
+  menuInsights: (params?: GetSalesInsightsRequest) =>
+    [...SALES_QUERY_ROOT, "menu-insights", params ?? {}] as const,
   campaignEffect: (params?: GetSalesInsightsRequest) =>
     [...SALES_QUERY_ROOT, "campaign-effect", params ?? {}] as const,
   benchmark: (storeId?: string) => [...SALES_QUERY_ROOT, "benchmark", storeId ?? "all"] as const,

@@ -328,6 +328,13 @@ export interface SalesInsightsResponse {
   filtered_date_to?: string | null;
 }
 
+export interface MenuInsightsResponse {
+  cards: SalesInsightSection[];
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+}
+
 export interface SalesCampaignEffectPeriod {
   label: string;
   start_date?: string | null;
