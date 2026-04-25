@@ -189,10 +189,19 @@ export interface GetSalesInsightsResponse {
  * 자연어 손익 질의
  * POST /api/sales/query
  */
+export type { ChatHistoryEntry } from "@/commons/types/floating-ai-chat";
+
 export interface CreateSalesQueryRequest {
-  store_id: string; // 질의 대상 매장 ID
-  prompt: string; // 사용자가 입력한 자연어 질문
-  domain?: "production" | "ordering" | "sales"; // 질의 도메인 식별자
+  store_id: string;
+  prompt: string;
+  domain?: "production" | "ordering" | "sales";
+  business_date?: string;
+  business_time?: string;
+  page_context?: string;
+  card_context_key?: string;
+  store_name?: string;
+  user_role?: string;
+  conversation_history?: ChatHistoryEntry[];
 }
 
 /**
@@ -228,6 +237,7 @@ export interface ExplainabilityPayload {
 export interface CreateSalesQueryResponse {
   text: string; // 사용자에게 보여줄 자연어 답변 본문
   actions: string[]; // 실행 가능한 권장 액션 목록
+  follow_up_questions?: string[]; // 후속 추천 질문 목록
   store_context: string; // 답변에 반영된 매장 문맥 요약
   data_source: string; // 답변 산출에 사용한 데이터 출처
   comparison_basis: string; // 비교 기준 설명
@@ -237,6 +247,18 @@ export interface CreateSalesQueryResponse {
   processing_route?: string | null; // 응답 생성 처리 경로
   blocked: boolean; // 정책상 차단된 질의 여부
   masked_fields?: string[]; // 마스킹 처리된 필드 목록
+}
+
+export interface SalesQueryAgentTrace {
+  keywords?: string[];
+  intent?: string | null;
+  relevant_tables?: string[];
+  sql?: string | null;
+  queried_period?: Record<string, unknown> | null;
+  row_count?: number;
+  matched_query_id?: string | null;
+  match_score?: number | null;
+  overlap_candidates?: Array<Record<string, unknown>>;
 }
 
 export interface SalesVisualDataset {
@@ -333,6 +355,8 @@ export interface SalesQueryResponse extends CreateSalesQueryResponse {
   confidence_score?: number;
   semantic_logic?: string;
   sources?: string[];
+  data_lineage?: Array<Record<string, unknown>>;
   visual_data?: SalesVisualData | null;
   explainability?: ExplainabilityPayload | null;
+  agent_trace?: SalesQueryAgentTrace | null;
 }

@@ -1,8 +1,23 @@
+export type FloatingAiChatReference = {
+  sources?: string[];
+  semanticLogic?: string | null;
+  sql?: string | null;
+  relevantTables?: string[];
+  queriedPeriod?: Record<string, unknown> | null;
+  dataLineage?: Array<Record<string, unknown>>;
+  matchedQueryId?: string | null;
+  matchScore?: number | null;
+};
+
 export type FloatingAiChatMessage = {
   id: number;
   title: string;
   content: string;
   evidence: string[];
+  suggestedQuestions?: string[];
+  processingRoute?: string | null;
+  matchedQueryId?: string | null;
+  reference?: FloatingAiChatReference;
 };
 
 export type FloatingAiChatQuickAction = {
@@ -28,6 +43,11 @@ export type FloatingAiCardContext = {
   contextKey: FloatingAiCardContextKey;
   cardTitle: string;
   quickActions: FloatingAiChatQuickAction[];
+};
+
+export type ChatHistoryEntry = {
+  role: "user" | "assistant";
+  text: string;
 };
 
 export type ChatEntry =

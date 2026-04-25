@@ -85,14 +85,33 @@ export const getSalesPrompts = async (filters?: GetSalesPromptsRequest): Promise
 
 export const postSalesQuery = async (
   prompt: string,
-  storeId?: string,
-  domain?: "production" | "ordering" | "sales",
+  storeId: string,
+  domain: "production" | "ordering" | "sales",
+  context?: {
+    businessDate?: string;
+    businessTime?: string;
+    pageContext?: string;
+    cardContextKey?: string;
+    storeName?: string;
+    userRole?: string;
+    conversationHistory?: Array<{ role: "user" | "assistant"; text: string }>;
+  },
 ) => {
-  const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", {
+  const body: Record<string, unknown> = {
     prompt,
-    ...(storeId ? { store_id: storeId } : {}),
-    ...(domain ? { domain } : {}),
-  });
+    store_id: storeId,
+    domain,
+  };
+  if (context?.businessDate) body.business_date = context.businessDate;
+  if (context?.businessTime) body.business_time = context.businessTime;
+  if (context?.pageContext) body.page_context = context.pageContext;
+  if (context?.cardContextKey) body.card_context_key = context.cardContextKey;
+  if (context?.storeName) body.store_name = context.storeName;
+  if (context?.userRole) body.user_role = context.userRole;
+  if (context?.conversationHistory?.length) {
+    body.conversation_history = context.conversationHistory;
+  }
+  const response = await axiosInstance.post<SalesQueryResponse>("/api/sales/query", body);
   return response.data;
 };
 
