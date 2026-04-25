@@ -64,6 +64,25 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     formula: "폐기 수량 = Σ wasted_qty (expired Lot)",
     description: "기간 내 유통기한 만료로 폐기된 총 수량입니다.",
   },
+  // 매출 기회 분석 카드
+  "sales:opportunity_marketing_roi": {
+    description: "캠페인별 마케팅 투자 대비 매출 성과를 분석합니다.",
+    formula: "ROI = (매출 기여분 - 마케팅 비용) ÷ 마케팅 비용 × 100",
+    assumption: "캠페인 기간 중 발생한 매출 증분을 마케팅 효과로 귀속합니다.",
+  },
+  "sales:opportunity_channel_payment": {
+    description: "채널 및 결제 수단별 수익성과 전환율을 진단합니다.",
+    assumption: "채널별 수수료와 결제 수단별 할인율을 반영한 실수익 기준입니다.",
+  },
+  "sales:opportunity_promotion_efficiency": {
+    description: "프로모션·제휴 할인의 매출 기여 대비 비용 효율을 분석합니다.",
+    formula: "효율 = 프로모션 기간 추가 매출 ÷ 할인 비용",
+    assumption: "프로모션 미적용 기간의 기저 매출을 비교 기준으로 사용합니다.",
+  },
+  "sales:opportunity_store_benchmark": {
+    description: "동일 클러스터 매장과의 매출 및 운영 지표를 비교합니다.",
+    assumption: "클러스터는 상권 유형·규모·영업시간 유사도 기준으로 분류됩니다.",
+  },
   // 대시보드 카드
   "dashboard:production_summary": {
     description: "현재 시점 기준 생산 위험 품목 수와 주요 생산 지표를 요약합니다.",
