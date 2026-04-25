@@ -2,7 +2,12 @@ import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { SummaryCardSectionProps } from "@/features/dashboard/types/summary-card";
 
-export function SummaryCardSection({ title, captionKey, action, children }: SummaryCardSectionProps) {
+export function SummaryCardSection({
+  title,
+  captionKey,
+  action,
+  children,
+}: SummaryCardSectionProps) {
   const caption = captionKey ? FIELD_CAPTIONS[captionKey] : null;
 
   return (

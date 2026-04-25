@@ -45,7 +45,11 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
                   <th className="px-4 py-2.5 text-left text-sm font-bold leading-7 text-[#653819]">
                     <span className="inline-flex items-center gap-1">
                       <span>괴리율</span>
-                      <InfoPopover caption={FIELD_CAPTIONS["ordering:gap_rate"]} side="bottom" align="left" />
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["ordering:gap_rate"]}
+                        side="bottom"
+                        align="left"
+                      />
                     </span>
                   </th>
                 </tr>

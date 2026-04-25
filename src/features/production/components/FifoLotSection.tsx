@@ -55,9 +55,24 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
       {summary && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <SummaryCard label="전체 품목" value={summary.total_items} unit="종" />
-          <SummaryCard label="폐기 발생 품목" value={summary.items_with_waste} unit="종" color="danger" />
-          <SummaryCard label="총 폐기 수량" value={summary.total_wasted_qty} unit="개" color="danger" />
-          <SummaryCard label="잔여 활성 수량" value={summary.total_active_qty} unit="개" color="safe" />
+          <SummaryCard
+            label="폐기 발생 품목"
+            value={summary.items_with_waste}
+            unit="종"
+            color="danger"
+          />
+          <SummaryCard
+            label="총 폐기 수량"
+            value={summary.total_wasted_qty}
+            unit="개"
+            color="danger"
+          />
+          <SummaryCard
+            label="잔여 활성 수량"
+            value={summary.total_active_qty}
+            unit="개"
+            color="safe"
+          />
         </div>
       )}
 
@@ -67,19 +82,33 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
             <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">품목명</th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">유형</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">유통기한</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">입고 수량</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">소진 수량</th>
+              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">
+                유통기한
+              </th>
+              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                입고 수량
+              </th>
+              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                소진 수량
+              </th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                 <span className="inline-flex items-center gap-1">
                   <span>폐기 수량</span>
-                  <InfoPopover caption={FIELD_CAPTIONS["fifo:wasted_qty"]} side="bottom" align="right" />
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["fifo:wasted_qty"]}
+                    side="bottom"
+                    align="right"
+                  />
                 </span>
               </th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                 <span className="inline-flex items-center gap-1">
                   <span>잔여 수량</span>
-                  <InfoPopover caption={FIELD_CAPTIONS["fifo:active_remaining"]} side="bottom" align="right" />
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["fifo:active_remaining"]}
+                    side="bottom"
+                    align="right"
+                  />
                 </span>
               </th>
             </tr>
@@ -124,7 +153,13 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className={item.active_remaining_qty > 0 ? "text-[#00BBA7] font-medium" : "text-slate-400"}>
+                    <span
+                      className={
+                        item.active_remaining_qty > 0
+                          ? "text-[#00BBA7] font-medium"
+                          : "text-slate-400"
+                      }
+                    >
                       {item.active_remaining_qty.toLocaleString("ko-KR")}
                     </span>
                   </td>
@@ -136,11 +171,7 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
       </div>
 
       {data?.pagination && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onChangePage={onChangePage}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
       )}
     </section>
   );
@@ -158,11 +189,7 @@ function SummaryCard({
   color?: "danger" | "safe";
 }) {
   const valueColor =
-    color === "danger"
-      ? "text-[#FF671F]"
-      : color === "safe"
-        ? "text-[#00BBA7]"
-        : "text-[#41352E]";
+    color === "danger" ? "text-[#FF671F]" : color === "safe" ? "text-[#00BBA7]" : "text-[#41352E]";
 
   return (
     <div className="rounded-lg border border-[#DADADA] bg-white px-4 py-3">

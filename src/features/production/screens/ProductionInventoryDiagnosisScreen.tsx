@@ -34,7 +34,9 @@ export function ProductionInventoryDiagnosisScreen() {
       <section className="space-y-6">
         <div>
           <h2 className="text-[#41352E] text-[24px] font-bold">현재 재고 현황</h2>
-          <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["production:inventory"].subtitle}</p>
+          <p className="mt-1 text-sm text-slate-500">
+            {PAGE_CAPTIONS["production:inventory"].subtitle}
+          </p>
         </div>
         <ProductionInventoryStatusSection
           data={inventoryStatusQuery.data}

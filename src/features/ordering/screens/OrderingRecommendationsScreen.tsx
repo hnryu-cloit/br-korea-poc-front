@@ -117,7 +117,9 @@ export function OrderingRecommendationsScreen() {
     <div className="space-y-6">
       <div className="mb-8">
         <h2 className="text-[#41352E] text-[24px] font-bold">주문 관리</h2>
-        <p className="mt-1 text-sm text-slate-500">{PAGE_CAPTIONS["ordering:recommendations"].subtitle}</p>
+        <p className="mt-1 text-sm text-slate-500">
+          {PAGE_CAPTIONS["ordering:recommendations"].subtitle}
+        </p>
       </div>
       <OrderingContextCards
         businessDate={optionsQuery.data?.business_date}

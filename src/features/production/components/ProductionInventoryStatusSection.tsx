@@ -62,19 +62,31 @@ export function ProductionInventoryStatusSection(props: Props) {
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                   <span className="inline-flex items-center gap-1">
                     <span>판매 가능 수량</span>
-                    <InfoPopover caption={FIELD_CAPTIONS["inventory:orderable_qty"]} side="bottom" align="right" />
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["inventory:orderable_qty"]}
+                      side="bottom"
+                      align="right"
+                    />
                   </span>
                 </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                   <span className="inline-flex items-center gap-1">
                     <span>판매 개수</span>
-                    <InfoPopover caption={FIELD_CAPTIONS["inventory:sold_qty"]} side="bottom" align="right" />
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["inventory:sold_qty"]}
+                      side="bottom"
+                      align="right"
+                    />
                   </span>
                 </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                   <span className="inline-flex items-center gap-1">
                     <span>상태</span>
-                    <InfoPopover caption={FIELD_CAPTIONS["inventory:status"]} side="bottom" align="right" />
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["inventory:status"]}
+                      side="bottom"
+                      align="right"
+                    />
                   </span>
                 </th>
               </tr>
