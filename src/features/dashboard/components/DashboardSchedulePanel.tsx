@@ -12,6 +12,7 @@ export function DashboardSchedulePanel({
   events,
   scheduleEvents,
   todos,
+  referenceDate,
   selectedDate,
   isLoading,
 }: {
@@ -19,6 +20,7 @@ export function DashboardSchedulePanel({
   events: ScheduleEvent[];
   scheduleEvents?: ScheduleEvent[];
   todos: ScheduleTodoItem[];
+  referenceDate?: Date;
   selectedDate?: Date;
   updatedAt?: string;
   isLoading: boolean;
@@ -38,6 +40,7 @@ export function DashboardSchedulePanel({
       <span className="text-lg text-brown-700 font-bold">나의 할 일</span>
       <div className="grid min-h-0 flex-1 items-stretch gap-6 lg:grid-cols-3">
         <DashboardScheduleCalendar
+          referenceDate={referenceDate ?? currentDate}
           selectedDate={currentDate}
           events={events}
           onChangeDate={setCurrentDate}

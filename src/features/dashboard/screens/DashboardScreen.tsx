@@ -38,6 +38,7 @@ export function DashboardScreen() {
         events={scheduleData?.calendar_events ?? []}
         scheduleEvents={scheduleData?.daily_events ?? []}
         todos={scheduleData?.todos ?? []}
+        referenceDate={selectedDate}
         selectedDate={selectedDate}
         isLoading={scheduleLoading && !scheduleData}
       />

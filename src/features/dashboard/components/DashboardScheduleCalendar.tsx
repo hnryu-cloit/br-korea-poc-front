@@ -7,11 +7,21 @@ import donutPink from "@/assets/donut-pink.svg";
 import type { ScheduleEvent } from "@/features/dashboard/types/dashboard";
 import { hasEventOnDate } from "@/features/dashboard/utils/schedule-panel";
 
+function isSameDate(left: Date, right: Date) {
+  return (
+    left.getFullYear() === right.getFullYear() &&
+    left.getMonth() === right.getMonth() &&
+    left.getDate() === right.getDate()
+  );
+}
+
 export function DashboardScheduleCalendar({
+  referenceDate,
   selectedDate,
   events,
   onChangeDate,
 }: {
+  referenceDate: Date;
   selectedDate: Date;
   events: ScheduleEvent[];
   onChangeDate: (date: Date) => void;
@@ -23,6 +33,7 @@ export function DashboardScheduleCalendar({
 
     if (date.getDay() === 0) classNames.push("text-red-500");
     if (date.getDay() === 6) classNames.push("text-blue-500");
+    if (isSameDate(date, referenceDate)) classNames.push("react-calendar__tile--referenceToday");
 
     if (hasEventOnDate(events, date)) {
       classNames.push(
@@ -36,7 +47,7 @@ export function DashboardScheduleCalendar({
   return (
     <div className="lg:col-span-1">
       <div
-        className="[&_.react-calendar]:w-full [&_.react-calendar]:border-0 [&_.react-calendar]:bg-transparent [&_.react-calendar__navigation__label]:font-semibold [&_.react-calendar__tile--now]:rounded-xl [&_.react-calendar__tile--now]:bg-[#edf4ff] [&_.react-calendar__month-view__weekdays]:text-[11px] [&_.react-calendar__month-view__weekdays]:font-semibold [&_.react-calendar__month-view__weekdays]:text-slate-400"
+        className="[&_.react-calendar]:w-full [&_.react-calendar]:border-0 [&_.react-calendar]:bg-transparent [&_.react-calendar__navigation__label]:font-semibold [&_.react-calendar__month-view__weekdays]:text-[11px] [&_.react-calendar__month-view__weekdays]:font-semibold [&_.react-calendar__month-view__weekdays]:text-slate-400"
         style={{
           ["--calendar-active-date-bg" as string]: `url("${donutPink}")`,
           ["--calendar-today-date-bg" as string]: `url("${donutBrown}")`,

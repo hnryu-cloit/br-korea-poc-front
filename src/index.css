@@ -200,7 +200,7 @@
   display: none;
 }
 
-.react-calendar__tile--now {
+.react-calendar__tile--referenceToday {
   background: transparent !important;
   border-radius: 50%;
   color: #41352e !important;
@@ -213,12 +213,12 @@
   color: #da1884 !important;
 }
 
-.react-calendar__tile--now:hover,
+.react-calendar__tile--referenceToday:hover,
 .react-calendar__tile--active:hover {
   background: transparent !important;
 }
 
-.react-calendar__tile--now abbr,
+.react-calendar__tile--referenceToday abbr,
 .react-calendar__tile--active abbr {
   text-shadow:
     -1px 0 #ffffff,
@@ -231,7 +231,7 @@
     1px 1px #ffffff;
 }
 
-.react-calendar__tile--now::before,
+.react-calendar__tile--referenceToday::before,
 .react-calendar__tile--active::before {
   content: "";
   position: absolute;
@@ -247,7 +247,7 @@
   height: 48px;
 }
 
-.react-calendar__tile--now::before {
+.react-calendar__tile--referenceToday::before {
   background: var(--calendar-today-date-bg) center / contain no-repeat;
 }
 
@@ -255,7 +255,7 @@
   background: var(--calendar-active-date-bg) center / contain no-repeat;
 }
 
-.react-calendar__tile--now.react-calendar__tile--active::before {
+.react-calendar__tile--referenceToday.react-calendar__tile--active::before {
   background: var(--calendar-active-date-bg) center / contain no-repeat;
 }
 
