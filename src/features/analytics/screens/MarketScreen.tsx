@@ -7,7 +7,6 @@ import {
   AnalysisScopeFilterBar,
   type AnalysisScope,
 } from "@/features/analytics/components/AnalysisScopeFilterBar";
-import { PageHero } from "@/commons/components/page/page-layout";
 import { HQMarketOverviewSection } from "@/features/analytics/components/HQMarketOverviewSection";
 import { MarketActionGuideSection } from "@/features/analytics/components/MarketActionGuideSection";
 import { MarketCustomerSection } from "@/features/analytics/components/MarketCustomerSection";
@@ -95,10 +94,21 @@ export function MarketScreen() {
 
   return (
     <div className="space-y-6">
-      <PageHero
-        title="상권·고객 분석"
-        description={`${heroDescription} · ${scope.year} ${scope.quarter} · 반경 ${scope.radiusMeters.toLocaleString()}m`}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-[#41352E] text-[24px] font-bold">상권·고객 분석</h2>
+        <button
+          type="button"
+          onClick={handleDownloadWeeklyReport}
+          disabled={isDownloading}
+          className="inline-flex items-center gap-2 rounded-lg border border-[#2c61d6] bg-white px-3 py-2 text-sm font-semibold text-[#2c61d6] hover:bg-[#edf3ff] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Download className="h-4 w-4" />
+          {isDownloading ? "PDF 생성 중..." : "주간 분석 리포트 PDF 다운로드"}
+        </button>
+      </div>
+      <p className="text-sm text-slate-500">
+        {heroDescription} · {scope.year} {scope.quarter} · 반경 {scope.radiusMeters.toLocaleString()}m
+      </p>
 
       <AnalysisScopeFilterBar
         value={scope}
@@ -112,17 +122,6 @@ export function MarketScreen() {
             : undefined
         }
       />
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleDownloadWeeklyReport}
-          disabled={isDownloading}
-          className="inline-flex items-center gap-2 rounded-lg border border-[#2c61d6] bg-white px-3 py-2 text-sm font-semibold text-[#2c61d6] hover:bg-[#edf3ff] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Download className="h-4 w-4" />
-          {isDownloading ? "PDF 생성 중..." : "주간 분석 리포트 PDF 다운로드"}
-        </button>
-      </div>
 
       {hasError ? (
         <section className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

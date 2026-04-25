@@ -22,15 +22,17 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
   );
 
   return (
-    <section className="rounded-3xl border border-border bg-white p-5 shadow-sm">
+    <section className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold tracking-[0.08em] text-[#2c61d6]">상권 인텔리전스</p>
-          <h3 className="mt-1 text-lg font-bold text-slate-900">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-bold text-slate-800">
             반경 {data?.radius_km ?? 3}km 상권·고객 종합 분석
-          </h3>
+          </p>
+          <span className="rounded-full bg-[linear-gradient(135deg,#FF6E00_0%,#DA1884_100%)] px-2.5 py-1 text-[10px] font-bold text-white">
+            상권 인텔리전스
+          </span>
         </div>
-        <p className="text-xs text-slate-500">업종·매출·인구·지역현황·고객특성 실데이터 기준</p>
+        <p className="text-xs text-slate-400">업종·매출·인구·지역현황·고객특성 실데이터 기준</p>
       </div>
 
       {isLoading ? (
@@ -43,8 +45,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
 
       {!isLoading && data ? (
         <div className="mt-4 space-y-5">
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">1. 업종 분석</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">1. 업종 분석</p>
             <div className="mt-3 grid gap-4 lg:grid-cols-2">
               <div>
                 <p className="text-xs font-semibold text-slate-700">최근 업소수 변화추이</p>
@@ -81,8 +83,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">2. 매출 분석</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">2. 매출 분석</p>
             <div className="mt-3 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
               <div>
                 <p className="text-xs font-semibold text-slate-700">매출건수 및 월평균 매출추이</p>
@@ -124,8 +126,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">3. 인구 분석</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">3. 인구 분석</p>
             <div className="mt-3 grid gap-4 lg:grid-cols-2">
               <div>
                 <p className="text-xs font-semibold text-slate-700">유동·주거·직장 인구 추이</p>
@@ -173,8 +175,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">4. 지역현황</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">4. 지역현황</p>
             <div className="mt-3 grid gap-2 md:grid-cols-4">
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">세대수(추정)</p>
@@ -214,8 +216,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">5. 고객특성</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">5. 고객특성</p>
             <div className="mt-3 grid gap-2 md:grid-cols-3">
               <div className="rounded-xl bg-white px-3 py-2 text-xs">
                 <p className="text-slate-500">남/여 비율</p>
@@ -272,8 +274,8 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
             ) : null}
           </article>
 
-          <article className="rounded-2xl border border-[#e5ecfa] bg-[#fbfdff] p-4">
-            <p className="text-sm font-semibold text-slate-900">데이터 출처</p>
+          <article className="rounded-2xl bg-[#f8fbff] p-4">
+            <p className="text-sm font-bold text-slate-800">데이터 출처</p>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-600">
               {data.data_sources.map((source) => (
                 <li key={source}>{source}</li>

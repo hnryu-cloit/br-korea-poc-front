@@ -14,8 +14,8 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
   const totalSegmentCount = sortedSegments.reduce((acc, segment) => acc + segment.count, 0);
 
   return (
-    <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <h3 className="text-base font-bold text-slate-900 mb-4">주요 고객 & 제휴 혜택</h3>
+    <section className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      <h3 className="text-sm font-bold text-slate-800 mb-4">주요 고객 & 제휴 혜택</h3>
 
       {isLoading && (
         <div className="space-y-3">
@@ -33,8 +33,8 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
         <div className="space-y-6">
           {sortedSegments.length > 0 && (
             <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-              <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+              <div className="rounded-2xl bg-[#f8fbff] p-3">
+                <p className="mb-2 text-[11px] text-slate-400">
                   고객 분포
                 </p>
                 <div className="h-[190px]">
@@ -68,7 +68,7 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
               </div>
 
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">
+                <p className="text-[11px] text-slate-400 mb-3">
                   캠페인 타겟 고객 분포
                 </p>
                 <div className="space-y-2.5">
@@ -112,17 +112,17 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
 
           {data.telecom_discounts.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">
+              <p className="text-[11px] text-slate-400 mb-3">
                 활성 통신사 제휴 할인
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {data.telecom_discounts.map((discount) => (
                   <div
                     key={`${discount.name}-${discount.value}`}
-                    className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
+                    className="rounded-2xl bg-[#f8fbff] px-3 py-3"
                   >
-                    <p className="text-sm font-semibold text-slate-800">{discount.name}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="text-sm font-bold text-slate-800">{discount.name}</p>
+                    <p className="mt-0.5 text-[11px] text-slate-400">
                       {discount.type_nm} · {discount.value} {discount.method_nm}
                     </p>
                   </div>

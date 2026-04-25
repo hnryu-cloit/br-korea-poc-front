@@ -14,7 +14,7 @@ const RISK_BADGE_CLASS: Record<"high" | "medium" | "low", string> = {
 export function HQMarketOverviewSection({ data, isLoading }: Props) {
   if (isLoading) {
     return (
-      <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      <section className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
         <div className="h-6 w-56 animate-pulse rounded bg-slate-100" />
         <div className="mt-4 space-y-2">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -27,8 +27,8 @@ export function HQMarketOverviewSection({ data, isLoading }: Props) {
 
   if (!data) {
     return (
-      <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-        <p className="text-base font-bold text-slate-900">전체 지점 상권 인사이트</p>
+      <section className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+        <p className="text-sm font-bold text-slate-800">전체 지점 상권 인사이트</p>
         <p className="mt-2 text-sm text-slate-500">지점 비교 데이터를 불러오지 못했습니다.</p>
       </section>
     );
@@ -45,10 +45,10 @@ export function HQMarketOverviewSection({ data, isLoading }: Props) {
     <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-base font-bold text-slate-900">전체 지점 상권 인사이트</p>
-          <p className="mt-1 text-sm text-slate-500">{data.summary.executive_summary}</p>
+          <p className="text-sm font-bold text-slate-800">전체 지점 상권 인사이트</p>
+          <p className="mt-1 text-xs text-slate-400">{data.summary.executive_summary}</p>
         </div>
-        <span className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs text-slate-500">
+        <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 text-[10px] font-bold text-[#2454C8]">
           {data.summary.source === "ai" ? "AI 인사이트" : "기본 분석"}
         </span>
       </div>
