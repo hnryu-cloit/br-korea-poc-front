@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type {
+  DashboardDomain,
   DashboardOrderDeadline,
   DashboardOrderingDeadlineItem,
   DashboardProductionSummaryItem,
@@ -19,6 +20,7 @@ export interface SummaryCardProps {
   title: string;
   captionKey?: string;
   pathname: string;
+  domain: DashboardDomain;
   recommendedQuestions: string[];
   children: ReactNode;
 }

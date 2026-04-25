@@ -39,6 +39,7 @@ export function SummaryCardsSection({
             title={card.title}
             captionKey={captionKey}
             pathname={card.cta_path}
+            domain={card.domain}
             recommendedQuestions={card.recommended_questions.slice(0, 3)}
           >
             {body}
