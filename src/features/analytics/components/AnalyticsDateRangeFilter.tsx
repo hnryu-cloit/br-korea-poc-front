@@ -1,37 +1,59 @@
-function DateField({ value, disabled = false }: { value: string; disabled?: boolean }) {
-  return (
-    <label className="relative block">
-      <input
-        type="date"
-        value={value}
-        disabled={disabled}
-        readOnly
-        className="h-8 w-full rounded-[4px] border border-[#DADADA] bg-white p-[6px_12px] text-sm font-medium text-[#45556C] outline-none transition-colors [color-scheme:light] focus:border-[#653819] disabled:cursor-not-allowed disabled:bg-[#F5F5F5] disabled:text-[#A8A8A8]"
-      />
-    </label>
-  );
-}
+import { DateRangeFilter } from "@/commons/components/input/DateRangeFilter";
+import { RadioFieldset } from "@/commons/components/input/RadioFieldset";
+
+export type AnalyticsDateComparisonMode = "daily" | "period";
+export type AnalyticsAggregationMode = "weekly" | "monthly";
 
 export const AnalyticsDateRangeFilter = ({
   dateFrom,
   dateTo,
+  dateComparisonMode,
+  aggregationMode,
+  onChangeDateFrom,
+  onChangeDateTo,
+  onChangeDateComparisonMode,
+  onChangeAggregationMode,
 }: {
   dateFrom: string;
   dateTo: string;
+  dateComparisonMode: AnalyticsDateComparisonMode;
+  aggregationMode: AnalyticsAggregationMode;
+  onChangeDateFrom: (value: string) => void;
+  onChangeDateTo: (value: string) => void;
+  onChangeDateComparisonMode: (value: AnalyticsDateComparisonMode) => void;
+  onChangeAggregationMode: (value: AnalyticsAggregationMode) => void;
 }) => {
   return (
     <section className="rounded-[16px] border border-[#DADADA] bg-white px-6 py-5">
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
-          <p className="text-sm text-black">시작일</p>
-          <DateField value={dateFrom} disabled />
-        </div>
-
-        <div className="text-sm text-black">~</div>
-
-        <div className="flex flex-col gap-1">
-          <p className="text-sm text-black">종료일</p>
-          <DateField value={dateTo} disabled />
+      <div className="flex flex-col gap-4">
+        <DateRangeFilter
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onChangeDateFrom={onChangeDateFrom}
+          onChangeDateTo={onChangeDateTo}
+          showDateTo={dateComparisonMode === "period"}
+        />
+        <div className="flex flex-wrap gap-4">
+          <RadioFieldset
+            legend="비교 기준"
+            name="analytics-date-comparison-mode"
+            value={dateComparisonMode}
+            options={[
+              { label: "일별 비교", value: "daily" },
+              { label: "기간별 비교", value: "period" },
+            ]}
+            onChange={onChangeDateComparisonMode}
+          />
+          <RadioFieldset
+            legend="집계 단위"
+            name="analytics-aggregation-mode"
+            value={aggregationMode}
+            options={[
+              { label: "주간 비교", value: "weekly" },
+              { label: "월간 비교", value: "monthly" },
+            ]}
+            onChange={onChangeAggregationMode}
+          />
         </div>
       </div>
     </section>
