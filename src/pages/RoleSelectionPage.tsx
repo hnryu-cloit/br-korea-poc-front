@@ -75,13 +75,20 @@ export function RoleSelectionPage() {
                 </div>
               </div>
 
-              <div className="rounded-[8px] bg-[#E2E8F0CC] p-4 flex flex-col gap-2">
-                <p className="text-[16px] font-bold leading-6 text-brown-700">주요 기능</p>
-                <ul className="flex flex-col gap-1 pl-4 text-[14px] leading-5 text-brown-700 list-disc">
-                  {card.bulletPoints.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
+              <div>
+                <div className="rounded-[8px] bg-[#E2E8F0CC] p-4 flex flex-col gap-2">
+                  <p className="text-[16px] font-bold leading-6 text-brown-700">주요 기능</p>
+                  <ul className="flex flex-col gap-1 pl-4 text-[14px] leading-5 text-brown-700 list-disc">
+                    {card.bulletPoints.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+                {card.role === "hq_admin" && (
+                  <span className="text-xs text-[#E7000B]">
+                    * 해당 페이지는 목업 구현 화면이며, 실제 데이터가 아닙니다.
+                  </span>
+                )}
               </div>
             </div>
 
@@ -91,9 +98,6 @@ export function RoleSelectionPage() {
               className="inline-flex h-[42px] w-full items-center justify-center gap-2 rounded-[4px] bg-[linear-gradient(90deg,#FF6A00_0%,#D31F8A_100%)] px-4 text-[18px] font-bold leading-none text-white"
             >
               <span>입장하기</span>
-              {/* <span className="material-symbols-outlined text-[24px] leading-none">
-                arrow_forward
-              </span> */}
               <ArrowRightIcon />
             </button>
           </article>
