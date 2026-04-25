@@ -3,8 +3,10 @@ import { useMemo } from "react";
 
 import { useOrderingDeadlineReminder } from "@/features/ordering/hooks/useOrderingDeadlineReminder";
 import { useGetOrderingDeadlineQuery } from "@/features/ordering/queries/useGetOrderingDeadlineQuery";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes?: string[] } = {}) {
+  const { referenceDateTime } = useDemoSession();
   const deadlineQuery = useGetOrderingDeadlineQuery();
   const effectiveDeadlineTimes = useMemo(() => {
     const fromProps = (deadlineTimes ?? []).filter(Boolean);
@@ -14,8 +16,10 @@ export function OrderingDeadlineReminder({ deadlineTimes }: { deadlineTimes?: st
     const fromApi = deadlineQuery.data?.deadline;
     return fromApi ? [fromApi] : [];
   }, [deadlineQuery.data?.deadline, deadlineTimes]);
-  const { toast, activePanelItems, confirmReminder } =
-    useOrderingDeadlineReminder(effectiveDeadlineTimes);
+  const { toast, activePanelItems, confirmReminder } = useOrderingDeadlineReminder(
+    effectiveDeadlineTimes,
+    referenceDateTime,
+  );
 
   return (
     <>

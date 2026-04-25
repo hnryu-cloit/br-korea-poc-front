@@ -17,7 +17,7 @@ import {
   toOrderingDateKey,
 } from "@/features/ordering/utils/ordering-deadline-reminder";
 
-export function useOrderingDeadlineReminder(deadlineTimes: string[]) {
+export function useOrderingDeadlineReminder(deadlineTimes: string[], referenceDateTime: string) {
   const [storage, setStorage] = useState<OrderingReminderStorage>(() =>
     parseOrderingReminderStorage(window.sessionStorage.getItem(ORDERING_REMINDER_STORAGE_KEY)),
   );
@@ -29,7 +29,8 @@ export function useOrderingDeadlineReminder(deadlineTimes: string[]) {
   }, [storage]);
 
   const evaluateReminderState = useCallback(() => {
-    const now = new Date();
+    const parsedReferenceDate = new Date(referenceDateTime);
+    const now = Number.isNaN(parsedReferenceDate.getTime()) ? new Date() : parsedReferenceDate;
     const todayKey = toOrderingDateKey(now);
     const events = buildOrderingReminderEvents(deadlineTimes, now);
 
@@ -69,7 +70,7 @@ export function useOrderingDeadlineReminder(deadlineTimes: string[]) {
       id: Date.now(),
       deadlineTimes: toastTargets.map((event) => event.deadlineAt),
     });
-  }, [deadlineTimes, storage.confirmed, storage.shown]);
+  }, [deadlineTimes, referenceDateTime, storage.confirmed, storage.shown]);
 
   useEffect(() => {
     const bootstrapTimer = window.setTimeout(evaluateReminderState, 0);
