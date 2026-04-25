@@ -34,7 +34,14 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
+        <span className="inline-flex items-center gap-1.5">
+          <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
+          <InfoPopover
+            caption={FIELD_CAPTIONS["fifo:section_title"]}
+            side="bottom"
+            align="left"
+          />
+        </span>
         <div className="flex gap-1 rounded-lg border border-[#DADADA] p-0.5">
           {LOT_TYPE_TABS.map((tab) => (
             <button
@@ -86,10 +93,24 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
                 유통기한
               </th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                입고 수량
+                <span className="inline-flex items-center gap-1">
+                  <span>입고 수량</span>
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["fifo:initial_qty"]}
+                    side="bottom"
+                    align="left"
+                  />
+                </span>
               </th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                소진 수량
+                <span className="inline-flex items-center gap-1">
+                  <span>소진 수량</span>
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["fifo:consumed_qty"]}
+                    side="bottom"
+                    align="left"
+                  />
+                </span>
               </th>
               <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                 <span className="inline-flex items-center gap-1">
@@ -97,7 +118,7 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:wasted_qty"]}
                     side="bottom"
-                    align="right"
+                    align="left"
                   />
                 </span>
               </th>
@@ -107,7 +128,7 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:active_remaining"]}
                     side="bottom"
-                    align="right"
+                    align="left"
                   />
                 </span>
               </th>

@@ -18,8 +18,10 @@ export function ProductionInventoryDiagnosisScreen() {
   const [fifoPage, setFifoPage] = useState(1);
   const [fifoLotType, setFifoLotType] = useState<FifoLotType>(undefined);
 
+  const today = new Date().toISOString().slice(0, 10);
+
   const inventoryStatusQuery = useGetProductionInventoryStatusQuery(storeId, inventoryPage, 10);
-  const fifoQuery = useGetFifoLotSummaryQuery(storeId, fifoLotType, fifoPage, 20);
+  const fifoQuery = useGetFifoLotSummaryQuery(storeId, fifoLotType, fifoPage, 20, today);
 
   const apiError = inventoryStatusQuery.error as AxiosError<{ detail?: string }> | null;
   const errorMessage = apiError?.response?.data?.detail ?? null;
