@@ -98,6 +98,14 @@ export function FloatingAiChat() {
   ]);
   const [isSending, setIsSending] = useState(false);
 
+  const prevSessionKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevSessionKeyRef.current !== null && prevSessionKeyRef.current !== sessionKey) {
+      close();
+    }
+    prevSessionKeyRef.current = sessionKey;
+  }, [sessionKey, close]);
+
   useEffect(() => {
     const saved = loadSessionHistory(sessionKey);
     setHistory(

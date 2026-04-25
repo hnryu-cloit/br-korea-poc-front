@@ -15,8 +15,8 @@ const ProfileRow = ({ label, value }: { label: string; value: string }) => (
 
 export function MarketStoreProfileSection({ data, isLoading }: Props) {
   return (
-    <section className="rounded-[26px] border border-border bg-white px-6 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-      <h3 className="text-base font-bold text-slate-900 mb-4">우리 매장 상권</h3>
+    <section className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+      <h3 className="text-sm font-bold text-slate-800 mb-4">우리 매장 상권</h3>
 
       {isLoading && (
         <div className="space-y-3">

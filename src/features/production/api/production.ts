@@ -67,6 +67,7 @@ export const getFifoLotSummary = async (
   lotType?: FifoLotType,
   page = 1,
   pageSize = 20,
+  date?: string,
 ) => {
   const response = await axiosInstance.get<FifoLotSummaryResponse>("/api/production/fifo-lots", {
     params: {
@@ -74,6 +75,7 @@ export const getFifoLotSummary = async (
       ...(lotType ? { lot_type: lotType } : {}),
       page,
       page_size: pageSize,
+      ...(date ? { date } : {}),
     },
   });
   return response.data;

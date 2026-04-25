@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { OrderingOptionCard } from "@/features/ordering/components/OrderingOptionCard";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
@@ -19,7 +21,14 @@ export function OrderingOptionsSection({
   return (
     <section className="flex flex-col items-center">
       <div className="flex flex-col items-center gap-5">
-        <p className="text-[24px] text-black font-semibold">AI 추천 발주량</p>
+        <span className="inline-flex items-center gap-2">
+          <p className="text-[24px] text-black font-semibold">AI 추천 발주량</p>
+          <InfoPopover
+            caption={FIELD_CAPTIONS["ordering:ai_recommended_qty"]}
+            side="bottom"
+            align="left"
+          />
+        </span>
         <p className="text-[20px] text-[#653819] font-medium">
           과거 동일 요일의 3가지 판매 패턴(전주, 전전주, 전월)을 분석하여 비교합니다.
         </p>

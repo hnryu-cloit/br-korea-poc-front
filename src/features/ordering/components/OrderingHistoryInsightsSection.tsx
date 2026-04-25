@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { OrderingHistoryInsightsResponse } from "@/features/ordering/types/ordering";
 import arrow_red from "@/assets/arrow_red.svg";
 import arrow_blue from "@/assets/arrow_blue.svg";
@@ -36,7 +38,14 @@ export function OrderingHistoryInsightsSection({ data }: Props) {
       </div> */}
       <div className="grid gap-2 lg:grid-cols-2">
         <article className="rounded-[8px] border border-[#DADADA] bg-white p-6">
-          <p className="text-2xl font-bold text-brown-700">이상징후</p>
+          <span className="inline-flex items-center gap-2">
+            <p className="text-2xl font-bold text-brown-700">이상징후</p>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["ordering:anomalies_mockup"]}
+              side="bottom"
+              align="left"
+            />
+          </span>
           <div className="h-[1px] bg-[#D9D9D9] mt-4 mb-6" />
           <ul className="flex flex-col gap-2">
             {(data?.anomalies ?? []).map((anomaly) => {

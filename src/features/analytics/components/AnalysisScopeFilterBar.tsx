@@ -74,7 +74,7 @@ export function AnalysisScopeFilterBar({ value, onChange, className, scopeOption
 
   return (
     <section
-      className={`rounded-2xl border border-border bg-white px-4 py-4 shadow-sm ${className ?? ""}`}
+      className={`rounded-[16px] border border-[#DADADA] bg-white px-6 py-5 ${className ?? ""}`}
     >
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
         <label className="space-y-1 text-xs text-slate-500">

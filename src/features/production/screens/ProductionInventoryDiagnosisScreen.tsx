@@ -38,6 +38,7 @@ export function ProductionInventoryDiagnosisScreen() {
     (status) => INVENTORY_STATUS_CODE_MAP[status],
   );
   const fifoLotType = selectedFifoLotTypes.length === 1 ? selectedFifoLotTypes[0] : undefined;
+  const today = new Date().toISOString().slice(0, 10);
   const inventoryStatusQuery = useGetProductionInventoryStatusQuery(
     storeId,
     inventoryStatusFilters,
@@ -50,6 +51,7 @@ export function ProductionInventoryDiagnosisScreen() {
     fifoPage,
     20,
     selectedFifoLotTypes.length > 0,
+    today,
   );
 
   const apiError = inventoryStatusQuery.error as AxiosError<{ detail?: string }> | null;

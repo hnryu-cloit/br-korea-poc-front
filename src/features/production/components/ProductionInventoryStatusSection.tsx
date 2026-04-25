@@ -83,7 +83,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                     <InfoPopover
                       caption={FIELD_CAPTIONS["inventory:orderable_qty"]}
                       side="bottom"
-                      align="right"
+                      align="left"
                     />
                   </span>
                 </th>
@@ -93,7 +93,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                     <InfoPopover
                       caption={FIELD_CAPTIONS["inventory:sold_qty"]}
                       side="bottom"
-                      align="right"
+                      align="left"
                     />
                   </span>
                 </th>
@@ -103,7 +103,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                     <InfoPopover
                       caption={FIELD_CAPTIONS["inventory:status"]}
                       side="bottom"
-                      align="right"
+                      align="left"
                     />
                   </span>
                 </th>

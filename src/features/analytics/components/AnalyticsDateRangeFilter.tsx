@@ -1,5 +1,6 @@
 import { DateRangeFilter } from "@/commons/components/input/DateRangeFilter";
 import { RadioFieldset } from "@/commons/components/input/RadioFieldset";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 
 export type AnalyticsDateComparisonMode = "daily" | "period";
 export type AnalyticsAggregationMode = "weekly" | "monthly";
@@ -49,8 +50,16 @@ export const AnalyticsDateRangeFilter = ({
             name="analytics-aggregation-mode"
             value={aggregationMode}
             options={[
-              { label: "주간 비교", value: "weekly" },
-              { label: "월간 비교", value: "monthly" },
+              {
+                label: "주간 비교",
+                value: "weekly",
+                caption: FIELD_CAPTIONS["analytics:weekly_comparison"],
+              },
+              {
+                label: "월간 비교",
+                value: "monthly",
+                caption: FIELD_CAPTIONS["analytics:monthly_comparison"],
+              },
             ]}
             onChange={onChangeAggregationMode}
           />

@@ -13,7 +13,7 @@ type Props = {
 };
 
 const CARD_CLASS =
-  "rounded-2xl border border-border/70 bg-white px-4 py-4 shadow-[0_8px_20px_rgba(16,32,51,0.05)]";
+  "rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]";
 
 export function MarketOverviewCardsSection({ storeProfile, customerProfile, isLoading }: Props) {
   const topSegment = getTopSegment(customerProfile?.customer_segments ?? []);

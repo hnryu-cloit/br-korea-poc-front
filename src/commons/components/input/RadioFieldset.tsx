@@ -1,6 +1,10 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import type { FieldCaption } from "@/commons/types/field-caption";
+
 type RadioOption<T extends string> = {
   label: string;
   value: T;
+  caption?: FieldCaption;
 };
 
 type RadioFieldsetProps<T extends string> = {
@@ -22,15 +26,20 @@ export function RadioFieldset<T extends string>({
     <fieldset className="flex items-center gap-4">
       <legend className="mb-1 text-sm font-medium text-black">{legend}</legend>
       {options.map((option) => (
-        <label key={option.value} className="flex items-center gap-2 text-sm text-brown-700">
-          <input
-            type="radio"
-            name={name}
-            checked={value === option.value}
-            onChange={() => onChange(option.value)}
-          />
-          {option.label}
-        </label>
+        <span key={option.value} className="inline-flex items-center gap-1">
+          <label className="flex items-center gap-2 text-sm text-brown-700">
+            <input
+              type="radio"
+              name={name}
+              checked={value === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            {option.label}
+          </label>
+          {option.caption ? (
+            <InfoPopover caption={option.caption} side="bottom" align="left" />
+          ) : null}
+        </span>
       ))}
     </fieldset>
   );
