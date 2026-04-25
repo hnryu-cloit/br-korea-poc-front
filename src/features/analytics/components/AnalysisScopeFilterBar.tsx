@@ -61,9 +61,7 @@ const quarterOptions = ["Q1", "Q2", "Q3", "Q4"];
 const quickRadius = [500, 750, 1000, 2000];
 
 export function AnalysisScopeFilterBar({ value, onChange, className, scopeOptions }: Props) {
-  const guOptions = scopeOptions?.guOptions?.length
-    ? scopeOptions.guOptions
-    : DEFAULT_GU_OPTIONS;
+  const guOptions = scopeOptions?.guOptions?.length ? scopeOptions.guOptions : DEFAULT_GU_OPTIONS;
   const dongOptionsByGu = scopeOptions?.dongOptionsByGu ?? DEFAULT_DONG_OPTIONS_BY_GU;
   const dongOptions = useMemo(
     () => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"] ?? ["전체"],
@@ -85,7 +83,8 @@ export function AnalysisScopeFilterBar({ value, onChange, className, scopeOption
             value={value.gu}
             onChange={(event) => {
               const nextGu = event.target.value;
-              const nextDongOptions = dongOptionsByGu[nextGu] ?? dongOptionsByGu["전체"] ?? ["전체"];
+              const nextDongOptions = dongOptionsByGu[nextGu] ??
+                dongOptionsByGu["전체"] ?? ["전체"];
               onChange({ ...value, gu: nextGu, dong: nextDongOptions[0] });
             }}
             className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-700"

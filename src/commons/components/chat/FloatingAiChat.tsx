@@ -42,14 +42,12 @@ const buildAssistantIntro = (
 
 export function FloatingAiChat() {
   const location = useLocation();
-  const routeState = location.state as
-    | {
-        source?: string;
-        domain?: "production" | "ordering" | "sales";
-        intent?: "view" | "ask";
-        prompt?: string;
-      }
-    | null;
+  const routeState = location.state as {
+    source?: string;
+    domain?: "production" | "ordering" | "sales";
+    intent?: "view" | "ask";
+    prompt?: string;
+  } | null;
   const { user, referenceDateTime } = useDemoSession();
   const { isOpen, activeCardContextKey, open, close } = useFloatingAiChat();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -70,9 +68,7 @@ export function FloatingAiChat() {
   const salesPromptsQuery = useGetSalesPromptsQuery({ store_id: user.storeId, domain });
 
   const guide: FloatingAiChatRouteGuide = useMemo(() => {
-    const cardContext = activeCardContextKey
-      ? floatingAiCardContexts[activeCardContextKey]
-      : null;
+    const cardContext = activeCardContextKey ? floatingAiCardContexts[activeCardContextKey] : null;
     return cardContext
       ? {
           title: cardContext.cardTitle,

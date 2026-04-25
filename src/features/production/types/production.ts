@@ -168,6 +168,9 @@ export interface InventoryStatusItem {
   status: "여유" | "부족" | "적정";
 }
 
+export type InventoryStatusFilterLabel = InventoryStatusItem["status"];
+export type InventoryStatusFilterCode = "excess" | "shortage" | "normal";
+
 export interface InventoryStatusResponse {
   summary: Record<string, string | number>;
   highlights: Array<Record<string, string | number>>;

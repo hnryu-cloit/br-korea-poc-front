@@ -1,4 +1,5 @@
 import ProductDefaultImage from "@/assets/default_product_img.svg";
+import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterGroup";
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
@@ -10,6 +11,8 @@ import type {
 type Props = {
   data?: InventoryStatusResponse;
   isLoading: boolean;
+  selectedStatuses: InventoryStatusItem["status"][];
+  onChangeStatuses: (statuses: InventoryStatusItem["status"][]) => void;
   onChangePage?: (page: number) => void;
   errorMessage?: string;
 };
@@ -19,6 +22,15 @@ const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
   부족: "bg-white text-[#FF671F] border border-[#FF671F]",
   적정: "bg-white text-[#2B7FFF] border border-[#2B7FFF]",
 };
+
+const STATUS_FILTER_OPTIONS: {
+  label: string;
+  value: InventoryStatusItem["status"];
+}[] = [
+  { label: "여유", value: "여유" },
+  { label: "부족", value: "부족" },
+  { label: "적정", value: "적정" },
+];
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:6002").replace(
   /\/$/,
@@ -45,13 +57,19 @@ function resolveImageUrl(imageUrl?: string | null): string {
 }
 
 export function ProductionInventoryStatusSection(props: Props) {
-  const { data, isLoading, onChangePage, errorMessage } = props;
+  const { data, isLoading, selectedStatuses, onChangeStatuses, onChangePage, errorMessage } = props;
   const totalPages = data?.pagination?.total_pages ?? 1;
   const currentPage = data?.pagination?.page ?? 1;
 
   return (
     <section className="overflow-hidden">
       <div className="flex flex-col gap-10">
+        <CheckboxFilterGroup
+          options={STATUS_FILTER_OPTIONS}
+          selectedValues={selectedStatuses}
+          onChange={onChangeStatuses}
+          allLabel="전체 선택"
+        />
         <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
           <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
             <thead>
@@ -103,14 +121,14 @@ export function ProductionInventoryStatusSection(props: Props) {
                 </tr>
               ) : errorMessage ? (
                 <tr>
-                  <td colSpan={3} className="bg-white px-6 py-16 text-center text-sm text-red-500">
+                  <td colSpan={4} className="bg-white px-6 py-16 text-center text-sm text-red-500">
                     {errorMessage}
                   </td>
                 </tr>
               ) : data?.items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     표시할 재고 현황 데이터가 없습니다.
@@ -123,7 +141,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                   return (
                     <tr
                       key={sku.item_nm}
-                      className="bg-white border-b border-[#DADADAS] text-brown-700 text-sm font-regular"
+                      className="border-b border-[#DADADA] bg-white text-sm text-brown-700"
                     >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">

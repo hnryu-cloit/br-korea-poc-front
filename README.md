@@ -663,9 +663,9 @@ npm run build
   - 직접 입력 + 후보 질문 버튼 클릭 모두 `POST /api/sales/query`로 실행
   - 경로 기반 domain 매핑: `/production/* -> production`, `/ordering/* -> ordering`, 그 외 `sales`
 - 골든쿼리 연동 후보 질문 우선순위를 반영했습니다.
-  1) `agent_trace.overlap_candidates`
-  2) `follow_up_questions`
-  3) 화면 기본 quick actions 폴백
+  1. `agent_trace.overlap_candidates`
+  2. `follow_up_questions`
+  3. 화면 기본 quick actions 폴백
 - 챗 세션을 페이지 단위(정규화 경로)로 분리하고 localStorage 복원을 추가했습니다.
   - 저장 키: `floating-ai-chat-sessions-v2`
 - 플로팅 챗 패널에서 후보 질문 버튼 클릭 시 즉시 전송되도록 변경했습니다.

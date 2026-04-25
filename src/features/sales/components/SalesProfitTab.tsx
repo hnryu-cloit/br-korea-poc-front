@@ -12,7 +12,11 @@ export function SalesProfitTab({ weeklyData }: { weeklyData: SalesWeeklyDataItem
       <article className="rounded-[24px] border border-border bg-[#f8fbff] px-5 py-5">
         <span className="inline-flex items-center gap-1.5">
           <p className="text-lg font-bold text-slate-900">주간 매출 및 순매출 추이</p>
-          <InfoPopover caption={FIELD_CAPTIONS["sales:weekly_revenue_trend"]} side="bottom" align="left" />
+          <InfoPopover
+            caption={FIELD_CAPTIONS["sales:weekly_revenue_trend"]}
+            side="bottom"
+            align="left"
+          />
         </span>
         <div className="mt-4 grid gap-3 lg:grid-cols-7">
           {weeklyData.map((day) => (
@@ -35,7 +39,11 @@ export function SalesProfitTab({ weeklyData }: { weeklyData: SalesWeeklyDataItem
         <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm">
           <span className="inline-flex items-center gap-1.5">
             <p className="text-base font-bold text-slate-900">주간 누적 순매출</p>
-            <InfoPopover caption={FIELD_CAPTIONS["sales:weekly_net_revenue"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:weekly_net_revenue"]}
+              side="bottom"
+              align="left"
+            />
           </span>
           <p className="mt-3 text-3xl font-bold text-green-600">
             {totalNetRevenue.toLocaleString()}원
@@ -47,7 +55,11 @@ export function SalesProfitTab({ weeklyData }: { weeklyData: SalesWeeklyDataItem
         <article className="rounded-[24px] border border-border bg-white px-5 py-5 shadow-sm">
           <span className="inline-flex items-center gap-1.5">
             <p className="text-base font-bold text-slate-900">주간 총 매출</p>
-            <InfoPopover caption={FIELD_CAPTIONS["sales:weekly_total_revenue"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:weekly_total_revenue"]}
+              side="bottom"
+              align="left"
+            />
           </span>
           <p className="mt-3 text-3xl font-bold text-[#2454C8]">
             {totalRevenue.toLocaleString()}원

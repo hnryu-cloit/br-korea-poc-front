@@ -23,13 +23,15 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 홈 - 주요 일정
   "home:upcoming_events": {
-    assumption: "통신사 할인 일정과 캠페인 일정을 동일 큐에 합쳐 마감일자가 가까운 순으로 정렬합니다.",
+    assumption:
+      "통신사 할인 일정과 캠페인 일정을 동일 큐에 합쳐 마감일자가 가까운 순으로 정렬합니다.",
     formula: "정렬 기준 = 마감일자 ASC · 표시 건수 = 상위 20건",
     description: "기준일자 이후 마감되는 통신사 할인·캠페인을 마감 임박 순으로 보여줍니다.",
   },
   // 생산 현황 - 대상 데이터 정의
   "production:scope": {
-    assumption: "해당 지점에서 생산하는 제품 중 최근 7일 이내 매출 이력 또는 생산 이력이 있는 SKU만 포함합니다.",
+    assumption:
+      "해당 지점에서 생산하는 제품 중 최근 7일 이내 매출 이력 또는 생산 이력이 있는 SKU만 포함합니다.",
     description: "생산 현황 테이블에 노출되는 SKU 선정 기준입니다.",
   },
   // 생산 현황 - 추천 생산 수량
@@ -51,7 +53,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 폐기 손실 - 조회 대상 데이터
   "production:waste_dataset": {
-    assumption: "조회 기준일 전일까지 입고된 미폐기 잔여 재고와 조회 기준일 당일 생산분을 합산합니다.",
+    assumption:
+      "조회 기준일 전일까지 입고된 미폐기 잔여 재고와 조회 기준일 당일 생산분을 합산합니다.",
     description: "폐기 손실 산정 대상이 되는 재고 풀의 정의입니다.",
   },
   // 폐기 손실 - 폐기 대상
@@ -62,7 +65,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 폐기 손실 - 손실 금액
   "production:waste_loss_amount": {
-    assumption: "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정합니다(원가 확보 시 원가 기준으로 전환).",
+    assumption:
+      "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정합니다(원가 확보 시 원가 기준으로 전환).",
     formula: "손실 금액 = 폐기 수량 × 판매가",
     description: "폐기 수량을 판매가로 환산한 손실 금액 추정치입니다.",
   },
@@ -82,12 +86,14 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "과거 동일 요일 3개 시점의 발주 패턴을 기준으로, 최근 판매 추세·재고 커버리지·유통기한 리스크를 반영해 SKU별 추천 수량을 산출합니다.",
   },
   "ordering:scope": {
-    assumption: "해당 지점에서 최근 7일 이내 주문(발주) 이력이 있는 품목만 추천 대상으로 사용합니다.",
+    assumption:
+      "해당 지점에서 최근 7일 이내 주문(발주) 이력이 있는 품목만 추천 대상으로 사용합니다.",
     description: "주문 추천 화면이 다루는 품목 범위 정의입니다.",
   },
   // 발주 이력 공통
   "ordering:history_scope": {
-    assumption: "발주 시점은 매일 오후 12시로 가정하며, 기준 시간이 발주 시점 이전이면 전일까지, 이후면 당일까지의 발주 이력을 반영합니다.",
+    assumption:
+      "발주 시점은 매일 오후 12시로 가정하며, 기준 시간이 발주 시점 이전이면 전일까지, 이후면 당일까지의 발주 이력을 반영합니다.",
     description: "기준 시간 기준으로 발주 이력 반영 범위를 결정합니다.",
   },
   // 발주 이력 - 이상징후 (목업)
@@ -106,7 +112,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 발주 이력 - 주요 변동 품목
   "ordering:top_change_items": {
-    assumption: "변동률 절대값을 기준으로 내림차순 정렬하며, 평균값은 발주 시점 이전이면 전일 기준 4주, 이후면 당일 포함 4주 데이터를 사용합니다.",
+    assumption:
+      "변동률 절대값을 기준으로 내림차순 정렬하며, 평균값은 발주 시점 이전이면 전일 기준 4주, 이후면 당일 포함 4주 데이터를 사용합니다.",
     formula: "변동률 = (당일 발주량 - 4주 평균) ÷ 4주 평균 × 100 · 정렬 = |변동률| DESC",
     description: "4주 평균 대비 변동률 절대값이 큰 순서로 노출되는 품목입니다.",
   },
@@ -138,14 +145,16 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 손익 분석 - 공통 비교 기준
   "sales:comparison_basis": {
-    assumption: "기준 일자의 전날을 비교 시점으로 삼으며, 일자/기간 조회 모두 전주(7일 전 동요일)와 전월(전월 동일 주차의 동요일) 기준을 제공합니다.",
+    assumption:
+      "기준 일자의 전날을 비교 시점으로 삼으며, 일자/기간 조회 모두 전주(7일 전 동요일)와 전월(전월 동일 주차의 동요일) 기준을 제공합니다.",
     formula:
       "일자 전주 = 7일 전 동요일 · 일자 전월 = 전월 동일 주차 동요일 · 기간 전주 = 7일 전 동요일 구성 기간 · 기간 전월 = 전월 동일 주차 동요일 구성 기간",
     description: "손익 분석 화면 전체에서 사용하는 비교 기준 정의입니다.",
   },
   // 손익 분석 - 객단가 지수 (단독 정의)
   "sales:avg_ticket_index": {
-    assumption: "최근 4주간 동 지점 일별 객단가의 최소·최대 범위를 0~100으로 환산합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
+    assumption:
+      "최근 4주간 동 지점 일별 객단가의 최소·최대 범위를 0~100으로 환산합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
     formula:
       "객단가 = 매출 ÷ 주문건수 · 객단가 지수 = (당일 객단가 - 4주 최소) ÷ (4주 최대 - 4주 최소) × 100",
     description: "최근 4주 객단가 분포에서 현재 객단가의 상대 위치를 0~100으로 표시합니다.",

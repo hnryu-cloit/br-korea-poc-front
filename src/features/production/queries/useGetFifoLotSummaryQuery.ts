@@ -9,16 +9,15 @@ export const useGetFifoLotSummaryQuery = (
   lotType?: FifoLotType,
   page = 1,
   pageSize = 20,
+  enabled = true,
   date?: string,
-) => {
-  const normalizedDate = date ?? "";
-  return useQuery({
-    queryKey: productionQueryKeys.fifoLots(storeId, lotType, page, pageSize, normalizedDate),
-    queryFn: () => getFifoLotSummary(storeId, lotType, page, pageSize, normalizedDate || undefined),
-    enabled: !!storeId,
+) =>
+  useQuery({
+    queryKey: productionQueryKeys.fifoLots(storeId, lotType, page, pageSize, date ?? ""),
+    queryFn: () => getFifoLotSummary(storeId, lotType, page, pageSize, date),
+    enabled: !!storeId && enabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     placeholderData: (previousData) => previousData,
   });
-};
