@@ -104,13 +104,12 @@ export function FloatingAiChat() {
 
   const prevSessionKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (prevSessionKeyRef.current !== null && prevSessionKeyRef.current !== sessionKey) {
+    const isFirstRun = prevSessionKeyRef.current === null;
+    if (!isFirstRun && prevSessionKeyRef.current !== sessionKey) {
       close();
     }
     prevSessionKeyRef.current = sessionKey;
-  }, [sessionKey, close]);
 
-  useEffect(() => {
     const saved = loadSessionHistory(sessionKey);
     setHistory(
       saved ?? [buildAssistantIntro(guideRef.current ?? guide, fallbackPromptsRef.current)],

@@ -41,7 +41,7 @@ export function OrderingHistoryInsightsSection({ data }: Props) {
           <span className="inline-flex items-center gap-2">
             <p className="text-2xl font-bold text-brown-700">이상징후</p>
             <InfoPopover
-              caption={FIELD_CAPTIONS["ordering:anomalies_mockup"]}
+              caption={FIELD_CAPTIONS["ordering:anomalies"]}
               side="bottom"
               align="left"
             />

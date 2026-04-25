@@ -10,26 +10,27 @@ type Props = {
 };
 
 const POPOVER_WIDTH = 288; // w-72
-const BULLET_PATTERN = /^([•·*])\s*(.*)$/;
-const DASH_PATTERN = /^([-–])\s+(.*)$/;
+const INDENT_PIXEL = 12; // 한 단계 들여쓰기 폭
+const BULLET_PATTERN = /^([•·▪▫‣◦*])\s*(.*)$/;
+const DASH_PATTERN = /^([-–—])\s+(.*)$/;
 
 type ParsedLine =
-  | { kind: "bullet"; indent: number; text: string }
-  | { kind: "dash"; indent: number; text: string }
+  | { kind: "bullet"; level: number; text: string }
+  | { kind: "dash"; level: number; text: string }
   | { kind: "text"; text: string };
 
-function parseCaptionLines(raw: string): ParsedLine[] {
+export function parseCaptionLines(raw: string): ParsedLine[] {
   return raw.split("\n").map<ParsedLine>((rawLine) => {
     const leading = rawLine.match(/^(\s*)/)?.[1] ?? "";
-    const indent = leading.length;
-    const trimmed = rawLine.slice(indent);
+    const level = Math.floor(leading.length / 2);
+    const trimmed = rawLine.slice(leading.length);
     const bulletMatch = trimmed.match(BULLET_PATTERN);
     if (bulletMatch) {
-      return { kind: "bullet", indent, text: bulletMatch[2] };
+      return { kind: "bullet", level, text: bulletMatch[2] };
     }
     const dashMatch = trimmed.match(DASH_PATTERN);
     if (dashMatch) {
-      return { kind: "dash", indent, text: dashMatch[2] };
+      return { kind: "dash", level, text: dashMatch[2] };
     }
     return { kind: "text", text: rawLine };
   });
@@ -49,7 +50,7 @@ function CaptionBody({ raw, mono = false }: { raw: string; mono?: boolean }) {
             <div
               key={idx}
               className="flex gap-1.5"
-              style={{ paddingLeft: `${line.indent * 4}px` }}
+              style={{ paddingLeft: `${line.level * INDENT_PIXEL}px` }}
             >
               <span className="shrink-0 text-slate-400">•</span>
               <span className="flex-1 break-words">{line.text}</span>
@@ -61,7 +62,7 @@ function CaptionBody({ raw, mono = false }: { raw: string; mono?: boolean }) {
             <div
               key={idx}
               className="flex gap-1.5"
-              style={{ paddingLeft: `${line.indent * 4 + 12}px` }}
+              style={{ paddingLeft: `${line.level * INDENT_PIXEL + INDENT_PIXEL}px` }}
             >
               <span className="shrink-0 text-slate-400">–</span>
               <span className="flex-1 break-words">{line.text}</span>

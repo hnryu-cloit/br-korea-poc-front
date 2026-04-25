@@ -72,7 +72,7 @@ export function DashboardScreen() {
               {updateTime(referenceDateTime)}
             </span>
             <InfoPopover
-              caption={FIELD_CAPTIONS["dashboard:update_schedule"]}
+              caption={FIELD_CAPTIONS["dashboard:summary_update"]}
               side="bottom"
               align="left"
             />

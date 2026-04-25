@@ -100,6 +100,8 @@ export function MarketScreen() {
           type="button"
           onClick={handleDownloadWeeklyReport}
           disabled={isDownloading}
+          aria-label="주간 분석 리포트 PDF 다운로드"
+          aria-busy={isDownloading}
           className="inline-flex items-center gap-2 rounded-lg border border-[#2c61d6] bg-white px-3 py-2 text-sm font-semibold text-[#2c61d6] hover:bg-[#edf3ff] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Download className="h-4 w-4" />

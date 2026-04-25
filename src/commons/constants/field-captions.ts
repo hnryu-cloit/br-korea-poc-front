@@ -13,7 +13,7 @@ export const PAGE_CAPTIONS: Record<string, PageCaption> = {
 
 export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 홈 - 운영 현황 업데이트 시간
-  "dashboard:update_schedule": {
+  "dashboard:summary_update": {
     assumption:
       "운영 현황 데이터는 매장 영업 시간 동안 정시(매시 0분)마다 자동 갱신됩니다.\n" +
       "• 갱신 주기: 오전 7시 ~ 오후 11시 정시 (07:00, 08:00, ..., 23:00)\n" +
@@ -91,7 +91,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     description: "기준 시간 기준으로 발주 이력 반영 범위를 결정합니다.",
   },
   // 발주 이력 - 이상징후 (목업)
-  "ordering:anomalies_mockup": {
+  "ordering:anomalies": {
     assumption:
       "현재 본 이상징후 카드의 항목은 시연용 목업(샘플) 데이터입니다.\n" +
       "• 메시지/심각도(높음/중간/낮음)/추천 조치는 AI(Gemini) + RAG 운영 가이드 응답을 기반으로 생성될 예정\n" +

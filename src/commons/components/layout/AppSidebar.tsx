@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { menuSections } from "@/commons/components/layout/menu";
@@ -18,15 +19,18 @@ export function AppSidebar({ isOpen, onClose }: Props) {
   const { pathname } = useLocation();
   const { user } = useDemoSession();
   const currentRole = user.role;
-  const visibleSections = menuSections.filter(
-    (section) => !section.roles || section.roles.includes(currentRole),
+  const visibleSections = useMemo(
+    () => menuSections.filter((section) => !section.roles || section.roles.includes(currentRole)),
+    [currentRole],
   );
 
-  const allMenuPaths = visibleSections.flatMap((section) => section.items.map((item) => item.to));
-
-  const activeMenuPath = allMenuPaths
-    .filter((to) => pathname === to || pathname.startsWith(`${to}/`))
-    .sort((a, b) => b.length - a.length)[0];
+  const activeMenuPath = useMemo(() => {
+    const candidates = visibleSections
+      .flatMap((section) => section.items.map((item) => item.to))
+      .filter((to) => pathname === to || pathname.startsWith(`${to}/`));
+    if (candidates.length === 0) return undefined;
+    return candidates.reduce((longest, to) => (to.length > longest.length ? to : longest));
+  }, [visibleSections, pathname]);
 
   const isRouteActive = (to: string) => to === activeMenuPath;
 
