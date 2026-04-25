@@ -1,4 +1,5 @@
-import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS, PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
@@ -65,9 +66,16 @@ export function DashboardScreen() {
         <div className="flex flex-col gap-1">
           <span className="text-2xl text-brown-700 font-bold">운영 현황</span>
           <span className="text-sm text-slate-500">{PAGE_CAPTIONS["dashboard"].subtitle}</span>
-          <span className="text-md text-[#716862]">
-            업데이트 시간:
-            {updateTime(referenceDateTime)}
+          <span className="inline-flex items-center gap-1.5 text-md text-[#716862]">
+            <span>
+              업데이트 시간:
+              {updateTime(referenceDateTime)}
+            </span>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["dashboard:update_schedule"]}
+              side="bottom"
+              align="left"
+            />
           </span>
         </div>
         <DashboardAlertSummary
