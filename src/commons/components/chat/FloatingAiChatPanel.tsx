@@ -12,7 +12,7 @@ import type {
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[80%] rounded-[18px] rounded-br-sm bg-[#1f4dbb] px-4 py-2.5 text-sm text-white">
+      <div className="max-w-[80%] rounded-[24px] bg-[#F1F5F9] px-4 py-2.5 text-md text-brown-700">
         {text}
       </div>
     </div>
@@ -222,10 +222,10 @@ export function FloatingAiChatPanel({
 
   return (
     <div
-      className="fixed bottom-24 right-6 z-50 flex w-[800px] h-[700px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] p-3 border border-[#99115C] border-3 bg-gradient-to-r from-[#FFECE3] to-[#DC8AB7] flex flex-col gap-5 shadow-[0_24px_60px_rgba(31,77,187,0.2)]"
+      className="fixed bottom-24 right-6 z-50 flex h-[700px] w-[800px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] border border-[#99115C] border-3 bg-gradient-to-r from-[#FFECE3] to-[#DC8AB7] p-3 shadow-[0_24px_60px_rgba(31,77,187,0.2)]"
       style={{ maxHeight: "calc(100vh - 120px)" }}
     >
-      <div className="shrink-0 flex items-start justify-between px-3 py-4">
+      <div className="flex shrink-0 items-start justify-between px-3 py-4">
         <div className="flex flex-col gap-3">
           <p className="text-[#99115C] font-bold text-md">안녕하세요, {storeName} 점주님</p>
           <div className="flex items-center gap-3">
@@ -242,22 +242,18 @@ export function FloatingAiChatPanel({
         </button>
       </div>
 
-      <div className="rounded-[12px] bg-white px-6 py-4 h-full flex flex-col gap-2">
-        <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto" style={{ minHeight: 0 }}>
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[12px] bg-white px-6 py-4">
+        <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto">
           {history.map((entry, idx) =>
             entry.role === "user" ? (
               <UserBubble key={`entry-${idx}`} text={entry.text} />
             ) : (
-              <AssistantBubble
-                key={`entry-${idx}`}
-                message={entry.message}
-                onQuickAsk={onSend}
-              />
+              <AssistantBubble key={`entry-${idx}`} message={entry.message} onQuickAsk={onSend} />
             ),
           )}
         </div>
 
-        <div className="flex items-center gap-2 rounded-[16px] border border-[#CAD5E2] bg-white px-4.5 py-2">
+        <div className="shrink-0 flex items-center gap-2 rounded-[16px] border border-[#CAD5E2] bg-white px-4.5 py-2">
           <input
             type="text"
             value={input}
