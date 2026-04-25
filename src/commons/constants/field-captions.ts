@@ -12,6 +12,85 @@ export const PAGE_CAPTIONS: Record<string, PageCaption> = {
 };
 
 export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
+  // 홈 - 주요 일정
+  "home:upcoming_events": {
+    assumption: "통신사 할인 일정과 캠페인 일정을 동일 큐에 합쳐 마감일자가 가까운 순으로 정렬합니다.",
+    formula: "정렬 기준 = 마감일자 ASC · 표시 건수 = 상위 20건",
+    description: "기준일자 이후 마감되는 통신사 할인·캠페인을 마감 임박 순으로 보여줍니다.",
+  },
+  // 생산 현황 - 대상 데이터 정의
+  "production:scope": {
+    assumption: "해당 지점에서 생산하는 제품 중 최근 7일 이내 매출 이력 또는 생산 이력이 있는 SKU만 포함합니다.",
+    description: "생산 현황 테이블에 노출되는 SKU 선정 기준입니다.",
+  },
+  // 생산 현황 - 추천 생산 수량
+  "production:recommended_qty": {
+    assumption: "4주간 1차·2차 평균 생산량을 기준으로 현재 시점 부족분을 보정합니다.",
+    formula: "추천 생산 수량 = 4주 평균 1차 생산량 + 4주 평균 2차 생산량 - 현재 재고 수량",
+    description: "현재 재고와 4주 평균 생산량 격차를 보정한 권고 생산 수량입니다.",
+  },
+  // 생산 현황 - 현재 판매 속도
+  "production:sales_velocity": {
+    assumption: "최근 30분 동안 발생한 판매 수량을 시간당으로 환산해 평균 판매 속도와 비교합니다.",
+    formula: "현재 판매 속도 = 최근 30분 판매 수량 × 2 (시간당 환산)",
+    description: "직전 30분 판매량을 시간당으로 환산한 실시간 판매 속도입니다.",
+  },
+  // 폐기 손실 - 조회 기준일
+  "production:waste_reference_date": {
+    assumption: "기준 일자의 전날 하루를 폐기 산정 기준일로 사용합니다.",
+    description: "폐기 손실 화면이 집계하는 영업일 정의입니다.",
+  },
+  // 폐기 손실 - 조회 대상 데이터
+  "production:waste_dataset": {
+    assumption: "조회 기준일 전일까지 입고된 미폐기 잔여 재고와 조회 기준일 당일 생산분을 합산합니다.",
+    description: "폐기 손실 산정 대상이 되는 재고 풀의 정의입니다.",
+  },
+  // 폐기 손실 - 폐기 대상
+  "production:waste_target": {
+    assumption: "FIFO 판매 차감 후 잔여분 중 유통기한이 경과한 수량만 폐기로 인식합니다.",
+    formula: "폐기 수량 = Σ(잔량 - FIFO 판매 차감) | 유통기한 < 기준일",
+    description: "FIFO 차감 후 유통기한 경과로 폐기되는 수량입니다.",
+  },
+  // 폐기 손실 - 손실 금액
+  "production:waste_loss_amount": {
+    assumption: "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정합니다(원가 확보 시 원가 기준으로 전환).",
+    formula: "손실 금액 = 폐기 수량 × 판매가",
+    description: "폐기 수량을 판매가로 환산한 손실 금액 추정치입니다.",
+  },
+  // 주문 관리 공통
+  "ordering:scope": {
+    assumption: "해당 지점에서 최근 7일 이내 주문(발주) 이력이 있는 품목만 추천 대상으로 사용합니다.",
+    description: "주문 추천 화면이 다루는 품목 범위 정의입니다.",
+  },
+  // 발주 이력 공통
+  "ordering:history_scope": {
+    assumption: "발주 시점은 매일 오후 12시로 가정하며, 기준 시간이 발주 시점 이전이면 전일까지, 이후면 당일까지의 발주 이력을 반영합니다.",
+    description: "기준 시간 기준으로 발주 이력 반영 범위를 결정합니다.",
+  },
+  // 발주 이력 - 주요 변동 품목
+  "ordering:top_change_items": {
+    assumption: "변동률 절대값을 기준으로 내림차순 정렬하며, 평균값은 발주 시점 이전이면 전일 기준 4주, 이후면 당일 포함 4주 데이터를 사용합니다.",
+    formula: "변동률 = (당일 발주량 - 4주 평균) ÷ 4주 평균 × 100 · 정렬 = |변동률| DESC",
+    description: "4주 평균 대비 변동률 절대값이 큰 순서로 노출되는 품목입니다.",
+  },
+  // 매출 현황
+  "analytics:sales_overview": {
+    description: "기간별 매출 흐름과 채널별 성과를 종합해 보여줍니다.",
+  },
+  // 손익 분석 - 공통 비교 기준
+  "sales:comparison_basis": {
+    assumption: "기준 일자의 전날을 비교 시점으로 삼으며, 일자/기간 조회 모두 전주(7일 전 동요일)와 전월(전월 동일 주차의 동요일) 기준을 제공합니다.",
+    formula:
+      "일자 전주 = 7일 전 동요일 · 일자 전월 = 전월 동일 주차 동요일 · 기간 전주 = 7일 전 동요일 구성 기간 · 기간 전월 = 전월 동일 주차 동요일 구성 기간",
+    description: "손익 분석 화면 전체에서 사용하는 비교 기준 정의입니다.",
+  },
+  // 손익 분석 - 객단가 지수 (단독 정의)
+  "sales:avg_ticket_index": {
+    assumption: "최근 4주간 동 지점 일별 객단가의 최소·최대 범위를 0~100으로 환산합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
+    formula:
+      "객단가 = 매출 ÷ 주문건수 · 객단가 지수 = (당일 객단가 - 4주 최소) ÷ (4주 최대 - 4주 최소) × 100",
+    description: "최근 4주 객단가 분포에서 현재 객단가의 상대 위치를 0~100으로 표시합니다.",
+  },
   // 생산 현황 테이블
   "production:forecast_1h": {
     assumption: "현재 시간대 판매 속도가 이후 1시간 동안 유지된다고 가정합니다.",
@@ -82,6 +161,48 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "sales:opportunity_store_benchmark": {
     description: "동일 클러스터 매장과의 매출 및 운영 지표를 비교합니다.",
     assumption: "클러스터는 상권 유형·규모·영업시간 유사도 기준으로 분류됩니다.",
+  },
+  // 손익분석 차트
+  "sales:weekly_revenue_trend": {
+    assumption: "조회 기간 내 일별 총 매출과 순매출(할인·수수료 차감 후)을 표시합니다.",
+    formula: "순매출 = 총 매출 - 채널 수수료 - 할인 금액",
+    description: "기간별 매출과 순매출의 흐름을 비교합니다.",
+  },
+  "sales:weekly_revenue_composition": {
+    assumption: "총 매출을 순매출과 차감비용으로 분리하여 구성비를 표시합니다.",
+    formula: "차감비용 = 총 매출 - 순매출 (채널 수수료 + 할인 합계)",
+    description: "일별 매출 구성에서 실수익(순매출)과 비용 차감 비중을 보여줍니다.",
+  },
+  "sales:today_profit_composition": {
+    assumption: "마진율은 최근 4주간 매출이 발생한 제품의 제품별 마진율 평균을 적용합니다.",
+    formula:
+      "마진율 = Avg((판매가 - 원가) / 판매가) · 추정 이익 = 오늘 매출 × 마진율 · 비용 추정 = 오늘 매출 - 추정 이익",
+    description: "오늘 매출에서 추정 이익과 비용이 차지하는 비율입니다.",
+  },
+  "sales:top_products": {
+    assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품을 집계합니다.",
+    description: "판매 금액 순으로 상위 6개 상품의 매출을 비교합니다.",
+  },
+  "sales:core_indicators": {
+    assumption:
+      "각 지표를 0~100으로 정규화합니다. 객단가 지수는 8,000원 기준, 메뉴 다양성은 품목 수 × 17 상한 100입니다.",
+    formula:
+      "마진율 점수 = avg_margin_rate × 100 · 객단가 지수 = (평균 순이익/건) ÷ 8,000 × 100 · 메뉴 다양성 = 품목 수 × 17",
+    description: "마진율·순매출 비율·수익성·메뉴 다양성·객단가 5개 지표를 방사형으로 비교합니다.",
+  },
+  "sales:product_revenue_share": {
+    assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",
+    description: "전체 매출 대비 상품별 매출 비중을 면적으로 시각화합니다.",
+  },
+  "sales:weekly_net_revenue": {
+    assumption: "조회 기간 내 전체 일자의 순매출 합산이며, 할인·수수료 차감 후 기준입니다.",
+    formula: "주간 누적 순매출 = Σ 일별 순매출",
+    description: "기간 내 누적 순매출 합계와 일 평균 순매출입니다.",
+  },
+  "sales:weekly_total_revenue": {
+    assumption: "할인 차감 전 총 매출 기준이며, 실제 DB에 기록된 원 매출입니다.",
+    formula: "주간 총 매출 = Σ 일별 총 매출 (할인 차감 전)",
+    description: "기간 내 할인 적용 전 원 매출 합계입니다.",
   },
   // 대시보드 카드
   "dashboard:production_summary": {
