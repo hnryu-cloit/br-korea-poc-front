@@ -7,17 +7,19 @@ import type {
   DashboardSalesTrendPoint,
 } from "@/features/dashboard/types/dashboard";
 
-export interface SummaryCardProps {
-  icon: ReactNode;
+export interface SummaryCardSectionProps {
   title: string;
-  pathname: string;
-  recommendedQuestions: string[];
+  captionKey?: string;
+  action?: ReactNode;
   children: ReactNode;
 }
 
-export interface SummaryCardSectionProps {
+export interface SummaryCardProps {
+  icon: ReactNode;
   title: string;
-  action?: ReactNode;
+  captionKey?: string;
+  pathname: string;
+  recommendedQuestions: string[];
   children: ReactNode;
 }
 

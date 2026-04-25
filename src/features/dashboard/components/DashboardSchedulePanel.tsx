@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { DashboardScheduleCalendar } from "@/features/dashboard/components/DashboardScheduleCalendar";
 import { DashboardScheduleContent } from "@/features/dashboard/components/DashboardScheduleContent";
@@ -10,30 +10,37 @@ import { getEventSummary } from "@/features/dashboard/utils/schedule-panel";
 export function DashboardSchedulePanel({
   storeId,
   events,
+  scheduleEvents,
   todos,
+  selectedDate,
   isLoading,
 }: {
   storeId?: string;
   events: ScheduleEvent[];
+  scheduleEvents?: ScheduleEvent[];
   todos: ScheduleTodoItem[];
+  selectedDate?: Date;
   updatedAt?: string;
   isLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("pending");
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, selectedDate, todos);
+  const [currentDate, setCurrentDate] = useState<Date>(selectedDate ?? new Date());
+  useEffect(() => {
+    setCurrentDate(selectedDate ?? new Date());
+  }, [selectedDate]);
+  const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, currentDate, todos);
   const incompleteTodos = resolvedTodos.filter((todo) => !todo.done);
   const completedTodos = resolvedTodos.filter((todo) => todo.done);
-  const eventSummary = getEventSummary(events, selectedDate);
+  const eventSummary = getEventSummary(scheduleEvents ?? events, currentDate);
 
   return (
     <section className="flex h-[430px] min-h-[430px] max-h-[430px] flex-col gap-[8px] overflow-hidden bg-white p-[24px_48px]">
       <span className="text-lg text-brown-700 font-bold">나의 할 일</span>
       <div className="grid min-h-0 flex-1 items-stretch gap-6 lg:grid-cols-3">
         <DashboardScheduleCalendar
-          selectedDate={selectedDate}
+          selectedDate={currentDate}
           events={events}
-          onChangeDate={setSelectedDate}
+          onChangeDate={setCurrentDate}
         />
         <DashboardScheduleContent
           activeTab={activeTab}

@@ -14,7 +14,7 @@ export function QualityPanelV3() {
       </div>
 
       <div className="g3" style={{ marginBottom: 12 }}>
-        <div className="metric" style={{ background: "var(--bg)", borderColor: "var(--border2)" }}>
+        <div className="metric" style={{ background: "#fff", borderColor: "var(--border2)" }}>
           <div
             style={{
               display: "flex",
@@ -54,7 +54,7 @@ export function QualityPanelV3() {
           </div>
         </div>
 
-        <div className="metric" style={{ background: "var(--bg)", borderColor: "var(--border2)" }}>
+        <div className="metric" style={{ background: "#fff", borderColor: "var(--border2)" }}>
           <div
             style={{
               display: "flex",
@@ -94,7 +94,7 @@ export function QualityPanelV3() {
           </div>
         </div>
 
-        <div className="metric" style={{ background: "var(--bg)", borderColor: "#FFCECE" }}>
+        <div className="metric" style={{ background: "#fff", borderColor: "#FFCECE" }}>
           <div
             style={{
               display: "flex",

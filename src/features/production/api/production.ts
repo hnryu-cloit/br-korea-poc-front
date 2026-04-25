@@ -1,6 +1,8 @@
 import axiosInstance from "@/services/axiosInstance";
 
 import type {
+  FifoLotSummaryResponse,
+  FifoLotType,
   InventoryStatusResponse,
   ProductionOverviewResponse,
   ProductionRegistrationPayload,
@@ -51,5 +53,22 @@ export const getProductionInventoryStatus = async (storeId: string, page = 1, pa
     "/api/production/inventory-status",
     { params: { store_id: storeId, page, page_size: pageSize } },
   );
+  return response.data;
+};
+
+export const getFifoLotSummary = async (
+  storeId: string,
+  lotType?: FifoLotType,
+  page = 1,
+  pageSize = 20,
+) => {
+  const response = await axiosInstance.get<FifoLotSummaryResponse>("/api/production/fifo-lots", {
+    params: {
+      store_id: storeId,
+      ...(lotType ? { lot_type: lotType } : {}),
+      page,
+      page_size: pageSize,
+    },
+  });
   return response.data;
 };

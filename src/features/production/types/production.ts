@@ -181,3 +181,35 @@ export interface InventoryStatusResponse {
     total_pages: number;
   };
 }
+
+export interface FifoLotItem {
+  item_nm: string;
+  lot_type: "production" | "delivery";
+  shelf_life_days: number | null;
+  last_lot_date: string | null;
+  total_initial_qty: number;
+  total_consumed_qty: number;
+  total_wasted_qty: number;
+  active_remaining_qty: number;
+  active_lot_count: number;
+  sold_out_lot_count: number;
+  expired_lot_count: number;
+}
+
+export interface FifoLotSummaryResponse {
+  items: FifoLotItem[];
+  summary: {
+    total_items: number;
+    items_with_waste: number;
+    total_wasted_qty: number;
+    total_active_qty: number;
+  };
+  pagination: {
+    page: number;
+    page_size: number;
+    total_items: number;
+    total_pages: number;
+  };
+}
+
+export type FifoLotType = "production" | "delivery" | undefined;

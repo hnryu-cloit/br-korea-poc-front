@@ -29,7 +29,7 @@ export function AuditPanelV3() {
       </div>
 
       <div className="g4" style={{ marginBottom: 12 }}>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">오늘 총 질의</div>
           <div className="mv">
             663<span>건</span>
@@ -38,7 +38,7 @@ export function AuditPanelV3() {
             <span className="b bb">▲ 12%</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">허용</div>
           <div className="mv">
             {allowedCount}
@@ -48,7 +48,7 @@ export function AuditPanelV3() {
             <span className="b bg">96.2%</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">차단</div>
           <div className="mv">
             {blockedCount}
@@ -58,7 +58,7 @@ export function AuditPanelV3() {
             <span className="b br">3.8%</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric !bg-white">
           <div className="ml">평균 응답시간</div>
           <div className="mv">
             1.7<span>초</span>

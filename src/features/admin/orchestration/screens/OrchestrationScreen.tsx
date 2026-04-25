@@ -1,5 +1,7 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
+import bizLogo from "@/assets/biz_logo.png";
+import dunkinLogo from "@/assets/dunkin_logo.png";
 import { PATH_PANEL_MAP } from "@/features/admin/orchestration/constants/orchestration";
 import { AgentsPanel } from "@/features/admin/orchestration/components/AgentsPanel";
 import { AuditPanelV3 } from "@/features/admin/orchestration/components/AuditPanelV3";
@@ -68,13 +70,11 @@ export function OrchestrationScreen() {
     <div className="settings-v3 h-full">
       <div className="settings-v3-shell">
         <header className="settings-v3-hdr">
-          <span className="settings-v3-logo-dot">
-            <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
-              <polygon fill="currentColor" points="6,0 12,3 12,9 6,12 0,9 0,3" />
-            </svg>
-          </span>
-          <span className="text-[12px] font-bold text-[#1c1008]">Biz</span>
-          <span className="settings-v3-brand">DUNKIN'</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src={bizLogo} alt="BR Korea" className="h-4.5" />
+            <div className="h-[16px] w-[2px] bg-[#DADADA]" />
+            <img src={dunkinLogo} alt="Dunkin" className="h-4" />
+          </Link>
           <span className="settings-v3-divider" />
           <span className="settings-v3-page">시스템 설정</span>
           <div className="settings-v3-right">

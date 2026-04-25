@@ -1,3 +1,5 @@
+import arrow_down from "@/assets/arrow_red.svg";
+import ProductDefaultImage from "@/assets/default_product_img.svg";
 import { Pagination } from "@/commons/components/page/Pagination";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
@@ -5,8 +7,6 @@ import type {
   ProductionSkuItem,
   ProductionSkuListResponse,
 } from "@/features/production/types/production";
-import ProductDefaultImage from "@/assets/default_product_img.svg";
-import arrow_down from "@/assets/arrow_red.svg";
 
 const TABLE_HEADS = [
   "품목명",

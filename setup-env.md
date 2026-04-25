@@ -164,6 +164,12 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - 주문관리 응답(`GET /api/ordering/options`) item note에 마감/도착/유통기한 정보가 추가될 수 있습니다.
   - 발주이력 응답(`GET /api/ordering/history`) explainability 근거에 신규 데이터 소스가 포함됩니다.
 
+## Session Note (2026-04-24, 이월재고 FIFO/기동 의존성)
+
+- 생산 진단 화면은 `GET /api/production/fifo-lots`를 호출해 이월재고 FIFO 요약(완제품/납품 탭)을 표시합니다.
+- Docker Compose 실행 시 `backend`는 `load` 완료 이후 기동되므로, `load`가 실행 중이면 `localhost:6002`가 연결 거부될 수 있습니다.
+- 이 경우 프론트 콘솔의 `ERR_CONNECTION_REFUSED`는 코드 오류가 아니라 기동 순서 이슈일 가능성이 높습니다.
+
 ## Session Note (2026-04-23, settings v3 shell alignment)
 
 - `/settings` 화면의 셸(UI 프레임)을 제공 기준 HTML(`설정 v3 – Biz Dunkin' 관리자`) 구조에 맞춰 정렬했습니다.
@@ -238,3 +244,40 @@ npm run dev -- --host 0.0.0.0 --port 6003
   - 기본 기준일시: `2026-03-05 09:00 (KST)`
   - UI에서 기준 일자/시간 변경 후 동일 질문 재실행으로 데이터 검증을 수행합니다.
 - `golden-queries-new-02.csv`는 파생 질문 포함 112건으로 확장되었습니다.
+
+## Session Note (2026-04-25, settings logo alignment)
+
+- `/settings` 상단 로고를 점주 유입 헤더와 동일 자산(`biz_logo.png`, `dunkin_logo.png`)으로 통일했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+- 로컬 확인 경로: `http://localhost:6003/settings`
+
+## Session Note (2026-04-25, production table JSX tag fix)
+
+- `src/features/production/components/ProductionTableSection.tsx`의 JSX 닫는 태그 불일치를 수정해 dev 서버 파싱 오류를 해소했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, dashboard alert summary prop type fix)
+
+- `DashboardScreen`의 `DashboardAlertSummary` prop 타입 불일치를 정리했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings logo click navigation)
+
+- `/settings` 상단 로고 클릭 시 역할 선택 페이지(`/`)로 이동합니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings typography size alignment)
+
+- `/settings` 화면의 전반적인 글자/헤더 사이즈를 점주 화면 기준에 맞게 상향 조정했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings sidebar design-system alignment)
+
+- `/settings` 사이드바 텍스트/버튼 토큰을 점주 공통 사이드바 기준으로 정렬했습니다.
+- 레이아웃 구조 변경 없이 스타일 토큰만 조정했습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-25, settings sidebar design-system alignment rollback)
+
+- `/settings` 사이드바 토큰 정렬 스타일 변경을 직전 상태로 되돌렸습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.

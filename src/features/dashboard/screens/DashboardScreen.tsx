@@ -1,3 +1,4 @@
+import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
 import { DashboardSchedulePanel } from "@/features/dashboard/components/DashboardSchedulePanel";
 import { SummaryCardsSection } from "@/features/dashboard/components/SummaryCardsSection";
@@ -10,11 +11,12 @@ import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import dayjs from "dayjs";
 
 export function DashboardScreen() {
-  const { user } = useDemoSession();
-  const now = dayjs(new Date()).format("YYYY-MM-DD");
+  const { user, referenceDateTime } = useDemoSession();
+  const businessDate = dayjs(referenceDateTime).format("YYYY-MM-DD");
+  const selectedDate = dayjs(referenceDateTime).toDate();
   const params = {
     store_id: user.storeId,
-    business_date: now,
+    business_date: businessDate,
   };
   const {
     data: noticesData,
@@ -34,12 +36,15 @@ export function DashboardScreen() {
       <DashboardSchedulePanel
         storeId={user.storeId}
         events={scheduleData?.calendar_events ?? []}
+        scheduleEvents={scheduleData?.daily_events ?? []}
         todos={scheduleData?.todos ?? []}
+        selectedDate={selectedDate}
         isLoading={scheduleLoading && !scheduleData}
       />
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <span className="text-2xl text-brown-700 font-bold">운영 현황</span>
+          <span className="text-sm text-slate-500">{PAGE_CAPTIONS["dashboard"].subtitle}</span>
           <span className="text-md text-[#716862]">
             업데이트 시간:{" "}
             {summaryCardsData?.updated_at

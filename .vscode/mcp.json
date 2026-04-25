@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "my-mcp-server-33c097de": {
+      "url": "http://127.0.0.1:3845/mcp",
+      "type": "http"
+    },
+    "my-mcp-server-a58f0049": {
+      "url": "http://127.0.0.1:3845/mcp",
+      "type": "http"
+    }
+  },
+  "inputs": []
+}
