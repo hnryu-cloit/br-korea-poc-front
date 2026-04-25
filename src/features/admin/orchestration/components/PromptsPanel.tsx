@@ -98,7 +98,7 @@ export function PromptsPanel({
       <div className="psubtab active">
         <div className="g2" style={{ marginBottom: 10 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div className="pc">
+            <div className="pc h-50 flex flex-col">
               <div className="pc-hdr">
                 <span className="b bg" style={{ fontSize: 10 }}>
                   대화
@@ -114,8 +114,7 @@ export function PromptsPanel({
                 </button>
               </div>
               <textarea
-                className="si"
-                style={{ minHeight: 100, resize: "vertical" }}
+                className="si w-full h-30 min-h-30 resize-none"
                 value={activeForm.systemInstruction}
                 onChange={(e) => onFieldChange(activeAgent, "systemInstruction", e.target.value)}
               />
@@ -129,7 +128,7 @@ export function PromptsPanel({
               </div>
             </div>
 
-            <div className="pc">
+            <div className="pc h-50 flex flex-col">
               <div className="pc-hdr">
                 <span className="b bpu" style={{ fontSize: 10 }}>
                   시각화
@@ -137,8 +136,7 @@ export function PromptsPanel({
                 <span className="pc-type">데이터 시각화 프롬프트</span>
               </div>
               <textarea
-                className="si"
-                style={{ minHeight: 90, resize: "vertical" }}
+                className="si w-full h-30 min-h-30 resize-none"
                 value={activeForm.queryPrefixTemplate}
                 onChange={(e) => onFieldChange(activeAgent, "queryPrefixTemplate", e.target.value)}
               />
@@ -154,7 +152,7 @@ export function PromptsPanel({
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div className="pc">
+            <div className="pc h-50 flex flex-col">
               <div className="pc-hdr">
                 <span className="b bo" style={{ fontSize: 10 }}>
                   인사이트
@@ -162,8 +160,7 @@ export function PromptsPanel({
                 <span className="pc-type">인사이트 도출 프롬프트</span>
               </div>
               <textarea
-                className="si"
-                style={{ minHeight: 90, resize: "vertical" }}
+                className="si w-full h-30 min-h-30 resize-none"
                 value={activeForm.systemInstruction}
                 onChange={(e) => onFieldChange(activeAgent, "systemInstruction", e.target.value)}
               />
@@ -175,7 +172,7 @@ export function PromptsPanel({
               </div>
             </div>
 
-            <div className="pc">
+            <div className="pc h-50 flex flex-col">
               <div className="pc-hdr">
                 <span className="b bgy" style={{ fontSize: 10 }}>
                   빠른질문
@@ -183,8 +180,7 @@ export function PromptsPanel({
                 <span className="pc-type">빠른 질문 목록</span>
               </div>
               <textarea
-                className="si"
-                style={{ minHeight: 120, resize: "vertical" }}
+                className="si w-full h-30 min-h-30 resize-none"
                 value={activeForm.quickPromptsText}
                 onChange={(e) => onFieldChange(activeAgent, "quickPromptsText", e.target.value)}
               />
