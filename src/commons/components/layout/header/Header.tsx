@@ -1,4 +1,5 @@
 import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import bizLogo from "@/assets/biz_logo.png";
 import dunkinLogo from "@/assets/dunkin_logo.png";
@@ -26,11 +27,15 @@ export function Header({ onMenuToggle, notifications, unreadCount }: Props) {
           <Menu className="h-4 w-4" />
         </button>
 
-        <div className="flex items-center gap-2">
+        <Link
+          to="/"
+          aria-label="역할 선택 화면으로 이동"
+          className="flex items-center gap-2 transition-opacity hover:opacity-80"
+        >
           <img src={bizLogo} alt="BR Korea" className="h-4.5" />
           <div className="h-[16px] w-[2px] bg-[#DADADA]" />
           <img src={dunkinLogo} alt="Dunkin" className="h-4" />
-        </div>
+        </Link>
 
         <div className="flex items-center gap-3">
           <ReferenceDate />
