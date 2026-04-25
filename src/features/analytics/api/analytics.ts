@@ -10,6 +10,7 @@ import type {
   HQMarketInsightsResponse,
   MarketIntelligenceResponse,
   MarketInsightsResponse,
+  MarketScopeOptionsResponse,
   SalesTrendResponse,
   StoreProfileResponse,
 } from "@/features/analytics/types/analytics";
@@ -105,4 +106,11 @@ export async function getAnalyticsWeeklyReport(params?: GetMarketIntelligenceReq
   const matched = disposition?.match(/filename=\"?([^"]+)\"?/i);
   const filename = matched?.[1] ?? "weekly_market_report.pdf";
   return { blob: response.data, filename };
+}
+
+export async function getAnalyticsMarketScopeOptions() {
+  const response = await axiosInstance.get<MarketScopeOptionsResponse>(
+    "/api/analytics/market-scope-options",
+  );
+  return response.data;
 }

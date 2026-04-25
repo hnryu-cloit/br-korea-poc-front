@@ -375,3 +375,7 @@ export interface WeatherImpactResponse {
   date_to: string;
   items: WeatherImpactBySido[];
 }
+export interface MarketScopeOptionsResponse {
+  gu_options: string[];
+  dong_options_by_gu: Record<string, string[]>;
+}
