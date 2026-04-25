@@ -5,7 +5,6 @@ import type { AxiosError } from "axios";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getDashboardCardChatHistory } from "@/commons/utils/dashboard-card-chat-history";
 import { getExplainability } from "@/features/sales/api/sales";
-import { getDefaultSalesDateRange } from "@/features/sales/constants/sales-date-range";
 import {
   SALES_OPPORTUNITY_DEFAULT_TAB,
   isSalesOpportunityTabKey,
@@ -21,6 +20,7 @@ import type { SalesOpportunityTabKey } from "@/features/sales/types/sales-opport
 import type { SalesV2Message } from "@/features/sales/types/sales-v2";
 import { toSalesV2Comparison } from "@/features/sales/utils/sales-v2";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+import { getDateRange } from "@/commons/utils/getDateRange";
 
 type SalesRouteState = {
   source?: string;
@@ -31,15 +31,23 @@ type SalesRouteState = {
   chatHistoryId?: string;
 } | null;
 
+export type SalesDateComparisonMode = "daily" | "period";
+export type SalesAggregationMode = "weekly" | "monthly";
+
 export const useSalesScreenV2 = () => {
-  const { user } = useDemoSession();
+  const { user, referenceDateTime } = useDemoSession();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const routeState = location.state as SalesRouteState;
 
-  const defaultDateRange = useMemo(() => getDefaultSalesDateRange(), []);
-  const dateFrom = searchParams.get("date_from") ?? defaultDateRange.dateFrom;
-  const dateTo = searchParams.get("date_to") ?? defaultDateRange.dateTo;
+  const { from: dateFrom, to: dateTo } = useMemo(
+    () => getDateRange(referenceDateTime),
+    [referenceDateTime],
+  );
+  const [dateComparisonMode, setDateComparisonMode] = useState<SalesDateComparisonMode>("period");
+  const [aggregationMode, setAggregationMode] = useState<SalesAggregationMode>("weekly");
+  const [selectedDateFrom, setSelectedDateFrom] = useState(dateFrom);
+  const [selectedDateTo, setSelectedDateTo] = useState(dateTo);
 
   const fromDashboardSales =
     routeState?.source === "dashboard-card-chat" && routeState?.domain === "sales";
@@ -93,10 +101,10 @@ export const useSalesScreenV2 = () => {
   const sharedFilters = useMemo(
     () => ({
       store_id: user.storeId,
-      date_from: dateFrom,
-      date_to: dateTo,
+      date_from: selectedDateFrom,
+      date_to: selectedDateTo,
     }),
-    [dateFrom, dateTo, user.storeId],
+    [selectedDateFrom, selectedDateTo, user.storeId],
   );
 
   const promptsQuery = useGetSalesPromptsQuery(sharedFilters);
@@ -111,8 +119,8 @@ export const useSalesScreenV2 = () => {
     summary: summaryQuery.data,
     insights: insightsQuery.data,
     campaignEffect: campaignEffectQuery.data,
-    dateFrom,
-    dateTo,
+    dateFrom: selectedDateFrom,
+    dateTo: selectedDateTo,
     prompts: promptsQuery.data,
   });
 
@@ -155,6 +163,7 @@ export const useSalesScreenV2 = () => {
   const insightSections = useMemo<SalesInsightSection[]>(() => {
     const data = insightsQuery.data;
     if (!data) return [];
+
     return [
       data.peak_hours,
       data.channel_mix,
@@ -203,6 +212,17 @@ export const useSalesScreenV2 = () => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (dateComparisonMode === "daily") {
+      setSelectedDateFrom(dateTo);
+      setSelectedDateTo(dateTo);
+      return;
+    }
+
+    setSelectedDateFrom(dateFrom);
+    setSelectedDateTo(dateTo);
+  }, [dateComparisonMode, dateFrom, dateTo]);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -287,31 +307,52 @@ export const useSalesScreenV2 = () => {
 
   const handleChangeDateFrom = useCallback(
     (value: string) => {
-      const nextSearchParams = new URLSearchParams(searchParams);
-      nextSearchParams.set("date_from", value);
-      if (dateTo < value) {
-        nextSearchParams.set("date_to", value);
+      setSelectedDateFrom(value);
+      if (dateComparisonMode === "daily") {
+        setSelectedDateTo(value);
+        return;
       }
-      setSearchParams(nextSearchParams, { replace: true });
+
+      if (selectedDateTo < value) {
+        setSelectedDateTo(value);
+      }
     },
-    [dateTo, searchParams, setSearchParams],
+    [dateComparisonMode, selectedDateTo],
   );
 
   const handleChangeDateTo = useCallback(
     (value: string) => {
-      const nextSearchParams = new URLSearchParams(searchParams);
-      nextSearchParams.set("date_to", value);
-      if (dateFrom > value) {
-        nextSearchParams.set("date_from", value);
+      setSelectedDateTo(value);
+      if (selectedDateFrom > value) {
+        setSelectedDateFrom(value);
       }
-      setSearchParams(nextSearchParams, { replace: true });
     },
-    [dateFrom, searchParams, setSearchParams],
+    [selectedDateFrom],
   );
 
+  const handleChangeDateComparisonMode = useCallback(
+    (value: SalesDateComparisonMode) => {
+      setDateComparisonMode(value);
+      if (value === "daily") {
+        setSelectedDateTo(selectedDateFrom);
+      } else {
+        const defaultRange = getDateRange(referenceDateTime);
+        setSelectedDateFrom(defaultRange.from);
+        setSelectedDateTo(defaultRange.to);
+      }
+    },
+    [referenceDateTime, selectedDateFrom],
+  );
+
+  const handleChangeAggregationMode = useCallback((value: SalesAggregationMode) => {
+    setAggregationMode(value);
+  }, []);
+
   return {
-    dateFrom,
-    dateTo,
+    dateFrom: selectedDateFrom,
+    dateTo: selectedDateTo,
+    dateComparisonMode,
+    aggregationMode,
     input,
     messages,
     bottomRef,
@@ -331,6 +372,8 @@ export const useSalesScreenV2 = () => {
     sendMessage,
     handleChangeDateFrom,
     handleChangeDateTo,
+    handleChangeDateComparisonMode,
+    handleChangeAggregationMode,
     handleChangeOpportunityTab,
   };
 };

@@ -1,4 +1,5 @@
 import type { SalesInsightSection } from "@/features/sales/types/sales";
+import ai_pencil from "@/assets/ai-pencil.svg";
 
 export const SalesV2InsightsSection = ({
   sections,
@@ -11,46 +12,35 @@ export const SalesV2InsightsSection = ({
     {sections.map((section) => (
       <article
         key={section.title}
-        className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]"
+        className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)] flex flex-col gap-4"
       >
-        <div className="flex flex-col items-start justify-between gap-3">
-          <div className="flex w-full items-center justify-between">
-            <p className="text-sm font-bold text-slate-800">{section.title}</p>
-            <span
-              className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${section.status === "active" ? "bg-[#eef4ff] text-[#2454C8]" : "bg-slate-100 text-slate-500"}`}
-            >
-              {section.status === "active" ? "실데이터" : "점검"}
-            </span>
-          </div>
-          <p className="text-xs leading-5 text-slate-400">{section.summary}</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-md font-bold text-brown-700">{section.title}</p>
+          <p className="text-sm leading-5 text-[#653819]">{section.summary}</p>
         </div>
 
-        <div className="mt-4 space-y-2">
+        <div className="flex flex-col gap-1">
           {section.metrics.map((metric) => (
             <div
               key={`${section.title}-${metric.label}`}
-              className="rounded-2xl bg-[#f8fbff] px-4 py-3"
+              className="rounded-[8px] bg-[#DADADA66] px-3 py-2 flex flex-col gap-1"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[11px] font-semibold text-slate-400">{metric.label}</p>
-                <p className="text-sm font-bold text-slate-800">{metric.value}</p>
+                <p className="text-sm font-semibold text-[#653819]">{metric.label}</p>
+                <p className="text-sm font-bold text-orange-500">{metric.value}</p>
               </div>
-              {metric.detail ? (
-                <p className="mt-1 text-[11px] text-slate-500">{metric.detail}</p>
-              ) : null}
+              {metric.detail ? <p className="text-xs text-[#653819]">{metric.detail}</p> : null}
             </div>
           ))}
         </div>
 
-        <div className="mt-4 space-y-1.5">
+        <div className="flex flex-col gap-2">
           {section.actions.slice(0, 2).map((action) => (
             <div
               key={action}
-              className="flex items-center gap-2 rounded-xl bg-[#EDF3FF] px-3 py-2 text-xs font-medium text-[#2454C8]"
+              className="flex items-center gap-2 border border-[#FFB38F] rounded-xl bg-[#FFD9C71A] px-3 py-2 text-sm font-medium text-[#41352E]"
             >
-              <span className="material-symbols-outlined mt-0.5 shrink-0 text-[14px]">
-                task_alt
-              </span>
+              <img src={ai_pencil} className="w-4 h-4" />
               {action}
             </div>
           ))}

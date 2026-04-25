@@ -22,7 +22,7 @@ import {
 
 import type { SalesSummaryResponse } from "@/features/sales/types/sales";
 
-const PALETTE = ["#2d6bff", "#60a5fa", "#34d399", "#f97316", "#a78bfa", "#f43f5e"];
+const PALETTE = ["#FFAF89", "#8EC5FF", "#76CA9B", "#ED8CC2", "#F5CD47", "#A898F9"];
 const PROFIT_PALETTE = ["#2d6bff", "#e2eaff"];
 
 const fmtWon = (v: number) =>
@@ -40,9 +40,9 @@ const ChartCard = ({ title, subtitle, className = "", children }: ChartCardProps
   <article
     className={`rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${className}`}
   >
-    <div className="mb-4">
+    <div className="mb-4 flex items-center gap-2">
       <p className="text-sm font-bold text-slate-800">{title}</p>
-      {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
     </div>
     {children}
   </article>
@@ -241,8 +241,8 @@ export const SalesV2ChartsSection = ({
                 contentStyle={CustomTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="순매출" stackId="s" fill="#2d6bff" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="차감비용" stackId="s" fill="#bfd5ff" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="순매출" stackId="s" fill="#8EC5FF" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="차감비용" stackId="s" fill="#ED8CC2" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

@@ -1,15 +1,15 @@
-import { PageHero } from "@/commons/components/page/page-layout";
-import { SalesV2ChartsSection } from "@/features/sales/components/SalesV2ChartsSection";
 import { SalesDateRangeFilter } from "@/features/sales/components/SalesDateRangeFilter";
+import { SalesV2ChartsSection } from "@/features/sales/components/SalesV2ChartsSection";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
 import { SalesV2OpportunitySection } from "@/features/sales/components/SalesV2OpportunitySection";
-import { SALES_V2_QUERY_TYPE_LABEL } from "@/features/sales/constants/sales-v2";
 import { useSalesScreenV2 } from "@/features/sales/hooks/useSalesScreenV2";
 
 export const SalesScreenV2 = () => {
   const {
     dateFrom,
     dateTo,
+    dateComparisonMode,
+    aggregationMode,
     opportunity,
     opportunityTab,
     insightSections,
@@ -20,37 +20,25 @@ export const SalesScreenV2 = () => {
     summaryLoading,
     handleChangeDateFrom,
     handleChangeDateTo,
+    handleChangeDateComparisonMode,
+    handleChangeAggregationMode,
     handleChangeOpportunityTab,
   } = useSalesScreenV2();
 
   return (
     <div className="space-y-6">
-      <PageHero
-        title="지표 분석"
-        description={
-          latestAssistantMessage?.queryType
-            ? `최근 ${SALES_V2_QUERY_TYPE_LABEL[latestAssistantMessage.queryType] ?? latestAssistantMessage.queryType} 응답까지 반영해 보여드려요.`
-            : "궁금한 것을 물어보시면 분석해 드려요."
-        }
-      />
-      {/* <StatsGrid stats={salesStats} /> */}
+      <h2 className="text-[#41352E] text-[24px] font-bold">손익 분석</h2>
+
       <SalesDateRangeFilter
         dateFrom={dateFrom}
         dateTo={dateTo}
+        dateComparisonMode={dateComparisonMode}
+        aggregationMode={aggregationMode}
         onChangeDateFrom={handleChangeDateFrom}
         onChangeDateTo={handleChangeDateTo}
+        onChangeDateComparisonMode={handleChangeDateComparisonMode}
+        onChangeAggregationMode={handleChangeAggregationMode}
       />
-
-      {salesErrorMessages.length > 0 ? (
-        <section className="rounded-[22px] border border-red-200 bg-red-50 px-5 py-4 text-sm">
-          <p className="font-semibold text-red-700">실데이터를 불러오지 못했습니다.</p>
-          <div className="mt-1 space-y-1 text-red-600">
-            {salesErrorMessages.map((message) => (
-              <p key={message}>{message}</p>
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       <SalesV2InsightsSection sections={insightSections} isLoading={insightsLoading} />
 
