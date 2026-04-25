@@ -17,7 +17,8 @@ export function resolveRouteContext(pathname: string): {
   sessionKey: string;
   domain: FloatingChatDomain;
 } {
-  if (pathname.startsWith("/production")) return { sessionKey: "/production", domain: "production" };
+  if (pathname.startsWith("/production"))
+    return { sessionKey: "/production", domain: "production" };
   if (pathname.startsWith("/ordering")) return { sessionKey: "/ordering", domain: "ordering" };
   return { sessionKey: pathname.startsWith("/sales") ? "/sales" : pathname, domain: "sales" };
 }

@@ -231,7 +231,11 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 2. Stacked Bar Chart: 주간 매출 구성 */}
-      <ChartCard title="주간 매출 구성" subtitle="순매출 + 차감비용 (누적 막대)" captionKey="sales:weekly_revenue_composition">
+      <ChartCard
+        title="주간 매출 구성"
+        subtitle="순매출 + 차감비용 (누적 막대)"
+        captionKey="sales:weekly_revenue_composition"
+      >
         {isLoading ? (
           <LoadingPlaceholder />
         ) : stackedWeekly.length === 0 ? (
@@ -258,7 +262,11 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 3. Pie Chart: 수익 구성 */}
-      <ChartCard title="오늘 수익 구성" subtitle="추정 이익 vs 비용 비율" captionKey="sales:today_profit_composition">
+      <ChartCard
+        title="오늘 수익 구성"
+        subtitle="추정 이익 vs 비용 비율"
+        captionKey="sales:today_profit_composition"
+      >
         {isLoading ? (
           <LoadingPlaceholder />
         ) : profitPie.length === 0 ? (
@@ -313,7 +321,11 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 4. Horizontal Bar Chart: 상위 상품 매출 */}
-      <ChartCard title="상위 상품 매출 Top 6" subtitle="최근 집계 기준 판매 금액 순" captionKey="sales:top_products">
+      <ChartCard
+        title="상위 상품 매출 Top 6"
+        subtitle="최근 집계 기준 판매 금액 순"
+        captionKey="sales:top_products"
+      >
         {isLoading ? (
           <LoadingPlaceholder />
         ) : productBar.length === 0 ? (
@@ -352,7 +364,11 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 5. Radar Chart: 핵심 지표 현황 */}
-      <ChartCard title="핵심 지표 현황" subtitle="주요 경영 지표 다차원 비교 (0–100 정규화)" captionKey="sales:core_indicators">
+      <ChartCard
+        title="핵심 지표 현황"
+        subtitle="주요 경영 지표 다차원 비교 (0–100 정규화)"
+        captionKey="sales:core_indicators"
+      >
         {isLoading ? (
           <LoadingPlaceholder />
         ) : (
