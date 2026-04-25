@@ -75,18 +75,22 @@ type CustomTreemapContentProps = {
   height?: number;
   name?: string;
   fill?: string;
+  percent?: number;
 };
 
 const CustomTreemapContent = (props: CustomTreemapContentProps) => {
-  const { x = 0, y = 0, width = 0, height = 0, name = "", fill } = props;
+  const { x = 0, y = 0, width = 0, height = 0, name = "", fill, percent } = props;
   if (width < 30 || height < 20) return null;
+  const showLabel = width > 60 && height > 30;
+  const showPercent = typeof percent === "number" && width > 50 && height > 44;
+  const labelY = showPercent ? y + height / 2 - 8 : y + height / 2;
   return (
     <g>
       <rect x={x} y={y} width={width} height={height} fill={fill} rx={6} ry={6} />
-      {width > 60 && height > 30 && (
+      {showLabel && (
         <text
           x={x + width / 2}
-          y={y + height / 2}
+          y={labelY}
           textAnchor="middle"
           dominantBaseline="middle"
           fill="#fff"
@@ -94,6 +98,20 @@ const CustomTreemapContent = (props: CustomTreemapContentProps) => {
           fontWeight={600}
         >
           {name.length > 8 ? name.slice(0, 8) + "…" : name}
+        </text>
+      )}
+      {showPercent && (
+        <text
+          x={x + width / 2}
+          y={y + height / 2 + 8}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight={700}
+          opacity={0.9}
+        >
+          {`${percent!.toFixed(1)}%`}
         </text>
       )}
     </g>
@@ -162,10 +180,12 @@ export const SalesV2ChartsSection = ({
   ];
 
   // Treemap: 상품 비중
+  const treemapTotalSales = topProducts.reduce((sum, item) => sum + (item.sales ?? 0), 0);
   const treemapData = topProducts.map((item, i) => ({
     name: item.name,
     size: item.sales,
     fill: PALETTE[i % PALETTE.length],
+    percent: treemapTotalSales > 0 ? ((item.sales ?? 0) / treemapTotalSales) * 100 : 0,
   }));
 
   return (
@@ -430,6 +450,9 @@ export const SalesV2ChartsSection = ({
                   <span className="text-xs text-slate-600">{item.name}</span>
                   <span className="text-xs font-semibold text-slate-800">
                     {fmtWon(item.size)}원
+                  </span>
+                  <span className="text-xs font-semibold text-[#2454C8]">
+                    {item.percent.toFixed(1)}%
                   </span>
                 </div>
               ))}
