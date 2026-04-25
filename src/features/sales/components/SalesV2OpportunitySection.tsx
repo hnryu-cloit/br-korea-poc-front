@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { SalesV2OpportunityTabs } from "@/features/sales/components/SalesV2OpportunityTabs";
 import type {
   SalesOpportunityMock,
@@ -34,7 +36,14 @@ const MarketingRoiCard = ({ data }: { data: SalesOpportunityMock }) => {
     <article className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-800">마케팅 성과 및 ROI 분석</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-bold text-slate-800">마케팅 성과 및 ROI 분석</p>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:opportunity_marketing_roi"]}
+              side="top"
+              align="left"
+            />
+          </div>
           <p className="mt-1 text-xs text-slate-400">{data.marketingRoi.campaignName}</p>
         </div>
         <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 text-[10px] font-bold text-[#2454C8]">
@@ -103,7 +112,14 @@ const ChannelPaymentCard = ({ data }: { data: SalesOpportunityMock }) => {
     <article className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-800">채널 및 결제 수단 최적화</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-bold text-slate-800">채널 및 결제 수단 최적화</p>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:opportunity_channel_payment"]}
+              side="top"
+              align="left"
+            />
+          </div>
           <p className="mt-1 text-xs text-slate-400">채널/결제 수단별 수익성 진단</p>
         </div>
         <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 text-[10px] font-bold text-[#2454C8]">
@@ -157,7 +173,14 @@ const PromotionEfficiencyCard = ({ data }: { data: SalesOpportunityMock }) => {
     <article className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-800">프로모션/제휴 할인 효율 분석</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-bold text-slate-800">프로모션/제휴 할인 효율 분석</p>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:opportunity_promotion_efficiency"]}
+              side="top"
+              align="left"
+            />
+          </div>
           <p className="mt-1 text-xs text-slate-400">{data.promotionEfficiency.partnerName}</p>
         </div>
         <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 text-[10px] font-bold text-[#2454C8]">
@@ -210,7 +233,14 @@ const StoreBenchmarkCard = ({ data }: { data: SalesOpportunityMock }) => {
     <article className="rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-slate-800">매장 간 벤치마킹 분석</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-bold text-slate-800">매장 간 벤치마킹 분석</p>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:opportunity_store_benchmark"]}
+              side="top"
+              align="left"
+            />
+          </div>
           <p className="mt-1 text-xs text-slate-400">
             {data.benchmark.clusterName} ({data.benchmark.clusterSize}개 매장)
           </p>

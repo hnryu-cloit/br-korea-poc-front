@@ -20,6 +20,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { SalesSummaryResponse } from "@/features/sales/types/sales";
 
 const PALETTE = ["#FFAF89", "#8EC5FF", "#76CA9B", "#ED8CC2", "#F5CD47", "#A898F9"];
@@ -32,16 +34,20 @@ const fmtPct = (v: number) => `${v.toFixed(1)}%`;
 type ChartCardProps = {
   title: string;
   subtitle?: string;
+  captionKey?: string;
   className?: string;
   children: React.ReactNode;
 };
 
-const ChartCard = ({ title, subtitle, className = "", children }: ChartCardProps) => (
+const ChartCard = ({ title, subtitle, captionKey, className = "", children }: ChartCardProps) => (
   <article
     className={`rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${className}`}
   >
     <div className="mb-4 flex items-center gap-2">
       <p className="text-sm font-bold text-slate-800">{title}</p>
+      {captionKey && FIELD_CAPTIONS[captionKey] && (
+        <InfoPopover caption={FIELD_CAPTIONS[captionKey]} side="bottom" align="left" />
+      )}
       {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
     </div>
     {children}
@@ -60,6 +66,38 @@ const CustomTooltipStyle = {
   borderRadius: 12,
   border: "1px solid #e2e8f0",
   boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+};
+
+type CustomTreemapContentProps = {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  name?: string;
+  fill?: string;
+};
+
+const CustomTreemapContent = (props: CustomTreemapContentProps) => {
+  const { x = 0, y = 0, width = 0, height = 0, name = "", fill } = props;
+  if (width < 30 || height < 20) return null;
+  return (
+    <g>
+      <rect x={x} y={y} width={width} height={height} fill={fill} rx={6} ry={6} />
+      {width > 60 && height > 30 && (
+        <text
+          x={x + width / 2}
+          y={y + height / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="#fff"
+          fontSize={11}
+          fontWeight={600}
+        >
+          {name.length > 8 ? name.slice(0, 8) + "…" : name}
+        </text>
+      )}
+    </g>
+  );
 };
 
 export const SalesV2ChartsSection = ({
@@ -130,42 +168,13 @@ export const SalesV2ChartsSection = ({
     fill: PALETTE[i % PALETTE.length],
   }));
 
-  const CustomTreemapContent = (props: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    name?: string;
-    fill?: string;
-  }) => {
-    const { x = 0, y = 0, width = 0, height = 0, name = "", fill } = props;
-    if (width < 30 || height < 20) return null;
-    return (
-      <g>
-        <rect x={x} y={y} width={width} height={height} fill={fill} rx={6} ry={6} />
-        {width > 60 && height > 30 && (
-          <text
-            x={x + width / 2}
-            y={y + height / 2}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="#fff"
-            fontSize={11}
-            fontWeight={600}
-          >
-            {name.length > 8 ? name.slice(0, 8) + "…" : name}
-          </text>
-        )}
-      </g>
-    );
-  };
-
   return (
     <section className="grid gap-4 xl:grid-cols-2">
       {/* 1. Area Chart: 주간 매출 / 순매출 추이 (full width) */}
       <ChartCard
         title="주간 매출 / 순매출 추이"
         subtitle={`${dateFrom} ~ ${dateTo} 기간 기준`}
+        captionKey="sales:weekly_revenue_trend"
         className="xl:col-span-2"
       >
         {isLoading ? (
@@ -222,7 +231,7 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 2. Stacked Bar Chart: 주간 매출 구성 */}
-      <ChartCard title="주간 매출 구성" subtitle="순매출 + 차감비용 (누적 막대)">
+      <ChartCard title="주간 매출 구성" subtitle="순매출 + 차감비용 (누적 막대)" captionKey="sales:weekly_revenue_composition">
         {isLoading ? (
           <LoadingPlaceholder />
         ) : stackedWeekly.length === 0 ? (
@@ -249,7 +258,7 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 3. Pie Chart: 수익 구성 */}
-      <ChartCard title="오늘 수익 구성" subtitle="추정 이익 vs 비용 비율">
+      <ChartCard title="오늘 수익 구성" subtitle="추정 이익 vs 비용 비율" captionKey="sales:today_profit_composition">
         {isLoading ? (
           <LoadingPlaceholder />
         ) : profitPie.length === 0 ? (
@@ -304,7 +313,7 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 4. Horizontal Bar Chart: 상위 상품 매출 */}
-      <ChartCard title="상위 상품 매출 Top 6" subtitle="최근 집계 기준 판매 금액 순">
+      <ChartCard title="상위 상품 매출 Top 6" subtitle="최근 집계 기준 판매 금액 순" captionKey="sales:top_products">
         {isLoading ? (
           <LoadingPlaceholder />
         ) : productBar.length === 0 ? (
@@ -343,7 +352,7 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       {/* 5. Radar Chart: 핵심 지표 현황 */}
-      <ChartCard title="핵심 지표 현황" subtitle="주요 경영 지표 다차원 비교 (0–100 정규화)">
+      <ChartCard title="핵심 지표 현황" subtitle="주요 경영 지표 다차원 비교 (0–100 정규화)" captionKey="sales:core_indicators">
         {isLoading ? (
           <LoadingPlaceholder />
         ) : (
@@ -378,6 +387,7 @@ export const SalesV2ChartsSection = ({
       <ChartCard
         title="상품별 매출 비중"
         subtitle="전체 매출 대비 상품별 면적 비중"
+        captionKey="sales:product_revenue_share"
         className="xl:col-span-2"
       >
         {isLoading ? (

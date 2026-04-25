@@ -15,12 +15,12 @@ import { MarketInsightBoardSection } from "@/features/analytics/components/Marke
 import { MarketIntelligenceSection } from "@/features/analytics/components/MarketIntelligenceSection";
 import { MarketOverviewCardsSection } from "@/features/analytics/components/MarketOverviewCardsSection";
 import { MarketStoreProfileSection } from "@/features/analytics/components/MarketStoreProfileSection";
-import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { useGetAnalyticsCustomerProfileQuery } from "@/features/analytics/queries/useGetAnalyticsCustomerProfileQuery";
 import { useGetAnalyticsMarketInsightsQuery } from "@/features/analytics/queries/useGetAnalyticsMarketInsightsQuery";
 import { useGetHqAnalyticsMarketInsightsQuery } from "@/features/analytics/queries/useGetHqAnalyticsMarketInsightsQuery";
 import { useGetAnalyticsMarketIntelligenceQuery } from "@/features/analytics/queries/useGetAnalyticsMarketIntelligenceQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
+import { useGetAnalyticsMarketScopeOptionsQuery } from "@/features/analytics/queries/useGetAnalyticsMarketScopeOptionsQuery";
 import { useGetAnalyticsStoreProfileQuery } from "@/features/analytics/queries/useGetAnalyticsStoreProfileQuery";
 import { formatWonCompact } from "@/features/analytics/utils/market";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
@@ -38,6 +38,7 @@ export function MarketScreen() {
 
   const storeProfileQuery = useGetAnalyticsStoreProfileQuery(user.storeId);
   const customerProfileQuery = useGetAnalyticsCustomerProfileQuery(user.storeId);
+  const marketScopeOptionsQuery = useGetAnalyticsMarketScopeOptionsQuery();
   const salesTrendQuery = useGetAnalyticsSalesTrendQuery({ store_id: user.storeId });
   const marketIntelligenceQuery = useGetAnalyticsMarketIntelligenceQuery({
     store_id: user.storeId,
@@ -76,7 +77,10 @@ export function MarketScreen() {
     marketIntelligenceQuery.isLoading ||
     marketInsightsQuery.isLoading ||
     hqInsightsQuery.isLoading;
-  const hasError = marketIntelligenceQuery.isError;
+  const hasError =
+    marketIntelligenceQuery.isError ||
+    marketInsightsQuery.isError ||
+    (user.role === "hq_admin" && hqInsightsQuery.isError);
   const storeProfile = storeProfileQuery.data;
   const customerProfile = customerProfileQuery.data;
   const salesTrend = salesTrendQuery.data;
@@ -96,7 +100,18 @@ export function MarketScreen() {
         description={`${heroDescription} · ${scope.year} ${scope.quarter} · 반경 ${scope.radiusMeters.toLocaleString()}m`}
       />
 
-      <AnalysisScopeFilterBar value={scope} onChange={setScope} />
+      <AnalysisScopeFilterBar
+        value={scope}
+        onChange={setScope}
+        scopeOptions={
+          marketScopeOptionsQuery.data
+            ? {
+                guOptions: marketScopeOptionsQuery.data.gu_options,
+                dongOptionsByGu: marketScopeOptionsQuery.data.dong_options_by_gu,
+              }
+            : undefined
+        }
+      />
       <div className="flex justify-end">
         <button
           type="button"
@@ -129,13 +144,6 @@ export function MarketScreen() {
         isLoading={marketIntelligenceQuery.isLoading}
       />
 
-      <SalesTrendChart
-        data={salesTrend}
-        isLoading={salesTrendQuery.isLoading}
-        compareMode={salesTrend?.compare_mode ?? "prev_month"}
-        onChangeCompareMode={() => {}}
-      />
-
       <MarketInsightBoardSection
         storeProfile={storeProfile}
         customerProfile={customerProfile}
@@ -155,10 +163,9 @@ export function MarketScreen() {
       </div>
 
       <MarketActionGuideSection
-        storeProfile={storeProfile}
-        customerProfile={customerProfile}
         aiActionPlan={storeInsights?.action_plan}
         source={storeInsights?.source}
+        isError={marketInsightsQuery.isError}
         isLoading={isLoading}
       />
     </div>

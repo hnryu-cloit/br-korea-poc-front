@@ -13,10 +13,41 @@ type Props = {
   value: AnalysisScope;
   onChange: (next: AnalysisScope) => void;
   className?: string;
+  scopeOptions?: {
+    guOptions: string[];
+    dongOptionsByGu: Record<string, string[]>;
+  };
 };
 
-const guOptions = ["전체", "강남구", "광진구", "마포구", "송파구", "영등포구"];
-const dongOptionsByGu: Record<string, string[]> = {
+const DEFAULT_GU_OPTIONS = [
+  "전체",
+  "강남구",
+  "강동구",
+  "강북구",
+  "강서구",
+  "관악구",
+  "광진구",
+  "구로구",
+  "금천구",
+  "노원구",
+  "도봉구",
+  "동대문구",
+  "동작구",
+  "마포구",
+  "서대문구",
+  "서초구",
+  "성동구",
+  "성북구",
+  "송파구",
+  "양천구",
+  "영등포구",
+  "용산구",
+  "은평구",
+  "종로구",
+  "중구",
+  "중랑구",
+];
+const DEFAULT_DONG_OPTIONS_BY_GU: Record<string, string[]> = {
   전체: ["전체", "역세권", "주거밀집권"],
   강남구: ["전체", "역삼동", "삼성동", "신사동"],
   광진구: ["전체", "구의동", "화양동", "자양동"],
@@ -29,10 +60,14 @@ const yearOptions = ["2026", "2025", "2024"];
 const quarterOptions = ["Q1", "Q2", "Q3", "Q4"];
 const quickRadius = [500, 750, 1000, 2000];
 
-export function AnalysisScopeFilterBar({ value, onChange, className }: Props) {
+export function AnalysisScopeFilterBar({ value, onChange, className, scopeOptions }: Props) {
+  const guOptions = scopeOptions?.guOptions?.length
+    ? scopeOptions.guOptions
+    : DEFAULT_GU_OPTIONS;
+  const dongOptionsByGu = scopeOptions?.dongOptionsByGu ?? DEFAULT_DONG_OPTIONS_BY_GU;
   const dongOptions = useMemo(
-    () => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"],
-    [value.gu],
+    () => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"] ?? ["전체"],
+    [value.gu, dongOptionsByGu],
   );
 
   const setField = <K extends keyof AnalysisScope>(key: K, next: AnalysisScope[K]) => {
@@ -50,7 +85,7 @@ export function AnalysisScopeFilterBar({ value, onChange, className }: Props) {
             value={value.gu}
             onChange={(event) => {
               const nextGu = event.target.value;
-              const nextDongOptions = dongOptionsByGu[nextGu] ?? dongOptionsByGu["전체"];
+              const nextDongOptions = dongOptionsByGu[nextGu] ?? dongOptionsByGu["전체"] ?? ["전체"];
               onChange({ ...value, gu: nextGu, dong: nextDongOptions[0] });
             }}
             className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-700"

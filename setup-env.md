@@ -130,6 +130,21 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 프론트 실행 방식(`npm run dev`, `VITE_API_BASE_URL`) 변경은 없습니다.
 - 프론트 쿼리 정책은 UI 변경 없이 `45초` 폴링(`market insights`, `sales summary/insights/campaign/prompts`)으로 백그라운드 갱신을 반영합니다.
 
+## Session Note (2026-04-25, sales charts refactor)
+
+- `SalesV2ChartsSection`의 treemap 렌더러를 컴포넌트 외부로 분리했습니다.
+- 실행 방식(`npm run dev`, `VITE_API_BASE_URL`) 및 환경변수 요구사항 변경은 없습니다.
+
+## Session Note (2026-04-25, backend/ai exception pattern refactor)
+
+- 이번 세션은 요청에 따라 backend/ai 레이어만 리팩토링했으며 프론트 실행 방식 변경은 없습니다.
+- 개발 실행 명령(`npm run dev`)과 환경변수(`VITE_API_BASE_URL`, `VITE_DEFAULT_STORE_ID`, `VITE_DEFAULT_REFERENCE_DATETIME`)는 동일합니다.
+
+## Session Note (2026-04-25, backend/ai bugfix only)
+
+- 이번 세션은 backend/ai 치명 버그 수정(미정의 참조, 로거 임포트 누락)만 수행했습니다.
+- 프론트 실행 방법/환경 변수/페이지 동선 변경은 없습니다.
+
 ## Session Note (2026-04-22, QA 병렬 회차)
 
 - QA 기준 자동 점검은 아래 명령으로 실행했습니다.

@@ -10,6 +10,7 @@ export function SummaryCard({
   title,
   captionKey,
   pathname,
+  domain,
   recommendedQuestions,
   children,
 }: SummaryCardProps) {
@@ -43,6 +44,12 @@ export function SummaryCard({
             <Link
               key={question}
               to={pathname}
+              state={{
+                source: "dashboard-card-chat",
+                domain,
+                intent: "ask",
+                prompt: question,
+              }}
               className="flex min-h-12 items-center justify-between gap-4 rounded-[8px] border border-[#DADADA] bg-white px-4 py-3 transition-colors hover:bg-[#FFFCF8]"
             >
               <span className="text-[16px] leading-6 font-bold tracking-[-0.02em] text-[#66290C]">

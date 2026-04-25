@@ -24,4 +24,5 @@ export const analyticsQueryKeys = {
     [...ANALYTICS_QUERY_ROOT, "market-insights", params ?? {}] as const,
   hqMarketInsights: (params?: GetMarketIntelligenceRequest & { limit?: number }) =>
     [...ANALYTICS_QUERY_ROOT, "hq-market-insights", params ?? {}] as const,
+  marketScopeOptions: () => [...ANALYTICS_QUERY_ROOT, "market-scope-options"] as const,
 };
