@@ -22,10 +22,13 @@ export function AppSidebar({ isOpen, onClose }: Props) {
     (section) => !section.roles || section.roles.includes(currentRole),
   );
 
-  const isRouteActive = (to: string) =>
-    to === "/dashboard"
-      ? pathname === "/dashboard"
-      : pathname === to || pathname.startsWith(`${to}/`);
+  const allMenuPaths = visibleSections.flatMap((section) => section.items.map((item) => item.to));
+
+  const activeMenuPath = allMenuPaths
+    .filter((to) => pathname === to || pathname.startsWith(`${to}/`))
+    .sort((a, b) => b.length - a.length)[0];
+
+  const isRouteActive = (to: string) => to === activeMenuPath;
 
   const SidebarContent = (
     <div className="flex h-full w-full flex-col px-4 py-3">
