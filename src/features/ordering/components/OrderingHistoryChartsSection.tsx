@@ -115,7 +115,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} interval={0} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
                 formatter={(value, name) => [
@@ -158,7 +158,7 @@ export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={typeByDay} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} interval={0} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} allowDecimals={false} />
               <Tooltip
                 formatter={(value, name) => [`${Number(value ?? 0)}건`, String(name)]}

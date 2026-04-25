@@ -8,6 +8,7 @@ import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGet
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
 import type { AnalyticsSalesTrendCompareMode } from "@/features/analytics/types/analytics";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+import { getDateRange } from "@/commons/utils/getDateRange";
 
 function formatKoreanDateLabel(date: string) {
   if (!date) return "";
@@ -15,35 +16,6 @@ function formatKoreanDateLabel(date: string) {
   if (Number.isNaN(parsedDate.getTime())) return "";
 
   return `${parsedDate.getFullYear()}년 ${parsedDate.getMonth() + 1}월 ${parsedDate.getDate()}일`;
-}
-
-function formatLocalDate(date: Date) {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getAnalyticsDateRange(referenceDateTime: string) {
-  const referenceDate = new Date(referenceDateTime);
-  if (Number.isNaN(referenceDate.getTime())) {
-    const fallback = new Date();
-    const fallbackFrom = new Date(fallback);
-    fallbackFrom.setDate(fallback.getDate() - 6);
-    return {
-      dateFrom: formatLocalDate(fallbackFrom),
-      dateTo: formatLocalDate(fallback),
-    };
-  }
-
-  const dateTo = new Date(referenceDate);
-  const dateFrom = new Date(referenceDate);
-  dateFrom.setDate(dateTo.getDate() - 6);
-
-  return {
-    dateFrom: formatLocalDate(dateFrom),
-    dateTo: formatLocalDate(dateTo),
-  };
 }
 
 function formatWon(value?: number) {
@@ -54,8 +26,8 @@ function formatWon(value?: number) {
 export function AnalyticsScreen() {
   const { user, referenceDateTime } = useDemoSession();
   const [compareMode, setCompareMode] = useState<AnalyticsSalesTrendCompareMode>("prev_week");
-  const { dateFrom, dateTo } = useMemo(
-    () => getAnalyticsDateRange(referenceDateTime),
+  const { from: dateFrom, to: dateTo } = useMemo(
+    () => getDateRange(referenceDateTime),
     [referenceDateTime],
   );
   const selectedRangeLabel = `(${formatKoreanDateLabel(dateFrom)} ~ ${formatKoreanDateLabel(dateTo)})`;

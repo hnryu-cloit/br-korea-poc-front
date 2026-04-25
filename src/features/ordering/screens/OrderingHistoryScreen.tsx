@@ -8,44 +8,12 @@ import { OrderingHistorySection } from "@/features/ordering/components/OrderingH
 import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/useGetOrderingHistoryInsightsQuery";
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-
-function formatLocalDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getOrderingHistoryDateRange(referenceDateTime: string): { from: string; to: string } {
-  const referenceDate = new Date(referenceDateTime);
-  if (Number.isNaN(referenceDate.getTime())) {
-    const fallback = new Date();
-    const to = new Date(fallback);
-    to.setDate(to.getDate() - 1);
-    const from = new Date(to);
-    from.setDate(from.getDate() - 6);
-
-    return {
-      from: formatLocalDate(from),
-      to: formatLocalDate(to),
-    };
-  }
-
-  const to = new Date(referenceDate);
-  to.setDate(to.getDate() - 1);
-  const from = new Date(to);
-  from.setDate(from.getDate() - 6);
-
-  return {
-    from: formatLocalDate(from),
-    to: formatLocalDate(to),
-  };
-}
+import { getDateRange } from "@/commons/utils/getDateRange";
 
 export function OrderingHistoryScreen() {
   const { user, referenceDateTime } = useDemoSession();
   const { from: defaultFrom, to: defaultTo } = useMemo(
-    () => getOrderingHistoryDateRange(referenceDateTime),
+    () => getDateRange(referenceDateTime),
     [referenceDateTime],
   );
   const [currentPage, setCurrentPage] = useState(1);
