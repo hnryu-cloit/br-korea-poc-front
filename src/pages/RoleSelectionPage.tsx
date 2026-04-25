@@ -76,7 +76,7 @@ export function RoleSelectionPage() {
               </div>
 
               <div>
-                <div className="rounded-[8px] bg-[#E2E8F0CC] p-4 flex flex-col gap-2">
+                <div className="rounded-[8px] bg-[#FFD9C7]/30 p-4 flex flex-col gap-2">
                   <p className="text-[16px] font-bold leading-6 text-brown-700">주요 기능</p>
                   <ul className="flex flex-col gap-1 pl-4 text-[14px] leading-5 text-brown-700 list-disc">
                     {card.bulletPoints.map((point) => (
