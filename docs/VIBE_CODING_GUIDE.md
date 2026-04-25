@@ -1182,3 +1182,22 @@ lib 폴더에는 axiosInstance, queryClient 같은 설정성 파일만 남기고
 
 이 문서는 구조를 단순히 예쁘게 맞추기 위한 문서가 아니라,
 코드 탐색 비용을 줄이고 유지보수 가능성을 높이기 위한 기준 문서이다.
+
+### 9. 플로팅 챗은 페이지 세션/단일 질의 경로 패턴을 따른다
+
+- 플로팅 챗 세션은 페이지 단위로 분리하고 localStorage에 저장/복원한다.
+- 세션 키는 path 정규화 기준을 사용한다.
+  - `/production/*`, `/ordering/*`, `/sales/*`는 도메인 루트로 묶고, 나머지는 pathname 기준으로 분리한다.
+- 챗 입력(직접 입력/추천 버튼)은 동일한 전송 경로를 사용한다.
+  - `POST /api/sales/query` 단일 경로 + path 기반 domain 매핑
+- 후보 질문은 `overlap_candidates -> follow_up_questions -> 기본 quick actions` 순서로 구성한다.
+
+## Session Rule (2026-04-25, dashboard question handoff)
+
+- 대시보드 추천 질문처럼 "다른 페이지에서 즉시 질의 실행"이 필요한 경우, 링크 이동 시 route state(`source`, `intent=ask`, `prompt`)를 전달한다.
+- 수신 측(공통 플로팅 챗)은 해당 state를 감지해 자동 오픈/자동 전송을 수행한다.
+
+## Session Rule (2026-04-25, card caption coverage)
+
+- 주요 의사결정 카드(차트/요약/분석 카드) 헤더에는 `InfoPopover`를 기본 적용하고 설명은 `FIELD_CAPTIONS` 키로 관리한다.
+- 컴포넌트 내부 하드코딩 문구 대신 caption key 전달 방식을 우선한다.
