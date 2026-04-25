@@ -3,6 +3,7 @@ import axiosInstance from "@/services/axiosInstance";
 import type {
   FifoLotSummaryResponse,
   FifoLotType,
+  InventoryStatusFilterCode,
   InventoryStatusResponse,
   ProductionOverviewResponse,
   ProductionRegistrationPayload,
@@ -48,10 +49,15 @@ export const getProductionWasteSummary = async (storeId: string, page = 1, pageS
   return response.data;
 };
 
-export const getProductionInventoryStatus = async (storeId: string, page = 1, pageSize = 10) => {
+export const getProductionInventoryStatus = async (
+  storeId: string,
+  statuses: InventoryStatusFilterCode[],
+  page = 1,
+  pageSize = 10,
+) => {
   const response = await axiosInstance.get<InventoryStatusResponse>(
     "/api/production/inventory-status",
-    { params: { store_id: storeId, page, page_size: pageSize } },
+    { params: { store_id: storeId, status: statuses.join(","), page, page_size: pageSize } },
   );
   return response.data;
 };

@@ -1,3 +1,4 @@
+import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterGroup";
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
@@ -10,13 +11,14 @@ import type {
 type Props = {
   data?: FifoLotSummaryResponse;
   isLoading: boolean;
-  lotType: FifoLotType;
-  onChangeLotType: (type: FifoLotType) => void;
+  selectedLotTypes: FifoLotFilterValue[];
+  onChangeLotTypes: (types: FifoLotFilterValue[]) => void;
   onChangePage: (page: number) => void;
 };
 
-const LOT_TYPE_TABS: { label: string; value: FifoLotType }[] = [
-  { label: "전체", value: undefined },
+type FifoLotFilterValue = Exclude<FifoLotType, undefined>;
+
+const LOT_TYPE_TABS: { label: string; value: FifoLotFilterValue }[] = [
   { label: "완제품", value: "production" },
   { label: "납품(원재료)", value: "delivery" },
 ];
@@ -26,30 +28,27 @@ const LOT_TYPE_LABEL: Record<FifoLotItem["lot_type"], string> = {
   delivery: "납품",
 };
 
-export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onChangePage }: Props) {
+export function FifoLotSection({
+  data,
+  isLoading,
+  selectedLotTypes,
+  onChangeLotTypes,
+  onChangePage,
+}: Props) {
   const summary = data?.summary;
   const totalPages = data?.pagination?.total_pages ?? 1;
   const currentPage = data?.pagination?.page ?? 1;
+  const isEmptySelection = selectedLotTypes.length === 0;
 
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
-        <div className="flex gap-1 rounded-lg border border-[#DADADA] p-0.5">
-          {LOT_TYPE_TABS.map((tab) => (
-            <button
-              key={tab.label}
-              onClick={() => onChangeLotType(tab.value)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                lotType === tab.value
-                  ? "bg-[#FF671F] text-white"
-                  : "text-[#653819] hover:bg-[#FFD9C780]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <CheckboxFilterGroup
+          options={LOT_TYPE_TABS}
+          selectedValues={selectedLotTypes}
+          onChange={onChangeLotTypes}
+        />
       </div>
 
       {summary && (
@@ -120,7 +119,7 @@ export function FifoLotSection({ data, isLoading, lotType, onChangeLotType, onCh
                   데이터를 불러오는 중입니다.
                 </td>
               </tr>
-            ) : !data?.items.length ? (
+            ) : isEmptySelection || !data?.items.length ? (
               <tr>
                 <td colSpan={7} className="bg-white px-6 py-16 text-center text-sm text-slate-400">
                   표시할 Lot 데이터가 없습니다.

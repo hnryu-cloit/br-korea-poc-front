@@ -11,6 +11,7 @@ type Props<T extends string> = {
   onChange: (selectedValues: T[]) => void;
   allLabel?: string;
   className?: string;
+  selectionMode?: "multiple" | "single";
 };
 
 export function CheckboxFilterGroup<T extends string>({
@@ -19,6 +20,7 @@ export function CheckboxFilterGroup<T extends string>({
   onChange,
   allLabel = "전체 선택",
   className,
+  selectionMode = "multiple",
 }: Props<T>) {
   const allValues = options.map((option) => option.value);
   const isAllSelected =
@@ -29,6 +31,11 @@ export function CheckboxFilterGroup<T extends string>({
   };
 
   const handleToggleOption = (value: T) => {
+    if (selectionMode === "single") {
+      onChange([value]);
+      return;
+    }
+
     if (selectedValues.includes(value)) {
       onChange(selectedValues.filter((selectedValue) => selectedValue !== value));
       return;
@@ -43,7 +50,9 @@ export function CheckboxFilterGroup<T extends string>({
 
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
-      <FilterChip label={allLabel} checked={isAllSelected} onClick={handleToggleAll} />
+      {selectionMode === "multiple" && allLabel ? (
+        <FilterChip label={allLabel} checked={isAllSelected} onClick={handleToggleAll} />
+      ) : null}
       {options.map((option) => (
         <FilterChip
           key={option.value}

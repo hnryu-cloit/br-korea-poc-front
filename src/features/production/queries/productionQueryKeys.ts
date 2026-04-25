@@ -1,4 +1,8 @@
-import type { FifoLotType, ProductionSkuListParams } from "@/features/production/types/production";
+import type {
+  FifoLotType,
+  InventoryStatusFilterCode,
+  ProductionSkuListParams,
+} from "@/features/production/types/production";
 
 export const productionQueryKeys = {
   all: ["production"] as const,
@@ -9,8 +13,12 @@ export const productionQueryKeys = {
   skuDetailAll: () => [...productionQueryKeys.all, "sku-detail"] as const,
   skuDetail: (skuId: string, storeId: string) =>
     [...productionQueryKeys.all, "sku-detail", skuId, storeId] as const,
-  inventoryStatus: (storeId: string, page: number, pageSize: number) =>
-    [...productionQueryKeys.all, "inventory-status", storeId, page, pageSize] as const,
+  inventoryStatus: (
+    storeId: string,
+    statuses: InventoryStatusFilterCode[],
+    page: number,
+    pageSize: number,
+  ) => [...productionQueryKeys.all, "inventory-status", storeId, statuses, page, pageSize] as const,
   waste: (storeId: string, page: number, pageSize: number) =>
     [...productionQueryKeys.all, "waste", storeId, page, pageSize] as const,
   fifoLots: (storeId: string, lotType: FifoLotType, page: number, pageSize: number) =>

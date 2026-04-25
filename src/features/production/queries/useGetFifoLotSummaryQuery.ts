@@ -9,11 +9,12 @@ export const useGetFifoLotSummaryQuery = (
   lotType?: FifoLotType,
   page = 1,
   pageSize = 20,
+  enabled = true,
 ) =>
   useQuery({
     queryKey: productionQueryKeys.fifoLots(storeId, lotType, page, pageSize),
     queryFn: () => getFifoLotSummary(storeId, lotType, page, pageSize),
-    enabled: !!storeId,
+    enabled: !!storeId && enabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
