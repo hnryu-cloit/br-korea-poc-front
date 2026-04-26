@@ -276,6 +276,11 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     assumption: "클러스터는 상권 유형·규모·영업시간 유사도 기준으로 분류됩니다.",
   },
   // 손익분석 차트
+  "sales:hourly_channel_sales": {
+    assumption: "조회 기간 내 시간대(0~23시)별 매출을 채널 구분으로 집계합니다. 오프라인+투고는 매장·포장 주문, 배달은 배달 주문입니다.",
+    formula: "오프라인+투고 = 시간대별 오프라인 채널 매출 합계 · 배달 = 시간대별 온라인 채널 매출 합계 · 판매건수 = 오프라인+투고 건수 + 배달 건수",
+    description: "시간대별 채널 매출(누적 막대)과 전체 판매건수(꺾은선)를 함께 표시합니다.",
+  },
   "sales:weekly_revenue_trend": {
     assumption: "조회 기간 내 일별 총 매출과 순매출(할인·수수료 차감 후)을 표시합니다.",
     formula: "순매출 = 총 매출 - 채널 수수료 - 할인 금액",

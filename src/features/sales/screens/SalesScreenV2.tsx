@@ -1,6 +1,7 @@
 import { SalesDateRangeFilter } from "@/features/sales/components/SalesDateRangeFilter";
 // import { SalesV2CampaignActivitySection } from "@/features/sales/components/SalesV2CampaignActivitySection";
 import { SalesV2ChartsSection } from "@/features/sales/components/SalesV2ChartsSection";
+import { SalesV2HourlyChannelChart } from "@/features/sales/components/SalesV2HourlyChannelChart";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
 import { SalesV2OpportunitySection } from "@/features/sales/components/SalesV2OpportunitySection";
 import { useSalesScreenV2 } from "@/features/sales/hooks/useSalesScreenV2";
@@ -15,6 +16,8 @@ export const SalesScreenV2 = () => {
     opportunityTab,
     insightSections,
     summaryData,
+    hourlyChannelItems,
+    hourlyChannelLoading,
     insightsLoading,
     summaryLoading,
     handleChangeDateFrom,
@@ -45,6 +48,13 @@ export const SalesScreenV2 = () => {
       <SalesV2ChartsSection
         summary={summaryData}
         isLoading={summaryLoading}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+      />
+
+      <SalesV2HourlyChannelChart
+        items={hourlyChannelItems}
+        isLoading={hourlyChannelLoading}
         dateFrom={dateFrom}
         dateTo={dateTo}
       />

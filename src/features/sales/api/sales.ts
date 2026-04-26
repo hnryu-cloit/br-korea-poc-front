@@ -5,6 +5,7 @@ import type {
   GetSalesPromptsRequest,
   GetSalesInsightsRequest,
   MenuInsightsResponse,
+  SalesHourlyChannelResponse,
   SalesInsightsResponse,
   SalesInsightSection,
   SalesCampaignEffectResponse,
@@ -163,6 +164,20 @@ export const getSalesMenuInsights = async (
   const response = await axiosInstance.get<MenuInsightsResponse>("/api/sales/menu-insights", {
     params: Object.fromEntries(query.entries()),
   });
+  return response.data;
+};
+
+export const getSalesHourlyChannel = async (
+  filters?: GetSalesInsightsRequest,
+): Promise<SalesHourlyChannelResponse> => {
+  const query = new URLSearchParams();
+  appendOperationalFilters(query, filters);
+  const response = await axiosInstance.get<SalesHourlyChannelResponse>(
+    "/api/sales/hourly-channel",
+    {
+      params: Object.fromEntries(query.entries()),
+    },
+  );
   return response.data;
 };
 
