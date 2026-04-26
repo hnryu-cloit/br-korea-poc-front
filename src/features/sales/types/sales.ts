@@ -300,12 +300,18 @@ export interface SalesSummaryProductItem {
   qty: number;
 }
 
+export interface SalesSummaryGroupRevenueItem {
+  name: string;
+  sales: number;
+}
+
 export interface SalesSummaryResponse {
   data_date: string | null;
   today_revenue: number;
   today_net_revenue: number;
   weekly_data: SalesSummaryWeeklyItem[];
   top_products: SalesSummaryProductItem[];
+  group_revenue_share: SalesSummaryGroupRevenueItem[];
   avg_margin_rate: number;
   avg_net_profit_per_item: number;
   avg_ticket_size: number;

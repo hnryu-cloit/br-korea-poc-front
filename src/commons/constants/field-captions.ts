@@ -1,4 +1,4 @@
-import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
+﻿import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
 
 export const PAGE_CAPTIONS: Record<string, PageCaption> = {
   dashboard: { subtitle: "점포 운영 주요 지표를 한눈에 확인합니다." },
@@ -9,6 +9,12 @@ export const PAGE_CAPTIONS: Record<string, PageCaption> = {
   "ordering:history": { subtitle: "과거 발주 내역과 실적을 조회합니다." },
   "analytics:sales": { subtitle: "기간별 매출 흐름과 채널별 성과를 분석합니다." },
   "analytics:market": { subtitle: "상권 내 경쟁 현황과 고객 분포를 확인합니다." },
+  "sales:product_revenue_share": {
+    assumption:
+      "조회 기간 전체 매출을 상품 그룹 단위로 합산해 비중을 계산합니다. 상품별 Top 6이 아니라, 분류된 모든 상품 그룹을 대상으로 합니다.",
+    formula: "상품 그룹별 매출 비중 = 각 상품 그룹 매출 ÷ 전체 상품 그룹 매출 × 100",
+    description: "전체 매출 대비 각 상품 그룹의 매출 비중을 면적으로 보여줍니다.",
+  }
 };
 
 export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
@@ -294,8 +300,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     description: "오늘 매출에서 추정 이익과 비용이 차지하는 비율입니다.",
   },
   "sales:top_products": {
-    assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품을 집계합니다.",
-    description: "판매 금액 순으로 상위 6개 상품의 매출을 비교합니다.",
+    assumption: "조회 기간 내 판매 금액 기준 상위 상품 그룹을 집계합니다.",
+    description: "판매 금액 순으로 상위 상품 그룹의 매출을 비교합니다.",
   },
   "sales:core_indicators": {
     assumption:
