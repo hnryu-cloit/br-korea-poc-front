@@ -12,9 +12,9 @@ type Props = {
 
 export function OrderingHistorySection({ data, isLoading, currentPage, onChangePage }: Props) {
   return (
-    <section className="rounded-[6px] border border-[#DADADA] bg-white p-2">
+    <section className="rounded-[6px] border border-[#DADADA] bg-white p-5">
       <div className="mb-5 flex items-center gap-2">
-        <h2 className="text-lg font-bold text-slate-900">발주 이력</h2>
+        <h2 className="text-sm font-bold text-slate-900">발주 이력</h2>
         <p className="text-xs text-slate-400">(총 {data?.total_count.toLocaleString()}건)</p>
       </div>
 
