@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { RotateCw } from "lucide-react";
 import { DashboardAlertCard } from "@/features/dashboard/components/DashboardAlertCard";
 import type { DashboardOrderDeadline } from "@/features/dashboard/types/dashboard";
@@ -11,9 +10,11 @@ export function OrderDeadlineCard({
 }: {
   orderDeadline: DashboardOrderDeadline | null;
 }) {
-  const [now, setNow] = useState(() => new Date());
-  const display = formatOrderDeadlineDisplay(orderDeadline, now);
   const { referenceDateTime } = useDemoSession();
+  const display = formatOrderDeadlineDisplay(
+    orderDeadline,
+    dayjs(referenceDateTime).toDate(),
+  );
 
   if (!display) {
     return (
@@ -44,7 +45,7 @@ export function OrderDeadlineCard({
             <span>•</span>
             <span>{display.remainingTimeLabel}</span>
           </div>
-          <button type="button" onClick={() => setNow(new Date())}>
+          <button type="button">
             <RotateCw />
           </button>
         </div>
