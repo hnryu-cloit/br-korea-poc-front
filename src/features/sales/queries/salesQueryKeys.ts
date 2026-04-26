@@ -26,5 +26,7 @@ export const salesQueryKeys = {
     [...SALES_QUERY_ROOT, "menu-insights", params ?? {}] as const,
   campaignEffect: (params?: GetSalesInsightsRequest) =>
     [...SALES_QUERY_ROOT, "campaign-effect", params ?? {}] as const,
+  hourlyChannel: (params?: GetSalesInsightsRequest) =>
+    [...SALES_QUERY_ROOT, "hourly-channel", params ?? {}] as const,
   benchmark: (storeId?: string) => [...SALES_QUERY_ROOT, "benchmark", storeId ?? "all"] as const,
 };

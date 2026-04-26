@@ -10,6 +10,7 @@ import {
   isSalesOpportunityTabKey,
 } from "@/features/sales/constants/sales-opportunity-tabs";
 import { useSalesOpportunityData } from "@/features/sales/hooks/useSalesOpportunityData";
+import { useGetSalesHourlyChannelQuery } from "@/features/sales/queries/useGetSalesHourlyChannelQuery";
 import { useGetSalesInsightsQuery } from "@/features/sales/queries/useGetSalesInsightsQuery";
 import { useGetSalesMenuInsightsQuery } from "@/features/sales/queries/useGetSalesMenuInsightsQuery";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
@@ -111,6 +112,7 @@ export const useSalesScreenV2 = () => {
   const insightsQuery = useGetSalesInsightsQuery(sharedFilters);
   const menuInsightsQuery = useGetSalesMenuInsightsQuery(sharedFilters);
   const summaryQuery = useGetSalesSummaryQuery(sharedFilters);
+  const hourlyChannelQuery = useGetSalesHourlyChannelQuery(sharedFilters);
   const postSalesQueryMutation = usePostSalesQueryMutation(user.storeId, "sales");
 
   const { opportunity, benchmarkQuery } = useSalesOpportunityData({
@@ -337,6 +339,8 @@ export const useSalesScreenV2 = () => {
     suggestedPrompts,
     latestAssistantMessage,
     summaryData: summaryQuery.data,
+    hourlyChannelItems: hourlyChannelQuery.data?.items ?? [],
+    hourlyChannelLoading: hourlyChannelQuery.isLoading,
     salesErrorMessages,
     insightsLoading: menuInsightsQuery.isLoading,
     summaryLoading: summaryQuery.isLoading,

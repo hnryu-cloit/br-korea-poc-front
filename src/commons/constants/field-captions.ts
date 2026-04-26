@@ -1,4 +1,4 @@
-import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
+﻿import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
 
 export const PAGE_CAPTIONS: Record<string, PageCaption> = {
   dashboard: { subtitle: "점포 운영 주요 지표를 한눈에 확인합니다." },
@@ -6,7 +6,7 @@ export const PAGE_CAPTIONS: Record<string, PageCaption> = {
     subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다.",
   },
   "production:inventory": { subtitle: "품목별 재고 수준과 판매 가능 수량을 확인합니다." },
-  "production:waste": { subtitle: "전일 기준 폐기 수량과 손실 금액을 분석합니다." },
+  "production:waste": { subtitle: "기준일자 이전 30일간의 폐기 수량과 손실 금액을 분석합니다." },
   "ordering:recommendations": { subtitle: "AI가 분석한 최적 발주량을 확인합니다." },
   "ordering:history": { subtitle: "과거 발주 내역과 실적을 조회합니다." },
   "analytics:sales": { subtitle: "기간별 매출 흐름과 채널별 성과를 분석합니다." },
@@ -53,31 +53,33 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 폐기 손실 - 조회 기준일
   "production:waste_reference_date": {
-    assumption: "기준 일자의 전날 하루를 폐기 산정 기준일로 사용합니다.",
+    assumption:
+      "기준 일자의 전날을 종료일로 하고, 그 이전 30일간을 폐기 손실 집계 기간으로 사용합니다.",
     description: "폐기 손실 화면이 집계하는 영업일 정의입니다.",
   },
   // 폐기 손실 - 조회 대상 데이터
   "production:waste_dataset": {
     assumption:
-      "조회 기준일 전일까지 입고된 미폐기 잔여 재고와 조회 기준일 당일 생산분을 합산합니다.",
+      "집계 기간(기준일자 전날까지 최근 30일) 동안 산출된 품목별 폐기 손실 데이터를 합산합니다.",
     description: "폐기 손실 산정 대상이 되는 재고 풀의 정의입니다.",
   },
   // 폐기 손실 - 폐기 대상
   "production:waste_target": {
     assumption: "FIFO 판매 차감 후 잔여분 중 유통기한이 경과한 수량만 폐기로 인식합니다.",
-    formula: "폐기 수량 = Σ(잔량 - FIFO 판매 차감) | 유통기한 < 기준일",
-    description: "FIFO 차감 후 유통기한 경과로 폐기되는 수량입니다.",
+    formula: "폐기 수량 = 최근 30일 각 기준일의 Σ(잔량 - FIFO 판매 차감) | 유통기한 경과",
+    description: "최근 30일 동안 FIFO 차감 후 유통기한 경과로 폐기된 수량의 합계입니다.",
   },
   // 폐기 손실 - 폐기한 갯수 (테이블 헤더)
   "production:waste_qty": {
     assumption:
-      "산정 절차. (기준일은 기준 일자 전날로 함)\n" +
-      "• 대상 데이터: 기준일 전일까지 입고된 미폐기 잔여 재고 + 기준일 당일 생산분\n" +
-      "• 차감 순서: FIFO(선입선출)로 당일 판매 수량을 먼저 차감\n" +
-      "• 폐기 인식: FIFO 차감 후 잔여분 중 유통기한이 기준일을 지난 Lot만 폐기 처리\n" +
-      "• 집계 단위: 품목별로 일자 폐기 수량을 합산해 표시",
-    formula: "폐기 수량 = Σ(잔량 - FIFO 판매 차감) | 유통기한 = 기준일",
-    description: "FIFO 판매 차감 후 유통기한 경과로 폐기 처리된 수량을 품목별로 집계한 값입니다.",
+      "산정 절차. (집계 종료일은 기준 일자 전날, 조회 범위는 그 이전 30일)\n" +
+      "• 대상 데이터: 최근 30일 동안 일자별로 산출된 품목별 폐기 손실 데이터\n" +
+      "• 차감 순서: FIFO(선입선출)로 판매 수량을 먼저 차감\n" +
+      "• 폐기 인식: FIFO 차감 후 잔여분 중 유통기한이 경과한 Lot만 폐기 처리\n" +
+      "• 집계 단위: 최근 30일 품목별 폐기 수량 합계",
+    formula: "폐기 수량 = 최근 30일 각 일자의 Σ(잔량 - FIFO 판매 차감) | 유통기한 경과",
+    description:
+      "최근 30일 동안 FIFO 판매 차감 후 유통기한 경과로 폐기 처리된 수량을 품목별로 합산한 값입니다.",
   },
   // 폐기 손실 - 단가
   "production:waste_unit_price": {
@@ -88,9 +90,9 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 폐기 손실 - 손실 금액
   "production:waste_loss_amount": {
     assumption:
-      "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정합니다(원가 확보 시 원가 기준으로 전환).",
-    formula: "손실 금액 = 폐기 수량 × 판매가",
-    description: "폐기 수량을 판매가로 환산한 손실 금액 추정치입니다.",
+      "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정하며, 최근 30일 폐기 수량을 합산해 표시합니다(원가 확보 시 원가 기준으로 전환).",
+    formula: "손실 금액 = 최근 30일 폐기 수량 × 판매가",
+    description: "최근 30일 폐기 수량을 판매가로 환산한 손실 금액 추정치입니다.",
   },
   // 주문 관리 - AI 추천 발주량 (메인 타이틀)
   "ordering:ai_recommended_qty": {
@@ -282,6 +284,13 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     assumption: "클러스터는 상권 유형·규모·영업시간 유사도 기준으로 분류됩니다.",
   },
   // 손익분석 차트
+  "sales:hourly_channel_sales": {
+    assumption:
+      "조회 기간 내 시간대(0~23시)별 매출을 채널 구분으로 집계합니다. 오프라인+투고는 매장·포장 주문, 배달은 배달 주문입니다.",
+    formula:
+      "오프라인+투고 = 시간대별 오프라인 채널 매출 합계 · 배달 = 시간대별 온라인 채널 매출 합계 · 판매건수 = 오프라인+투고 건수 + 배달 건수",
+    description: "시간대별 채널 매출(누적 막대)과 전체 판매건수(꺾은선)를 함께 표시합니다.",
+  },
   "sales:weekly_revenue_trend": {
     assumption: "조회 기간 내 일별 총 매출과 순매출(할인·수수료 차감 후)을 표시합니다.",
     formula: "순매출 = 총 매출 - 채널 수수료 - 할인 금액",

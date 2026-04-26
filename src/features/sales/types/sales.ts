@@ -300,12 +300,34 @@ export interface SalesSummaryProductItem {
   qty: number;
 }
 
+export interface SalesHourlyChannelItem {
+  hour: number; // 0~23
+  offline_sales: number; // 오프라인+투고 매출액
+  delivery_sales: number; // 배달 매출액
+  offline_qty: number; // 오프라인+투고 판매건수
+  delivery_qty: number; // 배달 판매건수
+  total_qty: number; // 시간대 전체 판매건수
+}
+
+export interface SalesHourlyChannelResponse {
+  items: SalesHourlyChannelItem[];
+  filtered_store_id?: string | null;
+  filtered_date_from?: string | null;
+  filtered_date_to?: string | null;
+}
+
+export interface SalesSummaryGroupRevenueItem {
+  name: string;
+  sales: number;
+}
+
 export interface SalesSummaryResponse {
   data_date: string | null;
   today_revenue: number;
   today_net_revenue: number;
   weekly_data: SalesSummaryWeeklyItem[];
   top_products: SalesSummaryProductItem[];
+  group_revenue_share: SalesSummaryGroupRevenueItem[];
   avg_margin_rate: number;
   avg_net_profit_per_item: number;
   avg_ticket_size: number;
