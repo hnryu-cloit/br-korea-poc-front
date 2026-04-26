@@ -206,7 +206,7 @@ export function OrderingHistoryChartsSection({
       </ChartCard>
 
       {/* 차트 2: 날짜별 수동 건수 */}
-      <ChartCard title="날짜별 수동 발주 건수" subtitle="is_auto 기준 스택">
+      <ChartCard title="날짜별 수동 발주 건수" subtitle="">
         {isLoading ? (
           <Loading />
         ) : typeByDay.length === 0 ? (
