@@ -156,6 +156,7 @@ export interface WasteSummaryResponse {
 export interface InventoryStatusItem {
   item_cd: string;
   item_nm: string;
+  item_group?: string | null;
   image_url?: string | null;
   total_stock: number;
   total_sold: number;

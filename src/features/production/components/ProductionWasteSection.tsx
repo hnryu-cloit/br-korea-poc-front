@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
 import type { WasteSummaryResponse } from "@/features/production/types/production";
 import ProductDefaultImage from "@/assets/default_product_img.svg";
@@ -48,10 +50,34 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
                   품목명
                 </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                  폐기한 갯수
+                  <span className="inline-flex items-center justify-end gap-1">
+                    <span>폐기한 갯수</span>
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["production:waste_qty"]}
+                      side="bottom"
+                      align="right"
+                    />
+                  </span>
                 </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                  손실 금액
+                  <span className="inline-flex items-center justify-end gap-1">
+                    <span>판매가</span>
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["production:waste_unit_price"]}
+                      side="bottom"
+                      align="right"
+                    />
+                  </span>
+                </th>
+                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                  <span className="inline-flex items-center justify-end gap-1">
+                    <span>손실 금액</span>
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["production:waste_loss_amount"]}
+                      side="bottom"
+                      align="right"
+                    />
+                  </span>
                 </th>
               </tr>
             </thead>
@@ -59,7 +85,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     폐기 손실 데이터를 불러오는 중입니다.
@@ -68,7 +94,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
               ) : errorMessage ? (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                   >
                     {errorMessage}
@@ -77,7 +103,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
               ) : data?.items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     표시할 폐기 손실 데이터가 없습니다.
@@ -109,6 +135,11 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
                       </td>
                       <td className="px-6 py-4 text-right">
                         {sku.confirmed_disuse_qty.toLocaleString("ko-KR")}개
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {sku.confirmed_disuse_qty > 0
+                          ? `${Math.round(sku.disuse_amount / sku.confirmed_disuse_qty).toLocaleString("ko-KR")}원`
+                          : "-"}
                       </td>
                       <td className="px-6 py-4 text-right">
                         {sku.disuse_amount.toLocaleString("ko-KR")}원

@@ -63,6 +63,27 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     formula: "폐기 수량 = Σ(잔량 - FIFO 판매 차감) | 유통기한 < 기준일",
     description: "FIFO 차감 후 유통기한 경과로 폐기되는 수량입니다.",
   },
+  // 폐기 손실 - 폐기한 갯수 (테이블 헤더)
+  "production:waste_qty": {
+    assumption:
+      "산정 절차.\n" +
+      "• 대상 데이터: 기준일 전일까지 입고된 미폐기 잔여 재고 + 기준일 당일 생산분\n" +
+      "• 차감 순서: FIFO(선입선출)로 당일 판매 수량을 먼저 차감\n" +
+      "• 폐기 인식: FIFO 차감 후 잔여분 중 유통기한이 기준일을 지난 Lot만 폐기 처리\n" +
+      "• 집계 단위: 품목(item_nm)별로 일자 폐기 수량을 합산해 표시",
+    formula: "폐기 수량 = Σ(initial_qty - consumed_qty) FROM inventory_fifo_lots WHERE status='expired'",
+    description: "FIFO 판매 차감 후 유통기한 경과로 폐기 처리된 수량을 품목별로 집계한 값입니다.",
+  },
+  // 폐기 손실 - 단가
+  "production:waste_unit_price": {
+    assumption:
+      "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.\n" +
+      "• 분자: 품목별 손실 금액(disuse_amount) — 폐기 수량 × 판매가 누적\n" +
+      "• 분모: 품목별 폐기 수량(confirmed_disuse_qty)\n" +
+      "• 원가 데이터 확보 시 원가 기반 단가로 전환 예정",
+    formula: "판매가 = disuse_amount ÷ confirmed_disuse_qty",
+    description: "폐기 수량 1개당 손실 금액(판매가 기준)입니다.",
+  },
   // 폐기 손실 - 손실 금액
   "production:waste_loss_amount": {
     assumption:
@@ -151,13 +172,20 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "일자 전주 = 7일 전 동요일 · 일자 전월 = 전월 동일 주차 동요일 · 기간 전주 = 7일 전 동요일 구성 기간 · 기간 전월 = 전월 동일 주차 동요일 구성 기간",
     description: "손익 분석 화면 전체에서 사용하는 비교 기준 정의입니다.",
   },
-  // 손익 분석 - 객단가 지수 (단독 정의)
+  // 손익 분석 - 평균 객단가
   "sales:avg_ticket_index": {
     assumption:
-      "최근 4주간 동 지점 일별 객단가의 최소·최대 범위를 0~100으로 환산합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
+      "데이터 출처와 가정.\n" +
+      "• 분모(주문 건수): raw_daily_store_channel.ord_cnt — POS에서 매장·일자·채널·시간대 단위로 사전 집계해 적재된 영수증(거래) 건수\n" +
+      "• 분자(매출): raw_daily_store_channel.sale_amt — 동일 raw 행의 매출 합계 (할인 차감 전)\n" +
+      "• 결제 수단별 합산 테이블(raw_daily_store_pay_way)은 카드+포인트 분할 결제 시 행이 늘어나 분모로 부적합하므로 사용하지 않습니다.\n" +
+      "• 마트(mart_{store}_analytics_daily)가 존재하면 total_order_count를 우선 사용하고, 없을 때만 raw 합산으로 폴백합니다.\n" +
+      "• 0~100 정규화는 동 지점 최근 4주 일별 객단가 분포의 min~max를 기준으로 합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
     formula:
-      "객단가 = 매출 ÷ 주문건수 · 객단가 지수 = (당일 객단가 - 4주 최소) ÷ (4주 최대 - 4주 최소) × 100",
-    description: "최근 4주 객단가 분포에서 현재 객단가의 상대 위치를 0~100으로 표시합니다.",
+      "객단가(avg_ticket_size) = Σ sale_amt ÷ Σ ord_cnt\n" +
+      "객단가 지수(avg_ticket_index) = (당일 객단가 - 4주 최소) ÷ (4주 최대 - 4주 최소) × 100",
+    description:
+      "당일 매출을 영수증 단위 주문 건수로 나눈 평균 객단가와, 최근 4주 분포에서의 상대 위치(0~100)를 함께 보여줍니다. 툴팁에서 점수와 실제 원 단위(avg_ticket_size)를 동시에 확인할 수 있습니다.",
   },
   // 생산 현황 테이블
   "production:forecast_1h": {
@@ -206,9 +234,9 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "본 테이블의 데이터는 임의 가정 기반의 시뮬레이션 데이터입니다.\n" +
       "• 유통기한: 완제품(production)은 제품명 키워드로 추정 — 샌드/샐러드/크림·도넛/베이글/빵 1일, 케이크/파이 2일, 커피/음료 당일(0일), 기타 1일\n" +
       "• 납품일(delivery): 납품 데이터가 없으므로 생산 이력에서 대리 산출\n" +
-      "• 조회 기준: 오늘 일자(KST) 1일치 데이터만 표시",
+      "• 조회 기준: 선택한 기준일(KST)의 lot_date 1일치 데이터만 표시",
     description:
-      "각 품목의 오늘 Lot 단위 입고·소진·폐기·잔여 수량을 FIFO 순서로 추적합니다. 실제 ERP·POS 연동 전까지 추정 데이터로 운영됩니다.",
+      "각 품목의 기준일 Lot 단위 입고·소진·폐기·잔여 수량을 FIFO 순서로 추적합니다. 실제 ERP·POS 연동 전까지 추정 데이터로 운영됩니다.",
   },
   // FIFO 입고 수량
   "fifo:initial_qty": {
@@ -230,7 +258,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "fifo:wasted_qty": {
     assumption: "유통기한 만료로 expired 처리된 Lot의 수량만 집계합니다.",
     formula: "폐기 수량 = Σ wasted_qty (expired Lot)",
-    description: "기간 내 유통기한 만료로 폐기된 총 수량입니다.",
+    description: "기준일 Lot 중 유통기한 만료로 폐기된 총 수량입니다.",
   },
   // 매출 기회 분석 카드
   "sales:opportunity_marketing_roi": {
@@ -274,10 +302,10 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   "sales:core_indicators": {
     assumption:
-      "각 지표를 0~100으로 정규화합니다. 객단가 지수는 8,000원 기준, 메뉴 다양성은 품목 수 × 17 상한 100입니다.",
+      "각 지표를 0~100으로 정규화합니다. 평균 객단가는 backend가 산출한 avg_ticket_index(최근 4주 객단가 분포 기반 0~100)를 그대로 사용하며, 메뉴 다양성은 품목 수 × 17 상한 100입니다.",
     formula:
-      "마진율 점수 = avg_margin_rate × 100 · 객단가 지수 = (평균 순이익/건) ÷ 8,000 × 100 · 메뉴 다양성 = 품목 수 × 17",
-    description: "마진율·순매출 비율·수익성·메뉴 다양성·객단가 5개 지표를 방사형으로 비교합니다.",
+      "마진율 점수 = avg_margin_rate × 100 · 순매출 비율 = today_net_revenue ÷ today_revenue × 100 · 수익성 = estimated_today_profit ÷ today_revenue × 100 · 평균 객단가 점수 = avg_ticket_index · 메뉴 다양성 = 품목 수 × 17",
+    description: "마진율·순매출 비율·수익성·메뉴 다양성·평균 객단가 5개 지표를 방사형으로 비교합니다. 객단가 항목은 툴팁에서 실제 원 단위(avg_ticket_size)를 함께 확인할 수 있습니다.",
   },
   "sales:product_revenue_share": {
     assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",

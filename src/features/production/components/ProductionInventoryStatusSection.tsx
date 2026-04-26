@@ -77,6 +77,9 @@ export function ProductionInventoryStatusSection(props: Props) {
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
                   품목명
                 </th>
+                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-left">
+                  상품 카테고리
+                </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                   <span className="inline-flex items-center gap-1">
                     <span>판매 가능 수량</span>
@@ -113,7 +116,7 @@ export function ProductionInventoryStatusSection(props: Props) {
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     재고 현황 데이터를 불러오는 중입니다.
@@ -121,14 +124,14 @@ export function ProductionInventoryStatusSection(props: Props) {
                 </tr>
               ) : errorMessage ? (
                 <tr>
-                  <td colSpan={4} className="bg-white px-6 py-16 text-center text-sm text-red-500">
+                  <td colSpan={5} className="bg-white px-6 py-16 text-center text-sm text-red-500">
                     {errorMessage}
                   </td>
                 </tr>
               ) : data?.items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     표시할 재고 현황 데이터가 없습니다.
@@ -157,6 +160,15 @@ export function ProductionInventoryStatusSection(props: Props) {
                             <div className="">{sku.item_nm}</div>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {sku.item_group ? (
+                          <span className="inline-flex rounded-full bg-[#FFF1E8] px-2 py-0.5 text-xs font-semibold text-[#653819]">
+                            {sku.item_group}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400">-</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-right">
                         {sku.total_orderable.toLocaleString("ko-KR")}개
