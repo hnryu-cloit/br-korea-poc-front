@@ -14,7 +14,7 @@ export interface SessionUser {
 
 function getDefaultReferenceDateTime(): string {
   const year = new Date().getFullYear();
-  return `${year}-03-05T00:00`;
+  return `${year}-03-05T09:00`;
 }
 
 const DEFAULT_DEMO_ROLE =

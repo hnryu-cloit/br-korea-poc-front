@@ -7,4 +7,4 @@ export const STORE_AVATAR_BACKGROUND_COLORS = [
   "#FEF3C6",
 ] as const;
 
-export const REFERENCE_DATE_DEFAULT_LABEL = "기본값: 3월 5일 00:00";
+export const REFERENCE_DATE_DEFAULT_LABEL = "기본값: 3월 5일 09:00 (오전)";

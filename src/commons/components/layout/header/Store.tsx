@@ -14,11 +14,19 @@ export function Store() {
 
   useEffect(() => {
     if (stores.length === 0) return;
-    if (stores.some((store) => store.store_id === user.storeId)) return;
+
+    const matched = stores.find((store) => store.store_id === user.storeId);
+    if (matched) {
+      const expectedName = `${matched.store_name}점`;
+      if (user.storeName !== expectedName) {
+        setStore(matched.store_id, expectedName);
+      }
+      return;
+    }
 
     const fallbackStore = stores[0];
     setStore(fallbackStore.store_id, `${fallbackStore.store_name}점`);
-  }, [setStore, stores, user.storeId]);
+  }, [setStore, stores, user.storeId, user.storeName]);
 
   const filteredStores = useMemo(() => {
     const normalized = searchTerm.trim().toLowerCase();
