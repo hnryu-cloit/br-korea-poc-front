@@ -27,8 +27,8 @@ npm run dev -- --host 0.0.0.0 --port 6003
 ```
 
 - 백엔드 base URL은 `VITE_API_BASE_URL` 환경변수로 지정할 수 있습니다.
-- 기본 환경값은 `VITE_DEFAULT_STORE_ID=POC_010`으로 설정되어 초기 점포가 `POC 010`으로 고정됩니다.
-- 기준 일시 기본값은 `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`입니다. (UI에서 변경 가능)
+- 기본 환경값은 `VITE_DEFAULT_STORE_ID=POC_010`, `VITE_DEFAULT_STORE_NAME=강서구01점`으로 설정되어 초기 점포가 `강서구01점`으로 고정됩니다. (실제 헤더 표기는 `/api/stores` 응답을 기준으로 동기화되므로, 환경변수가 잘못 설정되어도 매장 목록 도착 시 자동 보정됩니다.)
+- 기준 일시 기본값은 `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T09:00`입니다. (UI에서 변경 가능)
 - 매출 질의는 1차 응답 이후 `GET /api/explainability/{trace_id}` 폴링으로 액션/근거가 후속 갱신됩니다.
 - 소진공 빅데이터 OpenAPI 인증키는 프론트에서 직접 사용하지 않습니다. `br-korea-poc-backend/.env`에만 설정합니다.
 
@@ -73,7 +73,7 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - 상권/고객 분석 화면은 `업종 분석`, `매출 분석`, `인구 분석`, `지역현황`, `고객특성` 5개 블록으로 구성되며, 원천 데이터 미제공 항목은 `미제공`으로 표시됩니다.
 - 고객 식별 컬럼이 백엔드 원천 테이블에 추가되면 신규/단골 비율은 백엔드 자동탐지 템플릿으로 계산되어 프론트에 자동 반영됩니다.
 - `ordering/history`는 `store_id`를 필수로 전달하며, 누락/오입력은 백엔드에서 4xx로 반환됩니다. QA 검증 시 `VITE_DEFAULT_STORE_ID`를 실제 `masked_stor_cd` 값으로 설정해 사용하세요.
-- 기본값은 `VITE_DEFAULT_STORE_ID=POC_010`, `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T00:00`를 사용합니다.
+- 기본값은 `VITE_DEFAULT_STORE_ID=POC_010`, `VITE_DEFAULT_REFERENCE_DATETIME=2026-03-05T09:00`를 사용합니다.
 
 - 상권/고객 분석 화면의 글로벌 실패 메시지는 `market-intelligence` 메인 API 실패 기준으로만 표시됩니다. `store-profile`/`customer-profile`/`sales-trend` 일부 실패는 보조 데이터 결손으로 처리됩니다.
 
@@ -185,6 +185,11 @@ npm run dev -- --host 0.0.0.0 --port 6003
 - Docker Compose 실행 시 `backend`는 `load` 완료 이후 기동되므로, `load`가 실행 중이면 `localhost:6002`가 연결 거부될 수 있습니다.
 - 이 경우 프론트 콘솔의 `ERR_CONNECTION_REFUSED`는 코드 오류가 아니라 기동 순서 이슈일 가능성이 높습니다.
 
+## Session Note (2026-04-26, FIFO 기준일 당일 집계 전환)
+
+- `GET /api/production/fifo-lots`는 기준일 `lot_date` 1일치 데이터만 집계하도록 변경되었습니다.
+- 생산 진단 화면의 FIFO 툴팁 문구를 기준일 1일치 집계 기준으로 정리했습니다.
+
 ## Session Note (2026-04-23, settings v3 shell alignment)
 
 - `/settings` 화면의 셸(UI 프레임)을 제공 기준 HTML(`설정 v3 – Biz Dunkin' 관리자`) 구조에 맞춰 정렬했습니다.
@@ -295,4 +300,19 @@ npm run dev -- --host 0.0.0.0 --port 6003
 ## Session Note (2026-04-25, settings sidebar design-system alignment rollback)
 
 - `/settings` 사이드바 토큰 정렬 스타일 변경을 직전 상태로 되돌렸습니다.
+- 실행 커맨드/환경변수 변경은 없습니다.
+
+## Session Note (2026-04-26, backend QA stabilization sync)
+
+- 이번 세션의 핵심 변경은 backend 치명 회귀 보강이며 프론트 실행 방식 변경은 없습니다.
+- 기존 실행 커맨드(`npm run dev`, Docker compose)와 환경변수 구성을 그대로 사용합니다.
+
+## Session Note (2026-04-26, backend QA stabilization follow-up)
+
+- backend 치명 회귀 복구 이후에도 프론트 실행 방식은 동일합니다.
+- 실행 커맨드/환경변수 변경 사항은 없습니다.
+
+## Session Note (2026-04-26, frontend lint stabilization)
+
+- 프론트 lint 안정화 작업을 반영했습니다.
 - 실행 커맨드/환경변수 변경은 없습니다.
