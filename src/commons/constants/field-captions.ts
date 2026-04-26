@@ -1,22 +1,15 @@
 ﻿import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
 
 export const PAGE_CAPTIONS: Record<string, PageCaption> = {
-  dashboard: { subtitle: "점포 운영 주요 지표를 한눈에 확인합니다." },
-  "production:status": {
-    subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다.",
-  },
-  "production:inventory": { subtitle: "품목별 재고 수준과 판매 가능 수량을 확인합니다." },
-  "production:waste": { subtitle: "전일 기준 폐기 수량과 손실 금액을 분석합니다." },
-  "ordering:recommendations": { subtitle: "AI가 분석한 최적 발주량을 확인합니다." },
-  "ordering:history": { subtitle: "과거 발주 내역과 실적을 조회합니다." },
-  "analytics:sales": { subtitle: "기간별 매출 흐름과 채널별 성과를 분석합니다." },
-  "analytics:market": { subtitle: "상권 내 경쟁 현황과 고객 분포를 확인합니다." },
-  "sales:product_revenue_share": {
-    assumption:
-      "조회 기간 전체 매출을 상품 그룹 단위로 합산해 비중을 계산합니다. 상품별 Top 6이 아니라, 분류된 모든 상품 그룹을 대상으로 합니다.",
-    formula: "상품 그룹별 매출 비중 = 각 상품 그룹 매출 ÷ 전체 상품 그룹 매출 × 100",
-    description: "전체 매출 대비 각 상품 그룹의 매출 비중을 면적으로 보여줍니다.",
-  }
+  dashboard: {subtitle: "점포 운영 주요 지표를 한눈에 확인합니다."},
+  "production:status": {subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다."},
+  "production:inventory": {subtitle: "품목별 재고 수준과 판매 가능 수량을 확인합니다."},
+  "production:waste": {subtitle: "전일 기준 폐기 수량과 손실 금액을 분석합니다."},
+  "ordering:recommendations": {subtitle: "AI가 분석한 최적 발주량을 확인합니다."},
+  "ordering:history": {subtitle: "과거 발주 내역과 실적을 조회합니다."},
+  "analytics:sales": {subtitle: "기간별 매출 흐름과 채널별 성과를 분석합니다."},
+  "analytics:market": {subtitle: "상권 내 경쟁 현황과 고객 분포를 확인합니다."},
+  "sales:product_revenue_share": {subtitle: "조회 기간 전체 매출을 상품 그룹 단위로 합산해 비중을 계산합니다."}
 };
 
 export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
@@ -177,19 +170,17 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 손익 분석 - 평균 객단가
   "sales:avg_ticket_index": {
     assumption:
-      "당일 총매출을 당일 총주문 건수로 나누어 계산합니다. \n" +
-      "주문 건수는 매장 일별 집계 데이터가 있으면 그 값을 우선 사용하고, 없으면 채널별 주문 건수를 합산한 값으로 대체합니다.\n" +
-      "객단가 지수는 동일 매장의 최근 4주(28일) 동안의 일별 객단가 분포 안에서 오늘 객단가가 어느 위치에 있는지를 0~100으로 환산한 상대 지표입니다",
+      "• 주문 건수는 매장 일별 집계 데이터가 있으면 그 값을 우선 사용하고, 없으면 채널별 주문 건수를 합산한 값으로 대체합니다.\n" +
+      "• 객단가 지수는 동일 매장의 최근 4주(28일) 동안의 일별 객단가 분포 안에서 오늘 객단가가 어느 위치에 있는지를 0~100으로 환산한 상대 지표입니다",
     formula:
       "• 평균 객단가 = 당일 총매출 ÷ 당일 총주문 건수\n" +
       "• 객단가 지수 = (당일 객단가 - 최근 4주 최소 객단가) ÷ (최근 4주 최대 객단가 - 최근 4주 최소 객단가) × 100",
     description:
-      "당일 평균 객단가와, 그것이 최근 4주 기준에서 얼마나 높은 수준인지 0~100 점수로 함께 보여줍니다. 점수는 절대 금액 자체가 아니라 최근 4주 내 동일 매장의 상대적 위치를 의미합니다.",
+      "• 당일 평균 객단가와, 그것이 최근 4주 기준에서 얼마나 높은 수준인지 0~100 점수로 함께 보여줍니다. 점수는 절대 금액 자체가 아니라 최근 4주 내 동일 매장의 상대적 위치를 의미합니다.",
   },
   // 생산 현황 테이블
   "production:forecast_1h": {
-    assumption:
-      "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
+    assumption: "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
     formula: "예측 재고 = 현재 재고 - (시간당 평균 판매량 × 1)",
     description: "1시간 후 예상 잔여 재고 수량입니다.",
   },
@@ -210,8 +201,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 재고 현황 테이블
   "inventory:orderable_qty": {
-    assumption:
-      "판매 가능 수량은 기준 시점에 실제로 남아 있는 재고 수량을 의미합니다.\n" +
+    assumption: "판매 가능 수량은 기준 시점에 실제로 남아 있는 재고 수량을 의미합니다.\n" +
       "재고 조정·ERP 처리 지연으로 인한 음수 재고는 0으로 처리합니다.",
     formula: "판매 가능 수량 = max(기준 시점 재고 수량, 0)",
     description: "기준 시점에 실제로 남아 있어 판매 가능한 재고 수량입니다.",
@@ -303,24 +293,45 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     description: "오늘 매출에서 추정 이익과 비용이 차지하는 비율입니다.",
   },
   "sales:top_products": {
-    assumption: "조회 기간 내 판매 금액 기준 상위 상품 그룹을 집계합니다.",
-    description: "판매 금액 순으로 상위 상품 그룹의 매출을 비교합니다.",
+    assumption: "조회 기간 내 판매 금액 기준 상위 10개 상품을 집계합니다.",
+    description: "판매 금액 순으로 상위 10개 상품의 매출을 비교합니다.",
+  },
+  "sales:margin_rate": {
+    assumption: "최근 4주간 매출이 발생한 제품의 제품별 마진율 평균을 사용합니다.",
+    formula: "마진율 점수 = Avg((판매가 - 원가) ÷ 판매가) × 100",
+    description: "판매가 대비 이익 비중을 0~100 점수로 환산합니다.",
+  },
+  "sales:net_ratio": {
+    assumption: "당일 총매출에서 할인·수수료 등 차감 후 남은 순매출 비율을 의미합니다.",
+    formula: "순매출 비율 = 순매출 ÷ 총매출 × 100",
+    description: "매출 중 실제 매장에 남는 금액의 비중을 점수화합니다.",
+  },
+  "sales:profitability": {
+    assumption: "추정 이익은 오늘 매출에 평균 마진율을 곱해 산출합니다.",
+    formula: "수익성 점수 = 추정 이익 ÷ 총매출 × 100",
+    description: "매출 대비 추정 이익이 차지하는 비율을 점수로 보여줍니다.",
+  },
+  "sales:menu_diversity": {
+    assumption: "조회 기간 내 매출이 발생한 상위 상품 수를 기준으로 점수를 부여합니다.",
+    formula: "메뉴 다양성 점수 = min(100, 상위 상품 수 × 17)",
+    description: "매장이 다양한 메뉴를 균형 있게 운영하고 있는지를 점수화합니다.",
   },
   "sales:core_indicators": {
     assumption:
-      "핵심 지표는 마진율, 순매출 비율, 수익성, 메뉴 다양성, 객단가를 0~100 범위로 비교할 수 있도록 정리한 값입니다.\n" +
-      "메뉴 다양성은 판매된 주요 상품 수를 기준으로 보고, 객단가는 최근 4주 같은 지점의 객단가 흐름 안에서 상대적인 위치를 점수로 환산합니다.",
-    formula:
-      "• 마진율 점수 = 마진율 × 100\n" +
-      "• 순매출 비율 = 순매출 ÷ 총매출 × 100\n" +
-      "• 수익성 = 추정 이익 ÷ 총매출 × 100\n" +
-      "• 메뉴 다양성 = 매출 발생한 판매 상품 구성 기준 점수\n" +
-      "• 객단가 점수 = 최근 4주 객단가 범위 안에서 환산한 0~100 점수(추후 유사 상권 분석 진행 후 유사 상권끼리의 분포 적용)",
-    description: "매장의 수익 구조와 판매 구성을 5개 핵심 지표로 요약해 비교하는 영역입니다.",
+      "핵심 지표는 마진율, 순매출 비율, 수익성, 메뉴 다양성, 객단가를 0~100 범위로 비교할 수 있도록 정리한 값입니다.\n",
+    description:
+      "매장의 수익 구조와 판매 구성을 5개 핵심 지표로 요약해 비교하는 영역입니다.\n" +
+      "• 마진율: 판매 한 건당 남는 이익 비중을 보여 주는 단위 수익성 지표입니다. 가격·원가 구조가 건강한지 확인하는 출발점이 됩니다.\n" +
+      "• 순매출 비율: 할인·수수료 차감 후 실제 매장에 남는 매출 비중으로, 외부 비용이 수익을 얼마나 잠식하는지를 보여 줍니다.\n" +
+      "• 수익성: 추정 이익이 매출 전체에서 차지하는 비중으로, 마진율과 비용 구조가 결합된 종합 수익 체력을 나타냅니다.\n" +
+      "• 메뉴 다양성: 매출이 한두 개 메뉴에 쏠려 있는지를 측정해 매출 안정성과 위험 분산 정도를 평가합니다.\n" +
+      "• 평균 객단가: 고객 한 명이 평균 얼마를 지출하는지를 보여 줘, 트래픽 외에 객 단위 매출을 끌어올릴 여지가 있는지 판단하는 데 사용됩니다.\n" +
+      "이 5개 축을 함께 보면 '많이 파는가 / 비싸게 파는가 / 효율적으로 파는가 / 안정적으로 파는가'를 한 화면에서 진단할 수 있습니다.",
   },
-  "sales:product_revenue_share": {
-    assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",
-    description: "전체 매출 대비 상품별 매출 비중을 면적으로 시각화합니다.",
+"sales:product_revenue_share": {
+    assumption: "조회 기간 전체 매출을 상품 그룹 단위로 합산해 비중을 계산합니다.",
+    formula: "상품 그룹별 매출 비중 = 각 상품 그룹 매출 ÷ 전체 상품 그룹 매출 × 100",
+    description: "전체 매출 대비 각 상품 그룹의 매출 비중을 면적으로 보여줍니다."
   },
   "sales:weekly_net_revenue": {
     assumption: "조회 기간 내 전체 일자의 순매출 합산이며, 할인·수수료 차감 후 기준입니다.",
@@ -345,59 +356,73 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "page:settings_agents": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "운영 중 Agent의 모델/버전/상태를 관리하고 배포 현황을 추적합니다.",
+    assumption:
+      "운영 중 Agent의 모델/버전/상태를 관리하고 배포 현황을 추적합니다.",
     description:
       "서비스 품질 저하를 조기에 감지하고 안정적인 운영 릴리즈를 유지하기 위해 필요합니다.",
   },
   "page:settings_orchestration": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "라우팅, 핸드오프, fallback 규칙을 관리해 질의 처리 흐름을 제어합니다.",
-    description: "응답 일관성과 실패 복원력을 높여 운영 리스크를 줄이기 위해 필요합니다.",
+    assumption:
+      "라우팅, 핸드오프, fallback 규칙을 관리해 질의 처리 흐름을 제어합니다.",
+    description:
+      "응답 일관성과 실패 복원력을 높여 운영 리스크를 줄이기 위해 필요합니다.",
   },
   "page:settings_connectors": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "데이터 원천 커넥터 상태와 동기화 품질, 지연 이슈를 모니터링합니다.",
+    assumption:
+      "데이터 원천 커넥터 상태와 동기화 품질, 지연 이슈를 모니터링합니다.",
     description:
       "AI/분석 결과의 신뢰도를 좌우하는 데이터 파이프라인을 안정적으로 유지하기 위해 필요합니다.",
   },
   "page:settings_access": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "역할별 권한과 데이터 범위를 통제해 접근 정책을 운영합니다.",
-    description: "보안/컴플라이언스를 준수하고 사용자 권한 오남용을 방지하기 위해 필요합니다.",
+    assumption:
+      "역할별 권한과 데이터 범위를 통제해 접근 정책을 운영합니다.",
+    description:
+      "보안/컴플라이언스를 준수하고 사용자 권한 오남용을 방지하기 위해 필요합니다.",
   },
   "page:settings_prompts": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "도메인별 시스템 프롬프트와 빠른 질문, 템플릿을 관리합니다.",
+    assumption:
+      "도메인별 시스템 프롬프트와 빠른 질문, 템플릿을 관리합니다.",
     description:
       "응답 품질과 톤을 표준화하고, 운영자가 모델 동작을 통제 가능하게 만들기 위해 필요합니다.",
   },
   "page:settings_golden_queries": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "반복 핵심 질의를 골든 쿼리로 관리해 응답 속도와 정확도를 높입니다.",
-    description: "자주 묻는 운영 질문에 대한 일관된 답변을 빠르게 제공하기 위해 필요합니다.",
+    assumption:
+      "반복 핵심 질의를 골든 쿼리로 관리해 응답 속도와 정확도를 높입니다.",
+    description:
+      "자주 묻는 운영 질문에 대한 일관된 답변을 빠르게 제공하기 위해 필요합니다.",
   },
   "page:settings_audit_logs": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "질의 처리 기록, 차단 이력, 경로 정보를 추적해 감사 가능성을 확보합니다.",
-    description: "정책 위반 탐지, 장애 분석, 책임 추적을 위한 운영 근거를 남기기 위해 필요합니다.",
+    assumption:
+      "질의 처리 기록, 차단 이력, 경로 정보를 추적해 감사 가능성을 확보합니다.",
+    description:
+      "정책 위반 탐지, 장애 분석, 책임 추적을 위한 운영 근거를 남기기 위해 필요합니다.",
   },
   "page:settings_quality_archive": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "Agent별 품질 지표와 이슈 상태를 통합 관리합니다.",
+    assumption:
+      "Agent별 품질 지표와 이슈 상태를 통합 관리합니다.",
     description:
       "품질 저하를 수치 기반으로 관리하고 개선 작업 우선순위를 결정하기 위해 필요합니다.",
   },
   "page:settings_notices": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption: "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
-    description: "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
+    assumption:
+      "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
+    description:
+      "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
   },
 };
