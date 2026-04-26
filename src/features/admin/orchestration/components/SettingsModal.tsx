@@ -236,8 +236,9 @@ export function SettingsModal({ activeModal, selectedNotice, onClose }: Props) {
               실행
             </button>
             <select className="sel">
-              <option>매장 S0042 (강남점)</option>
-              <option>매장 S0078 (홍대점)</option>
+              <option>영등포구01점</option>
+              <option>마포구01점</option>
+              <option>강서구01점</option>
             </select>
           </div>
           <pre className="min-h-[80px] whitespace-pre-wrap rounded-[7px] border border-[var(--border2)] bg-[var(--bg)] p-[10px] text-[12px] text-[var(--t2)]">

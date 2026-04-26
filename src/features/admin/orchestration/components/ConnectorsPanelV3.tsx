@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { SettingsModalKey } from "@/features/admin/orchestration/types/orchestration";
 
 type Props = {
@@ -9,7 +11,14 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>데이터 커넥터</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>데이터 커넥터</h1>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_connectors"]}
+              side="bottom"
+              align="left"
+            />
+          </div>
           <p>원천 데이터 연동 상태 · 스키마 정합성 · 동기화 스케줄</p>
         </div>
         <div className="pgh-r">
@@ -79,6 +88,9 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
                 <span className="ml-auto text-[11px] text-[var(--t3)]">09:10 KST</span>
               </div>
               <div className="mt-[3px]">raw_daily_store_item · raw_daily_store_online</div>
+              <div className="mt-1 text-[11px] text-[var(--t3)]">
+                동기화 주기 30분 · SLA 99.9% · 최근 오류 0건
+              </div>
               <div className="mt-2 grid grid-cols-4 gap-[7px]">
                 <div className="metric">
                   <div className="ml">스키마</div>
@@ -126,6 +138,9 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
               <div className="mt-[3px]">
                 raw_order_extract · raw_production_extract · raw_sku_master
               </div>
+              <div className="mt-1 text-[11px] text-[var(--t3)]">
+                동기화 주기 15분 · 스키마 변경 감지 1건(자동 반영 완료)
+              </div>
               <div className="mt-2 grid grid-cols-4 gap-[7px]">
                 <div className="metric">
                   <div className="ml">스키마</div>
@@ -172,6 +187,9 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
               </div>
               <div className="mt-[3px]">
                 seoul_floating_population_monthly · internal_market_index
+              </div>
+              <div className="mt-1 text-[11px] text-[var(--t3)]">
+                동기화 주기 일 1회 · 최근 24시간 재시도 3회
               </div>
               <div className="mt-[7px] rounded-[7px] border border-[#FFE08A] bg-[var(--amber-lt)] px-[10px] py-[7px] text-[11.5px] text-[#7A5500]">
                 ⚠ 서울시 공공 데이터 포털 점검 중 — 이전 월 데이터로 임시 대체 적용

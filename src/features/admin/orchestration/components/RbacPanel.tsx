@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { useRbacPanel } from "@/features/admin/orchestration/hooks/useRbacPanel";
 import type {
   SettingsModalKey,
@@ -15,13 +17,17 @@ function getRoleBadge(role: UserRole) {
 }
 
 export function RbacPanel({ onOpenModal }: Props) {
-  const { filteredMembers, searchText, setSearchText, roleFilter, setRoleFilter } = useRbacPanel();
+  const { filteredMembers, roleCounts, searchText, setSearchText, roleFilter, setRoleFilter } =
+    useRbacPanel();
 
   return (
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>RBAC & 접근 제어</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>RBAC & 접근 제어</h1>
+            <InfoPopover caption={FIELD_CAPTIONS["page:settings_access"]} side="bottom" align="left" />
+          </div>
           <p>역할 기반 접근 통제 · 권한 매트릭스 · 데이터 범위 · 멤버 관리</p>
         </div>
         <div className="pgh-r">
@@ -71,7 +77,7 @@ export function RbacPanel({ onOpenModal }: Props) {
             </div>
             <div className="flex justify-between text-[11.5px]">
               <span className="sub">현재 인원</span>
-              <strong>4명</strong>
+              <strong>{roleCounts.hq_admin}명</strong>
             </div>
           </div>
         </div>
@@ -104,7 +110,7 @@ export function RbacPanel({ onOpenModal }: Props) {
             </div>
             <div className="flex justify-between text-[11.5px]">
               <span className="sub">현재 인원</span>
-              <strong>132명</strong>
+              <strong>{roleCounts.store_owner}명</strong>
             </div>
           </div>
         </div>
@@ -136,7 +142,7 @@ export function RbacPanel({ onOpenModal }: Props) {
             </div>
             <div className="flex justify-between text-[11.5px]">
               <span className="sub">현재 인원</span>
-              <strong>9명</strong>
+              <strong>{roleCounts.ops_partner}명</strong>
             </div>
           </div>
         </div>

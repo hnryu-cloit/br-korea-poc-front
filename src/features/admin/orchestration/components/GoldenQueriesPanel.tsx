@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { MOCK_RECOMMENDED_GOLDEN_QUERIES } from "@/features/admin/orchestration/mockdata/mock-orchestration";
 import { useGoldenQueriesPanel } from "@/features/admin/orchestration/hooks/useGoldenQueriesPanel";
 import type { SettingsModalKey } from "@/features/admin/orchestration/types/orchestration";
@@ -21,7 +23,14 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>골든 쿼리 관리</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>골든 쿼리 관리</h1>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_golden_queries"]}
+              side="bottom"
+              align="left"
+            />
+          </div>
           <p>자주 사용되는 질의를 배치 임베딩하여 빠른 응답을 제공합니다</p>
         </div>
         <div className="pgh-r">
@@ -98,15 +107,19 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
                   #{index + 1}
                 </span>
                 <div className="flex-1">
-                  <div className="mb-[3px] text-[12.5px] font-semibold text-[var(--text)]">
-                    {item.query}
+                    <div className="mb-[3px] text-[12.5px] font-semibold text-[var(--text)]">
+                      {item.query}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="sub text-[11px]">📊 {item.agent}</span>
+                      <span className="sub text-[11px]">{Math.max(item.hits - 10, 0)}회/주</span>
+                      <span className="sub text-[11px]">평균 1.{index + 1}s</span>
+                      <span className="sub text-[11px]">
+                        우선순위 {item.hits >= 50 ? "상" : item.hits >= 35 ? "중" : "하"}
+                      </span>
+                      <span className="sub text-[11px]">출처: 감사로그 패턴</span>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="sub text-[11px]">📊 {item.agent}</span>
-                    <span className="sub text-[11px]">{Math.max(item.hits - 10, 0)}회/주</span>
-                    <span className="sub text-[11px]">평균 1.{index + 1}s</span>
-                  </div>
-                </div>
                 <button
                   type="button"
                   className="btn btn-p btn-sm"

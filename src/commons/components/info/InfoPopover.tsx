@@ -94,7 +94,7 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
             {caption.assumption && (
               <div className="mb-3">
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
-                  전제 및 가정
+                  {caption.assumptionLabel ?? "전제 및 가정"}
                 </p>
                 <CaptionBody raw={caption.assumption} />
               </div>
@@ -102,7 +102,7 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
             {caption.formula && (
               <div className="mb-3">
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
-                  수식
+                  {caption.formulaLabel ?? "수식"}
                 </p>
                 <div className="rounded bg-[#f8f8f8] px-2 py-1.5">
                   <CaptionBody raw={caption.formula} />
@@ -111,7 +111,7 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
             )}
             <div>
               <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#653819]">
-                설명
+                {caption.descriptionLabel ?? "설명"}
               </p>
               <CaptionBody raw={caption.description} />
             </div>

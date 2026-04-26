@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type { SettingsModalKey } from "@/features/admin/orchestration/types/orchestration";
 
 type Props = {
@@ -9,7 +11,14 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>오케스트레이션</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>오케스트레이션</h1>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_orchestration"]}
+              side="bottom"
+              align="left"
+            />
+          </div>
           <p>멀티 에이전트 라우팅 파이프라인 · 핸드오프 규칙 · Fallback 체인</p>
         </div>
         <div className="pgh-r">
@@ -147,6 +156,22 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                   <td className="sub">9</td>
                   <td className="sub">On</td>
                 </tr>
+                <tr>
+                  <td className="mono">타매장, 개인정보, 민감정보</td>
+                  <td>
+                    <span className="b br">정책 차단</span>
+                  </td>
+                  <td className="sub">0</td>
+                  <td className="sub">On</td>
+                </tr>
+                <tr>
+                  <td className="mono">상권, 유동인구, 입지</td>
+                  <td>
+                    <span className="b bgy">RAG 우선</span>
+                  </td>
+                  <td className="sub">2</td>
+                  <td className="sub">On</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -276,6 +301,32 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                 <td>정책 차단</td>
                 <td className="sub">없음</td>
                 <td className="sub">0.2s</td>
+                <td>
+                  <span className="b br">차단</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="sub">09:46</td>
+                <td>상권 유동인구 기반으로 프로모션 추천해줘</td>
+                <td>
+                  <span className="b bo">매출관리</span>
+                </td>
+                <td className="mono">RAG → 응답</td>
+                <td className="sub">없음</td>
+                <td className="sub">2.4s</td>
+                <td>
+                  <span className="b bg">성공</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="sub">09:33</td>
+                <td>직원 개인 연락처 알려줘</td>
+                <td>
+                  <span className="b bb">주문관리</span>
+                </td>
+                <td className="mono">민감정보 정책 차단</td>
+                <td className="sub">없음</td>
+                <td className="sub">0.1s</td>
                 <td>
                   <span className="b br">차단</span>
                 </td>

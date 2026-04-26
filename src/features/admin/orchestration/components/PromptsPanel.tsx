@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import {
   AGENT_TABS,
   ORCHESTRATION_DOMAIN_LABEL,
@@ -55,7 +57,10 @@ export function PromptsPanel({
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>AI 프롬프트 설정</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>AI 프롬프트 설정</h1>
+            <InfoPopover caption={FIELD_CAPTIONS["page:settings_prompts"]} side="bottom" align="left" />
+          </div>
           <p>Agent별 다중 프롬프트 관리 · 버전 이력 · 테스트 콘솔</p>
         </div>
         <div className="pgh-r">
