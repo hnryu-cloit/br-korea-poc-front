@@ -281,42 +281,23 @@ export function AnswerContextMeta({
 }
 
 function ProcessingCriteriaItems({ agentTrace }: { agentTrace: FloatingAiChatAgentTrace }) {
-  const detailRows = [
-    { label: "intent", value: agentTrace.intent },
-    { label: "matched_query_id", value: agentTrace.matchedQueryId },
-    {
-      label: "row_count",
-      value: typeof agentTrace.rowCount === "number" ? String(agentTrace.rowCount) : "",
-    },
-    {
-      label: "match_score",
-      value: typeof agentTrace.matchScore === "number" ? agentTrace.matchScore.toFixed(3) : "",
-    },
-    { label: "sql", value: agentTrace.sql },
-  ].filter((row) => Boolean(row.value));
-
-  if (detailRows.length === 0 && agentTrace.relevantTables.length === 0) {
-    return null;
+  if (!agentTrace.sql) {
+    return (
+      <li className="rounded-xl bg-[#F8FAFC] px-3 py-2 text-sm leading-6 text-[#64748B]">
+        처리 기준이 없어요. 답변이 없어 SQL 기준을 확인할 수 없습니다.
+      </li>
+    );
   }
 
   return (
-    <>
-      {agentTrace.relevantTables.slice(0, 3).map((table) => (
-        <li key={table} className="rounded-xl bg-[#F8FAFC] px-3 py-2 text-sm text-[#475569]">
-          {table}
-        </li>
-      ))}
-      {detailRows.map((row) => (
-        <li key={row.label} className="rounded-xl bg-[#FFF9F4] px-3 py-2 text-sm text-[#41352E]">
-          <span className="block text-[11px] font-semibold uppercase tracking-wide text-[#B45309]">
-            {row.label}
-          </span>
-          <span className="mt-1 block whitespace-pre-wrap break-words text-[13px] leading-5">
-            {row.value}
-          </span>
-        </li>
-      ))}
-    </>
+    <li className="rounded-xl bg-[#FFF9F4] px-3 py-2 text-sm text-[#41352E]">
+      <span className="block text-[11px] font-semibold uppercase tracking-wide text-[#B45309]">
+        sql
+      </span>
+      <span className="mt-1 block whitespace-pre-wrap break-words text-[13px] leading-5">
+        {agentTrace.sql}
+      </span>
+    </li>
   );
 }
 
@@ -329,7 +310,7 @@ export function AnswerEvidenceAccordion({
   evidence: string[];
   agentTrace: FloatingAiChatAgentTrace;
 }) {
-  if (evidence.length === 0 && agentTrace.relevantTables.length === 0 && !agentTrace.sql) {
+  if (evidence.length === 0 && !agentTrace.sql) {
     return null;
   }
 
@@ -346,7 +327,7 @@ export function AnswerEvidenceAccordion({
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#653819]">근거</p>
             <ul className="space-y-2">
-              {evidence.slice(0, 4).map((item, index) => (
+              {evidence.slice(0, 1).map((item, index) => (
                 <li
                   key={`${item}-${index}`}
                   className="rounded-xl bg-[#FFF9F4] px-3 py-2 text-sm leading-6 text-[#41352E]"
