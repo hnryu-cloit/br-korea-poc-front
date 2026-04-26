@@ -2,16 +2,23 @@ import { OrderingSummaryCardBody } from "@/features/dashboard/components/Orderin
 import { ProductionSummaryCardBody } from "@/features/dashboard/components/ProductionSummaryCardBody";
 import { SalesSummaryCardBody } from "@/features/dashboard/components/SalesSummaryCardBody";
 import { SummaryCard } from "@/features/dashboard/components/SummaryCard";
+import { SummaryCardsSectionSkeleton } from "@/features/dashboard/components/DashboardSkeletons";
 import { SUMMARY_CARD_ICON_MAP } from "@/features/dashboard/constants/summary-card";
 import type { DashboardSummaryCard } from "@/features/dashboard/types/dashboard";
 
 export function SummaryCardsSection({
   cards,
   updatedAt,
+  isLoading,
 }: {
   cards: DashboardSummaryCard[];
   updatedAt?: string;
+  isLoading?: boolean;
 }) {
+  if (isLoading) {
+    return <SummaryCardsSectionSkeleton />;
+  }
+
   return (
     <section className="grid gap-5 xl:grid-cols-3">
       {cards.map((card) => {

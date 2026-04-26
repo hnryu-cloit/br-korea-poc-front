@@ -1,3 +1,4 @@
+import { DashboardAlertSummarySkeleton } from "@/features/dashboard/components/DashboardSkeletons";
 import { LowStockProductCard } from "@/features/dashboard/components/LowStockProductCard";
 import { OrderDeadlineCard } from "@/features/dashboard/components/OrderDeadlineCard";
 import type {
@@ -8,10 +9,16 @@ import type {
 export function DashboardAlertSummary({
   lowStockProducts,
   orderDeadline,
+  isLoading,
 }: {
   lowStockProducts: DashboardLowStockProduct[];
   orderDeadline: DashboardOrderDeadline | null;
+  isLoading?: boolean;
 }) {
+  if (isLoading) {
+    return <DashboardAlertSummarySkeleton />;
+  }
+
   return (
     <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-[16px]">
       <LowStockProductCard products={lowStockProducts} />
