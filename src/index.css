@@ -256,7 +256,7 @@
 }
 
 .react-calendar__tile--referenceToday.react-calendar__tile--active::before {
-  background: var(--calendar-active-date-bg) center / contain no-repeat;
+  background: var(--calendar-today-date-bg) center / contain no-repeat;
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {

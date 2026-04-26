@@ -107,19 +107,19 @@ export function GoldenQueriesPanel({ onOpenModal }: Props) {
                   #{index + 1}
                 </span>
                 <div className="flex-1">
-                    <div className="mb-[3px] text-[12.5px] font-semibold text-[var(--text)]">
-                      {item.query}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="sub text-[11px]">📊 {item.agent}</span>
-                      <span className="sub text-[11px]">{Math.max(item.hits - 10, 0)}회/주</span>
-                      <span className="sub text-[11px]">평균 1.{index + 1}s</span>
-                      <span className="sub text-[11px]">
-                        우선순위 {item.hits >= 50 ? "상" : item.hits >= 35 ? "중" : "하"}
-                      </span>
-                      <span className="sub text-[11px]">출처: 감사로그 패턴</span>
-                    </div>
+                  <div className="mb-[3px] text-[12.5px] font-semibold text-[var(--text)]">
+                    {item.query}
                   </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="sub text-[11px]">📊 {item.agent}</span>
+                    <span className="sub text-[11px]">{Math.max(item.hits - 10, 0)}회/주</span>
+                    <span className="sub text-[11px]">평균 1.{index + 1}s</span>
+                    <span className="sub text-[11px]">
+                      우선순위 {item.hits >= 50 ? "상" : item.hits >= 35 ? "중" : "하"}
+                    </span>
+                    <span className="sub text-[11px]">출처: 감사로그 패턴</span>
+                  </div>
+                </div>
                 <button
                   type="button"
                   className="btn btn-p btn-sm"

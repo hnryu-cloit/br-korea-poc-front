@@ -26,7 +26,11 @@ export function RbacPanel({ onOpenModal }: Props) {
         <div className="pgh-l">
           <div className="inline-flex items-center gap-1.5">
             <h1>RBAC & 접근 제어</h1>
-            <InfoPopover caption={FIELD_CAPTIONS["page:settings_access"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_access"]}
+              side="bottom"
+              align="left"
+            />
           </div>
           <p>역할 기반 접근 통제 · 권한 매트릭스 · 데이터 범위 · 멤버 관리</p>
         </div>

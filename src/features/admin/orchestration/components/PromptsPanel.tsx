@@ -59,7 +59,11 @@ export function PromptsPanel({
         <div className="pgh-l">
           <div className="inline-flex items-center gap-1.5">
             <h1>AI 프롬프트 설정</h1>
-            <InfoPopover caption={FIELD_CAPTIONS["page:settings_prompts"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_prompts"]}
+              side="bottom"
+              align="left"
+            />
           </div>
           <p>Agent별 다중 프롬프트 관리 · 버전 이력 · 테스트 콘솔</p>
         </div>
