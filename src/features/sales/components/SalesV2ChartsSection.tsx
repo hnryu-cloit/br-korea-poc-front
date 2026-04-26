@@ -167,7 +167,7 @@ export const SalesV2ChartsSection = ({
 
   const weekly = summary?.weekly_data ?? [];
   const allProducts = summary?.top_products ?? [];
-  const topProducts = allProducts.slice(0, 6);
+  const topProducts = allProducts.slice(0, 10);
   const groupRevenueShare = summary?.group_revenue_share ?? [];
 
   const weeklyWithAxisLabel = weekly.map((item, index) => ({
