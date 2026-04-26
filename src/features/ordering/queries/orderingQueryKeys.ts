@@ -1,4 +1,5 @@
 import type {
+  OrderingActiveCampaignsParams,
   OrderingAlertsParams,
   OrderingDeadlineParams,
   OrderingHistoryParams,
@@ -13,6 +14,8 @@ export const orderingQueryKeys = {
   all: ORDERING_QUERY_ROOT,
   options: (params?: OrderingOptionsParams) =>
     [...ORDERING_QUERY_ROOT, "options", params ?? {}] as const,
+  activeCampaigns: (params?: OrderingActiveCampaignsParams) =>
+    [...ORDERING_QUERY_ROOT, "active-campaigns", params ?? {}] as const,
   context: (notificationId: number) => [...ORDERING_QUERY_ROOT, "context", notificationId] as const,
   alerts: (params?: OrderingAlertsParams) =>
     [...ORDERING_QUERY_ROOT, "alerts", params ?? {}] as const,

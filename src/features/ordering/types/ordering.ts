@@ -49,6 +49,25 @@ export interface OrderingOptionsResponse {
   options: OrderingOption[]; // 추천안 목록
 }
 
+// GET /api/ordering/active-campaigns
+export interface OrderingActiveCampaignsParams {
+  reference_date?: string; // YYYY-MM-DD
+  limit?: number;
+}
+
+export interface ActiveCampaignItem {
+  code: string;
+  name: string;
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD
+  kind?: string | null;
+}
+
+export interface OrderingActiveCampaignsResponse {
+  reference_date: string;
+  items: ActiveCampaignItem[];
+}
+
 // GET /api/ordering/context/{notification_id}
 export interface OrderingContextPath {
   notification_id: number; // 알림 ID(path)

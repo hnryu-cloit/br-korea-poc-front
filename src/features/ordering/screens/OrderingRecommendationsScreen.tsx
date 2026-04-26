@@ -12,10 +12,19 @@ import {
   OrderingOptionsSectionSkeleton,
 } from "@/features/ordering/components/OrderingSkeletons";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
+import { useGetOrderingActiveCampaignsQuery } from "@/features/ordering/queries/useGetOrderingActiveCampaignsQuery";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
 import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
+
+function todayString() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
 
 export function OrderingRecommendationsScreen() {
   const location = useLocation();
@@ -33,8 +42,13 @@ export function OrderingRecommendationsScreen() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [campaignReferenceDate, setCampaignReferenceDate] = useState<string>(todayString);
 
   const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
+  const activeCampaignsQuery = useGetOrderingActiveCampaignsQuery({
+    reference_date: campaignReferenceDate,
+    limit: 3,
+  });
 
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
@@ -139,7 +153,10 @@ export function OrderingRecommendationsScreen() {
           <OrderingContextCards
             businessDate={optionsQuery.data?.business_date}
             weather={optionsQuery.data?.weather}
-            trend={optionsQuery.data?.trend_summary}
+            campaigns={activeCampaignsQuery.data?.items ?? []}
+            referenceDate={campaignReferenceDate}
+            onChangeReferenceDate={setCampaignReferenceDate}
+            isCampaignsLoading={activeCampaignsQuery.isLoading}
           />
           <OrderingDeadlineAlert deadlineItems={deadlineItems} />
           <OrderingOptionsSection
