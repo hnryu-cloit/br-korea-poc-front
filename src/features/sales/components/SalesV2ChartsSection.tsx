@@ -210,7 +210,11 @@ export const SalesV2ChartsSection = ({
     { subject: "순매출 비율", value: netRatio },
     { subject: "수익률", value: profitRatio },
     { subject: "메뉴 다양성", value: diversityScore },
-    { subject: "평균 객단가", value: ticketIndex, displayValue: `${ticketSize.toLocaleString()}원` },
+    {
+      subject: "평균 객단가",
+      value: ticketIndex,
+      displayValue: `${ticketSize.toLocaleString()}원`,
+    },
   ];
 
   const treemapTotalSales = groupRevenueShare.reduce((sum, item) => sum + (item.sales ?? 0), 0);
@@ -233,7 +237,10 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={weeklyWithAxisLabel} margin={{ top: 8, right: 16, left: -10, bottom: 40 }}>
+            <AreaChart
+              data={weeklyWithAxisLabel}
+              margin={{ top: 8, right: 16, left: -10, bottom: 40 }}
+            >
               <defs>
                 <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#bfd5ff" stopOpacity={0.7} />
@@ -255,7 +262,10 @@ export const SalesV2ChartsSection = ({
               />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}원`, String(name)]}
+                formatter={(value, name) => [
+                  `${Number(value ?? 0).toLocaleString()}원`,
+                  String(name),
+                ]}
                 contentStyle={customTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -305,7 +315,10 @@ export const SalesV2ChartsSection = ({
               />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}원`, String(name)]}
+                formatter={(value, name) => [
+                  `${Number(value ?? 0).toLocaleString()}원`,
+                  String(name),
+                ]}
                 contentStyle={customTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -316,7 +329,11 @@ export const SalesV2ChartsSection = ({
         )}
       </ChartCard>
 
-      <ChartCard title="오늘 수익 구성" subtitle="매출 대비 추정 이익과 비용" captionKey="sales:today_profit_composition">
+      <ChartCard
+        title="오늘 수익 구성"
+        subtitle="매출 대비 추정 이익과 비용"
+        captionKey="sales:today_profit_composition"
+      >
         {profitPie.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
@@ -337,7 +354,10 @@ export const SalesV2ChartsSection = ({
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}원`, String(name)]}
+                formatter={(value, name) => [
+                  `${Number(value ?? 0).toLocaleString()}원`,
+                  String(name),
+                ]}
                 contentStyle={customTooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -346,17 +366,37 @@ export const SalesV2ChartsSection = ({
         )}
       </ChartCard>
 
-      <ChartCard title="상위 상품 매출 Top 6" subtitle="조회 기간 매출 상위 상품" captionKey="sales:top_products">
+      <ChartCard
+        title="상위 상품 매출 Top 6"
+        subtitle="조회 기간 매출 상위 상품"
+        captionKey="sales:top_products"
+      >
         {productBar.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={productBar} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 8 }}>
+            <BarChart
+              data={productBar}
+              layout="vertical"
+              margin={{ top: 8, right: 16, left: 8, bottom: 8 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis type="number" tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
-              <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 11, fill: "#475569" }} />
+              <XAxis
+                type="number"
+                tickFormatter={fmtWon}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
+              />
+              <YAxis
+                type="category"
+                dataKey="name"
+                width={90}
+                tick={{ fontSize: 11, fill: "#475569" }}
+              />
               <Tooltip
-                formatter={(value, _name, payload) => [`${Number(value ?? 0).toLocaleString()}원`, payload?.payload?.fullName ?? "매출"]}
+                formatter={(value, _name, payload) => [
+                  `${Number(value ?? 0).toLocaleString()}원`,
+                  payload?.payload?.fullName ?? "매출",
+                ]}
                 contentStyle={customTooltipStyle}
               />
               <Bar dataKey="매출" radius={[0, 6, 6, 0]}>
@@ -369,13 +409,27 @@ export const SalesV2ChartsSection = ({
         )}
       </ChartCard>
 
-      <ChartCard title="핵심 지표 현황" subtitle="수익성과 구성 지표 요약" captionKey="sales:core_indicators">
+      <ChartCard
+        title="핵심 지표 현황"
+        subtitle="수익성과 구성 지표 요약"
+        captionKey="sales:core_indicators"
+      >
         <ResponsiveContainer width="100%" height={260}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="#e2e8f0" />
             <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#64748b" }} />
-            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: "#94a3b8" }} />
-            <Radar name="지표 점수" dataKey="value" stroke="#2454C8" fill="#8EC5FF" fillOpacity={0.45} />
+            <PolarRadiusAxis
+              angle={30}
+              domain={[0, 100]}
+              tick={{ fontSize: 10, fill: "#94a3b8" }}
+            />
+            <Radar
+              name="지표 점수"
+              dataKey="value"
+              stroke="#2454C8"
+              fill="#8EC5FF"
+              fillOpacity={0.45}
+            />
             <Tooltip
               formatter={(value, _name, payload) => [
                 payload?.payload?.displayValue ?? `${Number(value ?? 0).toFixed(1)}점`,
@@ -388,7 +442,11 @@ export const SalesV2ChartsSection = ({
         <div className="mt-3 flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2">
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
             <span>평균 객단가</span>
-            <InfoPopover caption={FIELD_CAPTIONS["sales:avg_ticket_index"]} side="top" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["sales:avg_ticket_index"]}
+              side="top"
+              align="left"
+            />
           </span>
           <span className="text-xs font-bold text-slate-800">
             {ticketSize.toLocaleString()}원
@@ -418,10 +476,17 @@ export const SalesV2ChartsSection = ({
             <div className="mt-3 flex flex-wrap gap-3">
               {treemapData.map((item, i) => (
                 <div key={item.name} className="flex items-center gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: PALETTE[i % PALETTE.length] }} />
+                  <div
+                    className="h-2.5 w-2.5 rounded-sm"
+                    style={{ backgroundColor: PALETTE[i % PALETTE.length] }}
+                  />
                   <span className="text-xs text-slate-600">{item.name}</span>
-                  <span className="text-xs font-semibold text-slate-800">{fmtWon(item.size)}원</span>
-                  <span className="text-xs font-semibold text-[#2454C8]">{item.percent.toFixed(1)}%</span>
+                  <span className="text-xs font-semibold text-slate-800">
+                    {fmtWon(item.size)}원
+                  </span>
+                  <span className="text-xs font-semibold text-[#2454C8]">
+                    {item.percent.toFixed(1)}%
+                  </span>
                 </div>
               ))}
             </div>

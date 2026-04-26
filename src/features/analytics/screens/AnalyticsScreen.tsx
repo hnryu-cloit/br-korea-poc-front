@@ -147,9 +147,7 @@ export function AnalyticsScreen() {
                 </p>
               ) : (
                 <div className="space-y-1">
-                  <p className="text-[28px] font-bold leading-[1.1] text-slate-400">
-                    데이터 없음
-                  </p>
+                  <p className="text-[28px] font-bold leading-[1.1] text-slate-400">데이터 없음</p>
                   <p className="text-sm text-slate-400">선택 기간 매출 데이터가 없습니다.</p>
                 </div>
               )}

@@ -1,6 +1,8 @@
 import deleteIcon from "@/assets/delete_red.svg";
 import { ProductionWasteSummarySkeleton } from "@/features/production/components/ProductionSkeletons";
 import type { WasteMonthlyTopItem } from "../types/production";
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 
 interface Props {
   totalDisuseAmount?: number;
@@ -18,9 +20,17 @@ export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems, isLoadi
   return (
     <div className="grid grid-cols-[338fr_928fr] overflow-hidden rounded-[6px] border border-[#FFD9C7] border-t-[4px] bg-white p-[24px] grid-cols-[338fr_928fr]">
       <div className="shrink-0 flex flex-col gap-3 text-[#0F172B] font-bold text-md">
-        <span>총 손실 금액</span>
-        <span className="text-[#C10007] font-medium text-2xl">
-          {totalDisuseAmount?.toLocaleString("ko-kr") ?? 0}원
+        <div className="inline-flex items-center gap-1">
+          <span>총 손실 금액</span>
+          <InfoPopover
+            caption={FIELD_CAPTIONS["production:waste_total_amount"]}
+            side="bottom"
+            align="left"
+          />
+        </div>
+
+        <span className="text-[#C10007] font-semibold text-2xl">
+          {Number(totalDisuseAmount?.toFixed(0) ?? 0).toLocaleString()}원
         </span>
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-2 rounded-[8px] bg-[#DADADA]/20 px-6 py-3">

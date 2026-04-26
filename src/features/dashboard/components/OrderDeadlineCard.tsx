@@ -11,10 +11,7 @@ export function OrderDeadlineCard({
   orderDeadline: DashboardOrderDeadline | null;
 }) {
   const { referenceDateTime } = useDemoSession();
-  const display = formatOrderDeadlineDisplay(
-    orderDeadline,
-    dayjs(referenceDateTime).toDate(),
-  );
+  const display = formatOrderDeadlineDisplay(orderDeadline, dayjs(referenceDateTime).toDate());
 
   if (!display) {
     return (

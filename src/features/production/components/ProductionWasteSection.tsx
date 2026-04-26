@@ -136,7 +136,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
                           : "-"}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {sku.disuse_amount.toLocaleString("ko-KR")}원
+                        {Number(sku?.disuse_amount.toFixed(0) ?? 0).toLocaleString()}원
                       </td>
                     </tr>
                   );

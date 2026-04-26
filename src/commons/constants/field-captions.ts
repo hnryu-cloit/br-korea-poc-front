@@ -92,7 +92,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     assumption:
       "원가 데이터 부재로 매출액 기준으로 손실 금액을 산정하며, 최근 30일 폐기 수량을 합산해 표시합니다(원가 확보 시 원가 기준으로 전환).",
     formula: "손실 금액 = 최근 30일 폐기 수량 × 판매가",
-    description: "최근 30일 폐기 수량을 판매가로 환산한 손실 금액 추정치입니다.",
+    description:
+      "최근 30일 폐기 수량을 판매가로 환산한 손실 금액 추정치이며, 소수점 반올림한 금액입니다.",
   },
   // 주문 관리 - AI 추천 발주량 (메인 타이틀)
   "ordering:ai_recommended_qty": {
@@ -425,5 +426,9 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
     descriptionLabel: "근거",
     assumption: "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
     description: "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
+  },
+  // 총 손실 금액
+  "production:waste_total_amount": {
+    description: "소수점 반올림한 금액입니다.",
   },
 };

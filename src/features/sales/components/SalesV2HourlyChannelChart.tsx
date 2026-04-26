@@ -22,9 +22,7 @@ type SalesV2HourlyChannelChartProps = {
 };
 
 const fmtWon = (value: number) =>
-  value >= 10_000
-    ? `${Math.round(value / 10_000).toLocaleString()}만`
-    : value.toLocaleString();
+  value >= 10_000 ? `${Math.round(value / 10_000).toLocaleString()}만` : value.toLocaleString();
 
 const fmtHour = (hour: number) => `${String(hour).padStart(2, "0")}시`;
 
@@ -79,11 +77,7 @@ export const SalesV2HourlyChannelChart = ({
         <ResponsiveContainer width="100%" height={300}>
           <ComposedChart data={chartData} margin={{ top: 8, right: 16, left: -8, bottom: 16 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis
-              dataKey="hourLabel"
-              tick={{ fontSize: 11, fill: "#94a3b8" }}
-              interval={1}
-            />
+            <XAxis dataKey="hourLabel" tick={{ fontSize: 11, fill: "#94a3b8" }} interval={1} />
             <YAxis
               yAxisId="left"
               tickFormatter={fmtWon}
