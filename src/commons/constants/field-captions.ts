@@ -2,9 +2,9 @@ import type { FieldCaption, PageCaption } from "@/commons/types/field-caption";
 
 export const PAGE_CAPTIONS: Record<string, PageCaption> = {
   dashboard: { subtitle: "점포 운영 주요 지표를 한눈에 확인합니다." },
-  "production:status": { subtitle: "품목별 현재 재고와 생산 권고량을 제공합니다." },
+  "production:status": { subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다." },
   "production:inventory": { subtitle: "품목별 재고 수준과 판매 가능 수량을 확인합니다." },
-  "production:waste": { subtitle: "기간별 폐기 수량과 손실 금액을 분석합니다." },
+  "production:waste": { subtitle: "전일 기준 폐기 수량과 손실 금액을 분석합니다." },
   "ordering:recommendations": { subtitle: "AI가 분석한 최적 발주량을 확인합니다." },
   "ordering:history": { subtitle: "과거 발주 내역과 실적을 조회합니다." },
   "analytics:sales": { subtitle: "기간별 매출 흐름과 채널별 성과를 분석합니다." },
@@ -66,23 +66,19 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 폐기 손실 - 폐기한 갯수 (테이블 헤더)
   "production:waste_qty": {
     assumption:
-      "산정 절차.\n" +
+      "산정 절차. (기준일은 기준 일자 전날로 함)\n" +
       "• 대상 데이터: 기준일 전일까지 입고된 미폐기 잔여 재고 + 기준일 당일 생산분\n" +
       "• 차감 순서: FIFO(선입선출)로 당일 판매 수량을 먼저 차감\n" +
       "• 폐기 인식: FIFO 차감 후 잔여분 중 유통기한이 기준일을 지난 Lot만 폐기 처리\n" +
-      "• 집계 단위: 품목(item_nm)별로 일자 폐기 수량을 합산해 표시",
-    formula:
-      "폐기 수량 = Σ(initial_qty - consumed_qty) FROM inventory_fifo_lots WHERE status='expired'",
+      "• 집계 단위: 품목별로 일자 폐기 수량을 합산해 표시",
+    formula: "폐기 수량 = Σ(잔량 - FIFO 판매 차감) | 유통기한 = 기준일",
     description: "FIFO 판매 차감 후 유통기한 경과로 폐기 처리된 수량을 품목별로 집계한 값입니다.",
   },
   // 폐기 손실 - 단가
   "production:waste_unit_price": {
     assumption:
-      "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.\n" +
-      "• 분자: 품목별 손실 금액(disuse_amount) — 폐기 수량 × 판매가 누적\n" +
-      "• 분모: 품목별 폐기 수량(confirmed_disuse_qty)\n" +
-      "• 원가 데이터 확보 시 원가 기반 단가로 전환 예정",
-    formula: "판매가 = disuse_amount ÷ confirmed_disuse_qty",
+      "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.",
+    formula: "평균 판매가 = 판매금액 ÷ 판매수량",
     description: "폐기 수량 1개당 손실 금액(판매가 기준)입니다.",
   },
   // 폐기 손실 - 손실 금액
@@ -95,17 +91,16 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 주문 관리 - AI 추천 발주량 (메인 타이틀)
   "ordering:ai_recommended_qty": {
     assumption:
-      "다음 가정 위에서 산출됩니다.\n" +
-      "• 기준일: 지난주 같은 요일(옵션 A) · 2주 전 같은 요일(옵션 B) · 지난달 같은 요일(옵션 C) 3개 패턴을 비교\n" +
-      "• 데이터 소스: 해당 지점에서 최근 7일 이내 주문(발주) 이력이 있는 품목만 대상\n" +
-      "• 보정 요소: 최근 7일 판매 추세, 현재 재고 커버리지(현재고 ÷ 일평균 수요), 유통기한 폐기 리스크\n" +
-      "• 최종 결정 권한은 점주에게 있으며, 추천값은 보조 자료입니다.",
+      "데이터 조회 범위는 해당 지점의 최근 7일 주문 이력이 있는 품목입니다.\n" +
+      "• 기준값은 지난주 같은 요일, 2주 전 같은 요일, 지난달 같은 요일의 발주량을 사용합니다.\n" +
+      "• 각 품목별로 최근 판매 추세, 현재 재고 수준, 유통기한 정보를 반영해 기준 발주량을 보정합니다.",
     formula:
-      "기준일 발주량(전주/전전주/전월) → SKU별 보정\n" +
-      "보정 후 수량 = 기준일 발주량 × 추세계수 × 재고계수 × 유통기한계수\n" +
-      "최종 보정계수(adjustment_ratio) = 추세계수 × 재고계수 × 유통기한계수",
+      "추천 발주량 = 기준 발주량 × 판매 추세 보정 × 재고 보정 × 유통기한 보정\n" +
+      "•  판매 추세 보정: 최근 판매가 늘면 가중치를 높이고, 줄면 낮춥니다.\n" +
+      "•  재고 보정: 현재 재고가 많으면 줄이고, 적으면 늘립니다.\n" +
+      "•  유통기한 보정: 유통기한이 짧을수록 보수적으로 조정합니다.",
     description:
-      "과거 동일 요일 3개 시점의 발주 패턴을 기준으로, 최근 판매 추세·재고 커버리지·유통기한 리스크를 반영해 SKU별 추천 수량을 산출합니다.",
+      "과거 같은 요일 발주 패턴에 최근 운영 상황을 반영해 산출한 권장 발주 수량입니다.",
   },
   "ordering:scope": {
     assumption:
@@ -176,28 +171,25 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 손익 분석 - 평균 객단가
   "sales:avg_ticket_index": {
     assumption:
-      "데이터 출처와 가정.\n" +
-      "• 분모(주문 건수): raw_daily_store_channel.ord_cnt — POS에서 매장·일자·채널·시간대 단위로 사전 집계해 적재된 영수증(거래) 건수\n" +
-      "• 분자(매출): raw_daily_store_channel.sale_amt — 동일 raw 행의 매출 합계 (할인 차감 전)\n" +
-      "• 결제 수단별 합산 테이블(raw_daily_store_pay_way)은 카드+포인트 분할 결제 시 행이 늘어나 분모로 부적합하므로 사용하지 않습니다.\n" +
-      "• 마트(mart_{store}_analytics_daily)가 존재하면 total_order_count를 우선 사용하고, 없을 때만 raw 합산으로 폴백합니다.\n" +
-      "• 0~100 정규화는 동 지점 최근 4주 일별 객단가 분포의 min~max를 기준으로 합니다. 유사 상권 지점이 정의되면 비교 기준으로 확장합니다.",
+      "당일 총매출을 당일 총주문 건수로 나누어 계산합니다. \n" +
+      "주문 건수는 매장 일별 집계 데이터가 있으면 그 값을 우선 사용하고, 없으면 채널별 주문 건수를 합산한 값으로 대체합니다.\n" +
+      "객단가 지수는 동일 매장의 최근 4주(28일) 동안의 일별 객단가 분포 안에서 오늘 객단가가 어느 위치에 있는지를 0~100으로 환산한 상대 지표입니다",
     formula:
-      "객단가(avg_ticket_size) = Σ sale_amt ÷ Σ ord_cnt\n" +
-      "객단가 지수(avg_ticket_index) = (당일 객단가 - 4주 최소) ÷ (4주 최대 - 4주 최소) × 100",
+      "• 평균 객단가 = 당일 총매출 ÷ 당일 총주문 건수\n" +
+      "• 객단가 지수 = (당일 객단가 - 최근 4주 최소 객단가) ÷ (최근 4주 최대 객단가 - 최근 4주 최소 객단가) × 100",
     description:
-      "당일 매출을 영수증 단위 주문 건수로 나눈 평균 객단가와, 최근 4주 분포에서의 상대 위치(0~100)를 함께 보여줍니다. 툴팁에서 점수와 실제 원 단위(avg_ticket_size)를 동시에 확인할 수 있습니다.",
+      "당일 평균 객단가와, 그것이 최근 4주 기준에서 얼마나 높은 수준인지 0~100 점수로 함께 보여줍니다. 점수는 절대 금액 자체가 아니라 최근 4주 내 동일 매장의 상대적 위치를 의미합니다.",
   },
   // 생산 현황 테이블
   "production:forecast_1h": {
-    assumption: "현재 시간대 판매 속도가 이후 1시간 동안 유지된다고 가정합니다.",
+    assumption: "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
     formula: "예측 재고 = 현재 재고 - (시간당 평균 판매량 × 1)",
     description: "1시간 후 예상 잔여 재고 수량입니다.",
   },
   "production:chance_loss": {
     assumption: "AI 권고 생산을 하지 않았을 때의 기회비용을 기준으로 합니다.",
-    formula: "절감율 = 품절 예상 수량 × 단가 대비 생산 조치 기여분",
-    description: "적시 생산으로 방지할 수 있는 찬스 로스 절감 비율입니다.",
+    formula: "절감비용 = 품절 예상 수량 × 해당제품의 판매가",
+    description: "적시 생산으로 방지할 수 있는 찬스 로스 절감 비용입니다.",
   },
   "production:avg_first_prod_4w": {
     assumption: "최근 4주 영업일 기준 첫 번째 생산이 발생한 날만 포함합니다.",
@@ -211,16 +203,20 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 재고 현황 테이블
   "inventory:orderable_qty": {
-    assumption: "재고 조정·ERP 처리 지연으로 인한 음수 재고는 0으로 처리합니다.",
-    formula: "판매 가능 수량 = max(현재고 + 당일 판매량, 0)",
-    description: "현재 시점에서 실제로 판매 가능한 수량입니다.",
+    assumption: "판매 가능 수량은 기준 시점에 실제로 남아 있는 재고 수량을 의미합니다.\n" +
+      "재고 조정·ERP 처리 지연으로 인한 음수 재고는 0으로 처리합니다.",
+    formula: "판매 가능 수량 = max(기준 시점 재고 수량, 0)",
+    description: "기준 시점에 실제로 남아 있어 판매 가능한 재고 수량입니다.",
   },
   "inventory:sold_qty": {
-    description: "해당 기준일의 판매 수량입니다.",
+    description: "해당 기준일의 기준 시간까지의 판매 수량 합계입니다.",
   },
   "inventory:status": {
-    assumption: "재고율(재고 ÷ 판매량)을 기준으로 세 단계로 분류합니다.",
-    formula: "부족: 재고율 < 0 또는 품절 / 적정: 0 ≤ 재고율 < 0.35 / 여유: 재고율 ≥ 0.35",
+    assumption: "재고율을 기준으로 세 단계(부족, 적정, 여유)로 구분합니다.",
+    formula: "재고율 = 판매 가능 수량 ÷ 판매 개수\n" +
+      "• 부족: 재고율 ≤ 0\n" +
+      "• 적정: 0 < 재고율 ≤ 0.35\n" +
+      "• 여유: 0.35 < 재고율",
     description: "품목의 현재 재고 수준 상태입니다.",
   },
   // 발주 이력 테이블
@@ -303,11 +299,16 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   "sales:core_indicators": {
     assumption:
-      "각 지표를 0~100으로 정규화합니다. 평균 객단가는 backend가 산출한 avg_ticket_index(최근 4주 객단가 분포 기반 0~100)를 그대로 사용하며, 메뉴 다양성은 품목 수 × 17 상한 100입니다.",
+      "핵심 지표는 마진율, 순매출 비율, 수익성, 메뉴 다양성, 객단가를 0~100 범위로 비교할 수 있도록 정리한 값입니다.\n" +
+      "메뉴 다양성은 판매된 주요 상품 수를 기준으로 보고, 객단가는 최근 4주 같은 지점의 객단가 흐름 안에서 상대적인 위치를 점수로 환산합니다.",
     formula:
-      "마진율 점수 = avg_margin_rate × 100 · 순매출 비율 = today_net_revenue ÷ today_revenue × 100 · 수익성 = estimated_today_profit ÷ today_revenue × 100 · 평균 객단가 점수 = avg_ticket_index · 메뉴 다양성 = 품목 수 × 17",
+      "• 마진율 점수 = 마진율 × 100\n" +
+      "• 순매출 비율 = 순매출 ÷ 총매출 × 100\n" +
+      "• 수익성 = 추정 이익 ÷ 총매출 × 100\n" +
+      "• 메뉴 다양성 = 매출 발생한 판매 상품 구성 기준 점수\n" +
+      "• 객단가 점수 = 최근 4주 객단가 범위 안에서 환산한 0~100 점수(추후 유사 상권 분석 진행 후 유사 상권끼리의 분포 적용)",
     description:
-      "마진율·순매출 비율·수익성·메뉴 다양성·평균 객단가 5개 지표를 방사형으로 비교합니다. 객단가 항목은 툴팁에서 실제 원 단위(avg_ticket_size)를 함께 확인할 수 있습니다.",
+      "매장의 수익 구조와 판매 구성을 5개 핵심 지표로 요약해 비교하는 영역입니다.",
   },
   "sales:product_revenue_share": {
     assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",
