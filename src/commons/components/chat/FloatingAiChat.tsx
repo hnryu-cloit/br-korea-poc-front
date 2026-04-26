@@ -4,57 +4,239 @@ import { useLocation } from "react-router-dom";
 import { FloatingAiChatButton } from "@/commons/components/chat/FloatingAiChatButton";
 import { FloatingAiChatPanel } from "@/commons/components/chat/FloatingAiChatPanel";
 import { floatingAiCardContexts } from "@/commons/constants/floating-ai-card-contexts";
-import { floatingAiChatRouteGuides } from "@/commons/constants/floating-ai-chat";
+import { floatingAiChatRouteGuides as routeGuides } from "@/commons/constants/floating-ai-chat";
 import { useFloatingAiChat } from "@/commons/hooks/useFloatingAiChat";
-import type {
-  ChatEntry,
-  ChatHistoryEntry,
-  FloatingAiChatRouteGuide,
-} from "@/commons/types/floating-ai-chat";
-import { extractCandidateText, dedupeStrings } from "@/commons/utils/chat-text-utils";
+import type { FloatingAiChatRouteGuide } from "@/commons/types/floating-ai-chat";
+import { dedupeStrings } from "@/commons/utils/chat-text-utils";
 import {
+  loadSessionHistory,
   resolveRouteContext,
   saveSessionHistory,
-  loadSessionHistory,
 } from "@/commons/utils/floating-ai-chat-session";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
 import { postSalesQuery } from "@/features/sales/api/sales";
 
+import {
+  type FloatingAiChatAnswerStatus,
+  type FloatingAiChatRequestContext,
+  normalizeFloatingAiChatResponse,
+  getChatAnswerStatus,
+} from "@/commons/components/chat/floating-ai-chat-utils";
+import {
+  type FloatingAiChatConversationItem,
+  type FloatingAiChatSuggestion,
+} from "@/commons/components/chat/FloatingAiChatParts";
+
 let messageIdCounter = 1;
 const nextMessageId = () => messageIdCounter++;
 
-const buildAssistantIntro = (
-  guide: FloatingAiChatRouteGuide,
-  suggestedQuestions: string[],
-): ChatEntry => ({
-  role: "assistant",
-  message: {
-    id: nextMessageId(),
-    title: guide.title,
-    content: guide.subtitle,
-    evidence: [],
-    suggestedQuestions,
-    processingRoute: "guide",
-    matchedQueryId: null,
-  },
-});
+type RouteState = {
+  source?: string;
+  domain?: "production" | "ordering" | "sales";
+  intent?: "view" | "ask";
+  prompt?: string;
+} | null;
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object") return null;
+  return value as Record<string, unknown>;
+}
+
+function asString(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    : [];
+}
+
+function createEmptyAnswer(requestContext: FloatingAiChatRequestContext) {
+  return normalizeFloatingAiChatResponse(
+    {
+      text: "",
+      evidence: [],
+      actions: [],
+      follow_up_questions: [],
+      store_context: "",
+      data_source: "",
+      comparison_basis: "",
+      calculation_date: "",
+      blocked: false,
+      agent_trace: {
+        intent: null,
+        relevant_tables: [],
+        sql: null,
+        queried_period: null,
+        row_count: null,
+        matched_query_id: null,
+        match_score: null,
+        overlap_candidates: [],
+      },
+    },
+    requestContext,
+  );
+}
+
+function toConversationItems(
+  storedHistory: unknown[],
+  requestContext: FloatingAiChatRequestContext,
+): FloatingAiChatConversationItem[] {
+  const items: FloatingAiChatConversationItem[] = [];
+
+  for (const item of storedHistory) {
+    const record = asRecord(item);
+    if (!record) continue;
+
+    if (record.role === "user" && typeof record.text === "string") {
+      items.push({
+        id: nextMessageId(),
+        role: "user",
+        text: record.text,
+      });
+      continue;
+    }
+
+    if (record.role === "assistant") {
+      if (typeof record.status === "string" && record.answer) {
+        const answerRecord = asRecord(record.answer);
+        const agentTrace = asRecord(answerRecord?.agentTrace);
+        const responseContext = asRecord(answerRecord?.responseContext);
+        const requestContextRecord = asRecord(answerRecord?.requestContext);
+        const normalizedAnswer = answerRecord
+          ? normalizeFloatingAiChatResponse(
+              {
+                text: answerRecord.text ?? "",
+                evidence: answerRecord.evidence ?? [],
+                actions: answerRecord.actions ?? [],
+                follow_up_questions: answerRecord.followUpQuestions ?? [],
+                blocked: answerRecord.blocked ?? false,
+                store_context: asString(responseContext?.storeContext),
+                data_source: asString(responseContext?.dataSource),
+                comparison_basis: asString(responseContext?.comparisonBasis),
+                calculation_date: asString(responseContext?.calculationDate),
+                agent_trace: {
+                  intent: asString(agentTrace?.intent) || null,
+                  relevant_tables: asStringArray(agentTrace?.relevantTables),
+                  sql: asString(agentTrace?.sql) || null,
+                  queried_period: agentTrace?.queriedPeriod ?? null,
+                  row_count:
+                    typeof agentTrace?.rowCount === "number" ? agentTrace.rowCount : null,
+                  matched_query_id: asString(agentTrace?.matchedQueryId) || null,
+                  match_score:
+                    typeof agentTrace?.matchScore === "number" ? agentTrace.matchScore : null,
+                  overlap_candidates: asStringArray(agentTrace?.overlapCandidates),
+                },
+              },
+              {
+                storeName: asString(requestContextRecord?.storeName),
+                businessDate: asString(requestContextRecord?.businessDate),
+                businessTime: asString(requestContextRecord?.businessTime),
+                domain: asString(requestContextRecord?.domain),
+                pageContext: asString(requestContextRecord?.pageContext),
+                cardContextKey: asString(requestContextRecord?.cardContextKey) || null,
+              },
+            )
+          : createEmptyAnswer(requestContext);
+
+        items.push({
+          id: nextMessageId(),
+          role: "assistant",
+          prompt: asString(record.prompt),
+          status: record.status as FloatingAiChatAnswerStatus,
+          answer: normalizedAnswer,
+        });
+        continue;
+      }
+
+      const nested = asRecord(record.message);
+      if (!nested) continue;
+
+      const processingRoute = asString(nested.processingRoute);
+      const nestedReference = asRecord(nested.reference);
+      const answer = normalizeFloatingAiChatResponse(
+        {
+          text: asString(nested.content),
+          evidence: asStringArray(nested.evidence),
+          actions: [],
+          follow_up_questions: asStringArray(nested.suggestedQuestions),
+          store_context: "",
+          data_source: "",
+          comparison_basis: "",
+          calculation_date: "",
+          blocked: false,
+          agent_trace: {
+            intent: processingRoute.includes("golden_query_miss") ? "golden_query_miss" : null,
+            relevant_tables: asStringArray(nestedReference?.relevantTables),
+            sql: asString(nestedReference?.sql) || null,
+            queried_period: nestedReference?.queriedPeriod ?? null,
+            row_count: null,
+            matched_query_id: asString(nestedReference?.matchedQueryId) || null,
+            match_score:
+              typeof nestedReference?.matchScore === "number" ? nestedReference.matchScore : null,
+            overlap_candidates: [],
+          },
+        },
+        requestContext,
+      );
+
+      items.push({
+        id: nextMessageId(),
+        role: "assistant",
+        prompt: asString(nested.content),
+        status: getChatAnswerStatus({
+          text: nested.content,
+          evidence: nested.evidence,
+          actions: nested.actions,
+          follow_up_questions: nested.suggestedQuestions,
+          blocked: false,
+          agent_trace: {
+            intent: processingRoute.includes("golden_query_miss") ? "golden_query_miss" : null,
+            sql: nestedReference?.sql ?? null,
+            row_count: null,
+          },
+        }),
+        answer,
+      });
+    }
+  }
+
+  return items;
+}
+
+function createSuggestionList(
+  prompts: Array<{ label?: string; prompt: string }>,
+  fallbackQuickActions: FloatingAiChatSuggestion[],
+): FloatingAiChatSuggestion[] {
+  const primary = prompts
+    .map((item) => ({
+      label: item.label?.trim() || item.prompt.trim(),
+      prompt: item.prompt.trim(),
+    }))
+    .filter((item) => item.prompt.length > 0);
+
+  const fallback = fallbackQuickActions
+    .map((item) => ({ label: item.label.trim() || item.prompt.trim(), prompt: item.prompt.trim() }))
+    .filter((item) => item.prompt.length > 0);
+
+  const deduped = dedupeStrings([...primary.map((item) => item.prompt), ...fallback.map((item) => item.prompt)]);
+  return deduped
+    .map((prompt) => primary.find((item) => item.prompt === prompt) ?? fallback.find((item) => item.prompt === prompt))
+    .filter((item): item is FloatingAiChatSuggestion => Boolean(item))
+    .slice(0, 4);
+}
 
 export function FloatingAiChat() {
   const location = useLocation();
-  const routeState = location.state as {
-    source?: string;
-    domain?: "production" | "ordering" | "sales";
-    intent?: "view" | "ask";
-    prompt?: string;
-  } | null;
+  const routeState = location.state as RouteState;
   const { user, referenceDateTime } = useDemoSession();
   const { isOpen, activeCardContextKey, open, close } = useFloatingAiChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const handledRoutePromptRef = useRef<string>("");
-  const hydratedSessionsRef = useRef<Set<string>>(new Set());
-  const guideRef = useRef<FloatingAiChatRouteGuide | null>(null);
-  const fallbackPromptsRef = useRef<string[]>([]);
+  const hydratedSessionKeyRef = useRef<string | null>(null);
+  const historyRef = useRef<FloatingAiChatConversationItem[]>([]);
 
   const { sessionKey, domain } = useMemo(
     () => resolveRouteContext(location.pathname),
@@ -62,7 +244,7 @@ export function FloatingAiChat() {
   );
 
   const routeGuide = useMemo(
-    () => floatingAiChatRouteGuides[location.pathname] ?? floatingAiChatRouteGuides["/"],
+    () => routeGuides[location.pathname] ?? routeGuides["/"],
     [location.pathname],
   );
   const salesPromptsQuery = useGetSalesPromptsQuery({ store_id: user.storeId, domain });
@@ -78,145 +260,118 @@ export function FloatingAiChat() {
       : routeGuide;
   }, [activeCardContextKey, routeGuide]);
 
-  const goldenPrompts = useMemo(
-    () => dedupeStrings((salesPromptsQuery.data ?? []).map((item) => item.prompt)),
-    [salesPromptsQuery.data],
-  );
-  const fallbackPrompts = useMemo(
-    () =>
-      goldenPrompts.length > 0
-        ? goldenPrompts
-        : dedupeStrings(guide.quickActions.map((item) => item.prompt)),
-    [goldenPrompts, guide.quickActions],
+  const requestContext = useMemo<FloatingAiChatRequestContext>(
+    () => ({
+      storeName: user.storeName,
+      businessDate: referenceDateTime.slice(0, 10),
+      businessTime: referenceDateTime.slice(11, 16) || undefined,
+      domain,
+      pageContext: location.pathname,
+      cardContextKey: activeCardContextKey ?? null,
+    }),
+    [activeCardContextKey, domain, location.pathname, referenceDateTime, user.storeName],
   );
 
-  guideRef.current = guide;
-  fallbackPromptsRef.current = fallbackPrompts;
+  const suggestedPrompts = useMemo(
+    () => createSuggestionList(salesPromptsQuery.data ?? [], guide.quickActions),
+    [guide.quickActions, salesPromptsQuery.data],
+  );
 
-  const [history, setHistory] = useState<ChatEntry[]>(() => [
-    buildAssistantIntro(guide, fallbackPrompts),
-  ]);
+  const [messages, setMessages] = useState<FloatingAiChatConversationItem[]>(() => []);
   const [isSending, setIsSending] = useState(false);
 
-  const prevSessionKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    const isFirstRun = prevSessionKeyRef.current === null;
-    if (!isFirstRun && prevSessionKeyRef.current !== sessionKey) {
+    const isFirstRun = hydratedSessionKeyRef.current === null;
+    if (!isFirstRun && hydratedSessionKeyRef.current !== sessionKey) {
       close();
     }
-    prevSessionKeyRef.current = sessionKey;
 
     const saved = loadSessionHistory(sessionKey);
-    setHistory(
-      saved ?? [buildAssistantIntro(guideRef.current ?? guide, fallbackPromptsRef.current)],
-    );
-    hydratedSessionsRef.current.add(sessionKey);
+    const parsed = Array.isArray(saved) ? toConversationItems(saved, requestContext) : [];
+    historyRef.current = parsed;
+    setMessages(parsed);
+    hydratedSessionKeyRef.current = sessionKey;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionKey]);
+  }, [sessionKey, requestContext]);
 
   useEffect(() => {
-    if (!hydratedSessionsRef.current.has(sessionKey)) return;
-    saveSessionHistory(sessionKey, history);
-  }, [history, sessionKey]);
+    if (hydratedSessionKeyRef.current !== sessionKey) return;
+    saveSessionHistory(sessionKey, messages);
+  }, [messages, sessionKey]);
 
   const send = useCallback(
-    async (prompt: string) => {
+    async (prompt: string): Promise<boolean> => {
       const normalizedPrompt = prompt.trim();
-      if (!normalizedPrompt || isSending) return;
+      if (!normalizedPrompt || isSending) return false;
 
-      const userEntry: ChatEntry = { role: "user", text: normalizedPrompt };
-      let recentHistory: ChatHistoryEntry[] = [];
-      setHistory((prev) => {
-        const next = [...prev, userEntry];
-        recentHistory = next
-          .slice(-6)
-          .flatMap((entry) =>
-            entry.role === "user"
-              ? [{ role: "user" as const, text: entry.text }]
-              : [{ role: "assistant" as const, text: entry.message.content }],
-          );
-        return next;
-      });
+      const userMessage: FloatingAiChatConversationItem = {
+        id: nextMessageId(),
+        role: "user",
+        text: normalizedPrompt,
+      };
+
+      const nextMessages = [...historyRef.current, userMessage];
+      historyRef.current = nextMessages;
+      setMessages(nextMessages);
       setIsSending(true);
 
       try {
         const response = await postSalesQuery(normalizedPrompt, user.storeId, domain, {
-          businessDate: referenceDateTime.slice(0, 10),
-          businessTime: referenceDateTime.slice(11, 16) || undefined,
-          pageContext: location.pathname,
-          cardContextKey: activeCardContextKey ?? undefined,
-          storeName: user.storeName,
+          businessDate: requestContext.businessDate,
+          businessTime: requestContext.businessTime,
+          pageContext: requestContext.pageContext,
+          cardContextKey: requestContext.cardContextKey ?? undefined,
+          storeName: requestContext.storeName,
           userRole: user.role,
-          conversationHistory: recentHistory,
+          conversationHistory: nextMessages.slice(-6).reduce<
+            Array<{ role: "user" | "assistant"; text: string }>
+          >((acc, entry) => {
+            acc.push({
+              role: entry.role,
+              text: entry.role === "user" ? entry.text : entry.answer.text,
+            });
+            return acc;
+          }, []),
         });
 
-        const overlapCandidates = Array.isArray(response.agent_trace?.overlap_candidates)
-          ? response.agent_trace.overlap_candidates
-              .map(extractCandidateText)
-              .filter((s): s is string => Boolean(s))
-          : [];
-
-        const suggestedQuestions = dedupeStrings([
-          ...overlapCandidates,
-          ...goldenPrompts,
-          ...fallbackPrompts,
-        ]).slice(0, 6);
-
-        const assistantEntry: ChatEntry = {
+        const status = getChatAnswerStatus(response);
+        const normalized = normalizeFloatingAiChatResponse(response, requestContext);
+        const assistantMessage: FloatingAiChatConversationItem = {
+          id: nextMessageId(),
           role: "assistant",
-          message: {
-            id: nextMessageId(),
-            title: guide.title,
-            content: response.text,
-            evidence: response.evidence ?? [],
-            suggestedQuestions,
-            processingRoute: response.processing_route ?? null,
-            matchedQueryId: response.agent_trace?.matched_query_id ?? null,
-            reference: {
-              sources: dedupeStrings(response.sources ?? []),
-              semanticLogic: response.semantic_logic ?? null,
-              sql: response.agent_trace?.sql ?? null,
-              relevantTables: response.agent_trace?.relevant_tables ?? [],
-              queriedPeriod: response.agent_trace?.queried_period ?? null,
-              dataLineage: response.data_lineage ?? [],
-              matchedQueryId: response.agent_trace?.matched_query_id ?? null,
-              matchScore: response.agent_trace?.match_score ?? null,
-            },
-          },
+          prompt: normalizedPrompt,
+          status,
+          answer: normalized,
         };
-        setHistory((prev) => [...prev, assistantEntry]);
+
+        const updatedMessages = [...nextMessages, assistantMessage];
+        historyRef.current = updatedMessages;
+        setMessages(updatedMessages);
+        return true;
       } catch {
-        const fallbackEntry: ChatEntry = {
+        const fallbackMessage: FloatingAiChatConversationItem = {
+          id: nextMessageId(),
           role: "assistant",
-          message: {
-            id: nextMessageId(),
-            title: guide.title,
-            content: "질의 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-            evidence: ["네트워크 또는 서버 상태를 확인해 주세요."],
-            suggestedQuestions: fallbackPrompts,
-            processingRoute: "error_fallback",
-            matchedQueryId: null,
-          },
+          prompt: normalizedPrompt,
+          status: "error",
+          answer: createEmptyAnswer(requestContext),
         };
-        setHistory((prev) => [...prev, fallbackEntry]);
+
+        const updatedMessages = [...nextMessages, fallbackMessage];
+        historyRef.current = updatedMessages;
+        setMessages(updatedMessages);
+        return false;
       } finally {
         setIsSending(false);
         setTimeout(() => {
-          scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+          scrollRef.current?.scrollTo({
+            top: scrollRef.current.scrollHeight,
+            behavior: "smooth",
+          });
         }, 50);
       }
     },
-    [
-      activeCardContextKey,
-      domain,
-      fallbackPrompts,
-      goldenPrompts,
-      guide,
-      isSending,
-      location.pathname,
-      referenceDateTime,
-      user,
-    ],
+    [domain, isSending, requestContext, user.role, user.storeId],
   );
 
   useEffect(() => {
@@ -243,7 +398,8 @@ export function FloatingAiChat() {
         <FloatingAiChatPanel
           guide={guide}
           storeName={user.storeName}
-          history={history}
+          history={messages}
+          suggestions={suggestedPrompts}
           scrollRef={scrollRef}
           onClose={close}
           onSend={send}

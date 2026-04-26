@@ -11,6 +11,7 @@ type Props = {
   customerProfile?: CustomerProfileResponse;
   aiActionPlan?: MarketActionItem[];
   source?: "ai";
+  isError?: boolean;
   isLoading: boolean;
 };
 
@@ -19,6 +20,7 @@ export function MarketActionGuideSection({
   customerProfile,
   aiActionPlan,
   source,
+  isError,
   isLoading,
 }: Props) {
   const actionItems =
@@ -43,6 +45,11 @@ export function MarketActionGuideSection({
         <p className="mt-1 text-sm text-[#653819]">
           상권/고객 데이터 기준으로 바로 실행할 우선 액션입니다.
         </p>
+        {isError ? (
+          <p className="mt-2 text-xs font-medium text-red-600">
+            일부 데이터를 불러오지 못해 기본 가이드를 함께 보여줍니다.
+          </p>
+        ) : null}
       </div>
 
       {isLoading ? (

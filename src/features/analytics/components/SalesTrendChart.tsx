@@ -219,23 +219,6 @@ export function SalesTrendChart({
         {activeTab === "dow" && <DowChart points={data.dow_points} />}
         {activeTab === "hour" && <HourChart points={data.hour_points} />}
       </div>
-
-      {/* 인사이트 chip */}
-      {data.insight_chips.length > 0 && (
-        <div className="border-t border-border/40 px-6 py-4">
-          <p className="mb-2 text-xs font-semibold text-slate-400">조회 기간 채널별 매출</p>
-          <div className="flex flex-wrap gap-2">
-            {data.insight_chips.map((chip) => (
-              <span
-                key={chip.label}
-                className="rounded-full bg-[#f7faff] border border-[#d8e5ff] px-3 py-1.5 text-xs font-medium text-slate-700"
-              >
-                {chip.label} · {chip.value}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
