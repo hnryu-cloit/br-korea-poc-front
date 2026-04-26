@@ -43,6 +43,12 @@ export function MarketIntelligenceSection({ data, isLoading }: Props) {
         </div>
       ) : null}
 
+      {!isLoading && !data ? (
+        <div className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+          선택한 분기에 매칭되는 상권 데이터가 없습니다. 다른 분기를 선택하거나, 적재된 분기로 변경해 주세요.
+        </div>
+      ) : null}
+
       {!isLoading && data ? (
         <div className="mt-4 space-y-5">
           <article className="rounded-2xl bg-[#f8fbff] p-4">

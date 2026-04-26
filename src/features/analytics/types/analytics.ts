@@ -375,7 +375,15 @@ export interface WeatherImpactResponse {
   date_to: string;
   items: WeatherImpactBySido[];
 }
+export interface AvailableQuarter {
+  year: number;
+  quarter: number;
+}
+
 export interface MarketScopeOptionsResponse {
   gu_options: string[];
   dong_options_by_gu: Record<string, string[]>;
+  available_quarters?: AvailableQuarter[];
+  latest_year?: number | null;
+  latest_quarter?: number | null;
 }

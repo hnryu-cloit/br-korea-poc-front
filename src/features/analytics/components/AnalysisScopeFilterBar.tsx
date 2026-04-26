@@ -16,6 +16,7 @@ type Props = {
   scopeOptions?: {
     guOptions: string[];
     dongOptionsByGu: Record<string, string[]>;
+    availableQuarters?: { year: number; quarter: number }[];
   };
 };
 
@@ -63,6 +64,21 @@ const quickRadius = [500, 750, 1000, 2000];
 export function AnalysisScopeFilterBar({ value, onChange, className, scopeOptions }: Props) {
   const guOptions = scopeOptions?.guOptions?.length ? scopeOptions.guOptions : DEFAULT_GU_OPTIONS;
   const dongOptionsByGu = scopeOptions?.dongOptionsByGu ?? DEFAULT_DONG_OPTIONS_BY_GU;
+  const availableQuarters = scopeOptions?.availableQuarters ?? [];
+  const availableYearSet = new Set(availableQuarters.map((q) => String(q.year)));
+  const availableQuarterByYear = availableQuarters.reduce<Record<string, Set<string>>>(
+    (acc, item) => {
+      const yearKey = String(item.year);
+      if (!acc[yearKey]) acc[yearKey] = new Set();
+      acc[yearKey].add(`Q${item.quarter}`);
+      return acc;
+    },
+    {},
+  );
+  const yearOptionsRendered = availableYearSet.size > 0 ? Array.from(availableYearSet).sort((a, b) => Number(b) - Number(a)) : yearOptions;
+  const quarterOptionsRendered = availableQuarterByYear[value.year]
+    ? quarterOptions.filter((q) => availableQuarterByYear[value.year].has(q))
+    : quarterOptions;
   const dongOptions = useMemo(
     () => dongOptionsByGu[value.gu] ?? dongOptionsByGu["전체"] ?? ["전체"],
     [value.gu, dongOptionsByGu],
@@ -134,7 +150,7 @@ export function AnalysisScopeFilterBar({ value, onChange, className, scopeOption
             onChange={(event) => setField("year", event.target.value)}
             className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-700"
           >
-            {yearOptions.map((option) => (
+            {yearOptionsRendered.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
@@ -149,7 +165,7 @@ export function AnalysisScopeFilterBar({ value, onChange, className, scopeOption
             onChange={(event) => setField("quarter", event.target.value)}
             className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-700"
           >
-            {quarterOptions.map((option) => (
+            {quarterOptionsRendered.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
