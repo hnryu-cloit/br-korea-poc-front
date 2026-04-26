@@ -219,17 +219,44 @@ export const SalesV2ChartsSection = ({
   const ticketIndex = Math.max(0, Math.min(100, Math.round(summary?.avg_ticket_index ?? 0)));
   const ticketSize = Math.round(summary?.avg_ticket_size ?? 0);
 
-  const radarData = [
-    { subject: "마진율", value: marginScore },
-    { subject: "순매출 비율", value: netRatio },
-    { subject: "수익률", value: profitRatio },
-    { subject: "메뉴 다양성", value: diversityScore },
+  const indicatorRows = [
+    {
+      subject: "마진율",
+      score: marginScore,
+      displayValue: `${marginScore}%`,
+      captionKey: "sales:margin_rate",
+    },
+    {
+      subject: "순매출 비율",
+      score: netRatio,
+      displayValue: `${netRatio}%`,
+      captionKey: "sales:net_ratio",
+    },
+    {
+      subject: "수익률",
+      score: profitRatio,
+      displayValue: `${profitRatio}%`,
+      captionKey: "sales:profitability",
+    },
+    {
+      subject: "메뉴 다양성",
+      score: diversityScore,
+      displayValue: `${diversityCount}개`,
+      captionKey: "sales:menu_diversity",
+    },
     {
       subject: "평균 객단가",
-      value: ticketIndex,
+      score: ticketIndex,
       displayValue: `${ticketSize.toLocaleString()}원`,
+      captionKey: "sales:avg_ticket_index",
     },
   ];
+
+  const radarData = indicatorRows.map((row) => ({
+    subject: row.subject,
+    value: row.score,
+    displayValue: row.displayValue,
+  }));
 
   const treemapTotalSales = groupRevenueShare.reduce((sum, item) => sum + (item.sales ?? 0), 0);
   const treemapData = groupRevenueShare.map((item, i) => ({
@@ -453,20 +480,29 @@ export const SalesV2ChartsSection = ({
             />
           </RadarChart>
         </ResponsiveContainer>
-        <div className="mt-3 flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-            <span>평균 객단가</span>
-            <InfoPopover
-              caption={FIELD_CAPTIONS["sales:avg_ticket_index"]}
-              side="top"
-              align="left"
-            />
-          </span>
-          <span className="text-xs font-bold text-slate-800">
-            {ticketSize.toLocaleString()}원
-            <span className="ml-1.5 text-[#2454C8]">({ticketIndex}/100)</span>
-          </span>
-        </div>
+        <ul className="mt-3 flex flex-col gap-1.5">
+          {indicatorRows.map((row) => (
+            <li
+              key={row.subject}
+              className="flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2"
+            >
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                <span>{row.subject}</span>
+                {FIELD_CAPTIONS[row.captionKey] && (
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS[row.captionKey]}
+                    side="top"
+                    align="left"
+                  />
+                )}
+              </span>
+              <span className="text-xs font-bold text-slate-800">
+                {row.displayValue}
+                <span className="ml-1.5 text-[#2454C8]">({row.score}/100)</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </ChartCard>
 
       <ChartCard
