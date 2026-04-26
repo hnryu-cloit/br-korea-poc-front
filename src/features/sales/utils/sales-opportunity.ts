@@ -65,9 +65,10 @@ export function buildSalesOpportunityFromLiveData(params: {
   );
   const promoCost = Math.round(currentRevenue * (discountRatio / 100) * 0.35);
   const roiRate = promoCost > 0 ? Math.round(((upliftRevenue - promoCost) / promoCost) * 100) : 0;
-  const campaignBefore = campaignEffect?.periods.find((period) => period.label === "캠페인 전");
-  const campaignDuring = campaignEffect?.periods.find((period) => period.label === "캠페인 중");
-  const campaignAfter = campaignEffect?.periods.find((period) => period.label === "캠페인 후");
+  const campaignPeriods = campaignEffect?.periods ?? [];
+  const campaignBefore = campaignPeriods.find((period) => period.label === "캠페인 전");
+  const campaignDuring = campaignPeriods.find((period) => period.label === "캠페인 중");
+  const campaignAfter = campaignPeriods.find((period) => period.label === "캠페인 후");
   const campaignBaselineRevenue = Math.round(campaignBefore?.revenue ?? baselineRevenue);
   const campaignDuringRevenue = Math.round(campaignDuring?.revenue ?? currentRevenue);
   const campaignAfterRevenue = Math.round(campaignAfter?.revenue ?? currentRevenue);
