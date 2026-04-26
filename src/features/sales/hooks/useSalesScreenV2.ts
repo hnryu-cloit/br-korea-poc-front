@@ -10,7 +10,6 @@ import {
   isSalesOpportunityTabKey,
 } from "@/features/sales/constants/sales-opportunity-tabs";
 import { useSalesOpportunityData } from "@/features/sales/hooks/useSalesOpportunityData";
-import { useGetSalesCampaignEffectQuery } from "@/features/sales/queries/useGetSalesCampaignEffectQuery";
 import { useGetSalesInsightsQuery } from "@/features/sales/queries/useGetSalesInsightsQuery";
 import { useGetSalesMenuInsightsQuery } from "@/features/sales/queries/useGetSalesMenuInsightsQuery";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
@@ -111,7 +110,6 @@ export const useSalesScreenV2 = () => {
   const promptsQuery = useGetSalesPromptsQuery(sharedFilters);
   const insightsQuery = useGetSalesInsightsQuery(sharedFilters);
   const menuInsightsQuery = useGetSalesMenuInsightsQuery(sharedFilters);
-  const campaignEffectQuery = useGetSalesCampaignEffectQuery(sharedFilters);
   const summaryQuery = useGetSalesSummaryQuery(sharedFilters);
   const postSalesQueryMutation = usePostSalesQueryMutation(user.storeId, "sales");
 
@@ -120,7 +118,6 @@ export const useSalesScreenV2 = () => {
     storeName: user.storeName,
     summary: summaryQuery.data,
     insights: insightsQuery.data,
-    campaignEffect: campaignEffectQuery.data,
     dateFrom: selectedDateFrom,
     dateTo: selectedDateTo,
     prompts: promptsQuery.data,
@@ -141,7 +138,6 @@ export const useSalesScreenV2 = () => {
     const summaryError = summaryQuery.error as AxiosError<{ detail?: string }> | null;
     const insightsError = insightsQuery.error as AxiosError<{ detail?: string }> | null;
     const menuInsightsError = menuInsightsQuery.error as AxiosError<{ detail?: string }> | null;
-    const campaignError = campaignEffectQuery.error as AxiosError<{ detail?: string }> | null;
     const benchmarkError = benchmarkQuery.error as Error | null;
 
     const messages = [
@@ -151,19 +147,11 @@ export const useSalesScreenV2 = () => {
         (insightsError ? "매출 인사이트 실데이터 조회 중 오류가 발생했습니다." : null),
       menuInsightsError?.response?.data?.detail ??
         (menuInsightsError ? "메뉴 인사이트 생성에 실패했습니다." : null),
-      campaignError?.response?.data?.detail ??
-        (campaignError ? "캠페인 효과 실데이터 조회 중 오류가 발생했습니다." : null),
       benchmarkError?.message ?? null,
     ].filter((message): message is string => Boolean(message));
 
     return Array.from(new Set(messages));
-  }, [
-    campaignEffectQuery.error,
-    benchmarkQuery.error,
-    insightsQuery.error,
-    menuInsightsQuery.error,
-    summaryQuery.error,
-  ]);
+  }, [benchmarkQuery.error, insightsQuery.error, menuInsightsQuery.error, summaryQuery.error]);
 
   const insightSections = useMemo<SalesInsightSection[]>(
     () => menuInsightsQuery.data?.cards ?? [],
@@ -349,11 +337,6 @@ export const useSalesScreenV2 = () => {
     suggestedPrompts,
     latestAssistantMessage,
     summaryData: summaryQuery.data,
-    campaignEffectData: campaignEffectQuery.data,
-    campaignEffectLoading: campaignEffectQuery.isLoading,
-    campaignEffectError:
-      (campaignEffectQuery.error as AxiosError<{ detail?: string }> | null)?.response?.data
-        ?.detail ?? null,
     salesErrorMessages,
     insightsLoading: menuInsightsQuery.isLoading,
     summaryLoading: summaryQuery.isLoading,

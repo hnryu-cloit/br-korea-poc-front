@@ -1,6 +1,7 @@
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { SalesV2OpportunityTabs } from "@/features/sales/components/SalesV2OpportunityTabs";
+import { SalesOpportunitySkeleton } from "@/features/sales/components/SalesSkeletons";
 import type {
   SalesOpportunityMock,
   SalesOpportunityTabKey,
@@ -318,11 +319,21 @@ export const SalesV2OpportunitySection = ({
   data,
   activeTab,
   onChangeTab,
+  isLoading,
 }: {
-  data: SalesOpportunityMock;
+  data?: SalesOpportunityMock | null;
   activeTab: SalesOpportunityTabKey;
   onChangeTab: (tab: SalesOpportunityTabKey) => void;
+  isLoading?: boolean;
 }) => {
+  if (isLoading) {
+    return <SalesOpportunitySkeleton />;
+  }
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <section className="space-y-3">
       <SalesV2OpportunityTabs activeTab={activeTab} onChangeTab={onChangeTab} />

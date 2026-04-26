@@ -7,6 +7,11 @@ import {
   type AnalyticsDateComparisonMode,
 } from "@/features/analytics/components/AnalyticsDateRangeFilter";
 import { AnalyticsMetricsGrid } from "@/features/analytics/components/AnalyticsMetricsGrid";
+import {
+  AnalyticsMetricsSkeleton,
+  AnalyticsSummarySkeleton,
+  SalesTrendSkeleton,
+} from "@/features/analytics/components/AnalyticsSkeletons";
 import { SalesTrendChart } from "@/features/analytics/components/SalesTrendChart";
 import { useGetAnalyticsMetricsQuery } from "@/features/analytics/queries/useGetAnalyticsMetricsQuery";
 import { useGetAnalyticsSalesTrendQuery } from "@/features/analytics/queries/useGetAnalyticsSalesTrendQuery";
@@ -104,6 +109,8 @@ export function AnalyticsScreen() {
   });
 
   const metrics = metricsQuery.data?.items ?? [];
+  const metricsLoading = metricsQuery.isLoading && !metricsQuery.data;
+  const trendLoading = salesTrendQuery.isLoading && !salesTrendQuery.data;
 
   return (
     <div className="space-y-6">
@@ -124,19 +131,21 @@ export function AnalyticsScreen() {
           onChangeAggregationMode={handleChangeAggregationMode}
         />
 
-        <section className="rounded-[6px] border border-[#DADADA] bg-white px-8 py-6 xl:min-h-full">
-          <div className="flex h-full min-h-[104px] flex-col justify-between gap-4">
-            <div className="flex items-center gap-2 text-[14px] leading-[18px]">
-              <p className="font-medium text-[#653819]">선택 기간 총 매출</p>
-              <p className="text-[#716862]">{selectedRangeLabel}</p>
+        {metricsLoading ? (
+          <AnalyticsSummarySkeleton />
+        ) : (
+          <section className="rounded-[6px] border border-[#DADADA] bg-white px-8 py-6 xl:min-h-full">
+            <div className="flex h-full min-h-[104px] flex-col justify-between gap-4">
+              <div className="flex items-center gap-2 text-[14px] leading-[18px]">
+                <p className="font-medium text-[#653819]">선택 기간 총 매출</p>
+                <p className="text-[#716862]">{selectedRangeLabel}</p>
+              </div>
+              <p className="text-[40px] font-bold leading-[1] text-[#41352E]">
+                {formatWon(metricsQuery.data?.selected_period_total_sales)}
+              </p>
             </div>
-            <p className="text-[40px] font-bold leading-[1] text-[#41352E]">
-              {metricsQuery.isLoading
-                ? "조회 중..."
-                : formatWon(metricsQuery.data?.selected_period_total_sales)}
-            </p>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
 
       {/* {uniqueErrorMessages.length > 0 ? (
@@ -150,14 +159,22 @@ export function AnalyticsScreen() {
         </section>
       ) : null} */}
 
-      <SalesTrendChart
-        data={salesTrendQuery.data}
-        isLoading={salesTrendQuery.isLoading}
-        compareMode={compareMode}
-        onChangeCompareMode={handleChangeCompareMode}
-      />
+      {trendLoading ? (
+        <SalesTrendSkeleton />
+      ) : (
+        <SalesTrendChart
+          data={salesTrendQuery.data}
+          isLoading={trendLoading}
+          compareMode={compareMode}
+          onChangeCompareMode={handleChangeCompareMode}
+        />
+      )}
 
-      <AnalyticsMetricsGrid metrics={metrics} dateFrom={dateFrom} dateTo={dateTo} />
+      {metricsLoading ? (
+        <AnalyticsMetricsSkeleton />
+      ) : (
+        <AnalyticsMetricsGrid metrics={metrics} dateFrom={dateFrom} dateTo={dateTo} />
+      )}
     </div>
   );
 }
