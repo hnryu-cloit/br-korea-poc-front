@@ -15,8 +15,8 @@ import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOr
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { getDateRange } from "@/commons/utils/getDateRange";
 
-export function OrderingHistoryScreen() {
-  const { user, referenceDateTime } = useDemoSession();
+function OrderingHistoryScreenContent({ referenceDateTime }: { referenceDateTime: string }) {
+  const { user } = useDemoSession();
   const { from: defaultFrom, to: defaultTo } = useMemo(
     () => getDateRange(referenceDateTime),
     [referenceDateTime],
@@ -126,5 +126,16 @@ export function OrderingHistoryScreen() {
         />
       )}
     </div>
+  );
+}
+
+export function OrderingHistoryScreen() {
+  const { referenceDateTime } = useDemoSession();
+
+  return (
+    <OrderingHistoryScreenContent
+      key={referenceDateTime}
+      referenceDateTime={referenceDateTime}
+    />
   );
 }

@@ -5,8 +5,9 @@ import { SalesV2HourlyChannelChart } from "@/features/sales/components/SalesV2Ho
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
 import { SalesV2OpportunitySection } from "@/features/sales/components/SalesV2OpportunitySection";
 import { useSalesScreenV2 } from "@/features/sales/hooks/useSalesScreenV2";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
-export const SalesScreenV2 = () => {
+function SalesScreenV2Content() {
   const {
     dateFrom,
     dateTo,
@@ -67,4 +68,10 @@ export const SalesScreenV2 = () => {
       />
     </div>
   );
+}
+
+export const SalesScreenV2 = () => {
+  const { referenceDateTime } = useDemoSession();
+
+  return <SalesScreenV2Content key={referenceDateTime} />;
 };

@@ -1,5 +1,8 @@
-import { useMemo, useState, type PropsWithChildren } from "react";
+import { useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
+import { analyticsQueryKeys } from "@/features/analytics/queries/analyticsQueryKeys";
+import { dashboardQueryKeys } from "@/features/dashboard/queries/dashboardQueryKeys";
 import type { DemoRole } from "@/commons/components/layout/menu";
 import {
   sessionDefaults,
@@ -7,12 +10,21 @@ import {
   type SessionUser,
 } from "@/features/session/constants/session-user";
 import { DemoSessionContext } from "@/features/session/context/demo-session-context";
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { SESSION_KEYS } from "@/lib/sessionStore";
 
 const roleLabelMap: Record<DemoRole, string> = {
   hq_admin: "본사 관리자",
   store_owner: "가맹점주",
 };
+
+const invalidationRoots = [
+  dashboardQueryKeys.all,
+  ["production"] as const,
+  ["ordering"] as const,
+  ["sales"] as const,
+  analyticsQueryKeys.all,
+] as const;
 
 function getInitials(storeName: string): string {
   return storeName.charAt(0);
@@ -52,6 +64,25 @@ function loadInitialReferenceDateTime(): string {
     window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME) ??
     sessionDefaults.referenceDateTime
   );
+}
+
+function ReferenceDateQueryInvalidator() {
+  const queryClient = useQueryClient();
+  const { referenceDateTime } = useDemoSession();
+  const hasMountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
+    for (const queryKey of invalidationRoots) {
+      queryClient.invalidateQueries({ queryKey });
+    }
+  }, [queryClient, referenceDateTime]);
+
+  return null;
 }
 
 export function DemoSessionProvider({ children }: PropsWithChildren) {
@@ -107,5 +138,10 @@ export function DemoSessionProvider({ children }: PropsWithChildren) {
     [referenceDateTime, user],
   );
 
-  return <DemoSessionContext.Provider value={value}>{children}</DemoSessionContext.Provider>;
+  return (
+    <DemoSessionContext.Provider value={value}>
+      <ReferenceDateQueryInvalidator />
+      {children}
+    </DemoSessionContext.Provider>
+  );
 }

@@ -32,8 +32,8 @@ function formatWon(value?: number) {
   return `₩ ${Math.round(value).toLocaleString("ko-KR")}원`;
 }
 
-export function AnalyticsScreen() {
-  const { user, referenceDateTime } = useDemoSession();
+function AnalyticsScreenContent({ referenceDateTime }: { referenceDateTime: string }) {
+  const { user } = useDemoSession();
   const { from: defaultFrom, to: defaultTo } = useMemo(
     () => getDateRange(referenceDateTime),
     [referenceDateTime],
@@ -185,4 +185,10 @@ export function AnalyticsScreen() {
       )}
     </div>
   );
+}
+
+export function AnalyticsScreen() {
+  const { referenceDateTime } = useDemoSession();
+
+  return <AnalyticsScreenContent key={referenceDateTime} referenceDateTime={referenceDateTime} />;
 }
