@@ -31,6 +31,26 @@ const fmtWon = (v: number) =>
   v >= 10_000 ? `${Math.round(v / 10_000).toLocaleString()}만` : v.toLocaleString();
 const fmtPct = (v: number) => `${v.toFixed(1)}%`;
 
+const parseIsoDate = (value: string) => {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+};
+
+const buildWeeklyAxisLabel = (dateFrom: string, index: number, dayLabel: string) => {
+  const baseDate = parseIsoDate(dateFrom);
+  if (!baseDate) return dayLabel;
+  const valueDate = new Date(baseDate);
+  valueDate.setDate(baseDate.getDate() + index);
+  const year = valueDate.getFullYear();
+  const month = String(valueDate.getMonth() + 1).padStart(2, "0");
+  const day = String(valueDate.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}(${dayLabel})`;
+};
+
 type ChartCardProps = {
   title: string;
   subtitle?: string;
@@ -131,10 +151,14 @@ export const SalesV2ChartsSection = ({
 }) => {
   const weekly = summary?.weekly_data ?? [];
   const topProducts = (summary?.top_products ?? []).slice(0, 6);
+  const weeklyWithAxisLabel = weekly.map((item, index) => ({
+    ...item,
+    axisLabel: buildWeeklyAxisLabel(dateFrom, index, item.day),
+  }));
 
   // Stacked Bar: 주간 매출 구성 (순매출 + 차감비용)
-  const stackedWeekly = weekly.map((item) => ({
-    day: item.day,
+  const stackedWeekly = weeklyWithAxisLabel.map((item) => ({
+    axisLabel: item.axisLabel,
     순매출: item.net_revenue,
     차감비용: Math.max(0, item.revenue - item.net_revenue),
   }));
@@ -167,16 +191,18 @@ export const SalesV2ChartsSection = ({
     todayRevenue > 0 ? Math.min(100, Math.round((todayProfit / todayRevenue) * 100)) : 0;
   const marginScore = Math.min(100, Math.round((summary?.avg_margin_rate ?? 0) * 100));
   const diversityScore = Math.min(100, topProducts.length * 17);
-  const unitScore = Math.min(
-    100,
-    Math.round(((summary?.avg_net_profit_per_item ?? 0) / 8_000) * 100),
-  );
+  const ticketIndex = Math.max(0, Math.min(100, Math.round(summary?.avg_ticket_index ?? 0)));
+  const ticketSize = Math.round(summary?.avg_ticket_size ?? 0);
   const radarData = [
     { subject: "마진율", value: marginScore },
     { subject: "순매출 비율", value: netRatio },
     { subject: "수익성", value: profitRatio },
     { subject: "메뉴 다양성", value: diversityScore },
-    { subject: "객단가 지수", value: unitScore },
+    {
+      subject: "평균 객단가",
+      value: ticketIndex,
+      displayValue: `${ticketSize.toLocaleString()}원`,
+    },
   ];
 
   // Treemap: 상품 비중
@@ -203,7 +229,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={weekly} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
+            <AreaChart data={weeklyWithAxisLabel} margin={{ top: 8, right: 16, left: -10, bottom: 40 }}>
               <defs>
                 <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#bfd5ff" stopOpacity={0.7} />
@@ -215,7 +241,14 @@ export const SalesV2ChartsSection = ({
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+              <XAxis
+                dataKey="axisLabel"
+                height={56}
+                interval={0}
+                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                angle={-35}
+                textAnchor="end"
+              />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
                 formatter={(value, name) => [
@@ -262,9 +295,16 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={stackedWeekly} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
+            <BarChart data={stackedWeekly} margin={{ top: 4, right: 8, left: -10, bottom: 40 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+              <XAxis
+                dataKey="axisLabel"
+                height={56}
+                interval={0}
+                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                angle={-35}
+                textAnchor="end"
+              />
               <YAxis tickFormatter={fmtWon} tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
                 formatter={(value, name) => [
@@ -392,30 +432,52 @@ export const SalesV2ChartsSection = ({
         {isLoading ? (
           <LoadingPlaceholder />
         ) : (
-          <ResponsiveContainer width="100%" height={200}>
-            <RadarChart cx="50%" cy="50%" outerRadius={72} data={radarData}>
-              <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#64748b" }} />
-              <PolarRadiusAxis
-                angle={30}
-                domain={[0, 100]}
-                tick={{ fontSize: 9, fill: "#94a3b8" }}
-                tickCount={4}
-              />
-              <Radar
-                name="현재 지표"
-                dataKey="value"
-                stroke="#2d6bff"
-                fill="#2d6bff"
-                fillOpacity={0.25}
-                dot={{ r: 3, fill: "#2d6bff" }}
-              />
-              <Tooltip
-                formatter={(value) => [`${Number(value ?? 0)}점 / 100`]}
-                contentStyle={CustomTooltipStyle}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
+          <>
+            <ResponsiveContainer width="100%" height={200}>
+              <RadarChart cx="50%" cy="50%" outerRadius={72} data={radarData}>
+                <PolarGrid stroke="#e2e8f0" />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#64748b" }} />
+                <PolarRadiusAxis
+                  angle={30}
+                  domain={[0, 100]}
+                  tick={{ fontSize: 9, fill: "#94a3b8" }}
+                  tickCount={4}
+                />
+                <Radar
+                  name="현재 지표"
+                  dataKey="value"
+                  stroke="#2d6bff"
+                  fill="#2d6bff"
+                  fillOpacity={0.25}
+                  dot={{ r: 3, fill: "#2d6bff" }}
+                />
+                <Tooltip
+                  formatter={(value, _name, item) => {
+                    const display = (item?.payload as { displayValue?: string } | undefined)
+                      ?.displayValue;
+                    return display
+                      ? [`${Number(value ?? 0)}점 / 100 (${display})`]
+                      : [`${Number(value ?? 0)}점 / 100`];
+                  }}
+                  contentStyle={CustomTooltipStyle}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+            <div className="mt-3 flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                <span>평균 객단가</span>
+                <InfoPopover
+                  caption={FIELD_CAPTIONS["sales:avg_ticket_index"]}
+                  side="top"
+                  align="left"
+                />
+              </span>
+              <span className="text-xs font-bold text-slate-800">
+                {ticketSize.toLocaleString()}원
+                <span className="ml-1.5 text-[#2454C8]">({ticketIndex}점/100)</span>
+              </span>
+            </div>
+          </>
         )}
       </ChartCard>
 
@@ -432,7 +494,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={140}>
               <Treemap
                 data={treemapData}
                 dataKey="size"

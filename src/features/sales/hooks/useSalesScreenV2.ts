@@ -160,7 +160,6 @@ export const useSalesScreenV2 = () => {
   }, [
     campaignEffectQuery.error,
     benchmarkQuery.error,
-    insightsQuery.data,
     insightsQuery.error,
     menuInsightsQuery.error,
     summaryQuery.error,
@@ -210,17 +209,6 @@ export const useSalesScreenV2 = () => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    if (dateComparisonMode === "daily") {
-      setSelectedDateFrom(dateTo);
-      setSelectedDateTo(dateTo);
-      return;
-    }
-
-    setSelectedDateFrom(dateFrom);
-    setSelectedDateTo(dateTo);
-  }, [dateComparisonMode, dateFrom, dateTo]);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -361,6 +349,11 @@ export const useSalesScreenV2 = () => {
     suggestedPrompts,
     latestAssistantMessage,
     summaryData: summaryQuery.data,
+    campaignEffectData: campaignEffectQuery.data,
+    campaignEffectLoading: campaignEffectQuery.isLoading,
+    campaignEffectError:
+      (campaignEffectQuery.error as AxiosError<{ detail?: string }> | null)?.response?.data
+        ?.detail ?? null,
     salesErrorMessages,
     insightsLoading: menuInsightsQuery.isLoading,
     summaryLoading: summaryQuery.isLoading,

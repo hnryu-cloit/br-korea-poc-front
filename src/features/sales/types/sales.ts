@@ -308,6 +308,8 @@ export interface SalesSummaryResponse {
   top_products: SalesSummaryProductItem[];
   avg_margin_rate: number;
   avg_net_profit_per_item: number;
+  avg_ticket_size: number;
+  avg_ticket_index: number;
   estimated_today_profit: number;
 }
 
@@ -342,17 +344,29 @@ export interface SalesCampaignEffectPeriod {
   revenue: number;
 }
 
+export interface SalesCampaignEffectMetric {
+  label: string;
+  value: string;
+  detail?: string | null;
+}
+
 export interface SalesCampaignEffectResponse {
-  campaign_code: string;
-  campaign_name: string;
-  benefit_type: string;
-  item_group_count: number;
-  item_count: number;
-  discount_cost: number;
-  uplift_revenue: number;
-  roi_pct: number;
+  // 백엔드 SalesCampaignEffectResponse 정합 필드
+  title?: string;
+  summary?: string;
+  metrics?: SalesCampaignEffectMetric[];
+  actions?: string[];
+  // 레거시(opportunity 계산용) 옵셔널 필드 — 백엔드 미반환 가능
+  campaign_code?: string;
+  campaign_name?: string;
+  benefit_type?: string;
+  item_group_count?: number;
+  item_count?: number;
+  discount_cost?: number;
+  uplift_revenue?: number;
+  roi_pct?: number;
   payback_days?: number | null;
-  periods: SalesCampaignEffectPeriod[];
+  periods?: SalesCampaignEffectPeriod[];
 }
 
 export type SalesComparison = SalesQueryComparison;

@@ -34,7 +34,6 @@ export const useSalesOpportunityData = (params: {
       benchmarkQuery.data,
       params.campaignEffect,
       params.insights,
-      params.prompts,
       params.storeName,
       params.summary,
     ],
