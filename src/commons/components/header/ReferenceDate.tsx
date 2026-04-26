@@ -1,5 +1,5 @@
 import { ChevronDown, Clock3, RotateCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { REFERENCE_DATE_DEFAULT_LABEL } from "@/commons/constants/header";
 import { sessionDefaults } from "@/features/session/constants/session-user";
@@ -10,13 +10,14 @@ export function ReferenceDate() {
   const { referenceDateTime, setReferenceDateTime } = useDemoSession();
   const [draft, setDraft] = useState(referenceDateTime);
 
-  useEffect(() => {
-    if (isOpen) {
+  const close = () => setIsOpen(false);
+
+  const handleToggle = () => {
+    if (!isOpen) {
       setDraft(referenceDateTime);
     }
-  }, [isOpen, referenceDateTime]);
-
-  const close = () => setIsOpen(false);
+    setIsOpen((value) => !value);
+  };
 
   const handleApply = () => {
     setReferenceDateTime(draft || sessionDefaults.referenceDateTime);
@@ -36,16 +37,16 @@ export function ReferenceDate() {
     <div className="relative">
       <button
         type="button"
-        onClick={() => setIsOpen((value) => !value)}
-        className="flex h-[42px] w-[230px] items-center justify-between rounded-xl border border-[#DCE4F3] bg-[#F7FAFF] px-[10px] transition-colors hover:border-[#bfd1ed]"
+        onClick={handleToggle}
+        className="flex h-[42px] w-[230px] items-center justify-between rounded-xl border border-[#FFB38F] bg-[#FFD9C71A] px-[10px] transition-colors hover:border-[#bfd1ed]"
         aria-label="기준 일자 및 시간 설정"
       >
         <div className="flex items-center gap-2">
-          <div className="grid size-7 place-items-center rounded-lg bg-[#EEF4FF] text-[#2454C8]">
+          <div className="grid size-7 place-items-center text-orange-500">
             <Clock3 className="h-4 w-4" />
           </div>
           <div className="min-w-0 text-left">
-            <p className="text-[11px] leading-tight text-slate-500">기준 일자 및 시간</p>
+            <p className="text-[11px] leading-tight text-brown-700">기준 일자 및 시간</p>
             <p className="truncate text-[12px] font-semibold leading-tight text-slate-800">
               {referenceDateTime.replace("T", " ")}
             </p>
@@ -102,7 +103,7 @@ export function ReferenceDate() {
                 type="button"
                 onClick={handleApply}
                 disabled={!draft || draft === referenceDateTime}
-                className="rounded-md bg-[#2454C8] px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#1d44a8] disabled:cursor-not-allowed disabled:bg-[#9fb4dd]"
+                className="rounded-md bg-orange-500 px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#1d44a8] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 확인
               </button>
