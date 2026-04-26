@@ -24,7 +24,7 @@ export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems, isLoadi
         </span>
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-2 rounded-[8px] bg-[#DADADA]/20 px-6 py-3">
-        <span className="font-bold text-brown-700 text-sm">월간 최다 폐기 품목 TOP 3</span>
+        <span className="font-bold text-brown-700 text-sm">최근 30일 폐기 품목 TOP 3</span>
         {hasTopItems ? (
           <div className="flex min-w-0 flex-col gap-3 xl:flex-row">
             {montlyTopItems?.map((item, index) => (
@@ -33,7 +33,7 @@ export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems, isLoadi
           </div>
         ) : (
           <div className="flex min-h-[64px] items-center justify-center rounded-[8px] border border-dashed border-[#D8CBC3] bg-white px-4 py-3 text-center text-sm font-medium text-[#8E7B71]">
-            일간 최대 폐기 품목 데이터가 없습니다.
+            최근 30일 폐기 품목 데이터가 없습니다.
           </div>
         )}
       </div>
