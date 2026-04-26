@@ -32,7 +32,9 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   // 생산 현황 - 대상 데이터 정의
   "production:scope": {
     assumption:
-      "해당 지점에서 생산하는 제품 중 최근 7일 이내 매출 이력 또는 생산 이력이 있는 SKU만 포함합니다.",
+      "생산 현황 대상은 다음 두 조건 중 하나를 만족하는 SKU만 포함합니다.\n" +
+      "• 최근 7일 이내 매출 이력이 있는 제품 중 해당 지점에서 생산하는 제품\n" +
+      "• 최근 7일 이내 생산 이력이 있는 제품",
     description: "생산 현황 테이블에 노출되는 SKU 선정 기준입니다.",
   },
   // 생산 현황 - 추천 생산 수량
@@ -43,9 +45,12 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 생산 현황 - 현재 판매 속도
   "production:sales_velocity": {
-    assumption: "최근 30분 동안 발생한 판매 수량을 시간당으로 환산해 평균 판매 속도와 비교합니다.",
-    formula: "현재 판매 속도 = 최근 30분 판매 수량 × 2 (시간당 환산)",
-    description: "직전 30분 판매량을 시간당으로 환산한 실시간 판매 속도입니다.",
+    assumption:
+      "마트 재고 테이블이 있으면 해당 테이블의 stock_rate 값을 그대로 사용합니다. 마트 재고 테이블이 없으면 1시간 판매 예상 수량을 현재 재고로 나눈 비율을 사용합니다.",
+    formula:
+      "마트 경로: 판매 속도 = stock_rate\n" +
+      "raw/스냅샷 경로: 판매 속도 = 1시간 판매 예상 수량 ÷ 현재 재고",
+    description: "현재 재고 대비 판매 소진 압력을 보여주는 상대 지표입니다.",
   },
   // 폐기 손실 - 조회 기준일
   "production:waste_reference_date": {
@@ -180,14 +185,20 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 생산 현황 테이블
   "production:forecast_1h": {
-    assumption: "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
-    formula: "예측 재고 = 현재 재고 - (시간당 평균 판매량 × 1)",
+    assumption:
+      "raw/스냅샷 경로에서는 현재 재고에서 1시간 판매 예상 수량을 차감한 잔여 재고를 사용합니다. 마트 재고 테이블 경로는 1시간 판매 예측값이 없어 현재 재고를 그대로 표시합니다.",
+    formula:
+      "raw/스냅샷 경로: 1시간 후 예측 재고 = max(현재 재고 - 1시간 판매 예상 수량, 0)\n" +
+      "마트 경로: 1시간 후 예측 재고 = 현재 재고",
     description: "1시간 후 예상 잔여 재고 수량입니다.",
   },
   "production:chance_loss": {
-    assumption: "AI 권고 생산을 하지 않았을 때의 기회비용을 기준으로 합니다.",
-    formula: "절감비용 = 품절 예상 수량 × 해당제품의 판매가",
-    description: "적시 생산으로 방지할 수 있는 찬스 로스 절감 비용입니다.",
+    assumption:
+      "권고 생산을 하지 않았을 때 1시간 판매 예상 수량을 현재 재고가 얼마나 충족하지 못하는지 기준으로 계산합니다. 마트 재고 테이블 경로처럼 1시간 판매 예측값이 없으면 0으로 표시합니다.",
+    formula:
+      "부족 수량 = max(1시간 판매 예상 수량 - 현재 재고, 0)\n" +
+      "절감비용 = 권고 생산으로 줄어드는 부족 수량 × 1,200원",
+    description: "적시 생산으로 방지할 수 있는 1시간 기준 잠재 매출 손실 추정치입니다.",
   },
   "production:avg_first_prod_4w": {
     assumption: "최근 4주 영업일 기준 첫 번째 생산이 발생한 날만 포함합니다.",
@@ -228,33 +239,36 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "fifo:section_title": {
     assumption:
       "본 테이블의 데이터는 임의 가정 기반의 시뮬레이션 데이터입니다.\n" +
+      "• 품목 구분 기준: `raw_store_production_item`에 등록된 품목은 완제품(production), 그 외 품목은 납품(원재료)(delivery)로 분류\n" +
+      "• 보조 기준: `raw_store_production_item`이 비어 있으면 최근 생산 이력(`raw_production_extract`)이 있는 품목을 완제품으로 간주\n" +
       "• 유통기한: 완제품(production)은 제품명 키워드로 추정 — 샌드/샐러드/크림·도넛/베이글/빵 1일, 케이크/파이 2일, 커피/음료 당일(0일), 기타 1일\n" +
       "• 납품일(delivery): 납품 데이터가 없으므로 생산 이력에서 대리 산출\n" +
-      "• 조회 기준: 선택한 기준일(KST)의 lot_date 1일치 데이터만 표시",
+      "• 조회 기준: 선택한 기준일(KST)의 당일은 제외하고 해당 월 1일~기준일 전일까지 누적 집계\n" +
+      "• 월 1일은 누적 이월 재고가 없으므로 0으로 표시",
     description:
-      "각 품목의 기준일 Lot 단위 입고·소진·폐기·잔여 수량을 FIFO 순서로 추적합니다. 실제 ERP·POS 연동 전까지 추정 데이터로 운영됩니다.",
+      "각 품목의 월 누적 이월 재고를 Lot 단위 입고·소진·폐기·잔여 수량으로 FIFO 순서에 맞춰 추적합니다. 실제 ERP·POS 연동 전까지 추정 데이터로 운영됩니다.",
   },
   // FIFO 입고 수량
   "fifo:initial_qty": {
-    assumption: "해당 일자에 생산·납품된 Lot의 최초 수량입니다.",
-    formula: "입고 수량 = SUM(initial_qty) — 오늘 lot_date 기준",
-    description: "오늘 입고된 Lot의 초기 수량 합계입니다.",
+    assumption: "해당 월 1일~기준일 전일까지 발생한 생산·납품 Lot의 초기 수량을 누적 집계합니다.",
+    formula: "입고 수량 = SUM(initial_qty) — 해당 월 1일~기준일 전일 lot_date 기준",
+    description: "해당 월 누적 이월 재고 대상 Lot의 초기 수량 합계입니다.",
   },
   // FIFO 소진 수량
   "fifo:consumed_qty": {
-    assumption: "FIFO 순서로 판매·출고된 수량입니다. sold_out 상태 Lot 포함.",
-    formula: "소진 수량 = SUM(consumed_qty) — 오늘 lot_date 기준",
-    description: "오늘 Lot에서 FIFO 차감으로 소진된 수량 합계입니다.",
+    assumption: "해당 월 1일~기준일 전일까지 FIFO 순서로 판매·출고된 수량입니다. sold_out 상태 Lot 포함.",
+    formula: "소진 수량 = SUM(consumed_qty) — 해당 월 1일~기준일 전일 기준",
+    description: "해당 월 누적 이월 재고 대상 Lot에서 FIFO 차감으로 소진된 수량 합계입니다.",
   },
   "fifo:active_remaining": {
-    assumption: "현재 active 상태인 Lot만 포함합니다. sold_out·expired Lot은 제외합니다.",
-    formula: "잔여 수량 = Σ(초기 수량 - 소진 수량) — active Lot 기준",
-    description: "유통기한이 남아있는 활성 Lot의 잔여 수량 합계입니다.",
+    assumption: "기준일 전일까지 남아 있는 active 상태 Lot만 포함합니다. sold_out·expired Lot은 제외합니다.",
+    formula: "잔여 수량 = Σ(기준일 전일까지 active 상태로 남은 Lot 잔량)",
+    description: "해당 월 누적 이월 재고 중 기준일 전일까지 유통기한이 남아 있는 활성 Lot의 잔여 수량 합계입니다.",
   },
   "fifo:wasted_qty": {
-    assumption: "유통기한 만료로 expired 처리된 Lot의 수량만 집계합니다.",
-    formula: "폐기 수량 = Σ wasted_qty (expired Lot)",
-    description: "기준일 Lot 중 유통기한 만료로 폐기된 총 수량입니다.",
+    assumption: "해당 월 1일~기준일 전일까지 유통기한 만료로 expired 처리된 Lot 수량만 집계합니다.",
+    formula: "폐기 수량 = Σ wasted_qty — 해당 월 1일~기준일 전일 expired Lot 기준",
+    description: "해당 월 누적 이월 재고 중 유통기한 만료로 폐기된 총 수량입니다.",
   },
   // 매출 기회 분석 카드
   "sales:opportunity_marketing_roi": {
