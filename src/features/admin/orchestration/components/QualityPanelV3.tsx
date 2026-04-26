@@ -1,9 +1,19 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
+
 export function QualityPanelV3() {
   return (
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>품질 검증 아카이브</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>품질 검증 아카이브</h1>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_quality_archive"]}
+              side="bottom"
+              align="left"
+            />
+          </div>
           <p>Agent별 품질 점수 · SLA 달성률 · 이슈 트래커</p>
         </div>
         <div className="pgh-r">

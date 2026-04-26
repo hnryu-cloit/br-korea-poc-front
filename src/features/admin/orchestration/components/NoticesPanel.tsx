@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { MOCK_NOTICES } from "@/features/admin/orchestration/mockdata/mock-orchestration";
 import type {
   NoticeItem,
@@ -14,7 +16,10 @@ export function NoticesPanel({ onOpenModal, onSelectNotice }: Props) {
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>공지사항</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>공지사항</h1>
+            <InfoPopover caption={FIELD_CAPTIONS["page:settings_notices"]} side="bottom" align="left" />
+          </div>
         </div>
         <div className="pgh-r">
           <button
@@ -53,6 +58,7 @@ export function NoticesPanel({ onOpenModal, onSelectNotice }: Props) {
                 {notice.title}
               </span>
             </div>
+            <div style={{ marginTop: 4, fontSize: 11.5, color: "var(--t2)" }}>{notice.desc}</div>
             <div
               style={{ fontSize: 11, color: "var(--t3)", marginTop: 3, display: "flex", gap: 8 }}
             >

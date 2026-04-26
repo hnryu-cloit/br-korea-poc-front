@@ -27,6 +27,8 @@ export function OrchestrationScreen() {
     setActiveAgent,
     isDirty,
     saveMessage,
+    updatedAtText,
+    updatedBy,
     handleFieldChange,
     handleSave,
     handleReset,
@@ -53,8 +55,8 @@ export function OrchestrationScreen() {
           isDirty={isDirty}
           isSaving={false}
           saveMessage={saveMessage}
-          updatedAtText="-"
-          updatedBy="-"
+          updatedAtText={updatedAtText}
+          updatedBy={updatedBy}
           onOpenModal={setActiveModal}
         />
       );

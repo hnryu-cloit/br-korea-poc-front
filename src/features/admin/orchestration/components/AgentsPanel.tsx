@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { PANEL_PATH_MAP } from "@/features/admin/orchestration/constants/orchestration";
 import type { SettingsModalKey } from "@/features/admin/orchestration/types/orchestration";
 
@@ -17,6 +19,8 @@ type AgentCard = {
   tools: string[];
   accuracy: number;
   calls: number;
+  owner: string;
+  lastReleasedAt: string;
   trendText?: string;
   urgent?: boolean;
 };
@@ -32,6 +36,8 @@ const AGENT_CARDS: AgentCard[] = [
     tools: ["NL2SQL", "RAG"],
     accuracy: 91,
     calls: 148,
+    owner: "ops.ml@brdunkin.co.kr",
+    lastReleasedAt: "2026-04-24 18:10",
   },
   {
     name: "주문관리 Agent",
@@ -43,6 +49,8 @@ const AGENT_CARDS: AgentCard[] = [
     tools: ["NL2SQL", "RAG", "Forecast"],
     accuracy: 89,
     calls: 203,
+    owner: "ordering.pm@brdunkin.co.kr",
+    lastReleasedAt: "2026-04-23 21:40",
   },
   {
     name: "매출관리 Agent",
@@ -54,6 +62,8 @@ const AGENT_CARDS: AgentCard[] = [
     tools: ["NL2SQL", "RAG"],
     accuracy: 86,
     calls: 312,
+    owner: "sales.data@brdunkin.co.kr",
+    lastReleasedAt: "2026-04-22 10:55",
     trendText: "⚠ 스키마 미매핑 8건 — 즉시 점검 필요",
     urgent: true,
   },
@@ -66,7 +76,10 @@ export function AgentsPanel({ onOpenModal }: Props) {
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>Agent 레지스트리</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>Agent 레지스트리</h1>
+            <InfoPopover caption={FIELD_CAPTIONS["page:settings_agents"]} side="bottom" align="left" />
+          </div>
           <p>배포된 Agent 현황 관리 · 신규 Agent 생성 · 버전 배포</p>
         </div>
         <div className="pgh-r">
@@ -88,23 +101,23 @@ export function AgentsPanel({ onOpenModal }: Props) {
       </div>
 
       <div className="g4 mb-[12px]">
-        <div className="metric">
+        <div className="metric" style={{ background: "#fff" }}>
           <div className="ml">전체 Agent</div>
           <div className="mv">
             3<span>개</span>
           </div>
           <div className="ms">
-            <span className="b bg">전체 운영 중</span>
+            <span className="b ba">정상 2 · 점검 1</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric" style={{ background: "#fff" }}>
           <div className="ml">최근 배포</div>
           <div className="mv text-[15px]">
             v3.2<span className="text-[11px]"> 생산관리</span>
           </div>
           <div className="ms mt-1 text-[11px] text-[var(--t3)]">2026-04-18 14:20</div>
         </div>
-        <div className="metric">
+        <div className="metric" style={{ background: "#fff" }}>
           <div className="ml">오늘 총 호출</div>
           <div className="mv">
             663<span>회</span>
@@ -113,7 +126,7 @@ export function AgentsPanel({ onOpenModal }: Props) {
             <span className="b bb">▲ 12% 전일</span>
           </div>
         </div>
-        <div className="metric">
+        <div className="metric" style={{ background: "#fff" }}>
           <div className="ml">평균 정확도</div>
           <div className="mv">
             89<span>%</span>
@@ -159,6 +172,9 @@ export function AgentsPanel({ onOpenModal }: Props) {
                     <div>
                       <div className="text-[13px] font-bold text-[var(--text)]">{card.name}</div>
                       <div className="text-[11px] text-[var(--t3)]">{card.id}</div>
+                      <div className="text-[10px] text-[var(--t3)]">
+                        Owner: {card.owner} · 배포: {card.lastReleasedAt}
+                      </div>
                     </div>
                   </div>
                 </div>

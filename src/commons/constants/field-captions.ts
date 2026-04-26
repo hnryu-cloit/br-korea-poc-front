@@ -334,4 +334,76 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "dashboard:ordering_summary": {
     description: "AI 발주 추천 대상과 마감 임박 품목을 요약합니다.",
   },
+  "page:settings_agents": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "운영 중 Agent의 모델/버전/상태를 관리하고 배포 현황을 추적합니다.",
+    description:
+      "서비스 품질 저하를 조기에 감지하고 안정적인 운영 릴리즈를 유지하기 위해 필요합니다.",
+  },
+  "page:settings_orchestration": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "라우팅, 핸드오프, fallback 규칙을 관리해 질의 처리 흐름을 제어합니다.",
+    description:
+      "응답 일관성과 실패 복원력을 높여 운영 리스크를 줄이기 위해 필요합니다.",
+  },
+  "page:settings_connectors": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "데이터 원천 커넥터 상태와 동기화 품질, 지연 이슈를 모니터링합니다.",
+    description:
+      "AI/분석 결과의 신뢰도를 좌우하는 데이터 파이프라인을 안정적으로 유지하기 위해 필요합니다.",
+  },
+  "page:settings_access": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "역할별 권한과 데이터 범위를 통제해 접근 정책을 운영합니다.",
+    description:
+      "보안/컴플라이언스를 준수하고 사용자 권한 오남용을 방지하기 위해 필요합니다.",
+  },
+  "page:settings_prompts": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "도메인별 시스템 프롬프트와 빠른 질문, 템플릿을 관리합니다.",
+    description:
+      "응답 품질과 톤을 표준화하고, 운영자가 모델 동작을 통제 가능하게 만들기 위해 필요합니다.",
+  },
+  "page:settings_golden_queries": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "반복 핵심 질의를 골든 쿼리로 관리해 응답 속도와 정확도를 높입니다.",
+    description:
+      "자주 묻는 운영 질문에 대한 일관된 답변을 빠르게 제공하기 위해 필요합니다.",
+  },
+  "page:settings_audit_logs": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "질의 처리 기록, 차단 이력, 경로 정보를 추적해 감사 가능성을 확보합니다.",
+    description:
+      "정책 위반 탐지, 장애 분석, 책임 추적을 위한 운영 근거를 남기기 위해 필요합니다.",
+  },
+  "page:settings_quality_archive": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "Agent별 품질 지표와 이슈 상태를 통합 관리합니다.",
+    description:
+      "품질 저하를 수치 기반으로 관리하고 개선 작업 우선순위를 결정하기 위해 필요합니다.",
+  },
+  "page:settings_notices": {
+    assumptionLabel: "역할 및 설명",
+    descriptionLabel: "근거",
+    assumption:
+      "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
+    description:
+      "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
+  },
 };

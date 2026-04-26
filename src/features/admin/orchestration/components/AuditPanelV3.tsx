@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { useAuditPanel } from "@/features/admin/orchestration/hooks/useAuditPanel";
 import type { OrchestrationAgent } from "@/features/admin/orchestration/types/orchestration";
 
@@ -14,11 +16,18 @@ export function AuditPanelV3() {
     blockedCount,
   } = useAuditPanel();
 
+  const totalCount = allowedCount + blockedCount;
+  const allowedRate = totalCount > 0 ? ((allowedCount / totalCount) * 100).toFixed(1) : "0.0";
+  const blockedRate = totalCount > 0 ? ((blockedCount / totalCount) * 100).toFixed(1) : "0.0";
+
   return (
     <section>
       <div className="pgh">
         <div className="pgh-l">
-          <h1>대화 감사 로그</h1>
+          <div className="inline-flex items-center gap-1.5">
+            <h1>대화 감사 로그</h1>
+            <InfoPopover caption={FIELD_CAPTIONS["page:settings_audit_logs"]} side="bottom" align="left" />
+          </div>
           <p>질의 처리 경로 · 차단 이력 · Agent별 통계 · 이상 감지</p>
         </div>
         <div className="pgh-r">
@@ -32,10 +41,11 @@ export function AuditPanelV3() {
         <div className="metric !bg-white">
           <div className="ml">오늘 총 질의</div>
           <div className="mv">
-            663<span>건</span>
+            {totalCount}
+            <span>건</span>
           </div>
           <div className="ms">
-            <span className="b bb">▲ 12%</span>
+            <span className="b bb">최근 1시간 기준</span>
           </div>
         </div>
         <div className="metric !bg-white">
@@ -45,7 +55,7 @@ export function AuditPanelV3() {
             <span>건</span>
           </div>
           <div className="ms">
-            <span className="b bg">96.2%</span>
+            <span className="b bg">{allowedRate}%</span>
           </div>
         </div>
         <div className="metric !bg-white">
@@ -55,7 +65,7 @@ export function AuditPanelV3() {
             <span>건</span>
           </div>
           <div className="ms">
-            <span className="b br">3.8%</span>
+            <span className="b br">{blockedRate}%</span>
           </div>
         </div>
         <div className="metric !bg-white">

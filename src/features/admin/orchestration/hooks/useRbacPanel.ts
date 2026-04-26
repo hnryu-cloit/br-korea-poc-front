@@ -17,8 +17,18 @@ export function useRbacPanel() {
     });
   }, [roleFilter, searchText]);
 
+  const roleCounts = useMemo(
+    () => ({
+      hq_admin: MOCK_RBAC_MEMBERS.filter((member) => member.role === "hq_admin").length,
+      store_owner: MOCK_RBAC_MEMBERS.filter((member) => member.role === "store_owner").length,
+      ops_partner: MOCK_RBAC_MEMBERS.filter((member) => member.role === "ops_partner").length,
+    }),
+    [],
+  );
+
   return {
     filteredMembers,
+    roleCounts,
     searchText,
     setSearchText,
     roleFilter,
