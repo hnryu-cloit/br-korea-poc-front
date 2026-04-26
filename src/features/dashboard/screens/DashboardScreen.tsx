@@ -38,20 +38,17 @@ export function DashboardScreen() {
     store_id: user.storeId,
     business_date: businessDate,
   };
-  const {
-    data: noticesData,
-    isLoading: noticesLoading,
-    isFetching: noticesFetching,
-  } = useGetDashboardNoticesQuery(params);
+  const { data: noticesData, isLoading: noticesLoading } = useGetDashboardNoticesQuery(params);
   const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(params);
-  const { data: alertsData } = useGetDashboardAlertsQuery(params);
-  const { data: summaryCardsData } = useGetDashboardSummaryCardsQuery(params);
+  const { data: alertsData, isLoading: alertsLoading } = useGetDashboardAlertsQuery(params);
+  const { data: summaryCardsData, isLoading: summaryCardsLoading } =
+    useGetDashboardSummaryCardsQuery(params);
 
   return (
     <div className="flex flex-col gap-6">
       <DashboardNotices
         notices={noticesData?.items ?? []}
-        isLoading={noticesLoading || noticesFetching}
+        isLoading={noticesLoading && !noticesData}
       />
       <DashboardSchedulePanel
         storeId={user.storeId}
@@ -81,10 +78,12 @@ export function DashboardScreen() {
         <DashboardAlertSummary
           lowStockProducts={alertsData?.low_stock_products ?? []}
           orderDeadline={alertsData?.order_deadline ?? null}
+          isLoading={alertsLoading && !alertsData}
         />
         <SummaryCardsSection
           cards={summaryCardsData?.cards ?? []}
           updatedAt={summaryCardsData?.updated_at}
+          isLoading={summaryCardsLoading && !summaryCardsData}
         />
       </div>
     </div>

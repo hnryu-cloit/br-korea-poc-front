@@ -1,6 +1,7 @@
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
+import { ProductionWasteTableSkeleton } from "@/features/production/components/ProductionSkeletons";
 import type { WasteSummaryResponse } from "@/features/production/types/production";
 import ProductDefaultImage from "@/assets/default_product_img.svg";
 
@@ -83,14 +84,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
             </thead>
             <tbody>
               {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
-                  >
-                    폐기 손실 데이터를 불러오는 중입니다.
-                  </td>
-                </tr>
+                <ProductionWasteTableSkeleton />
               ) : errorMessage ? (
                 <tr>
                   <td

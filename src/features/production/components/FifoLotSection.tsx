@@ -2,6 +2,7 @@ import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterG
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { Pagination } from "@/commons/components/page/Pagination";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
+import { FifoLotSkeleton } from "@/features/production/components/ProductionSkeletons";
 import type {
   FifoLotItem,
   FifoLotSummaryResponse,
@@ -57,137 +58,146 @@ export function FifoLotSection({
         />
       </div>
 
-      {summary && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <SummaryCard label="전체 품목" value={summary.total_items} unit="종" />
-          <SummaryCard
-            label="폐기 발생 품목"
-            value={summary.items_with_waste}
-            unit="종"
-            color="danger"
-          />
-          <SummaryCard
-            label="총 폐기 수량"
-            value={summary.total_wasted_qty}
-            unit="개"
-            color="danger"
-          />
-          <SummaryCard
-            label="잔여 활성 수량"
-            value={summary.total_active_qty}
-            unit="개"
-            color="safe"
-          />
-        </div>
-      )}
+      {isLoading ? (
+        <FifoLotSkeleton />
+      ) : (
+        <>
+          {summary && (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <SummaryCard label="전체 품목" value={summary.total_items} unit="종" />
+              <SummaryCard
+                label="폐기 발생 품목"
+                value={summary.items_with_waste}
+                unit="종"
+                color="danger"
+              />
+              <SummaryCard
+                label="총 폐기 수량"
+                value={summary.total_wasted_qty}
+                unit="개"
+                color="danger"
+              />
+              <SummaryCard
+                label="잔여 활성 수량"
+                value={summary.total_active_qty}
+                unit="개"
+                color="safe"
+              />
+            </div>
+          )}
 
-      <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
-        <table className="w-full min-w-[900px] whitespace-nowrap text-sm">
-          <thead>
-            <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">품목명</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">유형</th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-center">
-                유통기한
-              </th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                <span className="inline-flex items-center gap-1">
-                  <span>입고 수량</span>
-                  <InfoPopover
-                    caption={FIELD_CAPTIONS["fifo:initial_qty"]}
-                    side="top"
-                    align="left"
-                  />
-                </span>
-              </th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                <span className="inline-flex items-center gap-1">
-                  <span>소진 수량</span>
-                  <InfoPopover
-                    caption={FIELD_CAPTIONS["fifo:consumed_qty"]}
-                    side="top"
-                    align="left"
-                  />
-                </span>
-              </th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                <span className="inline-flex items-center gap-1">
-                  <span>폐기 수량</span>
-                  <InfoPopover
-                    caption={FIELD_CAPTIONS["fifo:wasted_qty"]}
-                    side="top"
-                    align="right"
-                  />
-                </span>
-              </th>
-              <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                <span className="inline-flex items-center gap-1">
-                  <span>잔여 수량</span>
-                  <InfoPopover
-                    caption={FIELD_CAPTIONS["fifo:active_remaining"]}
-                    side="top"
-                    align="right"
-                  />
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={7} className="bg-white px-6 py-16 text-center text-sm text-slate-400">
-                  데이터를 불러오는 중입니다.
-                </td>
-              </tr>
-            ) : isEmptySelection || !data?.items.length ? (
-              <tr>
-                <td colSpan={7} className="bg-white px-6 py-16 text-center text-sm text-slate-400">
-                  표시할 Lot 데이터가 없습니다.
-                </td>
-              </tr>
-            ) : (
-              data.items.map((item, idx) => (
-                <tr
-                  key={`${item.item_nm}-${item.lot_type}-${idx}`}
-                  className="border-b border-[#DADADA] bg-white text-sm"
-                >
-                  <td className="px-4 py-3 font-medium text-[#41352E]">{item.item_nm}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-[#FFF0E8] text-[#FF671F]">
-                      {LOT_TYPE_LABEL[item.lot_type]}
+          <div className="overflow-x-auto rounded-[4px] border border-[#DADADA]">
+            <table className="w-full min-w-[900px] whitespace-nowrap text-sm">
+              <thead>
+                <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
+                  <th className="px-4 py-2.5 text-left text-[14px] font-bold text-[#653819]">
+                    품목명
+                  </th>
+                  <th className="px-4 py-2.5 text-center text-[14px] font-bold text-[#653819]">
+                    유형
+                  </th>
+                  <th className="px-4 py-2.5 text-center text-[14px] font-bold text-[#653819]">
+                    유통기한
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-[14px] font-bold text-[#653819]">
+                    <span className="inline-flex items-center gap-1">
+                      <span>입고 수량</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["fifo:initial_qty"]}
+                        side="top"
+                        align="left"
+                      />
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-center text-[#653819]">
-                    {item.shelf_life_days != null ? `${item.shelf_life_days}일` : "-"}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {item.total_initial_qty.toLocaleString("ko-KR")}
-                  </td>
-                  <td className="px-4 py-3 text-right text-[#2B7FFF]">
-                    {item.total_consumed_qty.toLocaleString("ko-KR")}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <span className={item.total_wasted_qty > 0 ? "text-[#FF671F] font-medium" : ""}>
-                      {item.total_wasted_qty.toLocaleString("ko-KR")}
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-[14px] font-bold text-[#653819]">
+                    <span className="inline-flex items-center gap-1">
+                      <span>소진 수량</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["fifo:consumed_qty"]}
+                        side="top"
+                        align="left"
+                      />
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <span
-                      className={
-                        item.active_remaining_qty > 0
-                          ? "text-[#00BBA7] font-medium"
-                          : "text-slate-400"
-                      }
-                    >
-                      {item.active_remaining_qty.toLocaleString("ko-KR")}
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-[14px] font-bold text-[#653819]">
+                    <span className="inline-flex items-center gap-1">
+                      <span>폐기 수량</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["fifo:wasted_qty"]}
+                        side="top"
+                        align="right"
+                      />
                     </span>
-                  </td>
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-[14px] font-bold text-[#653819]">
+                    <span className="inline-flex items-center gap-1">
+                      <span>잔여 수량</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["fifo:active_remaining"]}
+                        side="top"
+                        align="right"
+                      />
+                    </span>
+                  </th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody>
+                {isEmptySelection || !data?.items.length ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                    >
+                      표시할 Lot 데이터가 없습니다.
+                    </td>
+                  </tr>
+                ) : (
+                  data.items.map((item, idx) => (
+                    <tr
+                      key={`${item.item_nm}-${item.lot_type}-${idx}`}
+                      className="border-b border-[#DADADA] bg-white text-sm"
+                    >
+                      <td className="px-4 py-3 font-medium text-[#41352E]">{item.item_nm}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="inline-flex rounded-full bg-[#FFF0E8] px-2 py-0.5 text-xs font-medium text-[#FF671F]">
+                          {LOT_TYPE_LABEL[item.lot_type]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center text-[#653819]">
+                        {item.shelf_life_days != null ? `${item.shelf_life_days}일` : "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {item.total_initial_qty.toLocaleString("ko-KR")}
+                      </td>
+                      <td className="px-4 py-3 text-right text-[#2B7FFF]">
+                        {item.total_consumed_qty.toLocaleString("ko-KR")}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span
+                          className={item.total_wasted_qty > 0 ? "text-[#FF671F] font-medium" : ""}
+                        >
+                          {item.total_wasted_qty.toLocaleString("ko-KR")}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span
+                          className={
+                            item.active_remaining_qty > 0
+                              ? "text-[#00BBA7] font-medium"
+                              : "text-slate-400"
+                          }
+                        >
+                          {item.active_remaining_qty.toLocaleString("ko-KR")}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       {!!data?.items.length && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />

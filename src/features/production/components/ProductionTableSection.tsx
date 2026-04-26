@@ -5,6 +5,7 @@ import { Pagination } from "@/commons/components/page/Pagination";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { formatCountWithUnit } from "@/commons/utils/format-count";
 import { getPublickProductImage } from "@/commons/utils/getPublicProductImage";
+import { ProductionTableRowsSkeleton } from "@/features/production/components/ProductionSkeletons";
 import { StatusBadge } from "@/features/production/components/StatusBadge";
 import type {
   ProductionSkuItem,
@@ -62,14 +63,7 @@ export function ProductionTableSection({
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td
-                    colSpan={9}
-                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
-                  >
-                    SKU 데이터를 불러오는 중입니다.
-                  </td>
-                </tr>
+                <ProductionTableRowsSkeleton />
               ) : items.length === 0 ? (
                 <tr>
                   <td

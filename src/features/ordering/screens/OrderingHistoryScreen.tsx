@@ -5,6 +5,11 @@ import { OrderingHistoryChartsSection } from "@/features/ordering/components/Ord
 import { OrderingHistoryFilterSection } from "@/features/ordering/components/OrderingHistoryFilterSection";
 import { OrderingHistoryInsightsSection } from "@/features/ordering/components/OrderingHistoryInsightsSection";
 import { OrderingHistorySection } from "@/features/ordering/components/OrderingHistorySection";
+import {
+  OrderingHistoryChartsSkeleton,
+  OrderingHistoryInsightsSkeleton,
+  OrderingHistoryTableSkeleton,
+} from "@/features/ordering/components/OrderingSkeletons";
 import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/useGetOrderingHistoryInsightsQuery";
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
@@ -64,6 +69,11 @@ export function OrderingHistoryScreen() {
   const historyQuery = useGetOrderingHistoryQuery(historyParams);
   const historyChartQuery = useGetOrderingHistoryQuery(historyChartParams);
   const insightsQuery = useGetOrderingHistoryInsightsQuery(insightsParams);
+  const chartsLoading =
+    (historyChartQuery.isLoading && !historyChartQuery.data) ||
+    (insightsQuery.isLoading && !insightsQuery.data);
+  const insightsLoading = insightsQuery.isLoading && !insightsQuery.data;
+  const historyLoading = historyQuery.isLoading && !historyQuery.data;
 
   const onConfirm = () => {
     setCurrentPage(1);
@@ -89,23 +99,32 @@ export function OrderingHistoryScreen() {
         onItemNameChange={setItemName}
         onConfirm={onConfirm}
       />
-      <OrderingHistoryChartsSection
-        items={historyChartQuery.data?.items ?? []}
-        topChangedItems={insightsQuery.data?.top_changed_items ?? []}
-        isLoading={historyChartQuery.isLoading || insightsQuery.isLoading}
-        dateFrom={appliedFilters.dateFrom}
-        dateTo={appliedFilters.dateTo}
-      />
-      <OrderingHistoryInsightsSection
-        data={insightsQuery.data}
-        isLoading={insightsQuery.isLoading}
-      />
-      <OrderingHistorySection
-        data={historyQuery.data}
-        isLoading={historyQuery.isLoading}
-        currentPage={currentPage}
-        onChangePage={setCurrentPage}
-      />
+      {chartsLoading ? (
+        <OrderingHistoryChartsSkeleton />
+      ) : (
+        <OrderingHistoryChartsSection
+          items={historyChartQuery.data?.items ?? []}
+          topChangedItems={insightsQuery.data?.top_changed_items ?? []}
+          isLoading={false}
+          dateFrom={appliedFilters.dateFrom}
+          dateTo={appliedFilters.dateTo}
+        />
+      )}
+      {insightsLoading ? (
+        <OrderingHistoryInsightsSkeleton />
+      ) : (
+        <OrderingHistoryInsightsSection data={insightsQuery.data} isLoading={insightsLoading} />
+      )}
+      {historyLoading ? (
+        <OrderingHistoryTableSkeleton />
+      ) : (
+        <OrderingHistorySection
+          data={historyQuery.data}
+          isLoading={historyLoading}
+          currentPage={currentPage}
+          onChangePage={setCurrentPage}
+        />
+      )}
     </div>
   );
 }

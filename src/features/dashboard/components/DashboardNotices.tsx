@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 
+import { DashboardNoticesSkeleton } from "@/features/dashboard/components/DashboardSkeletons";
 import type { ScheduleNotice } from "@/features/dashboard/types/dashboard";
 import { resolveDashboardNotices } from "@/features/dashboard/utils/dashboard-notices";
 interface Props {
@@ -16,7 +17,7 @@ export function DashboardNotices({ notices, isLoading }: Props) {
       <h2 className="text-[18px] leading-[29.88px] font-bold text-brown-700">공지사항</h2>
 
       {isLoading ? (
-        <p className="text-sm text-brown-500">공지사항을 불러오고 있습니다...</p>
+        <DashboardNoticesSkeleton />
       ) : (
         <>
           {hasNotices ? (
