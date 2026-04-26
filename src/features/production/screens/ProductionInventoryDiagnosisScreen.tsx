@@ -21,7 +21,7 @@ const INVENTORY_STATUS_CODE_MAP: Record<InventoryStatusItem["status"], Inventory
 const FIFO_LOT_FILTERS: Exclude<FifoLotType, undefined>[] = ["production", "delivery"];
 
 export function ProductionInventoryDiagnosisScreen() {
-  const { user } = useDemoSession();
+  const { user, referenceDateTime } = useDemoSession();
   const storeId = user.storeId ?? "";
 
   const [inventoryPage, setInventoryPage] = useState(1);
@@ -35,7 +35,7 @@ export function ProductionInventoryDiagnosisScreen() {
     (status) => INVENTORY_STATUS_CODE_MAP[status],
   );
   const fifoLotType = selectedFifoLotTypes.length === 1 ? selectedFifoLotTypes[0] : undefined;
-  const today = new Date().toISOString().slice(0, 10);
+  const fifoReferenceDate = referenceDateTime.slice(0, 10);
   const {
     data: inventoryData,
     isLoading: inventoryLoading,
@@ -47,7 +47,7 @@ export function ProductionInventoryDiagnosisScreen() {
     fifoPage,
     20,
     selectedFifoLotTypes.length > 0,
-    today,
+    fifoReferenceDate,
   );
 
   const handleLotTypesChange = (types: Exclude<FifoLotType, undefined>[]) => {
