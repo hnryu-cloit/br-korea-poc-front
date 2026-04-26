@@ -1,5 +1,5 @@
 import { SalesDateRangeFilter } from "@/features/sales/components/SalesDateRangeFilter";
-import { SalesV2CampaignActivitySection } from "@/features/sales/components/SalesV2CampaignActivitySection";
+// import { SalesV2CampaignActivitySection } from "@/features/sales/components/SalesV2CampaignActivitySection";
 import { SalesV2ChartsSection } from "@/features/sales/components/SalesV2ChartsSection";
 import { SalesV2InsightsSection } from "@/features/sales/components/SalesV2InsightsSection";
 import { SalesV2OpportunitySection } from "@/features/sales/components/SalesV2OpportunitySection";
@@ -15,9 +15,9 @@ export const SalesScreenV2 = () => {
     opportunityTab,
     insightSections,
     summaryData,
-    campaignEffectData,
-    campaignEffectLoading,
-    campaignEffectError,
+    // campaignEffectData,
+    // campaignEffectLoading,
+    // campaignEffectError,
     insightsLoading,
     summaryLoading,
     handleChangeDateFrom,
@@ -42,11 +42,11 @@ export const SalesScreenV2 = () => {
         onChangeAggregationMode={handleChangeAggregationMode}
       />
 
-      <SalesV2CampaignActivitySection
+      {/* <SalesV2CampaignActivitySection
         data={campaignEffectData}
         isLoading={campaignEffectLoading}
         errorMessage={campaignEffectError ?? undefined}
-      />
+      /> */}
 
       <SalesV2InsightsSection sections={insightSections} isLoading={insightsLoading} />
 

@@ -34,9 +34,7 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
           {sortedSegments.length > 0 && (
             <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
               <div className="rounded-2xl bg-[#f8fbff] p-3">
-                <p className="mb-2 text-[11px] text-slate-400">
-                  고객 분포
-                </p>
+                <p className="mb-2 text-[11px] text-slate-400">고객 분포</p>
                 <div className="h-[190px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -68,9 +66,7 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
               </div>
 
               <div>
-                <p className="text-[11px] text-slate-400 mb-3">
-                  캠페인 타겟 고객 분포
-                </p>
+                <p className="text-[11px] text-slate-400 mb-3">캠페인 타겟 고객 분포</p>
                 <div className="space-y-2.5">
                   {sortedSegments.map((segment, index) => {
                     const ratio =
@@ -112,9 +108,7 @@ export function MarketCustomerSection({ data, isLoading }: Props) {
 
           {data.telecom_discounts.length > 0 && (
             <div>
-              <p className="text-[11px] text-slate-400 mb-3">
-                활성 통신사 제휴 할인
-              </p>
+              <p className="text-[11px] text-slate-400 mb-3">활성 통신사 제휴 할인</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {data.telecom_discounts.map((discount) => (
                   <div

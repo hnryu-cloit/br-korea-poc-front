@@ -154,7 +154,7 @@ export function AuditPanelV3() {
                     </span>
                   </td>
                   <td className="sub">{row.agent}</td>
-                  <td className="mono">{row.route}</td>
+                  <td>{row.route}</td>
                   <td>
                     <span
                       className={row.goldenHit === "HIT" ? "b bg" : "b bgy"}

@@ -10,7 +10,7 @@ export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems }: Props
   const hasTopItems = (montlyTopItems?.length ?? 0) > 0;
 
   return (
-    <div className="flex flex-col gap-4 overflow-hidden rounded-[6px] border border-[#FFD9C7] border-t-[4px] bg-white p-[24px] lg:flex-row lg:items-start lg:justify-between">
+    <div className="grid grid-cols-[338fr_928fr] overflow-hidden rounded-[6px] border border-[#FFD9C7] border-t-[4px] bg-white p-[24px] grid-cols-[338fr_928fr]">
       <div className="shrink-0 flex flex-col gap-3 text-[#0F172B] font-bold text-md">
         <span>총 손실 금액</span>
         <span className="text-[#C10007] font-medium text-2xl">
@@ -38,7 +38,7 @@ export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems }: Props
 const WasteItem = ({ item, rank }: { item: WasteMonthlyTopItem; rank: number }) => {
   return (
     <div
-      className={`flex min-w-0 flex-1 items-center justify-between rounded-[16px] border bg-white px-2.5 py-4 ${rank === 1 ? "border-[#E7000B]" : rank === 2 ? "border-[#FF6467]" : "border-[#FFC9C9]"}`}
+      className={`flex min-w-0 flex-1 items-center justify-between rounded-[2px] px-4 py-2.5 ${rank === 1 ? "bg-[#FFC9C9]" : rank === 2 ? "bg-[#FFE2E2]" : "bg-[#FEF2F2]"}`}
     >
       <div className="min-w-0 truncate text-sm font-bold text-brown-700">
         {rank}. {item.item_nm}

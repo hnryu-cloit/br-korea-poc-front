@@ -810,12 +810,6 @@
   color: var(--t2);
 }
 
-.mono {
-  font-size: 11px;
-  font-family: ui-monospace, sfmono-regular, menlo, monospace;
-  color: var(--t2);
-}
-
 .sb {
   display: flex;
   align-items: center;

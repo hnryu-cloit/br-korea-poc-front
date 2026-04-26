@@ -5,7 +5,7 @@ import chefIcon from "@/assets/chef.svg";
 import dashboardIcon from "@/assets/dashboard.svg";
 import deleteIcon from "@/assets/delete.svg";
 import historyIcon from "@/assets/history.svg";
-import mapIcon from "@/assets/map.svg";
+// import mapIcon from "@/assets/map.svg";
 import receiptIcon from "@/assets/receipt.svg";
 
 export type DemoRole = "hq_admin" | "store_owner";
@@ -50,7 +50,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { to: "/analytics", label: "매출 현황", icon: chartIcon },
       { to: "/sales/metrics", label: "손익 분석", icon: balanceIcon },
-      { to: "/analytics/market", label: "상권 분석", icon: mapIcon },
+      // { to: "/analytics/market", label: "상권 분석", icon: mapIcon },
     ],
   },
 ];

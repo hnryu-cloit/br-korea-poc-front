@@ -61,7 +61,7 @@ type ChartCardProps = {
 
 const ChartCard = ({ title, subtitle, captionKey, className = "", children }: ChartCardProps) => (
   <article
-    className={`rounded-[28px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${className}`}
+    className={`rounded-[6px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)] ${className}`}
   >
     <div className="mb-4 flex items-center gap-2">
       <p className="text-sm font-bold text-slate-800">{title}</p>
@@ -229,7 +229,10 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={weeklyWithAxisLabel} margin={{ top: 8, right: 16, left: -10, bottom: 40 }}>
+            <AreaChart
+              data={weeklyWithAxisLabel}
+              margin={{ top: 8, right: 16, left: -10, bottom: 40 }}
+            >
               <defs>
                 <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#bfd5ff" stopOpacity={0.7} />
@@ -395,7 +398,7 @@ export const SalesV2ChartsSection = ({
             <BarChart
               data={productBar}
               layout="vertical"
-              margin={{ top: 4, right: 16, left: 4, bottom: 0 }}
+              margin={{ top: 4, right: 16, left: 40, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
               <XAxis
@@ -494,7 +497,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={140}>
+            <ResponsiveContainer width="100%" height={80}>
               <Treemap
                 data={treemapData}
                 dataKey="size"

@@ -116,7 +116,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
               </thead>
               <tbody>
                 <tr>
-                  <td className="mono">재고, 생산, 폐기, 품질</td>
+                  <td>재고, 생산, 폐기, 품질</td>
                   <td>
                     <span className="b bg">생산관리 Agent</span>
                   </td>
@@ -124,7 +124,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                   <td className="sub">On</td>
                 </tr>
                 <tr>
-                  <td className="mono">주문, 발주, 마감, 추천량</td>
+                  <td>주문, 발주, 마감, 추천량</td>
                   <td>
                     <span className="b bb">주문관리 Agent</span>
                   </td>
@@ -132,7 +132,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                   <td className="sub">On</td>
                 </tr>
                 <tr>
-                  <td className="mono">매출, 손익, 마진, 달성</td>
+                  <td>매출, 손익, 마진, 달성</td>
                   <td>
                     <span className="b bo">매출관리 Agent</span>
                   </td>
@@ -140,7 +140,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                   <td className="sub">On</td>
                 </tr>
                 <tr>
-                  <td className="mono">기타 / 분류 불가</td>
+                  <td>기타 / 분류 불가</td>
                   <td>
                     <span className="b bgy">Fallback → RAG</span>
                   </td>
@@ -232,7 +232,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                 <td>
                   <span className="b bg">생산관리</span>
                 </td>
-                <td className="mono">SQL → 응답</td>
+                <td>SQL → 응답</td>
                 <td className="sub">없음</td>
                 <td className="sub">1.2s</td>
                 <td>
@@ -245,7 +245,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                 <td>
                   <span className="b bb">주문관리</span>
                 </td>
-                <td className="mono">골든쿼리 HIT → 응답</td>
+                <td>골든쿼리 HIT → 응답</td>
                 <td className="sub">없음</td>
                 <td className="sub">0.3s</td>
                 <td>
@@ -258,7 +258,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                 <td>
                   <span className="b bo">매출관리</span>
                 </td>
-                <td className="mono">SQL → 매출관리 핸드오프</td>
+                <td>SQL → 매출관리 핸드오프</td>
                 <td>
                   <span className="b ba">생산→매출</span>
                 </td>
@@ -273,7 +273,7 @@ export function OrchPipelinePanel({ onOpenModal }: Props) {
                 <td>
                   <span className="b bo">매출관리</span>
                 </td>
-                <td className="mono">정책 차단</td>
+                <td>정책 차단</td>
                 <td className="sub">없음</td>
                 <td className="sub">0.2s</td>
                 <td>

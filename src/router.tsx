@@ -4,7 +4,7 @@ import { AppLayout } from "@/commons/components/layout/AppLayout";
 import { OrderingDeadlineReminder } from "@/features/ordering/components/OrderingDeadlineReminder";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import { DashboardPage } from "@/pages/DashboardPage";
-import { MarketPage } from "@/pages/MarketPage";
+// import { MarketPage } from "@/pages/MarketPage";
 import { OrchestrationPage } from "@/pages/OrchestrationPage";
 import { OrderingHistoryPage } from "@/pages/ordering/OrderingHistoryPage";
 import { OrderingRecommendationsPage } from "@/pages/ordering/OrderingRecommendationsPage";
@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
       { path: "sales", element: <Navigate to="/sales/metrics" replace /> },
       { path: "sales/metrics", element: <SalesMetricsPage /> },
       { path: "analytics", element: <AnalyticsPage /> },
-      { path: "analytics/market", element: <MarketPage /> },
+      // { path: "analytics/market", element: <MarketPage /> },
       { path: "orchestration", element: <Navigate to="/settings" replace /> },
       { path: "settings", element: <OrchestrationPage /> },
       { path: "settings/orchestration", element: <OrchestrationPage /> },

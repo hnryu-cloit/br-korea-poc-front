@@ -21,9 +21,7 @@ export const SalesV2CampaignActivitySection = ({ data, isLoading, errorMessage }
       </header>
 
       {errorMessage ? (
-        <div className="rounded-[8px] bg-red-50 px-3 py-2 text-sm text-red-700">
-          {errorMessage}
-        </div>
+        <div className="rounded-[8px] bg-red-50 px-3 py-2 text-sm text-red-700">{errorMessage}</div>
       ) : null}
 
       {isLoading && metrics.length === 0 ? (
@@ -43,9 +41,7 @@ export const SalesV2CampaignActivitySection = ({ data, isLoading, errorMessage }
                 <p className="text-sm font-semibold text-[#653819]">{metric.label}</p>
                 <p className="text-sm font-bold text-orange-500">{metric.value}</p>
               </div>
-              {metric.detail ? (
-                <p className="text-xs text-[#653819]">{metric.detail}</p>
-              ) : null}
+              {metric.detail ? <p className="text-xs text-[#653819]">{metric.detail}</p> : null}
             </div>
           ))}
         </div>

@@ -78,7 +78,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
                 <span className="b bgy">정형 DB</span>
                 <span className="ml-auto text-[11px] text-[var(--t3)]">09:10 KST</span>
               </div>
-              <div className="mono mt-[3px]">raw_daily_store_item · raw_daily_store_online</div>
+              <div className="mt-[3px]">raw_daily_store_item · raw_daily_store_online</div>
               <div className="mt-2 grid grid-cols-4 gap-[7px]">
                 <div className="metric">
                   <div className="ml">스키마</div>
@@ -123,7 +123,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
                 <span className="b bgy">정형 DB</span>
                 <span className="ml-auto text-[11px] text-[var(--t3)]">09:08 KST</span>
               </div>
-              <div className="mono mt-[3px]">
+              <div className="mt-[3px]">
                 raw_order_extract · raw_production_extract · raw_sku_master
               </div>
               <div className="mt-2 grid grid-cols-4 gap-[7px]">
@@ -170,7 +170,7 @@ export function ConnectorsPanelV3({ onOpenModal }: Props) {
                 <span className="b bgy">외부 API</span>
                 <span className="ml-auto text-[11px] text-[var(--t3)]">2026-04-19 23:30</span>
               </div>
-              <div className="mono mt-[3px]">
+              <div className="mt-[3px]">
                 seoul_floating_population_monthly · internal_market_index
               </div>
               <div className="mt-[7px] rounded-[7px] border border-[#FFE08A] bg-[var(--amber-lt)] px-[10px] py-[7px] text-[11.5px] text-[#7A5500]">

@@ -1,7 +1,7 @@
 import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterGroup";
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
-import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type {
   FifoLotItem,
   FifoLotSummaryResponse,
@@ -14,6 +14,7 @@ type Props = {
   selectedLotTypes: FifoLotFilterValue[];
   onChangeLotTypes: (types: FifoLotFilterValue[]) => void;
   onChangePage: (page: number) => void;
+  currentPage: number;
 };
 
 type FifoLotFilterValue = Exclude<FifoLotType, undefined>;
@@ -34,10 +35,10 @@ export function FifoLotSection({
   selectedLotTypes,
   onChangeLotTypes,
   onChangePage,
+  currentPage,
 }: Props) {
   const summary = data?.summary;
   const totalPages = data?.pagination?.total_pages ?? 1;
-  const currentPage = data?.pagination?.page ?? 1;
   const isEmptySelection = selectedLotTypes.length === 0;
 
   return (
@@ -52,6 +53,7 @@ export function FifoLotSection({
           options={LOT_TYPE_TABS}
           selectedValues={selectedLotTypes}
           onChange={onChangeLotTypes}
+          disabled={isLoading}
         />
       </div>
 
@@ -93,7 +95,7 @@ export function FifoLotSection({
                   <span>입고 수량</span>
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:initial_qty"]}
-                    side="bottom"
+                    side="top"
                     align="left"
                   />
                 </span>
@@ -103,7 +105,7 @@ export function FifoLotSection({
                   <span>소진 수량</span>
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:consumed_qty"]}
-                    side="bottom"
+                    side="top"
                     align="left"
                   />
                 </span>
@@ -113,8 +115,8 @@ export function FifoLotSection({
                   <span>폐기 수량</span>
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:wasted_qty"]}
-                    side="bottom"
-                    align="left"
+                    side="top"
+                    align="right"
                   />
                 </span>
               </th>
@@ -123,8 +125,8 @@ export function FifoLotSection({
                   <span>잔여 수량</span>
                   <InfoPopover
                     caption={FIELD_CAPTIONS["fifo:active_remaining"]}
-                    side="bottom"
-                    align="left"
+                    side="top"
+                    align="right"
                   />
                 </span>
               </th>
@@ -187,7 +189,7 @@ export function FifoLotSection({
         </table>
       </div>
 
-      {data?.pagination && (
+      {!!data?.items.length && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
       )}
     </section>

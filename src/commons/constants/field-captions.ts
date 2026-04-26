@@ -71,7 +71,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "• 차감 순서: FIFO(선입선출)로 당일 판매 수량을 먼저 차감\n" +
       "• 폐기 인식: FIFO 차감 후 잔여분 중 유통기한이 기준일을 지난 Lot만 폐기 처리\n" +
       "• 집계 단위: 품목(item_nm)별로 일자 폐기 수량을 합산해 표시",
-    formula: "폐기 수량 = Σ(initial_qty - consumed_qty) FROM inventory_fifo_lots WHERE status='expired'",
+    formula:
+      "폐기 수량 = Σ(initial_qty - consumed_qty) FROM inventory_fifo_lots WHERE status='expired'",
     description: "FIFO 판매 차감 후 유통기한 경과로 폐기 처리된 수량을 품목별로 집계한 값입니다.",
   },
   // 폐기 손실 - 단가
@@ -305,7 +306,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "각 지표를 0~100으로 정규화합니다. 평균 객단가는 backend가 산출한 avg_ticket_index(최근 4주 객단가 분포 기반 0~100)를 그대로 사용하며, 메뉴 다양성은 품목 수 × 17 상한 100입니다.",
     formula:
       "마진율 점수 = avg_margin_rate × 100 · 순매출 비율 = today_net_revenue ÷ today_revenue × 100 · 수익성 = estimated_today_profit ÷ today_revenue × 100 · 평균 객단가 점수 = avg_ticket_index · 메뉴 다양성 = 품목 수 × 17",
-    description: "마진율·순매출 비율·수익성·메뉴 다양성·평균 객단가 5개 지표를 방사형으로 비교합니다. 객단가 항목은 툴팁에서 실제 원 단위(avg_ticket_size)를 함께 확인할 수 있습니다.",
+    description:
+      "마진율·순매출 비율·수익성·메뉴 다양성·평균 객단가 5개 지표를 방사형으로 비교합니다. 객단가 항목은 툴팁에서 실제 원 단위(avg_ticket_size)를 함께 확인할 수 있습니다.",
   },
   "sales:product_revenue_share": {
     assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",

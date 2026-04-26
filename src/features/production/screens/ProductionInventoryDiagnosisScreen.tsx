@@ -1,14 +1,11 @@
 import { useState } from "react";
-
-import type { AxiosError } from "axios";
-
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { FifoLotSection } from "@/features/production/components/FifoLotSection";
 import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
 import { useGetFifoLotSummaryQuery } from "@/features/production/queries/useGetFifoLotSummaryQuery";
 import { useGetProductionInventoryStatusQuery } from "@/features/production/queries/useGetProductionInventoryStatusQuery";
-import type { FifoLotType } from "@/features/production/types/production";
 import type {
+  FifoLotType,
   InventoryStatusFilterCode,
   InventoryStatusItem,
 } from "@/features/production/types/production";
@@ -39,13 +36,17 @@ export function ProductionInventoryDiagnosisScreen() {
   );
   const fifoLotType = selectedFifoLotTypes.length === 1 ? selectedFifoLotTypes[0] : undefined;
   const today = new Date().toISOString().slice(0, 10);
-  const inventoryStatusQuery = useGetProductionInventoryStatusQuery(
-    storeId,
-    inventoryStatusFilters,
-    inventoryPage,
-    10,
-  );
-  const fifoQuery = useGetFifoLotSummaryQuery(
+  const {
+    data: inventoryData,
+    isLoading: inventoryLoading,
+    isFetching: inventoryFetching,
+    isError: inventoryError,
+  } = useGetProductionInventoryStatusQuery(storeId, inventoryStatusFilters, inventoryPage, 10);
+  const {
+    data: fifoData,
+    isLoading: fifoLoading,
+    isFetching: fifoFetching,
+  } = useGetFifoLotSummaryQuery(
     storeId,
     fifoLotType,
     fifoPage,
@@ -53,9 +54,6 @@ export function ProductionInventoryDiagnosisScreen() {
     selectedFifoLotTypes.length > 0,
     today,
   );
-
-  const apiError = inventoryStatusQuery.error as AxiosError<{ detail?: string }> | null;
-  const errorMessage = apiError?.response?.data?.detail ?? null;
 
   const handleLotTypesChange = (types: Exclude<FifoLotType, undefined>[]) => {
     setSelectedFifoLotTypes(types);
@@ -77,23 +75,25 @@ export function ProductionInventoryDiagnosisScreen() {
           </p>
         </div>
         <ProductionInventoryStatusSection
-          data={inventoryStatusQuery.data}
-          isLoading={inventoryStatusQuery.isLoading}
+          data={inventoryData}
+          isLoading={inventoryLoading || inventoryFetching}
           selectedStatuses={selectedStatuses}
           onChangeStatuses={handleStatusesChange}
           onChangePage={setInventoryPage}
-          errorMessage={errorMessage ?? undefined}
+          isError={inventoryError}
+          currentPage={inventoryPage}
         />
       </section>
 
       <div className="border-t border-[#DADADA]" />
 
       <FifoLotSection
-        data={selectedFifoLotTypes.length > 0 ? fifoQuery.data : undefined}
-        isLoading={selectedFifoLotTypes.length > 0 && fifoQuery.isLoading}
+        data={fifoData}
+        isLoading={fifoLoading || fifoFetching}
         selectedLotTypes={selectedFifoLotTypes}
         onChangeLotTypes={handleLotTypesChange}
         onChangePage={setFifoPage}
+        currentPage={fifoPage}
       />
     </div>
   );

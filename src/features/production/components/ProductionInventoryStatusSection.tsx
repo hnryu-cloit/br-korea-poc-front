@@ -1,8 +1,8 @@
 import ProductDefaultImage from "@/assets/default_product_img.svg";
 import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterGroup";
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
-import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { Pagination } from "@/commons/components/page/Pagination";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type {
   InventoryStatusItem,
   InventoryStatusResponse,
@@ -14,7 +14,8 @@ type Props = {
   selectedStatuses: InventoryStatusItem["status"][];
   onChangeStatuses: (statuses: InventoryStatusItem["status"][]) => void;
   onChangePage?: (page: number) => void;
-  errorMessage?: string;
+  isError?: boolean;
+  currentPage: number;
 };
 
 const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
@@ -57,9 +58,16 @@ function resolveImageUrl(imageUrl?: string | null): string {
 }
 
 export function ProductionInventoryStatusSection(props: Props) {
-  const { data, isLoading, selectedStatuses, onChangeStatuses, onChangePage, errorMessage } = props;
+  const {
+    data,
+    isLoading,
+    selectedStatuses,
+    onChangeStatuses,
+    onChangePage,
+    isError,
+    currentPage,
+  } = props;
   const totalPages = data?.pagination?.total_pages ?? 1;
-  const currentPage = data?.pagination?.page ?? 1;
 
   return (
     <section className="overflow-hidden">
@@ -69,6 +77,7 @@ export function ProductionInventoryStatusSection(props: Props) {
           selectedValues={selectedStatuses}
           onChange={onChangeStatuses}
           allLabel="전체 선택"
+          disabled={isLoading}
         />
         <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
           <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
@@ -96,7 +105,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                     <InfoPopover
                       caption={FIELD_CAPTIONS["inventory:sold_qty"]}
                       side="bottom"
-                      align="left"
+                      align="right"
                     />
                   </span>
                 </th>
@@ -106,7 +115,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                     <InfoPopover
                       caption={FIELD_CAPTIONS["inventory:status"]}
                       side="bottom"
-                      align="left"
+                      align="right"
                     />
                   </span>
                 </th>
@@ -117,22 +126,25 @@ export function ProductionInventoryStatusSection(props: Props) {
                 <tr>
                   <td
                     colSpan={5}
-                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                   >
                     재고 현황 데이터를 불러오는 중입니다.
                   </td>
                 </tr>
-              ) : errorMessage ? (
+              ) : isError ? (
                 <tr>
-                  <td colSpan={5} className="bg-white px-6 py-16 text-center text-sm text-red-500">
-                    {errorMessage}
+                  <td
+                    colSpan={5}
+                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
+                  >
+                    재고 현황 데이터를 불러오는데 문제가 발생했습니다.
                   </td>
                 </tr>
               ) : data?.items.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
-                    className="bg-white px-6 py-16 text-center text-sm text-slate-400"
+                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                   >
                     표시할 재고 현황 데이터가 없습니다.
                   </td>
@@ -190,13 +202,13 @@ export function ProductionInventoryStatusSection(props: Props) {
             </tbody>
           </table>
         </div>
-        {data?.pagination ? (
+        {!!data?.items.length && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onChangePage={onChangePage}
           />
-        ) : null}
+        )}
       </div>
     </section>
   );

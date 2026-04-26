@@ -160,7 +160,7 @@ export function SalesTrendChart({
   if (!data) return null;
 
   return (
-    <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
+    <section className="overflow-hidden rounded-[6px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="border-b border-border/60 px-6 py-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

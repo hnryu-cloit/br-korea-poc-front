@@ -12,6 +12,7 @@ type Props<T extends string> = {
   allLabel?: string;
   className?: string;
   selectionMode?: "multiple" | "single";
+  disabled?: boolean;
 };
 
 export function CheckboxFilterGroup<T extends string>({
@@ -21,6 +22,7 @@ export function CheckboxFilterGroup<T extends string>({
   allLabel = "전체 선택",
   className,
   selectionMode = "multiple",
+  disabled = false,
 }: Props<T>) {
   const allValues = options.map((option) => option.value);
   const isAllSelected =
@@ -51,7 +53,12 @@ export function CheckboxFilterGroup<T extends string>({
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
       {selectionMode === "multiple" && allLabel ? (
-        <FilterChip label={allLabel} checked={isAllSelected} onClick={handleToggleAll} />
+        <FilterChip
+          label={allLabel}
+          checked={isAllSelected}
+          onClick={handleToggleAll}
+          disabled={disabled}
+        />
       ) : null}
       {options.map((option) => (
         <FilterChip
@@ -59,6 +66,7 @@ export function CheckboxFilterGroup<T extends string>({
           label={option.label}
           checked={selectedValues.includes(option.value)}
           onClick={() => handleToggleOption(option.value)}
+          disabled={disabled}
         />
       ))}
     </div>
@@ -69,21 +77,25 @@ function FilterChip({
   label,
   checked,
   onClick,
+  disabled,
 }: {
   label: string;
   checked: boolean;
   onClick: () => void;
+  disabled: boolean;
 }) {
   return (
     <button
       type="button"
       aria-pressed={checked}
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         "inline-flex items-center gap-2 rounded-[8px] border px-4 py-1.5 text-md font-bold transition-colors",
         checked
           ? "border-orange-500 bg-orange-500 text-white"
           : "border-[#CAC4D0] bg-white text-[#653819]",
+        "disabled:opacity-50",
       )}
     >
       <span>{label}</span>

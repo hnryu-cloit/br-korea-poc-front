@@ -94,7 +94,7 @@ export const AnalyticsQueryLogSection = ({
                   key={log.id}
                   className="border-b border-border/30 last:border-0 hover:bg-[#f8fbff]"
                 >
-                  <td className="px-6 py-4 font-mono text-xs text-slate-500">
+                  <td className="px-6 py-4 text-xs text-slate-500">
                     {log.timestamp.slice(11, 19)}
                   </td>
                   <td className="max-w-[260px] truncate px-4 py-4 font-medium text-slate-800">

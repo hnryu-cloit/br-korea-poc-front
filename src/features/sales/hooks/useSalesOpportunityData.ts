@@ -30,13 +30,7 @@ export const useSalesOpportunityData = (params: {
         campaignEffect: params.campaignEffect,
         benchmark: benchmarkQuery.data,
       }),
-    [
-      benchmarkQuery.data,
-      params.campaignEffect,
-      params.insights,
-      params.storeName,
-      params.summary,
-    ],
+    [benchmarkQuery.data, params.campaignEffect, params.insights, params.storeName, params.summary],
   );
 
   return {

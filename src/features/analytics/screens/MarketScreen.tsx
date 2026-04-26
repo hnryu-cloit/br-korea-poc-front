@@ -47,9 +47,7 @@ export function MarketScreen() {
     const options = marketScopeOptionsQuery.data;
     const storeRegion = storeProfileQuery.data?.region;
     const guCandidate =
-      typeof storeRegion === "string" && storeRegion.endsWith("구")
-        ? storeRegion
-        : undefined;
+      typeof storeRegion === "string" && storeRegion.endsWith("구") ? storeRegion : undefined;
     const matchedGu =
       guCandidate && options?.gu_options.includes(guCandidate) ? guCandidate : undefined;
     const latestYear = options?.latest_year ? String(options.latest_year) : undefined;

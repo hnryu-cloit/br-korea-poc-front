@@ -13,11 +13,9 @@ type Props = {
 const POPOVER_WIDTH = 288; // w-72
 const INDENT_PIXEL = 12; // 한 단계 들여쓰기 폭
 
-function CaptionBody({ raw, mono = false }: { raw: string; mono?: boolean }) {
+function CaptionBody({ raw }: { raw: string }) {
   const lines = parseCaptionLines(raw);
-  const baseClass = mono
-    ? "font-mono text-[12px] leading-relaxed text-slate-700"
-    : "text-[13px] leading-relaxed text-slate-600";
+  const baseClass = "text-[13px] leading-relaxed text-slate-600";
 
   return (
     <div className={`flex flex-col gap-1 ${baseClass}`}>
@@ -107,7 +105,7 @@ export function InfoPopover({ caption, side = "bottom", align = "left" }: Props)
                   수식
                 </p>
                 <div className="rounded bg-[#f8f8f8] px-2 py-1.5">
-                  <CaptionBody raw={caption.formula} mono />
+                  <CaptionBody raw={caption.formula} />
                 </div>
               </div>
             )}

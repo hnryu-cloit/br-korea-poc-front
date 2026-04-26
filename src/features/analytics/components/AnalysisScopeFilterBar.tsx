@@ -75,7 +75,10 @@ export function AnalysisScopeFilterBar({ value, onChange, className, scopeOption
     },
     {},
   );
-  const yearOptionsRendered = availableYearSet.size > 0 ? Array.from(availableYearSet).sort((a, b) => Number(b) - Number(a)) : yearOptions;
+  const yearOptionsRendered =
+    availableYearSet.size > 0
+      ? Array.from(availableYearSet).sort((a, b) => Number(b) - Number(a))
+      : yearOptions;
   const quarterOptionsRendered = availableQuarterByYear[value.year]
     ? quarterOptions.filter((q) => availableQuarterByYear[value.year].has(q))
     : quarterOptions;

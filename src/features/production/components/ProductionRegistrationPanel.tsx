@@ -1,4 +1,6 @@
 import arrow_red from "@/assets/arrow_red.svg";
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import type {
   ProductionRegistrationForm,
   ProductionSkuItem,
@@ -98,18 +100,32 @@ export function ProductionRegistrationPanel({
             </div>
             <div className="border border-[#DADADA] px-6 py-3 flex items-stretch gap-6 rounded-[8px] w-fit">
               <div className="flex flex-col gap-4 text-brown-700 text-md">
-                <p className="font-bold text-sm">
-                  최근 4주 1차 생산량 ({activeSku.avg_first_production_time_4w}AM)
-                </p>
+                <div className="flex items-center gap-1">
+                  <p className="font-bold text-sm">
+                    최근 4주 1차 생산량 ({activeSku.avg_first_production_time_4w}AM)
+                  </p>
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["production:avg_first_prod_4w"]}
+                    side="bottom"
+                    align="left"
+                  />
+                </div>
                 <p>평균 {activeSku.avg_first_production_qty_4w}개</p>
               </div>
 
               <div className="w-[1px] self-stretch bg-[#DADADA]" />
 
               <div className="flex flex-col gap-4 text-brown-700 text-md">
-                <p className="font-bold text-sm">
-                  최근 4주 2차 생산량 ({activeSku.avg_second_production_time_4w}PM)
-                </p>
+                <div className="flex items-center gap-1">
+                  <p className="font-bold text-sm">
+                    최근 4주 2차 생산량 ({activeSku.avg_second_production_time_4w}PM)
+                  </p>
+                  <InfoPopover
+                    caption={FIELD_CAPTIONS["production:avg_second_prod_4w"]}
+                    side="bottom"
+                    align="left"
+                  />
+                </div>
                 <p>평균 {activeSku.avg_second_production_qty_4w}개</p>
               </div>
             </div>

@@ -8,7 +8,7 @@ export const SalesV2InsightsSection = ({
   sections: SalesInsightSection[];
   isLoading: boolean;
 }) => (
-  <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-4">
+  <section className="grid gap-4 lg:grid-cols-3">
     {sections.map((section) => (
       <article
         key={section.title}
