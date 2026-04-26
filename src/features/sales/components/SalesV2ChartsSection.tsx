@@ -39,6 +39,9 @@ const PALETTE = [
 ];
 const PROFIT_PALETTE = ["#2d6bff", "#e2eaff"];
 
+const DIVERSITY_SHARE_THRESHOLD = 0.05;
+const DIVERSITY_TARGET_COUNT = 10;
+
 const fmtWon = (v: number) =>
   v >= 10_000 ? `${Math.round(v / 10_000).toLocaleString()}만` : v.toLocaleString();
 
@@ -163,7 +166,8 @@ export const SalesV2ChartsSection = ({
   }
 
   const weekly = summary?.weekly_data ?? [];
-  const topProducts = (summary?.top_products ?? []).slice(0, 6);
+  const allProducts = summary?.top_products ?? [];
+  const topProducts = allProducts.slice(0, 6);
   const groupRevenueShare = summary?.group_revenue_share ?? [];
 
   const weeklyWithAxisLabel = weekly.map((item, index) => ({
@@ -201,7 +205,17 @@ export const SalesV2ChartsSection = ({
   const profitRatio =
     todayRevenue > 0 ? Math.min(100, Math.round((todayProfit / todayRevenue) * 100)) : 0;
   const marginScore = Math.min(100, Math.round((summary?.avg_margin_rate ?? 0) * 100));
-  const diversityScore = Math.min(100, topProducts.length * 17);
+  const totalProductSales = allProducts.reduce((sum, item) => sum + (item.sales ?? 0), 0);
+  const diversityCount =
+    totalProductSales > 0
+      ? allProducts.filter(
+          (item) => (item.sales ?? 0) / totalProductSales >= DIVERSITY_SHARE_THRESHOLD,
+        ).length
+      : 0;
+  const diversityScore = Math.min(
+    100,
+    Math.round((diversityCount / DIVERSITY_TARGET_COUNT) * 100),
+  );
   const ticketIndex = Math.max(0, Math.min(100, Math.round(summary?.avg_ticket_index ?? 0)));
   const ticketSize = Math.round(summary?.avg_ticket_size ?? 0);
 
@@ -367,7 +381,7 @@ export const SalesV2ChartsSection = ({
       </ChartCard>
 
       <ChartCard
-        title="상위 상품 매출 Top 6"
+        title="상위 상품 매출 Top 10"
         subtitle="조회 기간 매출 상위 상품"
         captionKey="sales:top_products"
       >
@@ -399,7 +413,7 @@ export const SalesV2ChartsSection = ({
                 ]}
                 contentStyle={customTooltipStyle}
               />
-              <Bar dataKey="매출" radius={[0, 6, 6, 0]}>
+              <Bar dataKey="매출" radius={[0, 10, 10, 0]}>
                 {productBar.map((item, index) => (
                   <Cell key={item.fullName} fill={PALETTE[index % PALETTE.length]} />
                 ))}
