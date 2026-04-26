@@ -111,6 +111,7 @@ export function AnalyticsScreen() {
   const metrics = metricsQuery.data?.items ?? [];
   const metricsLoading = metricsQuery.isLoading && !metricsQuery.data;
   const trendLoading = salesTrendQuery.isLoading && !salesTrendQuery.data;
+  const hasMetricsData = metrics.length > 0;
 
   return (
     <div className="space-y-6">
@@ -140,9 +141,18 @@ export function AnalyticsScreen() {
                 <p className="font-medium text-[#653819]">선택 기간 총 매출</p>
                 <p className="text-[#716862]">{selectedRangeLabel}</p>
               </div>
-              <p className="text-[40px] font-bold leading-[1] text-[#41352E]">
-                {formatWon(metricsQuery.data?.selected_period_total_sales)}
-              </p>
+              {hasMetricsData ? (
+                <p className="text-[40px] font-bold leading-[1] text-[#41352E]">
+                  {formatWon(metricsQuery.data?.selected_period_total_sales)}
+                </p>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-[28px] font-bold leading-[1.1] text-slate-400">
+                    데이터 없음
+                  </p>
+                  <p className="text-sm text-slate-400">선택 기간 매출 데이터가 없습니다.</p>
+                </div>
+              )}
             </div>
           </section>
         )}
