@@ -26,7 +26,11 @@ export function AuditPanelV3() {
         <div className="pgh-l">
           <div className="inline-flex items-center gap-1.5">
             <h1>대화 감사 로그</h1>
-            <InfoPopover caption={FIELD_CAPTIONS["page:settings_audit_logs"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_audit_logs"]}
+              side="bottom"
+              align="left"
+            />
           </div>
           <p>질의 처리 경로 · 차단 이력 · Agent별 통계 · 이상 감지</p>
         </div>

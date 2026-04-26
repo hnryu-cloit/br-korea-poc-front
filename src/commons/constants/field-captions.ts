@@ -77,8 +77,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 폐기 손실 - 단가
   "production:waste_unit_price": {
-    assumption:
-      "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.",
+    assumption: "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.",
     formula: "평균 판매가 = 판매금액 ÷ 판매수량",
     description: "폐기 수량 1개당 손실 금액(판매가 기준)입니다.",
   },
@@ -100,8 +99,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "•  판매 추세 보정: 최근 판매가 늘면 가중치를 높이고, 줄면 낮춥니다.\n" +
       "•  재고 보정: 현재 재고가 많으면 줄이고, 적으면 늘립니다.\n" +
       "•  유통기한 보정: 유통기한이 짧을수록 보수적으로 조정합니다.",
-    description:
-      "과거 같은 요일 발주 패턴에 최근 운영 상황을 반영해 산출한 권장 발주 수량입니다.",
+    description: "과거 같은 요일 발주 패턴에 최근 운영 상황을 반영해 산출한 권장 발주 수량입니다.",
   },
   "ordering:scope": {
     assumption:
@@ -213,7 +211,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   "inventory:status": {
     assumption: "재고율을 기준으로 세 단계(부족, 적정, 여유)로 구분합니다.",
-    formula: "재고율 = 판매 가능 수량 ÷ 판매 개수\n" +
+    formula:
+      "재고율 = 판매 가능 수량 ÷ 판매 개수\n" +
       "• 부족: 재고율 ≤ 0\n" +
       "• 적정: 0 < 재고율 ≤ 0.35\n" +
       "• 여유: 0.35 < 재고율",

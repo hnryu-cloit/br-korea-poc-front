@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 import bizLogo from "@/assets/biz_logo.png";
 import dunkinLogo from "@/assets/dunkin_logo.png";
-import { Alert } from "@/commons/components/layout/header/Alert";
-import { ReferenceDate } from "@/commons/components/layout/header/ReferenceDate";
-import { Store } from "@/commons/components/layout/header/Store";
+import { Alert } from "@/commons/components/header/Alert";
+import { ReferenceDate } from "@/commons/components/header/ReferenceDate";
+import { Store } from "@/commons/components/header/Store";
 import type { ApiNotification } from "@/features/notifications/types/notifications";
 
 type Props = {

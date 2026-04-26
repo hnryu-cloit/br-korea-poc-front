@@ -122,8 +122,7 @@ function toConversationItems(
                   relevant_tables: asStringArray(agentTrace?.relevantTables),
                   sql: asString(agentTrace?.sql) || null,
                   queried_period: agentTrace?.queriedPeriod ?? null,
-                  row_count:
-                    typeof agentTrace?.rowCount === "number" ? agentTrace.rowCount : null,
+                  row_count: typeof agentTrace?.rowCount === "number" ? agentTrace.rowCount : null,
                   matched_query_id: asString(agentTrace?.matchedQueryId) || null,
                   match_score:
                     typeof agentTrace?.matchScore === "number" ? agentTrace.matchScore : null,
@@ -221,9 +220,16 @@ function createSuggestionList(
     .map((item) => ({ label: item.label.trim() || item.prompt.trim(), prompt: item.prompt.trim() }))
     .filter((item) => item.prompt.length > 0);
 
-  const deduped = dedupeStrings([...primary.map((item) => item.prompt), ...fallback.map((item) => item.prompt)]);
+  const deduped = dedupeStrings([
+    ...primary.map((item) => item.prompt),
+    ...fallback.map((item) => item.prompt),
+  ]);
   return deduped
-    .map((prompt) => primary.find((item) => item.prompt === prompt) ?? fallback.find((item) => item.prompt === prompt))
+    .map(
+      (prompt) =>
+        primary.find((item) => item.prompt === prompt) ??
+        fallback.find((item) => item.prompt === prompt),
+    )
     .filter((item): item is FloatingAiChatSuggestion => Boolean(item))
     .slice(0, 4);
 }
@@ -323,15 +329,15 @@ export function FloatingAiChat() {
           cardContextKey: requestContext.cardContextKey ?? undefined,
           storeName: requestContext.storeName,
           userRole: user.role,
-          conversationHistory: nextMessages.slice(-6).reduce<
-            Array<{ role: "user" | "assistant"; text: string }>
-          >((acc, entry) => {
-            acc.push({
-              role: entry.role,
-              text: entry.role === "user" ? entry.text : entry.answer.text,
-            });
-            return acc;
-          }, []),
+          conversationHistory: nextMessages
+            .slice(-6)
+            .reduce<Array<{ role: "user" | "assistant"; text: string }>>((acc, entry) => {
+              acc.push({
+                role: entry.role,
+                text: entry.role === "user" ? entry.text : entry.answer.text,
+              });
+              return acc;
+            }, []),
         });
 
         const status = getChatAnswerStatus(response);

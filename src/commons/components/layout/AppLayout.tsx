@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
 import { FloatingAiChat } from "@/commons/components/chat/FloatingAiChat";
-import { Header } from "@/commons/components/layout/header/Header";
+import { Header } from "@/commons/components/header/Header";
 import { AppSidebar } from "@/commons/components/layout/AppSidebar";
 import { FloatingScrollTopButton } from "@/commons/components/page/FloatingScrollTopButton";
 import { ScrollToTopOnRouteChange } from "@/commons/components/page/ScrollToTopOnRouteChange";
