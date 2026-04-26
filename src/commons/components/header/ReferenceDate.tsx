@@ -103,7 +103,7 @@ export function ReferenceDate() {
                 type="button"
                 onClick={handleApply}
                 disabled={!draft || draft === referenceDateTime}
-                className="rounded-md bg-orange-500 px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#1d44a8] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md bg-orange-500 px-3 py-1.5 text-[12px] font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 확인
               </button>
