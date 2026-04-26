@@ -39,14 +39,9 @@ export function ProductionInventoryDiagnosisScreen() {
   const {
     data: inventoryData,
     isLoading: inventoryLoading,
-    isFetching: inventoryFetching,
     isError: inventoryError,
   } = useGetProductionInventoryStatusQuery(storeId, inventoryStatusFilters, inventoryPage, 10);
-  const {
-    data: fifoData,
-    isLoading: fifoLoading,
-    isFetching: fifoFetching,
-  } = useGetFifoLotSummaryQuery(
+  const { data: fifoData, isLoading: fifoLoading } = useGetFifoLotSummaryQuery(
     storeId,
     fifoLotType,
     fifoPage,
@@ -76,7 +71,7 @@ export function ProductionInventoryDiagnosisScreen() {
         </div>
         <ProductionInventoryStatusSection
           data={inventoryData}
-          isLoading={inventoryLoading || inventoryFetching}
+          isLoading={inventoryLoading}
           selectedStatuses={selectedStatuses}
           onChangeStatuses={handleStatusesChange}
           onChangePage={setInventoryPage}
@@ -89,7 +84,7 @@ export function ProductionInventoryDiagnosisScreen() {
 
       <FifoLotSection
         data={fifoData}
-        isLoading={fifoLoading || fifoFetching}
+        isLoading={fifoLoading}
         selectedLotTypes={selectedFifoLotTypes}
         onChangeLotTypes={handleLotTypesChange}
         onChangePage={setFifoPage}
