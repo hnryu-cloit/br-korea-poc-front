@@ -1,12 +1,36 @@
 import { ChevronDown, Clock3, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { REFERENCE_DATE_DEFAULT_LABEL } from "@/commons/constants/header";
+import { sessionDefaults } from "@/features/session/constants/session-user";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 
 export function ReferenceDate() {
   const [isOpen, setIsOpen] = useState(false);
-  const { referenceDateTime, setReferenceDateTime, resetReferenceDateTime } = useDemoSession();
+  const { referenceDateTime, setReferenceDateTime } = useDemoSession();
+  const [draft, setDraft] = useState(referenceDateTime);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDraft(referenceDateTime);
+    }
+  }, [isOpen, referenceDateTime]);
+
+  const close = () => setIsOpen(false);
+
+  const handleApply = () => {
+    setReferenceDateTime(draft || sessionDefaults.referenceDateTime);
+    close();
+  };
+
+  const handleCancel = () => {
+    setDraft(referenceDateTime);
+    close();
+  };
+
+  const handleResetDraft = () => {
+    setDraft(sessionDefaults.referenceDateTime);
+  };
 
   return (
     <div className="relative">
@@ -37,7 +61,7 @@ export function ReferenceDate() {
           <button
             type="button"
             className="fixed inset-0 z-40 cursor-default"
-            onClick={() => setIsOpen(false)}
+            onClick={handleCancel}
             aria-label="기준 일시 메뉴 닫기"
           />
           <div className="absolute right-0 top-12 z-50 w-[290px] overflow-hidden rounded-2xl border border-border bg-white shadow-[0_24px_60px_rgba(31,77,187,0.16)]">
@@ -49,8 +73,8 @@ export function ReferenceDate() {
                 <span className="text-xs font-medium text-slate-600">기준 일시</span>
                 <input
                   type="datetime-local"
-                  value={referenceDateTime}
-                  onChange={(event) => setReferenceDateTime(event.target.value)}
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
                   className="w-full rounded-lg border border-[#d5def0] bg-white px-2.5 py-2 text-sm text-slate-700 outline-none transition-colors focus:border-[#9ab8ef]"
                 />
               </label>
@@ -58,13 +82,30 @@ export function ReferenceDate() {
                 <p className="text-[11px] text-slate-500">{REFERENCE_DATE_DEFAULT_LABEL}</p>
                 <button
                   type="button"
-                  onClick={resetReferenceDateTime}
+                  onClick={handleResetDraft}
                   className="inline-flex items-center gap-1 rounded-md border border-[#d5def0] px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-[#bfd1ed] hover:text-slate-800"
                 >
                   <RotateCcw className="h-3 w-3" />
                   초기화
                 </button>
               </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-border/70 px-4 py-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="rounded-md border border-[#d5def0] px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-[#bfd1ed] hover:text-slate-800"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={handleApply}
+                disabled={!draft || draft === referenceDateTime}
+                className="rounded-md bg-[#2454C8] px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#1d44a8] disabled:cursor-not-allowed disabled:bg-[#9fb4dd]"
+              >
+                확인
+              </button>
             </div>
           </div>
         </>
