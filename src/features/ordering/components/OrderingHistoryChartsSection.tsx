@@ -18,6 +18,8 @@ type Props = {
   items: OrderingHistoryItem[];
   topChangedItems: OrderingChangedItem[];
   isLoading: boolean;
+  dateFrom?: string;
+  dateTo?: string;
 };
 
 const TooltipStyle = {
@@ -55,33 +57,88 @@ const Empty = () => (
 
 const Loading = () => <p className="py-8 text-center text-sm text-slate-400">불러오는 중...</p>;
 
-export function OrderingHistoryChartsSection({ items, topChangedItems, isLoading }: Props) {
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function normalizeDateKey(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const digits = value.replace(/[^0-9]/g, "");
+  if (digits.length !== 8) return null;
+  return digits;
+}
+
+function toDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}${month}${day}`;
+}
+
+function enumerateDateKeys(dateFrom?: string, dateTo?: string): string[] {
+  const from = normalizeDateKey(dateFrom);
+  const to = normalizeDateKey(dateTo);
+  if (!from || !to) return [];
+
+  const fromDate = new Date(`${from.slice(0, 4)}-${from.slice(4, 6)}-${from.slice(6, 8)}T00:00:00`);
+  const toDate = new Date(`${to.slice(0, 4)}-${to.slice(4, 6)}-${to.slice(6, 8)}T00:00:00`);
+  if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) return [];
+
+  const start = fromDate.getTime() <= toDate.getTime() ? fromDate : toDate;
+  const end = fromDate.getTime() <= toDate.getTime() ? toDate : fromDate;
+  const result: string[] = [];
+  for (let cursor = start.getTime(); cursor <= end.getTime(); cursor += DAY_MS) {
+    result.push(toDateKey(new Date(cursor)));
+  }
+  return result;
+}
+
+export function OrderingHistoryChartsSection({
+  items,
+  topChangedItems,
+  isLoading,
+  dateFrom,
+  dateTo,
+}: Props) {
+  const rangeDateKeys = enumerateDateKeys(dateFrom, dateTo);
   // 날짜별 발주량/확정량 집계
   const dailyMap = new Map<string, { 발주량: number; 확정량: number }>();
   for (const item of items) {
-    const day = item.dlv_dt ?? "미정";
+    const day = normalizeDateKey(item.dlv_dt);
+    if (!day) continue;
     const prev = dailyMap.get(day) ?? { 발주량: 0, 확정량: 0 };
     dailyMap.set(day, {
       발주량: prev.발주량 + (item.ord_qty ?? 0),
       확정량: prev.확정량 + (item.confrm_qty ?? 0),
     });
   }
-  const dailyTrend = Array.from(dailyMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([day, v]) => ({ day, ...v }));
+  const dailyTrend =
+    rangeDateKeys.length > 0
+      ? rangeDateKeys.map((day) => {
+          const daily = dailyMap.get(day) ?? { 발주량: 0, 확정량: 0 };
+          return { day, ...daily };
+        })
+      : Array.from(dailyMap.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([day, v]) => ({ day, ...v }));
 
   // 날짜별 수동 건수
   const typeMap = new Map<string, { 수동: number }>();
   for (const item of items) {
-    const day = item.dlv_dt ?? "미정";
-    const prev = typeMap.get(day) ?? { 자동: 0, 수동: 0 };
+    const day = normalizeDateKey(item.dlv_dt);
+    if (!day) continue;
+    const prev = typeMap.get(day) ?? { 수동: 0 };
     typeMap.set(day, {
       수동: prev.수동 + (item.is_auto ? 0 : 1),
     });
   }
-  const typeByDay = Array.from(typeMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([day, v]) => ({ day, ...v }));
+  const typeByDay =
+    rangeDateKeys.length > 0
+      ? rangeDateKeys.map((day) => {
+          const type = typeMap.get(day) ?? { 수동: 0 };
+          return { day, ...type };
+        })
+      : Array.from(typeMap.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([day, v]) => ({ day, ...v }));
 
   // 주요 변동 품목 변화율
   const changedBar = topChangedItems.map((item) => ({
