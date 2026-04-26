@@ -14,7 +14,7 @@ export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSumma
   return (
     <div className="flex flex-col gap-6">
       <SummaryCardSection title="AI 스마트 발주 추천">
-        <div className="rounded-[8px] border border-[#ED8CC2] bg-[#F6C5E0]/10 px-4 py-4">
+        <div className="rounded-[8px] border border-[#FFB38F] bg-[#FFD9C71A] px-4 py-4">
           <div className="flex w-full items-center justify-between">
             <span className="bg-[linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] bg-clip-text text-[16px] leading-5 font-bold text-transparent">
               {suggestion.title}

@@ -9,6 +9,7 @@ import { useFloatingAiChat } from "@/commons/hooks/useFloatingAiChat";
 import type { FloatingAiChatRouteGuide } from "@/commons/types/floating-ai-chat";
 import { dedupeStrings } from "@/commons/utils/chat-text-utils";
 import {
+  type FloatingChatDomain,
   loadSessionHistory,
   resolveRouteContext,
   saveSessionHistory,
@@ -238,7 +239,8 @@ export function FloatingAiChat() {
   const location = useLocation();
   const routeState = location.state as RouteState;
   const { user, referenceDateTime } = useDemoSession();
-  const { isOpen, activeCardContextKey, open, close } = useFloatingAiChat();
+  const { isOpen, activeCardContextKey, pendingChat, open, close, consumePendingChat } =
+    useFloatingAiChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const handledRoutePromptRef = useRef<string>("");
   const hydratedSessionKeyRef = useRef<string | null>(null);
@@ -306,9 +308,11 @@ export function FloatingAiChat() {
   }, [messages, sessionKey]);
 
   const send = useCallback(
-    async (prompt: string): Promise<boolean> => {
+    async (prompt: string, overrideDomain?: FloatingChatDomain): Promise<boolean> => {
       const normalizedPrompt = prompt.trim();
       if (!normalizedPrompt || isSending) return false;
+
+      const effectiveDomain = overrideDomain ?? domain;
 
       const userMessage: FloatingAiChatConversationItem = {
         id: nextMessageId(),
@@ -322,7 +326,7 @@ export function FloatingAiChat() {
       setIsSending(true);
 
       try {
-        const response = await postSalesQuery(normalizedPrompt, user.storeId, domain, {
+        const response = await postSalesQuery(normalizedPrompt, user.storeId, effectiveDomain, {
           businessDate: requestContext.businessDate,
           businessTime: requestContext.businessTime,
           pageContext: requestContext.pageContext,
@@ -396,6 +400,12 @@ export function FloatingAiChat() {
     open();
     void send(routeState.prompt ?? "");
   }, [location.key, open, routeState?.intent, routeState?.prompt, routeState?.source, send]);
+
+  useEffect(() => {
+    if (!pendingChat) return;
+    consumePendingChat();
+    void send(pendingChat.prompt, pendingChat.domain);
+  }, [pendingChat, consumePendingChat, send]);
 
   return (
     <>
