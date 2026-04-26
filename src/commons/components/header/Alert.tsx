@@ -26,12 +26,12 @@ export function Alert({ notifications, unreadCount }: Props) {
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce4f3] bg-[#f7faff] text-slate-500 transition-colors hover:border-[#bfd1ed] hover:text-slate-700"
+        className="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-[#FFB38F] bg-[#FFD9C71A] text-orange-500 transition-colors hover:border-orange-500 hover:text-orange-600"
         aria-label="알림 인박스"
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[10px] font-bold text-white">
             {formatCount(unreadCount)}
           </span>
         ) : null}

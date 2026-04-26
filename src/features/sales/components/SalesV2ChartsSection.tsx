@@ -25,7 +25,18 @@ import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { SalesChartsSkeleton } from "@/features/sales/components/SalesSkeletons";
 import type { SalesSummaryResponse } from "@/features/sales/types/sales";
 
-const PALETTE = ["#FFAF89", "#8EC5FF", "#76CA9B", "#ED8CC2", "#F5CD47", "#A898F9"];
+const PALETTE = [
+  "#FFAF89",
+  "#8EC5FF",
+  "#76CA9B",
+  "#ED8CC2",
+  "#F5CD47",
+  "#A898F9",
+  "#7ED9D0",
+  "#FF9F9F",
+  "#B6D86A",
+  "#C99BE8",
+];
 const PROFIT_PALETTE = ["#2d6bff", "#e2eaff"];
 
 const fmtWon = (v: number) =>

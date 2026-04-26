@@ -18,7 +18,11 @@ export function NoticesPanel({ onOpenModal, onSelectNotice }: Props) {
         <div className="pgh-l">
           <div className="inline-flex items-center gap-1.5">
             <h1>공지사항</h1>
-            <InfoPopover caption={FIELD_CAPTIONS["page:settings_notices"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_notices"]}
+              side="bottom"
+              align="left"
+            />
           </div>
         </div>
         <div className="pgh-r">

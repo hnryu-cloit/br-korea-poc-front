@@ -78,7 +78,11 @@ export function AgentsPanel({ onOpenModal }: Props) {
         <div className="pgh-l">
           <div className="inline-flex items-center gap-1.5">
             <h1>Agent 레지스트리</h1>
-            <InfoPopover caption={FIELD_CAPTIONS["page:settings_agents"]} side="bottom" align="left" />
+            <InfoPopover
+              caption={FIELD_CAPTIONS["page:settings_agents"]}
+              side="bottom"
+              align="left"
+            />
           </div>
           <p>배포된 Agent 현황 관리 · 신규 Agent 생성 · 버전 배포</p>
         </div>

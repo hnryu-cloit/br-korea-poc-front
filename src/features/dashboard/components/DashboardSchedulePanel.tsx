@@ -15,6 +15,7 @@ export function DashboardSchedulePanel({
   todos,
   referenceDate,
   selectedDate,
+  onChangeDate,
   isLoading,
 }: {
   storeId?: string;
@@ -23,12 +24,13 @@ export function DashboardSchedulePanel({
   todos: ScheduleTodoItem[];
   referenceDate?: Date;
   selectedDate?: Date;
+  onChangeDate?: (date: Date) => void;
   updatedAt?: string;
   isLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("pending");
   const [internalDate, setInternalDate] = useState<Date>(selectedDate ?? new Date());
-  const currentDate = selectedDate ?? internalDate;
+  const currentDate = internalDate;
   const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, currentDate, todos);
   const incompleteTodos = resolvedTodos.filter((todo) => !todo.done);
   const completedTodos = resolvedTodos.filter((todo) => todo.done);
@@ -46,7 +48,13 @@ export function DashboardSchedulePanel({
           referenceDate={referenceDate ?? currentDate}
           selectedDate={currentDate}
           events={events}
-          onChangeDate={setInternalDate}
+          onChangeDate={(date) => {
+            if (onChangeDate) {
+              onChangeDate(date);
+            }
+
+            setInternalDate(date);
+          }}
         />
         <DashboardScheduleContent
           activeTab={activeTab}

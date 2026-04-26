@@ -2,7 +2,9 @@
 
 export const PAGE_CAPTIONS: Record<string, PageCaption> = {
   dashboard: { subtitle: "점포 운영 주요 지표를 한눈에 확인합니다." },
-  "production:status": { subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다." },
+  "production:status": {
+    subtitle: "해당 지점에서 생산하는 품목별 현재 재고와 생산 권고량을 제공합니다.",
+  },
   "production:inventory": { subtitle: "품목별 재고 수준과 판매 가능 수량을 확인합니다." },
   "production:waste": { subtitle: "전일 기준 폐기 수량과 손실 금액을 분석합니다." },
   "ordering:recommendations": { subtitle: "AI가 분석한 최적 발주량을 확인합니다." },
@@ -82,8 +84,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 폐기 손실 - 단가
   "production:waste_unit_price": {
-    assumption:
-      "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.",
+    assumption: "원가 데이터가 없으므로 판매가 기준 단가를 사용합니다.",
     formula: "평균 판매가 = 판매금액 ÷ 판매수량",
     description: "폐기 수량 1개당 손실 금액(판매가 기준)입니다.",
   },
@@ -105,8 +106,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "•  판매 추세 보정: 최근 판매가 늘면 가중치를 높이고, 줄면 낮춥니다.\n" +
       "•  재고 보정: 현재 재고가 많으면 줄이고, 적으면 늘립니다.\n" +
       "•  유통기한 보정: 유통기한이 짧을수록 보수적으로 조정합니다.",
-    description:
-      "과거 같은 요일 발주 패턴에 최근 운영 상황을 반영해 산출한 권장 발주 수량입니다.",
+    description: "과거 같은 요일 발주 패턴에 최근 운영 상황을 반영해 산출한 권장 발주 수량입니다.",
   },
   "ordering:scope": {
     assumption:
@@ -188,7 +188,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 생산 현황 테이블
   "production:forecast_1h": {
-    assumption: "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
+    assumption:
+      "현재 시간대에서 1시간동안 4주 평균 동일 시간대 판매량의 평균만큼 판매된다고 가정합니다.",
     formula: "예측 재고 = 현재 재고 - (시간당 평균 판매량 × 1)",
     description: "1시간 후 예상 잔여 재고 수량입니다.",
   },
@@ -209,7 +210,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 재고 현황 테이블
   "inventory:orderable_qty": {
-    assumption: "판매 가능 수량은 기준 시점에 실제로 남아 있는 재고 수량을 의미합니다.\n" +
+    assumption:
+      "판매 가능 수량은 기준 시점에 실제로 남아 있는 재고 수량을 의미합니다.\n" +
       "재고 조정·ERP 처리 지연으로 인한 음수 재고는 0으로 처리합니다.",
     formula: "판매 가능 수량 = max(기준 시점 재고 수량, 0)",
     description: "기준 시점에 실제로 남아 있어 판매 가능한 재고 수량입니다.",
@@ -219,7 +221,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   "inventory:status": {
     assumption: "재고율을 기준으로 세 단계(부족, 적정, 여유)로 구분합니다.",
-    formula: "재고율 = 판매 가능 수량 ÷ 판매 개수\n" +
+    formula:
+      "재고율 = 판매 가능 수량 ÷ 판매 개수\n" +
       "• 부족: 재고율 ≤ 0\n" +
       "• 적정: 0 < 재고율 ≤ 0.35\n" +
       "• 여유: 0.35 < 재고율",
@@ -313,8 +316,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
       "• 수익성 = 추정 이익 ÷ 총매출 × 100\n" +
       "• 메뉴 다양성 = 매출 발생한 판매 상품 구성 기준 점수\n" +
       "• 객단가 점수 = 최근 4주 객단가 범위 안에서 환산한 0~100 점수(추후 유사 상권 분석 진행 후 유사 상권끼리의 분포 적용)",
-    description:
-      "매장의 수익 구조와 판매 구성을 5개 핵심 지표로 요약해 비교하는 영역입니다.",
+    description: "매장의 수익 구조와 판매 구성을 5개 핵심 지표로 요약해 비교하는 영역입니다.",
   },
   "sales:product_revenue_share": {
     assumption: "조회 기간 내 판매 금액 기준 상위 6개 상품의 면적 비중을 표시합니다.",
@@ -343,73 +345,59 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "page:settings_agents": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "운영 중 Agent의 모델/버전/상태를 관리하고 배포 현황을 추적합니다.",
+    assumption: "운영 중 Agent의 모델/버전/상태를 관리하고 배포 현황을 추적합니다.",
     description:
       "서비스 품질 저하를 조기에 감지하고 안정적인 운영 릴리즈를 유지하기 위해 필요합니다.",
   },
   "page:settings_orchestration": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "라우팅, 핸드오프, fallback 규칙을 관리해 질의 처리 흐름을 제어합니다.",
-    description:
-      "응답 일관성과 실패 복원력을 높여 운영 리스크를 줄이기 위해 필요합니다.",
+    assumption: "라우팅, 핸드오프, fallback 규칙을 관리해 질의 처리 흐름을 제어합니다.",
+    description: "응답 일관성과 실패 복원력을 높여 운영 리스크를 줄이기 위해 필요합니다.",
   },
   "page:settings_connectors": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "데이터 원천 커넥터 상태와 동기화 품질, 지연 이슈를 모니터링합니다.",
+    assumption: "데이터 원천 커넥터 상태와 동기화 품질, 지연 이슈를 모니터링합니다.",
     description:
       "AI/분석 결과의 신뢰도를 좌우하는 데이터 파이프라인을 안정적으로 유지하기 위해 필요합니다.",
   },
   "page:settings_access": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "역할별 권한과 데이터 범위를 통제해 접근 정책을 운영합니다.",
-    description:
-      "보안/컴플라이언스를 준수하고 사용자 권한 오남용을 방지하기 위해 필요합니다.",
+    assumption: "역할별 권한과 데이터 범위를 통제해 접근 정책을 운영합니다.",
+    description: "보안/컴플라이언스를 준수하고 사용자 권한 오남용을 방지하기 위해 필요합니다.",
   },
   "page:settings_prompts": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "도메인별 시스템 프롬프트와 빠른 질문, 템플릿을 관리합니다.",
+    assumption: "도메인별 시스템 프롬프트와 빠른 질문, 템플릿을 관리합니다.",
     description:
       "응답 품질과 톤을 표준화하고, 운영자가 모델 동작을 통제 가능하게 만들기 위해 필요합니다.",
   },
   "page:settings_golden_queries": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "반복 핵심 질의를 골든 쿼리로 관리해 응답 속도와 정확도를 높입니다.",
-    description:
-      "자주 묻는 운영 질문에 대한 일관된 답변을 빠르게 제공하기 위해 필요합니다.",
+    assumption: "반복 핵심 질의를 골든 쿼리로 관리해 응답 속도와 정확도를 높입니다.",
+    description: "자주 묻는 운영 질문에 대한 일관된 답변을 빠르게 제공하기 위해 필요합니다.",
   },
   "page:settings_audit_logs": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "질의 처리 기록, 차단 이력, 경로 정보를 추적해 감사 가능성을 확보합니다.",
-    description:
-      "정책 위반 탐지, 장애 분석, 책임 추적을 위한 운영 근거를 남기기 위해 필요합니다.",
+    assumption: "질의 처리 기록, 차단 이력, 경로 정보를 추적해 감사 가능성을 확보합니다.",
+    description: "정책 위반 탐지, 장애 분석, 책임 추적을 위한 운영 근거를 남기기 위해 필요합니다.",
   },
   "page:settings_quality_archive": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "Agent별 품질 지표와 이슈 상태를 통합 관리합니다.",
+    assumption: "Agent별 품질 지표와 이슈 상태를 통합 관리합니다.",
     description:
       "품질 저하를 수치 기반으로 관리하고 개선 작업 우선순위를 결정하기 위해 필요합니다.",
   },
   "page:settings_notices": {
     assumptionLabel: "역할 및 설명",
     descriptionLabel: "근거",
-    assumption:
-      "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
-    description:
-      "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
+    assumption: "운영 공지와 점검 일정을 사용자에게 전달하고 이행 상태를 관리합니다.",
+    description: "변경사항 공유 누락을 줄이고 현장 운영 혼선을 예방하기 위해 필요합니다.",
   },
 };

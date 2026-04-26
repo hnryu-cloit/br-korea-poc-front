@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS, PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { DashboardNotices } from "@/features/dashboard/components/DashboardNotices";
@@ -9,7 +11,6 @@ import { useGetDashboardNoticesQuery } from "@/features/dashboard/queries/useGet
 import { useGetDashboardSummaryCardsQuery } from "@/features/dashboard/queries/useGetDashboardSummaryCardsQuery";
 import { useGetHomeScheduleQuery } from "@/features/dashboard/queries/useGetHomeScheduleQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-import dayjs from "dayjs";
 
 function updateTime(referenceDateTime: string) {
   const date = dayjs(referenceDateTime);
@@ -33,7 +34,7 @@ function updateTime(referenceDateTime: string) {
 export function DashboardScreen() {
   const { user, referenceDateTime } = useDemoSession();
   const businessDate = dayjs(referenceDateTime).format("YYYY-MM-DD");
-  const selectedDate = dayjs(referenceDateTime).toDate();
+  const referenceDate = dayjs(referenceDateTime).toDate();
   const params = {
     store_id: user.storeId,
     business_date: businessDate,
@@ -51,12 +52,13 @@ export function DashboardScreen() {
         isLoading={noticesLoading && !noticesData}
       />
       <DashboardSchedulePanel
+        key={referenceDateTime}
         storeId={user.storeId}
         events={scheduleData?.calendar_events ?? []}
         scheduleEvents={scheduleData?.daily_events ?? []}
         todos={scheduleData?.todos ?? []}
-        referenceDate={selectedDate}
-        selectedDate={selectedDate}
+        referenceDate={referenceDate}
+        selectedDate={referenceDate}
         isLoading={scheduleLoading && !scheduleData}
       />
       <div className="flex flex-col gap-6">

@@ -10,7 +10,12 @@ export const usePostSalesQueryMutation = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (prompt: string) => postSalesQuery(prompt, storeId, domain),
+    mutationFn: (prompt: string) => {
+      if (!storeId) {
+        throw new Error("storeId is required");
+      }
+      return postSalesQuery(prompt, storeId, domain);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: salesQueryKeys.insights() });
       queryClient.invalidateQueries({ queryKey: salesQueryKeys.all });
