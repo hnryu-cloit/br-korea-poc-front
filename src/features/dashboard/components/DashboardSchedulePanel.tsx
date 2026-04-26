@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { DashboardScheduleCalendar } from "@/features/dashboard/components/DashboardScheduleCalendar";
 import { DashboardScheduleContent } from "@/features/dashboard/components/DashboardScheduleContent";
@@ -26,10 +26,8 @@ export function DashboardSchedulePanel({
   isLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("pending");
-  const [currentDate, setCurrentDate] = useState<Date>(selectedDate ?? new Date());
-  useEffect(() => {
-    setCurrentDate(selectedDate ?? new Date());
-  }, [selectedDate]);
+  const [internalDate, setInternalDate] = useState<Date>(selectedDate ?? new Date());
+  const currentDate = selectedDate ?? internalDate;
   const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, currentDate, todos);
   const incompleteTodos = resolvedTodos.filter((todo) => !todo.done);
   const completedTodos = resolvedTodos.filter((todo) => todo.done);
@@ -43,7 +41,7 @@ export function DashboardSchedulePanel({
           referenceDate={referenceDate ?? currentDate}
           selectedDate={currentDate}
           events={events}
-          onChangeDate={setCurrentDate}
+          onChangeDate={setInternalDate}
         />
         <DashboardScheduleContent
           activeTab={activeTab}

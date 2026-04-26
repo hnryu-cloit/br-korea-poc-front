@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import {
@@ -40,17 +40,6 @@ export function AnalyticsScreen() {
   const [dateTo, setDateTo] = useState(defaultTo);
   const compareMode: AnalyticsSalesTrendCompareMode =
     aggregationMode === "weekly" ? "prev_week" : "prev_month";
-
-  useEffect(() => {
-    if (dateComparisonMode === "daily") {
-      setDateFrom(defaultTo);
-      setDateTo(defaultTo);
-      return;
-    }
-
-    setDateFrom(defaultFrom);
-    setDateTo(defaultTo);
-  }, [dateComparisonMode, defaultFrom, defaultTo]);
 
   const handleChangeDateFrom = useCallback(
     (value: string) => {

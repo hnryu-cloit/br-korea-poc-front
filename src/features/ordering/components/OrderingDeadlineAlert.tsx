@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Pagination } from "@/commons/components/page/Pagination";
 import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
@@ -15,18 +15,15 @@ export function OrderingDeadlineAlert({
   deadlineItems?: OrderingDeadlineItem[];
 }) {
   const pageSize = 5;
-  const items = deadlineItems ?? [];
+  const items = useMemo(() => deadlineItems ?? [], [deadlineItems]);
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [items.length]);
+  const safeCurrentPage = Math.min(currentPage, totalPages);
 
   const pagedItems = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (safeCurrentPage - 1) * pageSize;
     return items.slice(start, start + pageSize);
-  }, [currentPage, items]);
+  }, [items, safeCurrentPage]);
 
   return (
     <section className="overflow-hidden rounded-[6px] border border-t-4 border-[#FFD9C7] bg-white p-6">
@@ -74,7 +71,7 @@ export function OrderingDeadlineAlert({
             </table>
           </div>
           <Pagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
             onChangePage={setCurrentPage}
           />

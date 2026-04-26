@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { OrderingHistoryChartsSection } from "@/features/ordering/components/OrderingHistoryChartsSection";
@@ -25,17 +25,6 @@ export function OrderingHistoryScreen() {
     dateTo: defaultTo,
     itemName: "",
   });
-
-  useEffect(() => {
-    setCurrentPage(1);
-    setDateFrom(defaultFrom);
-    setDateTo(defaultTo);
-    setAppliedFilters((current) => ({
-      ...current,
-      dateFrom: defaultFrom,
-      dateTo: defaultTo,
-    }));
-  }, [defaultFrom, defaultTo]);
 
   const historyParams = useMemo(
     () => ({
@@ -104,6 +93,8 @@ export function OrderingHistoryScreen() {
         items={historyChartQuery.data?.items ?? []}
         topChangedItems={insightsQuery.data?.top_changed_items ?? []}
         isLoading={historyChartQuery.isLoading || insightsQuery.isLoading}
+        dateFrom={appliedFilters.dateFrom}
+        dateTo={appliedFilters.dateTo}
       />
       <OrderingHistoryInsightsSection
         data={insightsQuery.data}

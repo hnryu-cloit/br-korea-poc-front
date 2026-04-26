@@ -103,7 +103,7 @@ export async function getAnalyticsWeeklyReport(params?: GetMarketIntelligenceReq
     },
   );
   const disposition = response.headers["content-disposition"] as string | undefined;
-  const matched = disposition?.match(/filename=\"?([^"]+)\"?/i);
+  const matched = disposition?.match(/filename="?([^"]+)"?/i);
   const filename = matched?.[1] ?? "weekly_market_report.pdf";
   return { blob: response.data, filename };
 }

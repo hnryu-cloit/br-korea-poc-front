@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AlertCircle, Download } from "lucide-react";
 
 import { useMarketScreen } from "@/features/analytics/hooks/useMarketScreen";
@@ -34,37 +34,60 @@ export function MarketScreen() {
     quarter: "Q1",
     radiusMeters: 3000,
   });
+  const [scopeTouched, setScopeTouched] = useState(false);
 
   const storeProfileQuery = useGetAnalyticsStoreProfileQuery(user.storeId);
   const customerProfileQuery = useGetAnalyticsCustomerProfileQuery(user.storeId);
   const marketScopeOptionsQuery = useGetAnalyticsMarketScopeOptionsQuery();
+
+  const resolvedScope = useMemo<AnalysisScope>(() => {
+    if (scopeTouched) {
+      return scope;
+    }
+    const options = marketScopeOptionsQuery.data;
+    const storeRegion = storeProfileQuery.data?.region;
+    const guCandidate =
+      typeof storeRegion === "string" && storeRegion.endsWith("구")
+        ? storeRegion
+        : undefined;
+    const matchedGu =
+      guCandidate && options?.gu_options.includes(guCandidate) ? guCandidate : undefined;
+    const latestYear = options?.latest_year ? String(options.latest_year) : undefined;
+    const latestQuarter = options?.latest_quarter ? `Q${options.latest_quarter}` : undefined;
+    return {
+      ...scope,
+      ...(matchedGu ? { gu: matchedGu } : {}),
+      ...(latestYear ? { year: latestYear } : {}),
+      ...(latestQuarter ? { quarter: latestQuarter } : {}),
+    };
+  }, [marketScopeOptionsQuery.data, scope, scopeTouched, storeProfileQuery.data?.region]);
   const salesTrendQuery = useGetAnalyticsSalesTrendQuery({ store_id: user.storeId });
   const marketIntelligenceQuery = useGetAnalyticsMarketIntelligenceQuery({
     store_id: user.storeId,
-    gu: scope.gu,
-    dong: scope.dong,
-    industry: scope.industry,
-    year: Number(scope.year),
-    quarter: scope.quarter,
-    radius_m: scope.radiusMeters,
+    gu: resolvedScope.gu,
+    dong: resolvedScope.dong,
+    industry: resolvedScope.industry,
+    year: Number(resolvedScope.year),
+    quarter: resolvedScope.quarter,
+    radius_m: resolvedScope.radiusMeters,
   });
   const marketInsightsQuery = useGetAnalyticsMarketInsightsQuery({
     store_id: user.storeId,
-    gu: scope.gu,
-    dong: scope.dong,
-    industry: scope.industry,
-    year: Number(scope.year),
-    quarter: scope.quarter,
-    radius_m: scope.radiusMeters,
+    gu: resolvedScope.gu,
+    dong: resolvedScope.dong,
+    industry: resolvedScope.industry,
+    year: Number(resolvedScope.year),
+    quarter: resolvedScope.quarter,
+    radius_m: resolvedScope.radiusMeters,
   });
   const hqInsightsQuery = useGetHqAnalyticsMarketInsightsQuery(
     {
-      gu: scope.gu,
-      dong: scope.dong,
-      industry: scope.industry,
-      year: Number(scope.year),
-      quarter: scope.quarter,
-      radius_m: scope.radiusMeters,
+      gu: resolvedScope.gu,
+      dong: resolvedScope.dong,
+      industry: resolvedScope.industry,
+      year: Number(resolvedScope.year),
+      quarter: resolvedScope.quarter,
+      radius_m: resolvedScope.radiusMeters,
       limit: 30,
     },
     user.role === "hq_admin",
@@ -109,17 +132,22 @@ export function MarketScreen() {
         </button>
       </div>
       <p className="text-sm text-slate-500">
-        {heroDescription} · {scope.year} {scope.quarter} · 반경 {scope.radiusMeters.toLocaleString()}m
+        {heroDescription} · {resolvedScope.year} {resolvedScope.quarter} · 반경{" "}
+        {resolvedScope.radiusMeters.toLocaleString()}m
       </p>
 
       <AnalysisScopeFilterBar
-        value={scope}
-        onChange={setScope}
+        value={resolvedScope}
+        onChange={(nextScope) => {
+          setScope(nextScope);
+          setScopeTouched(true);
+        }}
         scopeOptions={
           marketScopeOptionsQuery.data
             ? {
                 guOptions: marketScopeOptionsQuery.data.gu_options,
                 dongOptionsByGu: marketScopeOptionsQuery.data.dong_options_by_gu,
+                availableQuarters: marketScopeOptionsQuery.data.available_quarters,
               }
             : undefined
         }

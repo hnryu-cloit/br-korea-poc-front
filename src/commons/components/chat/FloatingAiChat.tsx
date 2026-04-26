@@ -212,7 +212,6 @@ export function FloatingAiChat() {
       fallbackPrompts,
       goldenPrompts,
       guide,
-      history,
       isSending,
       location.pathname,
       referenceDateTime,
