@@ -6,6 +6,11 @@ import { OrderingConfirmedSummary } from "@/features/ordering/components/Orderin
 import { OrderingContextCards } from "@/features/ordering/components/OrderingContextCards";
 import { OrderingDeadlineAlert } from "@/features/ordering/components/OrderingDeadlineAlert";
 import { OrderingOptionsSection } from "@/features/ordering/components/OrderingOptionsSection";
+import {
+  OrderingContextCardsSkeleton,
+  OrderingDeadlineAlertSkeleton,
+  OrderingOptionsSectionSkeleton,
+} from "@/features/ordering/components/OrderingSkeletons";
 import { useOrderingCountdown } from "@/features/ordering/hooks/useOrderingCountdown";
 import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOrderingContextQuery";
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
@@ -33,6 +38,8 @@ export function OrderingRecommendationsScreen() {
 
   const contextQuery = useGetOrderingContextQuery(notificationId);
   const postOrderingSelectionMutation = usePostOrderingSelectionMutation();
+  const optionsLoading = optionsQuery.isLoading && !optionsQuery.data;
+  const contextLoading = notificationEntry && contextQuery.isLoading && !contextQuery.data;
 
   useOrderingCountdown((optionsQuery.data?.deadline_minutes ?? 20) * 60, confirmed);
 
@@ -121,20 +128,30 @@ export function OrderingRecommendationsScreen() {
           {PAGE_CAPTIONS["ordering:recommendations"].subtitle}
         </p>
       </div>
-      <OrderingContextCards
-        businessDate={optionsQuery.data?.business_date}
-        weather={optionsQuery.data?.weather}
-        trend={optionsQuery.data?.trend_summary}
-      />
-      <OrderingDeadlineAlert deadlineItems={deadlineItems} />
-      <OrderingOptionsSection
-        options={orderingOptions}
-        selectedOptionId={effectiveSelectedOptionId}
-        onSelectOption={setSelectedOptionId}
-        onConfirm={handleConfirm}
-        isSubmitting={postOrderingSelectionMutation.isPending}
-        errorMessage={submitError}
-      />
+      {optionsLoading || contextLoading ? (
+        <>
+          <OrderingContextCardsSkeleton />
+          <OrderingDeadlineAlertSkeleton />
+          <OrderingOptionsSectionSkeleton />
+        </>
+      ) : (
+        <>
+          <OrderingContextCards
+            businessDate={optionsQuery.data?.business_date}
+            weather={optionsQuery.data?.weather}
+            trend={optionsQuery.data?.trend_summary}
+          />
+          <OrderingDeadlineAlert deadlineItems={deadlineItems} />
+          <OrderingOptionsSection
+            options={orderingOptions}
+            selectedOptionId={effectiveSelectedOptionId}
+            onSelectOption={setSelectedOptionId}
+            onConfirm={handleConfirm}
+            isSubmitting={postOrderingSelectionMutation.isPending}
+            errorMessage={submitError}
+          />
+        </>
+      )}
     </div>
   );
 }

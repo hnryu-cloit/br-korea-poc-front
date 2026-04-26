@@ -15,9 +15,6 @@ export const SalesScreenV2 = () => {
     opportunityTab,
     insightSections,
     summaryData,
-    // campaignEffectData,
-    // campaignEffectLoading,
-    // campaignEffectError,
     insightsLoading,
     summaryLoading,
     handleChangeDateFrom,
@@ -26,6 +23,7 @@ export const SalesScreenV2 = () => {
     handleChangeAggregationMode,
     handleChangeOpportunityTab,
   } = useSalesScreenV2();
+  const opportunityLoading = insightsLoading || summaryLoading;
 
   return (
     <div className="space-y-6">
@@ -42,12 +40,6 @@ export const SalesScreenV2 = () => {
         onChangeAggregationMode={handleChangeAggregationMode}
       />
 
-      {/* <SalesV2CampaignActivitySection
-        data={campaignEffectData}
-        isLoading={campaignEffectLoading}
-        errorMessage={campaignEffectError ?? undefined}
-      /> */}
-
       <SalesV2InsightsSection sections={insightSections} isLoading={insightsLoading} />
 
       <SalesV2ChartsSection
@@ -57,27 +49,12 @@ export const SalesScreenV2 = () => {
         dateTo={dateTo}
       />
 
-      {opportunity ? (
-        <SalesV2OpportunitySection
-          data={opportunity}
-          activeTab={opportunityTab}
-          onChangeTab={handleChangeOpportunityTab}
-        />
-      ) : null}
-
-      {/* <section>
-        <SalesV2ChatPanel
-          messages={messages}
-          prompts={suggestedPrompts}
-          promptsLoading={promptsLoading}
-          input={input}
-          loading={sending}
-          bottomRef={bottomRef}
-          onChangeInput={setInput}
-          onSelectPrompt={sendMessage}
-          onSubmitInput={() => sendMessage(input)}
-        />
-      </section> */}
+      <SalesV2OpportunitySection
+        data={opportunity}
+        activeTab={opportunityTab}
+        onChangeTab={handleChangeOpportunityTab}
+        isLoading={opportunityLoading}
+      />
     </div>
   );
 };

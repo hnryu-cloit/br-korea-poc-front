@@ -25,6 +25,7 @@ export function ProductionWasteLossScreen() {
       <ProductWasteSummary
         totalDisuseAmount={wasteQuery.data?.total_disuse_amount}
         montlyTopItems={wasteQuery.data?.monthly_top_items}
+        isLoading={wasteQuery.isLoading}
       />
       <ProductionWasteSection
         data={wasteQuery.data}

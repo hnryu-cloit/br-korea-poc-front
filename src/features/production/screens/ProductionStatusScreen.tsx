@@ -17,11 +17,7 @@ export function ProductionStatusScreen() {
   const [qty, setQty] = useState("48");
   const [page, setPage] = useState(1);
 
-  const {
-    data: skuListData,
-    isFetching: skuListFetching,
-    isLoading: skuListLoading,
-  } = useGetProductionSkuListQuery({
+  const { data: skuListData, isLoading: skuListLoading } = useGetProductionSkuListQuery({
     page,
     page_size: 10,
     store_id: user.storeId,
@@ -65,7 +61,7 @@ export function ProductionStatusScreen() {
         pagination={skuListData?.pagination}
         onChangePage={setPage}
         onOpenRegister={openRegister}
-        loading={skuListLoading || skuListFetching}
+        loading={skuListLoading && !skuListData}
       />
       {activeSku ? (
         <AppModal onClose={closeRegister}>

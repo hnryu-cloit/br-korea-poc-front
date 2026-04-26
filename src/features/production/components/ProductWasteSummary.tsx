@@ -1,12 +1,18 @@
 import deleteIcon from "@/assets/delete_red.svg";
+import { ProductionWasteSummarySkeleton } from "@/features/production/components/ProductionSkeletons";
 import type { WasteMonthlyTopItem } from "../types/production";
 
 interface Props {
   totalDisuseAmount?: number;
   montlyTopItems?: WasteMonthlyTopItem[];
+  isLoading?: boolean;
 }
 
-export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems }: Props) => {
+export const ProductWasteSummary = ({ totalDisuseAmount, montlyTopItems, isLoading }: Props) => {
+  if (isLoading) {
+    return <ProductionWasteSummarySkeleton />;
+  }
+
   const hasTopItems = (montlyTopItems?.length ?? 0) > 0;
 
   return (

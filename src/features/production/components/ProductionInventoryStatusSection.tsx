@@ -3,6 +3,7 @@ import { CheckboxFilterGroup } from "@/commons/components/filter/CheckboxFilterG
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { Pagination } from "@/commons/components/page/Pagination";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
+import { ProductionInventoryStatusSkeleton } from "@/features/production/components/ProductionSkeletons";
 import type {
   InventoryStatusItem,
   InventoryStatusResponse,
@@ -79,129 +80,124 @@ export function ProductionInventoryStatusSection(props: Props) {
           allLabel="전체 선택"
           disabled={isLoading}
         />
-        <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
-          <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
-            <thead>
-              <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
-                <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
-                  품목명
-                </th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-left">
-                  상품 카테고리
-                </th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                  <span className="inline-flex items-center gap-1">
-                    <span>판매 가능 수량</span>
-                    <InfoPopover
-                      caption={FIELD_CAPTIONS["inventory:orderable_qty"]}
-                      side="bottom"
-                      align="left"
-                    />
-                  </span>
-                </th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                  <span className="inline-flex items-center gap-1">
-                    <span>판매 개수</span>
-                    <InfoPopover
-                      caption={FIELD_CAPTIONS["inventory:sold_qty"]}
-                      side="bottom"
-                      align="right"
-                    />
-                  </span>
-                </th>
-                <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
-                  <span className="inline-flex items-center gap-1">
-                    <span>상태</span>
-                    <InfoPopover
-                      caption={FIELD_CAPTIONS["inventory:status"]}
-                      side="bottom"
-                      align="right"
-                    />
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
-                  >
-                    재고 현황 데이터를 불러오는 중입니다.
-                  </td>
+        {isLoading ? (
+          <ProductionInventoryStatusSkeleton />
+        ) : (
+          <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
+            <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
+              <thead>
+                <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
+                  <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
+                    품목명
+                  </th>
+                  <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-left">
+                    상품 카테고리
+                  </th>
+                  <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                    <span className="inline-flex items-center gap-1">
+                      <span>판매 가능 수량</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["inventory:orderable_qty"]}
+                        side="bottom"
+                        align="left"
+                      />
+                    </span>
+                  </th>
+                  <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                    <span className="inline-flex items-center gap-1">
+                      <span>판매 개수</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["inventory:sold_qty"]}
+                        side="bottom"
+                        align="right"
+                      />
+                    </span>
+                  </th>
+                  <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
+                    <span className="inline-flex items-center gap-1">
+                      <span>상태</span>
+                      <InfoPopover
+                        caption={FIELD_CAPTIONS["inventory:status"]}
+                        side="bottom"
+                        align="right"
+                      />
+                    </span>
+                  </th>
                 </tr>
-              ) : isError ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
-                  >
-                    재고 현황 데이터를 불러오는데 문제가 발생했습니다.
-                  </td>
-                </tr>
-              ) : data?.items.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="bg-white px-6 py-16 text-center text-sm text-brown-700"
-                  >
-                    표시할 재고 현황 데이터가 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                data?.items.map((sku) => {
-                  const imageUrl = resolveImageUrl(sku.image_url);
-                  const displayImageUrl = imageUrl ?? ProductDefaultImage;
-                  return (
-                    <tr
-                      key={sku.item_nm}
-                      className="border-b border-[#DADADA] bg-white text-sm text-brown-700"
+              </thead>
+              <tbody>
+                {isError ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                     >
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={displayImageUrl}
-                            alt={sku.item_nm}
-                            className="h-10 w-10 shrink-0 object-cover"
-                            onError={(event) => {
-                              event.currentTarget.src = ProductDefaultImage;
-                            }}
-                          />
-                          <div className="min-w-0">
-                            <div className="">{sku.item_nm}</div>
+                      재고 현황 데이터를 불러오는데 문제가 발생했습니다.
+                    </td>
+                  </tr>
+                ) : data?.items.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="bg-white px-6 py-16 text-center text-sm text-brown-700"
+                    >
+                      표시할 재고 현황 데이터가 없습니다.
+                    </td>
+                  </tr>
+                ) : (
+                  data?.items.map((sku) => {
+                    const imageUrl = resolveImageUrl(sku.image_url);
+                    const displayImageUrl = imageUrl ?? ProductDefaultImage;
+                    return (
+                      <tr
+                        key={sku.item_nm}
+                        className="border-b border-[#DADADA] bg-white text-sm text-brown-700"
+                      >
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={displayImageUrl}
+                              alt={sku.item_nm}
+                              className="h-10 w-10 shrink-0 object-cover"
+                              onError={(event) => {
+                                event.currentTarget.src = ProductDefaultImage;
+                              }}
+                            />
+                            <div className="min-w-0">
+                              <div className="">{sku.item_nm}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        {sku.item_group ? (
-                          <span className="inline-flex rounded-full bg-[#FFF1E8] px-2 py-0.5 text-xs font-semibold text-[#653819]">
-                            {sku.item_group}
+                        </td>
+                        <td className="px-6 py-4">
+                          {sku.item_group ? (
+                            <span className="inline-flex rounded-full bg-[#FFF1E8] px-2 py-0.5 text-xs font-semibold text-[#653819]">
+                              {sku.item_group}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-slate-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {sku.total_orderable.toLocaleString("ko-KR")}개
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {sku.total_sold.toLocaleString("ko-KR")}개
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <span
+                            className={`inline-flex rounded-full px-2 py-1 font-bold ${STATUS_STYLE[sku.status]}`}
+                          >
+                            {sku.status}
                           </span>
-                        ) : (
-                          <span className="text-xs text-slate-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {sku.total_orderable.toLocaleString("ko-KR")}개
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {sku.total_sold.toLocaleString("ko-KR")}개
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-1 font-bold ${STATUS_STYLE[sku.status]}`}
-                        >
-                          {sku.status}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
         {!!data?.items.length && (
           <Pagination
             currentPage={currentPage}

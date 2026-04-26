@@ -22,6 +22,7 @@ import {
 
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
+import { SalesChartsSkeleton } from "@/features/sales/components/SalesSkeletons";
 import type { SalesSummaryResponse } from "@/features/sales/types/sales";
 
 const PALETTE = ["#FFAF89", "#8EC5FF", "#76CA9B", "#ED8CC2", "#F5CD47", "#A898F9"];
@@ -74,9 +75,6 @@ const ChartCard = ({ title, subtitle, captionKey, className = "", children }: Ch
   </article>
 );
 
-const LoadingPlaceholder = () => (
-  <p className="py-8 text-center text-sm text-slate-400">차트 데이터를 불러오는 중...</p>
-);
 const EmptyPlaceholder = () => (
   <p className="py-8 text-center text-sm text-slate-400">표시할 데이터가 없습니다.</p>
 );
@@ -149,6 +147,10 @@ export const SalesV2ChartsSection = ({
   dateFrom: string;
   dateTo: string;
 }) => {
+  if (isLoading) {
+    return <SalesChartsSkeleton />;
+  }
+
   const weekly = summary?.weekly_data ?? [];
   const topProducts = (summary?.top_products ?? []).slice(0, 6);
   const weeklyWithAxisLabel = weekly.map((item, index) => ({
@@ -223,9 +225,7 @@ export const SalesV2ChartsSection = ({
         captionKey="sales:weekly_revenue_trend"
         className="xl:col-span-2"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : weekly.length === 0 ? (
+        {weekly.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -292,9 +292,7 @@ export const SalesV2ChartsSection = ({
         subtitle="순매출 + 차감비용 (누적 막대)"
         captionKey="sales:weekly_revenue_composition"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : stackedWeekly.length === 0 ? (
+        {stackedWeekly.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={200}>
@@ -330,9 +328,7 @@ export const SalesV2ChartsSection = ({
         subtitle="추정 이익 vs 비용 비율"
         captionKey="sales:today_profit_composition"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : profitPie.length === 0 ? (
+        {profitPie.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <div className="flex items-center gap-4">
@@ -389,9 +385,7 @@ export const SalesV2ChartsSection = ({
         subtitle="최근 집계 기준 판매 금액 순"
         captionKey="sales:top_products"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : productBar.length === 0 ? (
+        {productBar.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={200}>
@@ -432,56 +426,52 @@ export const SalesV2ChartsSection = ({
         subtitle="주요 경영 지표 다차원 비교 (0–100 정규화)"
         captionKey="sales:core_indicators"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : (
-          <>
-            <ResponsiveContainer width="100%" height={200}>
-              <RadarChart cx="50%" cy="50%" outerRadius={72} data={radarData}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#64748b" }} />
-                <PolarRadiusAxis
-                  angle={30}
-                  domain={[0, 100]}
-                  tick={{ fontSize: 9, fill: "#94a3b8" }}
-                  tickCount={4}
-                />
-                <Radar
-                  name="현재 지표"
-                  dataKey="value"
-                  stroke="#2d6bff"
-                  fill="#2d6bff"
-                  fillOpacity={0.25}
-                  dot={{ r: 3, fill: "#2d6bff" }}
-                />
-                <Tooltip
-                  formatter={(value, _name, item) => {
-                    const display = (item?.payload as { displayValue?: string } | undefined)
-                      ?.displayValue;
-                    return display
-                      ? [`${Number(value ?? 0)}점 / 100 (${display})`]
-                      : [`${Number(value ?? 0)}점 / 100`];
-                  }}
-                  contentStyle={CustomTooltipStyle}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-            <div className="mt-3 flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                <span>평균 객단가</span>
-                <InfoPopover
-                  caption={FIELD_CAPTIONS["sales:avg_ticket_index"]}
-                  side="top"
-                  align="left"
-                />
-              </span>
-              <span className="text-xs font-bold text-slate-800">
-                {ticketSize.toLocaleString()}원
-                <span className="ml-1.5 text-[#2454C8]">({ticketIndex}점/100)</span>
-              </span>
-            </div>
-          </>
-        )}
+        <>
+          <ResponsiveContainer width="100%" height={200}>
+            <RadarChart cx="50%" cy="50%" outerRadius={72} data={radarData}>
+              <PolarGrid stroke="#e2e8f0" />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#64748b" }} />
+              <PolarRadiusAxis
+                angle={30}
+                domain={[0, 100]}
+                tick={{ fontSize: 9, fill: "#94a3b8" }}
+                tickCount={4}
+              />
+              <Radar
+                name="현재 지표"
+                dataKey="value"
+                stroke="#2d6bff"
+                fill="#2d6bff"
+                fillOpacity={0.25}
+                dot={{ r: 3, fill: "#2d6bff" }}
+              />
+              <Tooltip
+                formatter={(value, _name, item) => {
+                  const display = (item?.payload as { displayValue?: string } | undefined)
+                    ?.displayValue;
+                  return display
+                    ? [`${Number(value ?? 0)}점 / 100 (${display})`]
+                    : [`${Number(value ?? 0)}점 / 100`];
+                }}
+                contentStyle={CustomTooltipStyle}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+          <div className="mt-3 flex items-center justify-between rounded-lg bg-[#f8fbff] px-3 py-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+              <span>평균 객단가</span>
+              <InfoPopover
+                caption={FIELD_CAPTIONS["sales:avg_ticket_index"]}
+                side="top"
+                align="left"
+              />
+            </span>
+            <span className="text-xs font-bold text-slate-800">
+              {ticketSize.toLocaleString()}원
+              <span className="ml-1.5 text-[#2454C8]">({ticketIndex}점/100)</span>
+            </span>
+          </div>
+        </>
       </ChartCard>
 
       {/* 6. Treemap: 상품별 매출 비중 (full width) */}
@@ -491,9 +481,7 @@ export const SalesV2ChartsSection = ({
         captionKey="sales:product_revenue_share"
         className="xl:col-span-2"
       >
-        {isLoading ? (
-          <LoadingPlaceholder />
-        ) : treemapData.length === 0 ? (
+        {treemapData.length === 0 ? (
           <EmptyPlaceholder />
         ) : (
           <>

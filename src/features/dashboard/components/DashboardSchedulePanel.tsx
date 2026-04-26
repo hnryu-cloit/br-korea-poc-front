@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { DashboardScheduleCalendar } from "@/features/dashboard/components/DashboardScheduleCalendar";
 import { DashboardScheduleContent } from "@/features/dashboard/components/DashboardScheduleContent";
+import { DashboardSchedulePanelSkeleton } from "@/features/dashboard/components/DashboardSkeletons";
 import { type SchedulePanelTab } from "@/features/dashboard/constants/schedule-panel";
 import { useDashboardTodos } from "@/features/dashboard/hooks/useDashboardTodos";
 import type { ScheduleEvent, ScheduleTodoItem } from "@/features/dashboard/types/dashboard";
@@ -32,6 +33,10 @@ export function DashboardSchedulePanel({
   const incompleteTodos = resolvedTodos.filter((todo) => !todo.done);
   const completedTodos = resolvedTodos.filter((todo) => todo.done);
   const eventSummary = getEventSummary(scheduleEvents ?? events, currentDate);
+
+  if (isLoading) {
+    return <DashboardSchedulePanelSkeleton />;
+  }
 
   return (
     <section className="flex h-[430px] min-h-[430px] max-h-[430px] flex-col gap-[8px] overflow-hidden bg-white p-[24px_48px]">

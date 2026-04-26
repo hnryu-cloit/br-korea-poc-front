@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { SalesTrendSkeleton } from "@/features/analytics/components/AnalyticsSkeletons";
 import type {
   AnalyticsSalesTrendCompareMode,
   SalesTrendResponse,
@@ -150,11 +151,7 @@ export function SalesTrendChart({
   const [activeTab, setActiveTab] = useState<Tab>("cumulative");
 
   if (isLoading) {
-    return (
-      <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
-        <div className="px-6 py-8 text-sm text-slate-400">매출 추이 데이터를 불러오는 중...</div>
-      </section>
-    );
+    return <SalesTrendSkeleton />;
   }
 
   if (!data) return null;
