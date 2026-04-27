@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
@@ -17,14 +17,8 @@ import { useGetOrderingContextQuery } from "@/features/ordering/queries/useGetOr
 import { useGetOrderingOptionsQuery } from "@/features/ordering/queries/useGetOrderingOptionsQuery";
 import { usePostOrderingSelectionMutation } from "@/features/ordering/queries/usePostOrderingSelectionMutation";
 import type { OrderingDeadlineItem } from "@/features/ordering/types/ordering";
-
-function todayString() {
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
-  const dd = String(now.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
+import { useDemoSession } from "@/features/session/hooks/useDemoSession";
+import dayjs from "dayjs";
 
 export function OrderingRecommendationsScreen() {
   const location = useLocation();
@@ -37,16 +31,36 @@ export function OrderingRecommendationsScreen() {
     prompt?: string;
     chatHistoryId?: string;
   } | null;
+  const { user, referenceDateTime } = useDemoSession();
   const notificationEntry = routeState?.source === "notification";
   const notificationId = notificationEntry ? (routeState?.notificationId ?? null) : null;
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [campaignReferenceDate, setCampaignReferenceDate] = useState<string>(todayString);
+  const [campaignReferenceDate, setCampaignReferenceDate] = useState<string>(
+    dayjs(referenceDateTime).format("YYYY-MM-DD"),
+  );
 
-  const optionsQuery = useGetOrderingOptionsQuery({ notification_entry: notificationEntry });
+  useEffect(() => {
+    setCampaignReferenceDate(dayjs(referenceDateTime).format("YYYY-MM-DD"));
+  }, [referenceDateTime]);
+
+  const orderingReferenceDate = dayjs(referenceDateTime).format("YYYY-MM-DD");
+
+  useEffect(() => {
+    setSelectedOptionId(null);
+    setConfirmed(false);
+    setSubmitError(null);
+  }, [orderingReferenceDate, user.storeId]);
+
+  const optionsQuery = useGetOrderingOptionsQuery({
+    notification_entry: notificationEntry,
+    store_id: user.storeId,
+    business_date: orderingReferenceDate,
+  });
   const activeCampaignsQuery = useGetOrderingActiveCampaignsQuery({
     reference_date: campaignReferenceDate,
+    store_id: user.storeId,
     limit: 3,
   });
 

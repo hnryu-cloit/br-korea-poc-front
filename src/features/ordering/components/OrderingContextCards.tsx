@@ -48,8 +48,8 @@ export function OrderingContextCards({
   weather,
   businessDate,
   campaigns,
-  referenceDate,
-  onChangeReferenceDate,
+  // referenceDate,
+  // onChangeReferenceDate,
   isCampaignsLoading = false,
 }: Props) {
   const visibleCampaigns = campaigns.slice(0, 3);
@@ -67,13 +67,13 @@ export function OrderingContextCards({
       <article className="flex min-w-0 w-full flex flex-col gap-2 rounded-[6px] border border-[#FFD9C7] border-t-[4px] bg-white p-[24px]">
         <div className="flex items-center justify-between gap-2">
           <p className="text-md font-bold text-[#0F172B]">캠페인</p>
-          <input
+          {/* <input
             type="date"
             value={referenceDate}
             onChange={(event) => onChangeReferenceDate(event.target.value)}
             className="rounded-md border border-[#FFD9C7] bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#FF7A4D]"
             aria-label="캠페인 기준일자"
-          />
+          /> */}
         </div>
         {isCampaignsLoading ? (
           <ul className="space-y-1">
