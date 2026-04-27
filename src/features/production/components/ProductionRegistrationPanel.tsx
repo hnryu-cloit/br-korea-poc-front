@@ -32,6 +32,7 @@ export function ProductionRegistrationPanel({
     image_url: activeSku.image_url,
     current_stock: activeSku.current_stock,
     forecast_stock_1h: activeSku.forecast_stock_1h,
+    predicted_sales_1h: activeSku.predicted_sales_1h,
     recommended_qty: activeSku.recommended_production_qty ?? activeSku.avg_first_production_qty_4w,
     chance_loss_saving_pct: activeSku.chance_loss_saving_pct,
     chance_loss_basis_text:
@@ -73,7 +74,7 @@ export function ProductionRegistrationPanel({
               <tbody>
                 <tr className="text-brown-700 bg-white text-md">
                   <td className="px-4 py-3">{detail.current_stock}개</td>
-                  <td className="px-4 py-3">{detail.forecast_stock_1h}개</td>
+                  <td className="px-4 py-3">{detail.predicted_sales_1h}개</td>
                   <td className="px-4 py-3">1시간 이내</td>
                 </tr>
               </tbody>

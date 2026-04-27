@@ -45,6 +45,7 @@ export interface ProductionSkuItem {
   image_url?: string;
   current_stock: number;
   forecast_stock_1h: number;
+  predicted_sales_1h: number;
   avg_first_production_qty_4w: number;
   avg_first_production_time_4w: string;
   avg_second_production_qty_4w: number;
@@ -88,6 +89,7 @@ export interface ProductionRegistrationForm {
   image?: string;
   current_stock: number;
   forecast_stock_1h: number;
+  predicted_sales_1h: number;
   recommended_qty: number;
   chance_loss_saving_pct: number;
   chance_loss_basis_text: string;
