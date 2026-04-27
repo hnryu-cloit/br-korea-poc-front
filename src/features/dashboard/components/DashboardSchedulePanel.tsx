@@ -29,8 +29,7 @@ export function DashboardSchedulePanel({
   isLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<SchedulePanelTab>("pending");
-  const [internalDate, setInternalDate] = useState<Date>(selectedDate ?? new Date());
-  const currentDate = internalDate;
+  const currentDate = selectedDate ?? referenceDate ?? new Date();
   const { todos: resolvedTodos, toggleTodo } = useDashboardTodos(storeId, currentDate, todos);
   const incompleteTodos = resolvedTodos.filter((todo) => !todo.done);
   const completedTodos = resolvedTodos.filter((todo) => todo.done);
@@ -52,8 +51,6 @@ export function DashboardSchedulePanel({
             if (onChangeDate) {
               onChangeDate(date);
             }
-
-            setInternalDate(date);
           }}
         />
         <DashboardScheduleContent

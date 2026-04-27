@@ -1,3 +1,4 @@
+import { useState } from "react";
 import dayjs from "dayjs";
 
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
@@ -31,16 +32,24 @@ function updateTime(referenceDateTime: string) {
   return date.format("YYYY-MM-DD A hh시");
 }
 
-export function DashboardScreen() {
+function DashboardScreenContent() {
   const { user, referenceDateTime } = useDemoSession();
   const businessDate = dayjs(referenceDateTime).format("YYYY-MM-DD");
   const referenceDate = dayjs(referenceDateTime).toDate();
+  const [selectedScheduleDate, setSelectedScheduleDate] = useState(referenceDate);
+  const selectedScheduleBusinessDate = dayjs(selectedScheduleDate).format("YYYY-MM-DD");
+
   const params = {
     store_id: user.storeId,
     business_date: businessDate,
   };
+  const scheduleParams = {
+    store_id: user.storeId,
+    business_date: selectedScheduleBusinessDate,
+  };
   const { data: noticesData, isLoading: noticesLoading } = useGetDashboardNoticesQuery(params);
-  const { data: scheduleData, isLoading: scheduleLoading } = useGetHomeScheduleQuery(params);
+  const { data: scheduleData, isLoading: scheduleLoading } =
+    useGetHomeScheduleQuery(scheduleParams);
   const { data: alertsData, isLoading: alertsLoading } = useGetDashboardAlertsQuery(params);
   const { data: summaryCardsData, isLoading: summaryCardsLoading } =
     useGetDashboardSummaryCardsQuery(params);
@@ -58,7 +67,8 @@ export function DashboardScreen() {
         scheduleEvents={scheduleData?.daily_events ?? []}
         todos={scheduleData?.todos ?? []}
         referenceDate={referenceDate}
-        selectedDate={referenceDate}
+        selectedDate={selectedScheduleDate}
+        onChangeDate={setSelectedScheduleDate}
         isLoading={scheduleLoading && !scheduleData}
       />
       <div className="flex flex-col gap-6">
@@ -90,4 +100,10 @@ export function DashboardScreen() {
       </div>
     </div>
   );
+}
+
+export function DashboardScreen() {
+  const { user, referenceDateTime } = useDemoSession();
+
+  return <DashboardScreenContent key={`${user.storeId}:${referenceDateTime}`} />;
 }

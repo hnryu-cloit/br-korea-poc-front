@@ -66,11 +66,11 @@ export function DashboardScheduleContent({
             ) : scheduleEvents.length === 0 ? (
               <p className="mt-2 text-sm text-[#8A7A73]">선택한 날짜에 주요 일정이 없습니다.</p>
             ) : (
-              <ul className="flex flex-col">
+              <ul className="flex flex-col gap-1">
                 {scheduleEvents.map((event) => (
                   <li
                     key={event.id}
-                    className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3"
+                    className="flex items-start gap-3 rounded-2xl border border-border/40 px-4 py-3 bg-white"
                   >
                     <div className="shrink-0 pt-0.5">
                       <span
@@ -121,7 +121,7 @@ export function DashboardScheduleContent({
                       >
                         {todo.label}
                       </span>
-                      {todo.recurring ? (
+                      {todo.recurring && !todo.done ? (
                         <span className="ml-auto shrink-0 text-sm font-bold text-orange-500">
                           반복하기
                         </span>

@@ -23,7 +23,13 @@ export function SummaryCard({
         <h2 className="text-[24px] leading-[1.66] font-semibold tracking-[-0.02em] text-brown-700">
           {title}
         </h2>
-        {caption && <InfoPopover caption={caption} side="bottom" align="left" />}
+        {caption && (
+          <InfoPopover
+            caption={caption}
+            side="bottom"
+            align={title === "손익분석" ? "right" : "left"}
+          />
+        )}
       </div>
 
       <div className="mt-4 border-t border-[#DADADA] pt-5">
