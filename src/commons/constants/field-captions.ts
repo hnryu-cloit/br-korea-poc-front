@@ -37,7 +37,7 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "production:scope": {
     assumption:
       "생산 현황 대상은 해당 지점의 생산 대상 제품 목록을 기준으로 잡습니다.\n" +
-      "• 생산 대상 목록에 등록된 SKU 중 최근 7일 이내 생산 이력이 있는 SKU만 포함합니다.\n" +
+      "• 생산 대상 목록에 등록된 SKU 중 최근 7일 이내 매출이 있거나 최근 7일 이내 생산 이력이 있는 SKU만 포함합니다.\n" +
       "• 생산 대상 목록이 비어 있는 경우에만 최근 7일 생산 이력 SKU로 대체합니다.",
     description: "생산 현황 테이블에 노출되는 SKU 선정 기준입니다.",
   },
