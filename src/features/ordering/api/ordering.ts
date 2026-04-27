@@ -31,9 +31,7 @@ export const getOrderingOptions = async (params?: OrderingOptionsParams) => {
 };
 
 // 기준일자 진행 중 캠페인 -> /ordering/recommendations 컨텍스트 카드용
-export const getOrderingActiveCampaigns = async (
-  params?: OrderingActiveCampaignsParams,
-) => {
+export const getOrderingActiveCampaigns = async (params?: OrderingActiveCampaignsParams) => {
   const response = await axiosInstance.get<OrderingActiveCampaignsResponse>(
     "/api/ordering/active-campaigns",
     { params },

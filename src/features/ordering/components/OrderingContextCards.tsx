@@ -1,10 +1,7 @@
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 
-import type {
-  ActiveCampaignItem,
-  OrderingWeather,
-} from "@/features/ordering/types/ordering";
+import type { ActiveCampaignItem, OrderingWeather } from "@/features/ordering/types/ordering";
 
 dayjs.locale("ko");
 

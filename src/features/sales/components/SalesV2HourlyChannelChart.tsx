@@ -26,6 +26,9 @@ const fmtWon = (value: number) =>
 
 const fmtHour = (hour: number) => `${String(hour).padStart(2, "0")}시`;
 
+const BUSINESS_OPEN_HOUR = 6;
+const BUSINESS_CLOSE_HOUR = 23;
+
 const TooltipStyle = {
   fontSize: 12,
   borderRadius: 12,
@@ -41,15 +44,18 @@ export const SalesV2HourlyChannelChart = ({
 }: SalesV2HourlyChannelChartProps) => {
   const captionKey = "sales:hourly_channel_sales";
   const caption = FIELD_CAPTIONS[captionKey];
+  const businessHourItems = items.filter(
+    (item) => item.hour >= BUSINESS_OPEN_HOUR && item.hour <= BUSINESS_CLOSE_HOUR,
+  );
 
-  const chartData = items.map((item) => ({
+  const chartData = businessHourItems.map((item) => ({
     hourLabel: fmtHour(item.hour),
     "오프라인+투고": item.offline_sales,
     배달: item.delivery_sales,
     판매건수: item.total_qty,
   }));
 
-  const hasData = items.some(
+  const hasData = businessHourItems.some(
     (item) =>
       item.offline_sales > 0 ||
       item.delivery_sales > 0 ||
@@ -63,7 +69,7 @@ export const SalesV2HourlyChannelChart = ({
         <p className="text-sm font-bold text-slate-800">시간대별 판매건수 · 채널 매출</p>
         {caption && <InfoPopover caption={caption} side="bottom" align="left" />}
         <p className="text-xs text-slate-400">
-          {dateFrom} ~ {dateTo} · 0~23시 집계
+          {dateFrom} ~ {dateTo} · {BUSINESS_OPEN_HOUR}~{BUSINESS_CLOSE_HOUR}시 집계
         </p>
       </div>
 

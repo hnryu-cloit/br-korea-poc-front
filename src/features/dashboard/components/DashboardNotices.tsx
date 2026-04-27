@@ -25,28 +25,24 @@ export function DashboardNotices({ notices, isLoading }: Props) {
               <ul className="grid min-w-0 flex-1 gap-x-[134px] gap-y-[6px] lg:grid-cols-2">
                 {visibleNotices.map((notice) => (
                   <li key={notice.id} className="min-w-0">
-                    {notice.accent ? (
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span
-                          className={`inline-flex h-5 shrink-0 items-center rounded-xl px-[7px] text-sm leading-[19.88px] font-bold ${notice.accent.badgeClassName}`}
-                        >
-                          {notice.accent.label}
-                        </span>
-                        <p
-                          className={`truncate text-base leading-6 font-normal ${notice.accent.textClassName} underline decoration-current underline-offset-2`}
-                          title={notice.title}
-                        >
-                          {notice.title}
-                        </p>
-                      </div>
-                    ) : (
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span
+                        className={`inline-flex h-5 shrink-0 items-center rounded-xl px-[7px] text-sm leading-[19.88px] font-bold ${
+                          notice.accent?.badgeClassName ??
+                          "border border-slate-200 bg-slate-50 text-slate-600"
+                        }`}
+                      >
+                        {notice.accent?.label ?? notice.tag}
+                      </span>
                       <p
-                        className="truncate text-base leading-6 font-normal text-brown-600 underline decoration-current underline-offset-2"
+                        className={`truncate text-base leading-6 font-normal underline decoration-current underline-offset-2 ${
+                          notice.accent?.textClassName ?? "text-brown-600"
+                        }`}
                         title={notice.title}
                       >
                         {notice.title}
                       </p>
-                    )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -54,6 +50,7 @@ export function DashboardNotices({ notices, isLoading }: Props) {
               <button
                 type="button"
                 className="inline-flex shrink-0 items-center justify-center gap-1 px-3 py-1 text-sm font-bold text-pink-500"
+                onClick={() => window.alert("준비중인 기능입니다.")}
               >
                 <span>전체보기</span>
                 <ChevronRight className="h-[18px] w-[18px]" />

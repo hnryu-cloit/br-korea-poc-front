@@ -32,7 +32,15 @@ export function ProductionTableSection({
     <section className="overflow-hidden">
       <div className="flex flex-col gap-10">
         <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
-          <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
+          <table className="w-full min-w-[1080px] table-fixed whitespace-nowrap text-sm">
+            <colgroup>
+              <col className="w-[34%]" />
+              <col className="w-[12%]" />
+              <col className="w-[13%]" />
+              <col className="w-[18%]" />
+              <col className="w-[14%]" />
+              <col className="w-[9%]" />
+            </colgroup>
             <thead>
               <tr className="border-b border-[#DADADA] bg-[#FFD9C780] text-left">
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819]">품목명</th>
@@ -67,7 +75,7 @@ export function ProductionTableSection({
               ) : items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={6}
                     className="bg-white px-6 py-16 text-center text-sm text-slate-400"
                   >
                     표시할 SKU 데이터가 없습니다.
@@ -95,7 +103,7 @@ export function ProductionTableSection({
                             }}
                           />
                           <div className="min-w-0">
-                            <div className="text-[#41352E] text-md font-regular">
+                            <div className="truncate text-[#41352E] text-md font-regular">
                               {sku.sku_name}
                             </div>
                           </div>
