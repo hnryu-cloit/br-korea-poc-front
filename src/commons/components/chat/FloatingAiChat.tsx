@@ -10,16 +10,13 @@ import type { FloatingAiChatRouteGuide } from "@/commons/types/floating-ai-chat"
 import { dedupeStrings } from "@/commons/utils/chat-text-utils";
 import {
   type FloatingChatDomain,
-  loadSessionHistory,
   resolveRouteContext,
-  saveSessionHistory,
 } from "@/commons/utils/floating-ai-chat-session";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
 import { useGetSalesPromptsQuery } from "@/features/sales/queries/useGetSalesPromptsQuery";
 import { postSalesQuery } from "@/features/sales/api/sales";
 
 import {
-  type FloatingAiChatAnswerStatus,
   type FloatingAiChatRequestContext,
   normalizeFloatingAiChatResponse,
   getChatAnswerStatus,
@@ -38,21 +35,6 @@ type RouteState = {
   intent?: "view" | "ask";
   prompt?: string;
 } | null;
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (!value || typeof value !== "object") return null;
-  return value as Record<string, unknown>;
-}
-
-function asString(value: unknown): string {
-  return typeof value === "string" ? value : "";
-}
-
-function asStringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
-    : [];
-}
 
 function createEmptyAnswer(requestContext: FloatingAiChatRequestContext) {
   return normalizeFloatingAiChatResponse(
@@ -79,131 +61,6 @@ function createEmptyAnswer(requestContext: FloatingAiChatRequestContext) {
     },
     requestContext,
   );
-}
-
-function toConversationItems(
-  storedHistory: unknown[],
-  requestContext: FloatingAiChatRequestContext,
-): FloatingAiChatConversationItem[] {
-  const items: FloatingAiChatConversationItem[] = [];
-
-  for (const item of storedHistory) {
-    const record = asRecord(item);
-    if (!record) continue;
-
-    if (record.role === "user" && typeof record.text === "string") {
-      items.push({
-        id: nextMessageId(),
-        role: "user",
-        text: record.text,
-      });
-      continue;
-    }
-
-    if (record.role === "assistant") {
-      if (typeof record.status === "string" && record.answer) {
-        const answerRecord = asRecord(record.answer);
-        const agentTrace = asRecord(answerRecord?.agentTrace);
-        const responseContext = asRecord(answerRecord?.responseContext);
-        const requestContextRecord = asRecord(answerRecord?.requestContext);
-        const normalizedAnswer = answerRecord
-          ? normalizeFloatingAiChatResponse(
-              {
-                text: answerRecord.text ?? "",
-                evidence: answerRecord.evidence ?? [],
-                actions: answerRecord.actions ?? [],
-                follow_up_questions: answerRecord.followUpQuestions ?? [],
-                blocked: answerRecord.blocked ?? false,
-                store_context: asString(responseContext?.storeContext),
-                data_source: asString(responseContext?.dataSource),
-                comparison_basis: asString(responseContext?.comparisonBasis),
-                calculation_date: asString(responseContext?.calculationDate),
-                agent_trace: {
-                  intent: asString(agentTrace?.intent) || null,
-                  relevant_tables: asStringArray(agentTrace?.relevantTables),
-                  sql: asString(agentTrace?.sql) || null,
-                  queried_period: agentTrace?.queriedPeriod ?? null,
-                  row_count: typeof agentTrace?.rowCount === "number" ? agentTrace.rowCount : null,
-                  matched_query_id: asString(agentTrace?.matchedQueryId) || null,
-                  match_score:
-                    typeof agentTrace?.matchScore === "number" ? agentTrace.matchScore : null,
-                  overlap_candidates: asStringArray(agentTrace?.overlapCandidates),
-                },
-              },
-              {
-                storeName: asString(requestContextRecord?.storeName),
-                businessDate: asString(requestContextRecord?.businessDate),
-                businessTime: asString(requestContextRecord?.businessTime),
-                domain: asString(requestContextRecord?.domain),
-                pageContext: asString(requestContextRecord?.pageContext),
-                cardContextKey: asString(requestContextRecord?.cardContextKey) || null,
-              },
-            )
-          : createEmptyAnswer(requestContext);
-
-        items.push({
-          id: nextMessageId(),
-          role: "assistant",
-          prompt: asString(record.prompt),
-          status: record.status as FloatingAiChatAnswerStatus,
-          answer: normalizedAnswer,
-        });
-        continue;
-      }
-
-      const nested = asRecord(record.message);
-      if (!nested) continue;
-
-      const processingRoute = asString(nested.processingRoute);
-      const nestedReference = asRecord(nested.reference);
-      const answer = normalizeFloatingAiChatResponse(
-        {
-          text: asString(nested.content),
-          evidence: asStringArray(nested.evidence),
-          actions: [],
-          follow_up_questions: asStringArray(nested.suggestedQuestions),
-          store_context: "",
-          data_source: "",
-          comparison_basis: "",
-          calculation_date: "",
-          blocked: false,
-          agent_trace: {
-            intent: processingRoute.includes("golden_query_miss") ? "golden_query_miss" : null,
-            relevant_tables: asStringArray(nestedReference?.relevantTables),
-            sql: asString(nestedReference?.sql) || null,
-            queried_period: nestedReference?.queriedPeriod ?? null,
-            row_count: null,
-            matched_query_id: asString(nestedReference?.matchedQueryId) || null,
-            match_score:
-              typeof nestedReference?.matchScore === "number" ? nestedReference.matchScore : null,
-            overlap_candidates: [],
-          },
-        },
-        requestContext,
-      );
-
-      items.push({
-        id: nextMessageId(),
-        role: "assistant",
-        prompt: asString(nested.content),
-        status: getChatAnswerStatus({
-          text: nested.content,
-          evidence: nested.evidence,
-          actions: nested.actions,
-          follow_up_questions: nested.suggestedQuestions,
-          blocked: false,
-          agent_trace: {
-            intent: processingRoute.includes("golden_query_miss") ? "golden_query_miss" : null,
-            sql: nestedReference?.sql ?? null,
-            row_count: null,
-          },
-        }),
-        answer,
-      });
-    }
-  }
-
-  return items;
 }
 
 function createSuggestionList(
@@ -293,19 +150,15 @@ export function FloatingAiChat() {
     if (!isFirstRun && hydratedSessionKeyRef.current !== sessionKey) {
       close();
     }
-
-    const saved = loadSessionHistory(sessionKey);
-    const parsed = Array.isArray(saved) ? toConversationItems(saved, requestContext) : [];
-    historyRef.current = parsed;
-    setMessages(parsed);
     hydratedSessionKeyRef.current = sessionKey;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionKey, requestContext]);
+  }, [sessionKey]);
 
   useEffect(() => {
-    if (hydratedSessionKeyRef.current !== sessionKey) return;
-    saveSessionHistory(sessionKey, messages);
-  }, [messages, sessionKey]);
+    if (!isOpen) return;
+    historyRef.current = [];
+    setMessages([]);
+  }, [isOpen]);
 
   const send = useCallback(
     async (prompt: string, overrideDomain?: FloatingChatDomain): Promise<boolean> => {
