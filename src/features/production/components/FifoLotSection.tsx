@@ -49,8 +49,12 @@ export function FifoLotSection({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <span className="inline-flex items-center gap-1.5">
-          <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
-          <InfoPopover caption={FIELD_CAPTIONS["fifo:section_title"]} side="bottom" align="left" />
+            <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
+            <InfoPopover
+              caption={FIELD_CAPTIONS["fifo:section_title"]}
+              side="bottom"
+              align="left"
+            />
           </span>
           <p className="text-sm text-slate-500">{periodDescription}</p>
         </div>
@@ -207,7 +211,6 @@ export function FifoLotSection({
       {!!data?.items.length && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
       )}
-
     </section>
   );
 }

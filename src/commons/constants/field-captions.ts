@@ -386,7 +386,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "dashboard:ordering_summary": {
     assumption:
       "주문 관리 카드는 추천 발주안 3종의 기준과 발주 마감이 가까운 품목을 함께 요약합니다.",
-    description: "주문 판단에 바로 필요한 추천 기준과 마감 임박 품목을 한 장에서 확인하는 카드입니다.",
+    description:
+      "주문 판단에 바로 필요한 추천 기준과 마감 임박 품목을 한 장에서 확인하는 카드입니다.",
   },
   "dashboard:low_stock_products": {
     assumption:
@@ -411,7 +412,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   "dashboard:sales_trend_summary": {
     assumption:
       "카드는 현재 시간 매출, 오늘 매출, 이번 달 매출을 각각 비교 기준과 함께 보여줍니다. 현재 시간 매출은 지난달 같은 시간 평균, 오늘 매출은 지난달 같은 요일 평균, 이번 달 매출은 지난달 전체 매출과 비교합니다.",
-    description: "같은 조건의 과거 기준과 비교해 지금 매출 흐름이 강한지 약한지 빠르게 판단할 수 있도록 정리한 영역입니다.",
+    description:
+      "같은 조건의 과거 기준과 비교해 지금 매출 흐름이 강한지 약한지 빠르게 판단할 수 있도록 정리한 영역입니다.",
   },
   "page:settings_agents": {
     assumptionLabel: "역할 및 설명",
