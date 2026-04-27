@@ -37,7 +37,7 @@ const PALETTE = [
   "#B6D86A",
   "#C99BE8",
 ];
-const PROFIT_PALETTE = ["#2d6bff", "#e2eaff"];
+const PROFIT_PALETTE = ["#76CA9B", "#ED8CC2"];
 
 const DIVERSITY_SHARE_THRESHOLD = 0.05;
 const DIVERSITY_TARGET_COUNT = 10;
@@ -111,14 +111,14 @@ type CustomTreemapContentProps = {
 
 const CustomTreemapContent = (props: CustomTreemapContentProps) => {
   const { x = 0, y = 0, width = 0, height = 0, name = "", fill, percent } = props;
-  if (width < 30 || height < 20) return null;
+  if (width <= 0 || height <= 0) return null;
   const showLabel = width > 60 && height > 30;
   const showPercent = typeof percent === "number" && width > 50 && height > 44;
   const labelY = showPercent ? y + height / 2 - 8 : y + height / 2;
 
   return (
     <g>
-      <rect x={x} y={y} width={width} height={height} fill={fill} rx={6} ry={6} />
+      <rect x={x} y={y} width={width} height={height} fill={fill ?? "#ffffff"} rx={6} ry={6} />
       {showLabel && (
         <text
           x={x + width / 2}
@@ -212,10 +212,7 @@ export const SalesV2ChartsSection = ({
           (item) => (item.sales ?? 0) / totalProductSales >= DIVERSITY_SHARE_THRESHOLD,
         ).length
       : 0;
-  const diversityScore = Math.min(
-    100,
-    Math.round((diversityCount / DIVERSITY_TARGET_COUNT) * 100),
-  );
+  const diversityScore = Math.min(100, Math.round((diversityCount / DIVERSITY_TARGET_COUNT) * 100));
   const ticketIndex = Math.max(0, Math.min(100, Math.round(summary?.avg_ticket_index ?? 0)));
   const ticketSize = Math.round(summary?.avg_ticket_size ?? 0);
 
@@ -344,7 +341,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={stackedWeekly} margin={{ top: 4, right: 8, left: -10, bottom: 40 }}>
+            <BarChart data={stackedWeekly} margin={{ top: 4, right: 8, left: -10, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis
                 dataKey="axisLabel"
@@ -489,11 +486,7 @@ export const SalesV2ChartsSection = ({
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
                 <span>{row.subject}</span>
                 {FIELD_CAPTIONS[row.captionKey] && (
-                  <InfoPopover
-                    caption={FIELD_CAPTIONS[row.captionKey]}
-                    side="top"
-                    align="left"
-                  />
+                  <InfoPopover caption={FIELD_CAPTIONS[row.captionKey]} side="top" align="left" />
                 )}
               </span>
               <span className="text-xs font-bold text-slate-800">
@@ -515,7 +508,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={180} className="bg-white">
               <Treemap
                 data={treemapData}
                 dataKey="size"

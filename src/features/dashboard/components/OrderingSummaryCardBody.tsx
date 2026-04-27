@@ -25,6 +25,12 @@ export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSumma
             <span className="font-bold">{suggestion.detailPrefix}</span>
             {suggestion.detailSuffix}
           </p>
+          <Link
+            to={suggestion.ctaPath}
+            className="mt-4 flex h-10 w-full items-center justify-center rounded-[8px] bg-[linear-gradient(90deg,#FF6E00_0%,#DA1884_100%)] text-sm font-bold text-white"
+          >
+            자세히 보기
+          </Link>
         </div>
       </SummaryCardSection>
       <SummaryCardSection
