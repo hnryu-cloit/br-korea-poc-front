@@ -19,6 +19,7 @@ import type {
 } from "@/commons/components/chat/floating-ai-chat-utils";
 import { dedupeStrings } from "@/commons/utils/chat-text-utils";
 import { cn } from "@/lib/utils";
+import { MarkdownAnswer } from "./MarkdownAnswer";
 
 export type FloatingAiChatSuggestion = {
   label: string;
@@ -261,11 +262,11 @@ export function AnswerEvidenceAccordion({
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#653819]">근거</p>
-            <ul className="space-y-2">
-              {evidence.slice(0, 1).map((item, index) => (
+            <ul className="flex flex-col gap-1 bg-[#FFF9F4] px-3 py-2 rounded-xl">
+              {evidence.map((item, index) => (
                 <li
                   key={`${item}-${index}`}
-                  className="rounded-xl bg-[#FFF9F4] px-3 py-2 text-sm leading-6 text-[#41352E]"
+                  className="text-sm leading-6 text-[#41352E] list-disc list-inside"
                 >
                   {item}
                 </li>
@@ -401,18 +402,18 @@ function ChatEmptyState({
           </p>
         </div>
 
+        <AnswerEvidenceAccordion
+          icon={getSectionIcon("근거 보기")}
+          evidence={answer.evidence}
+          agentTrace={answer.agentTrace}
+        />
+
         <FollowUpQuestionList
           title="추천 질문"
           questions={followUps}
           onQuestionClick={onQuestionClick}
           disabled={disabled}
           compact
-        />
-
-        <AnswerEvidenceAccordion
-          icon={getSectionIcon("근거 보기")}
-          evidence={answer.evidence}
-          agentTrace={answer.agentTrace}
         />
       </div>
     </ResponseCardShell>
@@ -488,18 +489,19 @@ function ChatSuccessState({
       <div className="space-y-4">
         <div className="space-y-2">
           <SectionTitle title="답변 요약" description="API 응답에서 정규화한 본문입니다." />
-          <p className="whitespace-pre-wrap rounded-[8px] bg-[#FFF1E6] px-4 py-3 text-sm leading-7 text-brown-700">
+          {/* <p className="whitespace-pre-wrap rounded-[8px] bg-[#FFF1E6] px-4 py-3 text-sm leading-7 text-brown-700">
             {answer.text}
-          </p>
+          </p> */}
+          <MarkdownAnswer text={answer.text} />
         </div>
-
-        <AnswerActionList actions={answer.actions} />
 
         <AnswerEvidenceAccordion
           icon={getSectionIcon("근거 보기")}
           evidence={answer.evidence}
           agentTrace={answer.agentTrace}
         />
+
+        <AnswerActionList actions={answer.actions} />
 
         <FollowUpQuestionList
           title="이어서 물어보기"
