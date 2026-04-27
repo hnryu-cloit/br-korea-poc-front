@@ -155,7 +155,7 @@ export function FloatingAiChat() {
   }, [sessionKey]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (isOpen) return;
     historyRef.current = [];
     setMessages([]);
   }, [isOpen]);
