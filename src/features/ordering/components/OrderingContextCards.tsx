@@ -15,7 +15,7 @@ interface Props {
 }
 
 function formatWeather(weather?: OrderingWeather | null) {
-  if (!weather) return "-";
+  if (!weather) return "";
 
   const maxTemperature =
     weather.max_temperature_c === null || weather.max_temperature_c === undefined
