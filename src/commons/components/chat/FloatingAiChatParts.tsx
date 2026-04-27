@@ -3,6 +3,7 @@ import {
   ChevronDown,
   ClipboardList,
   GraduationCap,
+  MessageCircleQuestion,
   ScrollText,
   SearchCheck,
   Sparkles,
@@ -11,11 +12,9 @@ import {
 import type { ReactNode, RefObject } from "react";
 
 import ai_pencil from "@/assets/ai-pencil.svg";
-import brown_donut from "@/assets/donut-brown.svg";
 import type {
   FloatingAiChatAgentTrace,
   FloatingAiChatAnswerStatus,
-  FloatingAiChatRequestContext,
   NormalizedFloatingAiChatResponse,
 } from "@/commons/components/chat/floating-ai-chat-utils";
 import { dedupeStrings } from "@/commons/utils/chat-text-utils";
@@ -75,7 +74,7 @@ export function ChatHeader({ subtitle, storeName, onClose }: ChatHeaderProps) {
 function UserMessageBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[80%] rounded-[24px] bg-[#F1F5F9] px-4 py-2.5 text-md text-brown-700">
+      <div className="max-w-[80%] rounded-[24px_24px_4px_24px] bg-[#F1F5F9] px-4 py-2.5 text-md text-brown-700">
         {text}
       </div>
     </div>
@@ -85,7 +84,7 @@ function UserMessageBubble({ text }: { text: string }) {
 function ChatLoadingBubble() {
   return (
     <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-[24px] bg-[#F1F5F9] px-4 py-3.5">
+      <div className="max-w-[80%] rounded-[24px_24px_24px_4px] bg-[#FFF1E6] px-4 py-3.5">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FFC9AC]" />
           <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FF874D] [animation-delay:120ms]" />
@@ -101,6 +100,8 @@ const iconList = [
   { title: "이렇게 다시 물어보세요", icon: <GraduationCap className="h-5 w-5 text-orange-500" /> },
   { title: "근거 보기", icon: <ScrollText className="h-5 w-5 text-orange-500" /> },
   { title: "처리 기준 보기", icon: <SearchCheck className="h-5 w-5 text-orange-500" /> },
+  { title: "바로 할 일", icon: <ClipboardList className="h-5 w-5 text-orange-500" /> },
+  { title: "이어서 물어보기", icon: <MessageCircleQuestion className="h-5 w-5 text-orange-500" /> },
 ];
 
 function SectionTitle({
@@ -115,7 +116,7 @@ function SectionTitle({
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-1.5">
-        {icon ?? <img src={brown_donut} className="w-6" alt="" />}
+        {icon ?? <Sparkles className="h-5 w-5 text-orange-500" />}
         <p className="text-md font-bold text-brown-700">{title}</p>
       </div>
       {description ? <p className="text-xs leading-5 text-[#653819]">{description}</p> : null}
@@ -210,72 +211,6 @@ export function AnswerActionList({ actions }: { actions: string[] }) {
           </div>
         ))}
       </div>
-    </section>
-  );
-}
-
-export function AnswerContextMeta({
-  requestContext,
-  responseContext,
-  agentTrace,
-}: {
-  requestContext: FloatingAiChatRequestContext;
-  responseContext: NormalizedFloatingAiChatResponse["responseContext"];
-  agentTrace: FloatingAiChatAgentTrace;
-}) {
-  const items = [
-    { label: "점포", value: requestContext.storeName },
-    { label: "기준일", value: requestContext.businessDate },
-    { label: "기준 시간", value: requestContext.businessTime },
-    { label: "도메인", value: requestContext.domain },
-  ].filter((item) => Boolean(item.value));
-
-  if (items.length === 0 && !responseContext.storeContext && !responseContext.dataSource) {
-    return null;
-  }
-
-  return (
-    <section className="space-y-3">
-      <SectionTitle title="문맥 정보" description="답변에 반영된 요청과 계산 기준입니다." />
-      <div className="flex flex-wrap gap-2">
-        {items.map((item) => (
-          <span
-            key={item.label}
-            className="rounded-full bg-[#F8FAFC] px-3 py-1 text-[11px] font-semibold text-[#475569]"
-          >
-            {item.label}: {item.value}
-          </span>
-        ))}
-      </div>
-      <div className="grid gap-2 text-xs text-[#653819] sm:grid-cols-2">
-        {responseContext.storeContext ? (
-          <div className="rounded-xl bg-[#FFF9F4] px-3 py-2">
-            <span className="block font-semibold text-[#41352E]">매장 문맥</span>
-            <span className="mt-1 block leading-5">{responseContext.storeContext}</span>
-          </div>
-        ) : null}
-        {responseContext.dataSource ? (
-          <div className="rounded-xl bg-[#FFF9F4] px-3 py-2">
-            <span className="block font-semibold text-[#41352E]">데이터 출처</span>
-            <span className="mt-1 block leading-5">{responseContext.dataSource}</span>
-          </div>
-        ) : null}
-        {responseContext.comparisonBasis ? (
-          <div className="rounded-xl bg-[#FFF9F4] px-3 py-2">
-            <span className="block font-semibold text-[#41352E]">비교 기준</span>
-            <span className="mt-1 block leading-5">{responseContext.comparisonBasis}</span>
-          </div>
-        ) : null}
-        {responseContext.calculationDate ? (
-          <div className="rounded-xl bg-[#FFF9F4] px-3 py-2">
-            <span className="block font-semibold text-[#41352E]">계산 시점</span>
-            <span className="mt-1 block leading-5">{responseContext.calculationDate}</span>
-          </div>
-        ) : null}
-      </div>
-      {agentTrace.traceId ? (
-        <p className="text-[11px] text-slate-400">trace_id: {agentTrace.traceId}</p>
-      ) : null}
     </section>
   );
 }
@@ -474,12 +409,6 @@ function ChatEmptyState({
           compact
         />
 
-        <AnswerContextMeta
-          requestContext={answer.requestContext}
-          responseContext={answer.responseContext}
-          agentTrace={answer.agentTrace}
-        />
-
         <AnswerEvidenceAccordion
           icon={getSectionIcon("근거 보기")}
           evidence={answer.evidence}
@@ -490,13 +419,7 @@ function ChatEmptyState({
   );
 }
 
-function ChatBlockedState({
-  message,
-}: {
-  message: Extract<FloatingAiChatConversationItem, { role: "assistant" }>;
-}) {
-  const answer = message.answer;
-
+function ChatBlockedState() {
   return (
     <ResponseCardShell>
       <div className="space-y-3">
@@ -506,11 +429,6 @@ function ChatBlockedState({
             현재 질문은 답변할 수 없어요. 표현을 바꿔 다시 질문해 주세요.
           </p>
         </div>
-        <AnswerContextMeta
-          requestContext={answer.requestContext}
-          responseContext={answer.responseContext}
-          agentTrace={answer.agentTrace}
-        />
       </div>
     </ResponseCardShell>
   );
@@ -570,18 +488,12 @@ function ChatSuccessState({
       <div className="space-y-4">
         <div className="space-y-2">
           <SectionTitle title="답변 요약" description="API 응답에서 정규화한 본문입니다." />
-          <p className="whitespace-pre-wrap rounded-[8px] bg-[#F1F5F9] px-4 py-3 text-sm leading-7 text-brown-700">
-            {answer.text.length > 180 ? `${answer.text.slice(0, 180)}...` : answer.text}
+          <p className="whitespace-pre-wrap rounded-[8px] bg-[#FFF1E6] px-4 py-3 text-sm leading-7 text-brown-700">
+            {answer.text}
           </p>
         </div>
 
         <AnswerActionList actions={answer.actions} />
-
-        <AnswerContextMeta
-          requestContext={answer.requestContext}
-          responseContext={answer.responseContext}
-          agentTrace={answer.agentTrace}
-        />
 
         <AnswerEvidenceAccordion
           icon={getSectionIcon("근거 보기")}
@@ -591,6 +503,7 @@ function ChatSuccessState({
 
         <FollowUpQuestionList
           title="이어서 물어보기"
+          icon={getSectionIcon("이어서 물어보기")}
           questions={followUps}
           onQuestionClick={onQuestionClick}
           disabled={disabled}
@@ -651,7 +564,7 @@ export function ChatContent({
             disabled={isSending}
           />
         ) : message.status === "blocked" ? (
-          <ChatBlockedState key={message.id} message={message} />
+          <ChatBlockedState key={message.id} />
         ) : (
           <ChatErrorState
             key={message.id}
