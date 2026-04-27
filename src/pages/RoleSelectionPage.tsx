@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import type { DemoRole } from "@/commons/components/layout/menu";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
-import admin from "@/assets/admin.svg";
+import setting from "@/assets/setting.png";
 import manager from "@/assets/manager.svg";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -33,16 +33,12 @@ const roleCards: RoleCard[] = [
   },
   {
     role: "hq_admin",
-    title: "시스템 어드민",
+    title: "본사 관리자",
     descriptionLines: [
-      "데이터 커넥터와 품질 검증 상태를 관리하세요.\n권한, 골든 쿼리, 감사 로그를 기반으로\n안정적인 에이전트 운영 체계를 유지할 수 있습니다.",
+      "전체 매장을 모니터링하세요.\n매장별 핵심 지표를 확인하고,\n이상 시그널에 선제적으로 대응할 수 있습니다.",
     ],
     targetPath: "/settings",
-    bulletPoints: [
-      "데이터 연결·품질 검증 관리",
-      "접근 권한 및 보안 정책 제어",
-      "골든 쿼리·대화 감사 로그 운영",
-    ],
+    bulletPoints: ["시스템 현황 모니터링", "매출 시그널 감지", "설정 및 접근 제어"],
     borderColor: "#D31F8A",
   },
 ];
@@ -68,7 +64,7 @@ export function RoleSelectionPage() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
                 <img
-                  src={card.role === "store_owner" ? manager : admin}
+                  src={card.role === "store_owner" ? manager : setting}
                   className="h-[72px] w-[72px]"
                 />
                 <h1 className="text-[30px] font-bold leading-[1.33] text-brown-700">
