@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import aiPencilIcon from "@/assets/ai-pencil.svg";
 import { SummaryCardListItem } from "@/features/dashboard/components/SummaryCardListItem";
 import { SummaryCardSection } from "@/features/dashboard/components/SummaryCardSection";
@@ -6,14 +8,13 @@ import {
   buildOrderingDeadlineDescription,
   buildOrderingSummarySuggestion,
 } from "@/features/dashboard/utils/summary-card";
-import { Link } from "react-router-dom";
 
 export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSummaryCard }) {
   const suggestion = buildOrderingSummarySuggestion(card);
 
   return (
     <div className="flex flex-col gap-6">
-      <SummaryCardSection title="AI 스마트 발주 추천">
+      <SummaryCardSection title="AI 발주 추천" captionKey="dashboard:ordering_ai_basis">
         <div className="rounded-[8px] border border-[#FFB38F] bg-[#FFD9C71A] px-4 py-4">
           <div className="flex w-full items-center justify-between">
             <span className="bg-[linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] bg-clip-text text-[16px] leading-5 font-bold text-transparent">
@@ -35,6 +36,7 @@ export function OrderingSummaryCardBody({ card }: { card: DashboardOrderingSumma
       </SummaryCardSection>
       <SummaryCardSection
         title="마감 임박 상품"
+        captionKey="dashboard:ordering_deadline_products"
         action={
           <Link
             to="/ordering"

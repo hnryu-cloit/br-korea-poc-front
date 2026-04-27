@@ -13,6 +13,7 @@ export function ProductionSummaryCardBody({
   return (
     <SummaryCardSection
       title="현 시각 생산 현황"
+      captionKey="dashboard:production_risk_top5"
       action={
         <span className="text-xs text-[#314158]">
           업데이트 시간 : {updatedAt ? dayjs(updatedAt).format("HH:mm") : "-"}
@@ -25,7 +26,7 @@ export function ProductionSummaryCardBody({
             key={`${item.name}-${index}`}
             title={item.name}
             value={`${item.current_stock}개`}
-            description={`Ai 예측: 다음 1시간 동안 약 ${item.predicted_consumption_1h}개 소진 예상`}
+            description={`AI 예측: 다음 1시간 동안 약 ${item.predicted_consumption_1h}개 소진 예상`}
           />
         ))}
       </div>

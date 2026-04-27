@@ -139,7 +139,7 @@ export function SalesSummaryCardBody({ card }: { card: DashboardSalesSummaryCard
   const panels = buildSalesSummaryTrendPanels(card.sales_overview);
 
   return (
-    <SummaryCardSection title="매출 요약">
+    <SummaryCardSection title="매출 요약" captionKey="dashboard:sales_trend_summary">
       <div className="flex flex-col gap-3">
         {panels.map((panel) => (
           <SalesSummaryMetricCard key={panel.key} panel={panel} />
