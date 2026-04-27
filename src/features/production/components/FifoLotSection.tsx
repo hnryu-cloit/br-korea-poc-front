@@ -16,6 +16,7 @@ type Props = {
   onChangeLotTypes: (types: FifoLotFilterValue[]) => void;
   onChangePage: (page: number) => void;
   currentPage: number;
+  periodDescription: string;
 };
 
 type FifoLotFilterValue = Exclude<FifoLotType, undefined>;
@@ -37,6 +38,7 @@ export function FifoLotSection({
   onChangeLotTypes,
   onChangePage,
   currentPage,
+  periodDescription,
 }: Props) {
   const summary = data?.summary;
   const totalPages = data?.pagination?.total_pages ?? 1;
@@ -44,11 +46,14 @@ export function FifoLotSection({
 
   return (
     <section className="space-y-6">
-      <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1.5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <span className="inline-flex items-center gap-1.5">
           <h3 className="text-[18px] font-bold text-[#41352E]">이월 재고 FIFO 추적</h3>
           <InfoPopover caption={FIELD_CAPTIONS["fifo:section_title"]} side="bottom" align="left" />
-        </span>
+          </span>
+          <p className="text-sm text-slate-500">{periodDescription}</p>
+        </div>
 
         <CheckboxFilterGroup
           options={LOT_TYPE_TABS}
@@ -202,6 +207,7 @@ export function FifoLotSection({
       {!!data?.items.length && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onChangePage={onChangePage} />
       )}
+
     </section>
   );
 }

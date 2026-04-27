@@ -1,4 +1,5 @@
 import { useState } from "react";
+import dayjs from "dayjs";
 import { PAGE_CAPTIONS } from "@/commons/constants/field-captions";
 import { FifoLotSection } from "@/features/production/components/FifoLotSection";
 import { ProductionInventoryStatusSection } from "@/features/production/components/ProductionInventoryStatusSection";
@@ -20,6 +21,23 @@ const INVENTORY_STATUS_CODE_MAP: Record<InventoryStatusItem["status"], Inventory
   };
 const FIFO_LOT_FILTERS: Exclude<FifoLotType, undefined>[] = ["production", "delivery"];
 
+function buildFifoPeriodDescription(referenceDate: string) {
+  const targetDate = dayjs(referenceDate);
+  if (!targetDate.isValid()) {
+    return "";
+  }
+
+  const monthStart = targetDate.startOf("month");
+  const previousDay = targetDate.subtract(1, "day");
+  const formattedReferenceDate = targetDate.format("YYYY-MM-DD");
+
+  if (previousDay.isBefore(monthStart, "day")) {
+    return `조회 기간 기준: ${formattedReferenceDate} 기준 당월 누적 대상이 없어 0건으로 표시됩니다.`;
+  }
+
+  return `조회 기간 기준: ${monthStart.format("YYYY-MM-DD")} ~ ${previousDay.format("YYYY-MM-DD")} (기준일 ${formattedReferenceDate} 전일까지 누적)`;
+}
+
 export function ProductionInventoryDiagnosisScreen() {
   const { user, referenceDateTime } = useDemoSession();
   const storeId = user.storeId ?? "";
@@ -36,6 +54,7 @@ export function ProductionInventoryDiagnosisScreen() {
   );
   const fifoLotType = selectedFifoLotTypes.length === 1 ? selectedFifoLotTypes[0] : undefined;
   const fifoReferenceDate = referenceDateTime.slice(0, 10);
+  const fifoPeriodDescription = buildFifoPeriodDescription(fifoReferenceDate);
   const {
     data: inventoryData,
     isLoading: inventoryLoading,
@@ -89,6 +108,7 @@ export function ProductionInventoryDiagnosisScreen() {
         onChangeLotTypes={handleLotTypesChange}
         onChangePage={setFifoPage}
         currentPage={fifoPage}
+        periodDescription={fifoPeriodDescription}
       />
     </div>
   );

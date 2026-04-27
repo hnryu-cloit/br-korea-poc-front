@@ -8,6 +8,14 @@ import { formatCountWithUnit } from "@/commons/utils/format-count";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 import dayjs from "dayjs";
 
+function formatOptionTitle(title: string) {
+  const trimmedTitle = title.trim();
+  if (!trimmedTitle || trimmedTitle.endsWith("참고")) {
+    return trimmedTitle;
+  }
+  return `${trimmedTitle} 참고`;
+}
+
 function formatOptionBasis(basis: string) {
   const parsed = dayjs(basis);
   if (parsed.isValid()) {
@@ -59,7 +67,7 @@ export function OrderingOptionCard({
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <p className="text-xl font-bold text-brown-700">{option.title}</p>
+            <p className="text-xl font-bold text-brown-700">{formatOptionTitle(option.title)}</p>
             <p className="text-md text-brown-700">({formatOptionBasis(option.basis)})</p>
           </div>
         </div>
