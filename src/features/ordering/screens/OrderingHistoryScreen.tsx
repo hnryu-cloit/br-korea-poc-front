@@ -133,9 +133,6 @@ export function OrderingHistoryScreen() {
   const { referenceDateTime } = useDemoSession();
 
   return (
-    <OrderingHistoryScreenContent
-      key={referenceDateTime}
-      referenceDateTime={referenceDateTime}
-    />
+    <OrderingHistoryScreenContent key={referenceDateTime} referenceDateTime={referenceDateTime} />
   );
 }

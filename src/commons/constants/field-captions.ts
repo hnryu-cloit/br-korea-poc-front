@@ -261,14 +261,17 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // FIFO 소진 수량
   "fifo:consumed_qty": {
-    assumption: "해당 월 1일~기준일 전일까지 FIFO 순서로 판매·출고된 수량입니다. sold_out 상태 Lot 포함.",
+    assumption:
+      "해당 월 1일~기준일 전일까지 FIFO 순서로 판매·출고된 수량입니다. sold_out 상태 Lot 포함.",
     formula: "소진 수량 = 해당 월 1일~기준일 전일까지 FIFO 순서로 차감된 수량의 합계",
     description: "해당 월 누적 이월 재고 대상 Lot에서 FIFO 차감으로 소진된 수량 합계입니다.",
   },
   "fifo:active_remaining": {
-    assumption: "기준일 전일까지 남아 있는 active 상태 Lot만 포함합니다. sold_out·expired Lot은 제외합니다.",
+    assumption:
+      "기준일 전일까지 남아 있는 active 상태 Lot만 포함합니다. sold_out·expired Lot은 제외합니다.",
     formula: "잔여 수량 = 기준일 전일까지 유통기한이 남아 있는 Lot 잔량의 합계",
-    description: "해당 월 누적 이월 재고 중 기준일 전일까지 유통기한이 남아 있는 활성 Lot의 잔여 수량 합계입니다.",
+    description:
+      "해당 월 누적 이월 재고 중 기준일 전일까지 유통기한이 남아 있는 활성 Lot의 잔여 수량 합계입니다.",
   },
   "fifo:wasted_qty": {
     assumption: "해당 월 1일~기준일 전일까지 유통기한 만료로 expired 처리된 Lot 수량만 집계합니다.",
