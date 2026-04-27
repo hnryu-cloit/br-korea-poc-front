@@ -67,7 +67,7 @@ export const SalesV2HourlyChannelChart = ({
     <article className="rounded-[6px] border border-border bg-white px-5 py-5 shadow-[0_12px_30px_rgba(16,32,51,0.06)]">
       <div className="mb-4 flex items-center gap-2">
         <p className="text-sm font-bold text-slate-800">시간대별 판매건수 · 채널 매출</p>
-        {caption && <InfoPopover caption={caption} side="bottom" align="left" />}
+        {caption && <InfoPopover caption={caption} side="top" align="left" />}
         <p className="text-xs text-slate-400">
           {dateFrom} ~ {dateTo} · {BUSINESS_OPEN_HOUR}~{BUSINESS_CLOSE_HOUR}시 집계
         </p>
