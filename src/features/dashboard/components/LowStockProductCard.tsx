@@ -1,3 +1,5 @@
+import { InfoPopover } from "@/commons/components/info/InfoPopover";
+import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { DashboardAlertCard } from "@/features/dashboard/components/DashboardAlertCard";
 import type { DashboardLowStockProduct } from "@/features/dashboard/types/dashboard";
 
@@ -11,7 +13,14 @@ export const LowStockProductCard = ({ products }: Props) => {
   return (
     <DashboardAlertCard actionLabel="상품 자세히 보기" actionPath={actionPath}>
       <>
-        <span className="text-md font-bold text-[#0F172B]">품절 임박 상품</span>
+        <div className="flex items-center gap-1">
+          <span className="text-md font-bold text-[#0F172B]">품절 임박 상품</span>
+          <InfoPopover
+            caption={FIELD_CAPTIONS["dashboard:low_stock_products"]}
+            side="bottom"
+            align="left"
+          />
+        </div>
         <div className="flex min-w-0 w-full items-center gap-[8px] overflow-hidden">
           <span className="shrink-0 text-[24px] font-semibold text-orange-500">
             {products.length}개

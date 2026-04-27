@@ -371,13 +371,44 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 대시보드 카드
   "dashboard:production_summary": {
-    description: "현재 시점 기준 생산 위험 품목 수와 주요 생산 지표를 요약합니다.",
+    assumption:
+      "생산 카드는 현재 시점 기준으로 위험도가 높은 품목과 다음 1시간 예상 소진 정보를 함께 요약합니다.",
+    description: "즉시 생산 판단이 필요한 품목을 빠르게 확인하는 카드입니다.",
   },
   "dashboard:sales_summary": {
-    description: "오늘 매출 현황과 전일 대비 증감을 보여줍니다.",
+    assumption:
+      "매출 카드는 현재 시간, 오늘, 이번 달의 매출을 각각 성격이 맞는 과거 기준과 비교합니다.",
+    description: "같은 조건의 과거 흐름과 비교해 현재 매출 강도를 빠르게 확인하는 카드입니다.",
   },
   "dashboard:ordering_summary": {
-    description: "AI 발주 추천 대상과 마감 임박 품목을 요약합니다.",
+    assumption:
+      "주문 관리 카드는 추천 발주안 3종의 기준과 발주 마감이 가까운 품목을 함께 요약합니다.",
+    description: "주문 판단에 바로 필요한 추천 기준과 마감 임박 품목을 한 장에서 확인하는 카드입니다.",
+  },
+  "dashboard:low_stock_products": {
+    assumption:
+      "현재 생산 현황에서 상태가 '위험' 또는 '주의'로 분류된 품목만 포함합니다. 숫자는 해당 품목 수이며, 각 품목 옆 숫자는 지금 판매 가능한 재고 수량입니다.",
+    description: "생산 보강이 먼저 필요한 품목이 몇 개인지와 현재 남아 있는 수량을 보여줍니다.",
+  },
+  "dashboard:production_risk_top5": {
+    assumption:
+      "현재 생산 현황에서 '위험'을 먼저, 그다음 '주의'를 우선으로 정렬한 뒤 현재 재고가 적은 순서대로 5개 품목을 보여줍니다.",
+    description: "지금 가장 먼저 확인해야 할 생산 위험 품목 5개를 우선순위대로 보여줍니다.",
+  },
+  "dashboard:ordering_ai_basis": {
+    assumption:
+      "추천 발주안은 지난주 같은 요일, 2주 전 같은 요일, 지난달 같은 요일을 기준으로 만들며, 카드에는 그중 우선 추천된 기준 한 가지를 요약해 보여줍니다.",
+    description: "주문 관리 카드에서 어떤 기준의 발주안을 대표로 보여주는지 설명합니다.",
+  },
+  "dashboard:ordering_deadline_products": {
+    assumption:
+      "발주 마감 시각이 잡혀 있는 품목 중 현재 시점 기준으로 마감이 가까운 품목을 최대 3개까지 보여줍니다.",
+    description: "지금 바로 발주 여부를 결정해야 하는 품목을 빠르게 확인하는 영역입니다.",
+  },
+  "dashboard:sales_trend_summary": {
+    assumption:
+      "카드는 현재 시간 매출, 오늘 매출, 이번 달 매출을 각각 비교 기준과 함께 보여줍니다. 현재 시간 매출은 지난달 같은 시간 평균, 오늘 매출은 지난달 같은 요일 평균, 이번 달 매출은 지난달 전체 매출과 비교합니다.",
+    description: "같은 조건의 과거 기준과 비교해 지금 매출 흐름이 강한지 약한지 빠르게 판단할 수 있도록 정리한 영역입니다.",
   },
   "page:settings_agents": {
     assumptionLabel: "역할 및 설명",
@@ -439,6 +470,8 @@ export const FIELD_CAPTIONS: Record<string, FieldCaption> = {
   },
   // 총 손실 금액
   "production:waste_total_amount": {
-    description: "소수점 반올림한 금액입니다.",
+    assumption:
+      "기준일 전날까지 최근 30일 동안 발생한 품목별 폐기 손실 금액을 모두 합산해 보여줍니다. 품목별 손실 금액은 폐기 수량에 평균 판매가를 곱한 추정치입니다.",
+    description: "최근 30일 폐기로 인해 발생한 추정 손실 금액의 합계입니다.",
   },
 };
