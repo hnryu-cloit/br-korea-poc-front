@@ -26,7 +26,7 @@ export function FloatingScrollTopButton() {
       type="button"
       aria-label="페이지 최상단으로 이동"
       onClick={() => scrollWindowToTop("smooth")}
-      className="fixed bottom-25 right-10 z-40 inline-flex h-[56px] w-[56px] items-center justify-center rounded-full border-[3px] border-[#FFB38F] bg-[#FFD9C780] shadow-[0_6px_18px_rgba(16,32,51,0.08)]"
+      className="fixed bottom-30 right-10 z-40 inline-flex h-[56px] w-[56px] items-center justify-center rounded-full border-[3px] border-[#FFB38F] bg-[#FFD9C780] shadow-[0_6px_18px_rgba(16,32,51,0.08)]"
     >
       <ChevronUp className="h-8 w-8 text-orange-500" strokeWidth={2.25} />
     </button>
