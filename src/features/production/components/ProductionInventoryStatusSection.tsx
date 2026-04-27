@@ -98,7 +98,14 @@ export function ProductionInventoryStatusSection(props: Props) {
           <ProductionInventoryStatusSkeleton />
         ) : (
           <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
-            <table className="w-full min-w-[1080px] whitespace-nowrap text-sm">
+            <table className="w-full min-w-[1080px] table-fixed whitespace-nowrap text-sm">
+              <colgroup>
+                <col className="w-[42%]" />
+                <col className="w-[18%]" />
+                <col className="w-[14%]" />
+                <col className="w-[14%]" />
+                <col className="w-[12%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
                   <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
@@ -177,9 +184,9 @@ export function ProductionInventoryStatusSection(props: Props) {
                                 event.currentTarget.src = ProductDefaultImage;
                               }}
                             />
-                            <div className="min-w-0">
-                              <div className="">{sku.item_nm}</div>
-                            </div>
+                          <div className="min-w-0">
+                            <div className="truncate">{sku.item_nm}</div>
+                          </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">

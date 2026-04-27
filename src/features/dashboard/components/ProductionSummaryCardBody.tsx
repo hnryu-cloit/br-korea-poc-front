@@ -12,7 +12,7 @@ export function ProductionSummaryCardBody({
 }) {
   return (
     <SummaryCardSection
-      title="대표 메뉴 TOP 5 상황"
+      title="현 시각 생산 현황"
       action={
         <span className="text-xs text-[#314158]">
           업데이트 시간 : {updatedAt ? dayjs(updatedAt).format("HH:mm") : "-"}

@@ -28,8 +28,15 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto border border-[#DADADA rounded-[4px]">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-[4px] border border-[#DADADA]">
+            <table className="w-full min-w-[900px] table-fixed text-sm">
+              <colgroup>
+                <col className="w-[18%]" />
+                <col className="w-[46%]" />
+                <col className="w-[12%]" />
+                <col className="w-[12%]" />
+                <col className="w-[12%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C7]/50">
                   {(["납품일", "품목명", "발주량", "확정량"] as const).map((header) => (
@@ -64,7 +71,7 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
                     <tr key={idx} className="border-b border-slate-50 last:border-0">
                       <td className="py-1 px-4 text-brown-700">{item.dlv_dt ?? "-"}</td>
                       <td className="py-1 px-4 text-brown-700">
-                        <span>{item.item_nm}</span>
+                        <span className="block truncate">{item.item_nm}</span>
                       </td>
                       <td className="py-1 px-4 text-brown-700">
                         {item.ord_qty != null ? item.ord_qty.toLocaleString() : "-"}
