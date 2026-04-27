@@ -211,8 +211,6 @@ export const SalesV2ChartsSection = ({
     0,
     Math.min(100, Math.round(summary?.core_avg_ticket_index ?? summary?.avg_ticket_index ?? 0)),
   );
-  const ticketSize = Math.round(summary?.core_avg_ticket_size ?? summary?.avg_ticket_size ?? 0);
-
   const indicatorRows = [
     {
       subject: "마진율",
@@ -241,7 +239,7 @@ export const SalesV2ChartsSection = ({
     {
       subject: "평균 객단가",
       score: ticketIndex,
-      displayValue: `${ticketIndex}%`,
+      displayValue: `${ticketIndex}점`,
       captionKey: "sales:avg_ticket_index",
     },
   ];
@@ -467,7 +465,7 @@ export const SalesV2ChartsSection = ({
             />
             <Tooltip
               formatter={(value, _name, payload) => [
-                payload?.payload?.displayValue ?? `${Number(value ?? 0).toFixed(1)}%`,
+                Math.round(Number(value ?? 0)),
                 payload?.payload?.subject ?? "지표",
               ]}
               contentStyle={customTooltipStyle}
