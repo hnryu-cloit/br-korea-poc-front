@@ -52,7 +52,9 @@ export function ProductionInventoryDiagnosisScreen() {
   const inventoryStatusFilters = selectedStatuses.map(
     (status) => INVENTORY_STATUS_CODE_MAP[status],
   );
-  const fifoLotType = selectedFifoLotTypes.length === 1 ? selectedFifoLotTypes[0] : undefined;
+  const effectiveFifoLotTypes =
+    selectedFifoLotTypes.length === 0 ? FIFO_LOT_FILTERS : selectedFifoLotTypes;
+  const fifoLotType = effectiveFifoLotTypes.length === 1 ? effectiveFifoLotTypes[0] : undefined;
   const fifoReferenceDate = referenceDateTime.slice(0, 10);
   const fifoPeriodDescription = buildFifoPeriodDescription(fifoReferenceDate);
   const {
@@ -65,7 +67,7 @@ export function ProductionInventoryDiagnosisScreen() {
     fifoLotType,
     fifoPage,
     20,
-    selectedFifoLotTypes.length > 0,
+    true,
     fifoReferenceDate,
   );
 
@@ -104,7 +106,7 @@ export function ProductionInventoryDiagnosisScreen() {
       <FifoLotSection
         data={fifoData}
         isLoading={fifoLoading}
-        selectedLotTypes={selectedFifoLotTypes}
+        selectedLotTypes={effectiveFifoLotTypes}
         onChangeLotTypes={handleLotTypesChange}
         onChangePage={setFifoPage}
         currentPage={fifoPage}
