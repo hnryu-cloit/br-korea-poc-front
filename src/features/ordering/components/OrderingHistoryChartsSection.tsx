@@ -238,7 +238,7 @@ export function OrderingHistoryChartsSection({
             <BarChart
               data={changedBar}
               layout="vertical"
-              margin={{ top: 4, right: 24, left: 4, bottom: 0 }}
+              margin={{ top: 4, right: 24, left: 20, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
               <XAxis

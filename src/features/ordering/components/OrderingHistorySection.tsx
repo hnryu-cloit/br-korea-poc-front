@@ -55,7 +55,7 @@ export function OrderingHistorySection({ data, isLoading, currentPage, onChangeP
                       <InfoPopover
                         caption={FIELD_CAPTIONS["ordering:gap_rate"]}
                         side="bottom"
-                        align="left"
+                        align="right"
                       />
                     </span>
                   </th>

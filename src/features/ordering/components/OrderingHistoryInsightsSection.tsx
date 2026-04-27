@@ -47,10 +47,10 @@ export function OrderingHistoryInsightsSection({ data, isLoading }: Props) {
                       key={anomaly.id}
                       className="rounded-[8px] border border-[#DADADA] bg-white p-4 flex flex-col gap-2"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-5">
                         <p className="text-md font-bold text-[#2E2520]">{anomaly.message}</p>
                         <span
-                          className={`inline-block rounded-[24px] px-2 py-1 text-sm font-bold border ${badgeCls}`}
+                          className={`inline-block rounded-[24px] px-2 py-1 text-sm font-bold border whitespace-nowrap ${badgeCls}`}
                         >
                           {SEVERITY_LABEL[anomaly.severity] ?? anomaly.severity}
                         </span>
