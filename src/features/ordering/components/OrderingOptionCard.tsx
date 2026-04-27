@@ -26,10 +26,12 @@ function formatOptionBasis(basis: string) {
 
 export function OrderingOptionCard({
   option,
+  reasoningText,
   selected,
   onSelect,
 }: {
   option: OrderingOption;
+  reasoningText: string;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -112,7 +114,7 @@ export function OrderingOptionCard({
             </span>
             <img src={aiPencilIcon} alt="" className="h-5 w-5 shrink-0" />
           </div>
-          <p className=" text-sm leading-5 text-[#41352E] px-2">{option.reasoning_text}</p>
+          <p className=" text-sm leading-5 text-[#41352E] px-2">{reasoningText}</p>
         </div>
       </div>
       {isItemsModalOpen ? (

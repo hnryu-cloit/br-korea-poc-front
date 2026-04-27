@@ -1,6 +1,9 @@
+import { useMemo } from "react";
+
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
 import { OrderingOptionCard } from "@/features/ordering/components/OrderingOptionCard";
+import { getRandomOrderingReasoningText } from "@/features/ordering/constants/ordering-reasoning";
 import type { OrderingOption } from "@/features/ordering/types/ordering";
 
 export function OrderingOptionsSection({
@@ -18,6 +21,14 @@ export function OrderingOptionsSection({
   isSubmitting?: boolean;
   errorMessage?: string | null;
 }) {
+  const randomizedReasoningTexts = useMemo(
+    () =>
+      Object.fromEntries(
+        options.map((option) => [option.option_id, getRandomOrderingReasoningText(option)]),
+      ),
+    [options],
+  );
+
   return (
     <section className="flex flex-col items-center">
       <div className="flex flex-col items-center gap-5">
@@ -47,6 +58,7 @@ export function OrderingOptionsSection({
             <OrderingOptionCard
               key={option.option_id}
               option={option}
+              reasoningText={randomizedReasoningTexts[option.option_id] ?? option.reasoning_text}
               selected={selectedOptionId === option.option_id}
               onSelect={() => onSelectOption(option.option_id)}
             />
