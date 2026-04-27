@@ -184,9 +184,9 @@ export function ProductionInventoryStatusSection(props: Props) {
                                 event.currentTarget.src = ProductDefaultImage;
                               }}
                             />
-                          <div className="min-w-0">
-                            <div className="truncate">{sku.item_nm}</div>
-                          </div>
+                            <div className="min-w-0">
+                              <div className="truncate">{sku.item_nm}</div>
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
