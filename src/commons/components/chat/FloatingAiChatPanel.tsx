@@ -59,7 +59,7 @@ export function FloatingAiChatPanel({
 
   return (
     <div
-      className="fixed bottom-24 right-6 z-50 flex h-[700px] w-[800px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] border border-[#99115C] border-3 bg-gradient-to-r from-[#FFECE3] to-[#DC8AB7] p-3 shadow-[0_24px_60px_rgba(31,77,187,0.2)]"
+      className="fixed bottom-24 right-6 z-50 flex h-[700px] w-[800px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[28px] border-[3px] border-[#FF671F] bg-[linear-gradient(90deg,#FFECE3_0%,#FFC6AB_100%)] p-3 shadow-[0_0_24px_0_rgba(50,56,62,0.20)]"
       style={{ maxHeight: "calc(100vh - 120px)" }}
     >
       <ChatHeader subtitle={guide.subtitle} storeName={storeName} onClose={onClose} />

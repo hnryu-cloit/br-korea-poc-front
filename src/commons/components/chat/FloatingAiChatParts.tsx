@@ -51,7 +51,7 @@ export function ChatHeader({ subtitle, storeName, onClose }: ChatHeaderProps) {
     <div className="shrink-0 px-3 py-4">
       <div className="flex items-start justify-between gap-4 px-3">
         <div className="flex flex-col gap-3">
-          <p className="text-[#99115C] font-bold text-md">안녕하세요, {storeName} 점주님</p>
+          <p className="text-[#B34816] font-bold text-md">안녕하세요, {storeName} 점주님</p>
           <div className="flex items-center gap-3">
             <img src={ai_pencil} className="w-[28px]" alt="" />
             <div className="min-w-0">
@@ -87,9 +87,9 @@ function ChatLoadingBubble() {
     <div className="flex justify-start">
       <div className="max-w-[80%] rounded-[24px] bg-[#F1F5F9] px-4 py-3.5">
         <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#DA1884]" />
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FF6E00] [animation-delay:120ms]" />
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#DA1884] [animation-delay:240ms]" />
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FFC9AC]" />
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FF874D] [animation-delay:120ms]" />
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#FF671F] [animation-delay:240ms]" />
         </div>
         <p className="mt-3 text-md text-brown-700">답변을 불러오는 중입니다.</p>
       </div>
@@ -146,7 +146,7 @@ function QuestionChipButton({
       onClick={() => onClick(prompt)}
       disabled={disabled}
       className={cn(
-        "group flex w-full items-center gap-3 rounded-[16px] border-[2px] border-transparent bg-[linear-gradient(#fff,#fff),linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] [background-origin:border-box] [background-clip:padding-box,border-box] px-2 text-left text-sm font-bold text-[#DA1884] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60",
+        "group flex w-full items-center gap-3 rounded-[16px] border-[2px] border-transparent bg-[linear-gradient(#fff,#fff),linear-gradient(180deg,#FF6E00_0%,#DA1884_100%)] [background-origin:border-box] [background-clip:padding-box,border-box] px-2 text-left text-sm font-bold text-[#FF671F] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60",
         compact ? "py-1.5" : "py-2",
       )}
     >
@@ -173,7 +173,7 @@ export function ChatInitialSuggestions({
   if (suggestions.length === 0) return null;
 
   return (
-    <section className="rounded-[16px] border border-[#F7E6D7] bg-white p-4">
+    <section className="bg-white p-2">
       <SectionTitle
         title="현재 화면 데이터를 바탕으로 빠르게 질문할 수 있어요."
         description="궁금한 내용을 선택하거나 직접 입력해 주세요."
