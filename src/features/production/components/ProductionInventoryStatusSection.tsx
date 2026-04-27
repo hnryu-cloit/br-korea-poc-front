@@ -25,16 +25,6 @@ const STATUS_STYLE: Record<InventoryStatusItem["status"], string> = {
   적정: "bg-white text-[#2B7FFF] border border-[#2B7FFF]",
 };
 
-const ITEM_GROUP_BADGE_STYLE: Record<string, string> = {
-  도넛: "border border-pink-200 bg-pink-50 text-pink-700",
-  베이커리: "border border-orange-200 bg-orange-50 text-orange-700",
-  커피: "border border-brown-200 bg-brown-50 text-brown-700",
-  음료: "border border-blue-200 bg-blue-50 text-blue-700",
-  기타: "border border-slate-200 bg-slate-50 text-slate-600",
-  "원재료/소모품": "border border-emerald-200 bg-emerald-50 text-emerald-700",
-  "RTD/패키지": "border border-purple-200 bg-purple-50 text-purple-700",
-};
-
 const STATUS_FILTER_OPTIONS: {
   label: string;
   value: InventoryStatusItem["status"];
@@ -68,10 +58,6 @@ function resolveImageUrl(imageUrl?: string | null): string {
   return `${API_BASE_URL}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
 }
 
-function getItemGroupBadgeStyle(itemGroup: string): string {
-  return ITEM_GROUP_BADGE_STYLE[itemGroup] ?? "border border-slate-200 bg-slate-50 text-slate-600";
-}
-
 export function ProductionInventoryStatusSection(props: Props) {
   const {
     data,
@@ -100,19 +86,15 @@ export function ProductionInventoryStatusSection(props: Props) {
           <div className="overflow-x-auto border border-[#DADADA] rounded-[4px]">
             <table className="w-full min-w-[1080px] table-fixed whitespace-nowrap text-sm">
               <colgroup>
-                <col className="w-[42%]" />
+                <col className="w-[52%]" />
                 <col className="w-[18%]" />
+                <col className="w-[16%]" />
                 <col className="w-[14%]" />
-                <col className="w-[14%]" />
-                <col className="w-[12%]" />
               </colgroup>
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
                   <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
                     품목명
-                  </th>
-                  <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-left">
-                    상품 카테고리
                   </th>
                   <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                     <span className="inline-flex items-center gap-1">
@@ -150,7 +132,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                 {isError ? (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={4}
                       className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                     >
                       재고 현황 데이터를 불러오는데 문제가 발생했습니다.
@@ -159,7 +141,7 @@ export function ProductionInventoryStatusSection(props: Props) {
                 ) : data?.items.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={4}
                       className="bg-white px-6 py-16 text-center text-sm text-brown-700"
                     >
                       표시할 재고 현황 데이터가 없습니다.
@@ -188,19 +170,6 @@ export function ProductionInventoryStatusSection(props: Props) {
                               <div className="truncate">{sku.item_nm}</div>
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {sku.item_group ? (
-                            <span
-                              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getItemGroupBadgeStyle(
-                                sku.item_group,
-                              )}`}
-                            >
-                              {sku.item_group}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-slate-400">-</span>
-                          )}
                         </td>
                         <td className="px-6 py-4 text-right">
                           {sku.total_orderable.toLocaleString("ko-KR")}개
