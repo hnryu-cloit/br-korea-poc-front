@@ -1,8 +1,7 @@
-import dayjs from "dayjs";
-
 import { SummaryCardListItem } from "@/features/dashboard/components/SummaryCardListItem";
 import { SummaryCardSection } from "@/features/dashboard/components/SummaryCardSection";
 import type { DashboardProductionSummaryItem } from "@/features/dashboard/types/dashboard";
+import dayjs from "dayjs";
 
 export function ProductionSummaryCardBody({
   items,
@@ -13,7 +12,7 @@ export function ProductionSummaryCardBody({
 }) {
   return (
     <SummaryCardSection
-      title="위험 메뉴 TOP 5 현황"
+      title="현 시각 생산 현황"
       captionKey="dashboard:production_risk_top5"
       action={
         <span className="text-xs text-[#314158]">

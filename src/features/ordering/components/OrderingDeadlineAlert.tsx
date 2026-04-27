@@ -37,6 +37,11 @@ export function OrderingDeadlineAlert({
         <>
           <div className="overflow-x-auto border">
             <table className="w-full min-w-[960px] table-fixed border-collapse">
+              <colgroup>
+                <col className="w-[56%]" />
+                <col className="w-[24%]" />
+                <col className="w-[20%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-[#DADADA] bg-[#FFD9C7]/50">
                   {TABLE_HEADERS.map((header) => (
@@ -54,7 +59,9 @@ export function OrderingDeadlineAlert({
               <tbody>
                 {pagedItems.map((item) => (
                   <tr key={item.id} className="border-b border-[#D4D4D4] last:border-b-0">
-                    <td className="px-3 py-2 text-md leading-7 text-brown-700">{item.sku_name}</td>
+                    <td className="px-3 py-2 text-md leading-7 text-brown-700">
+                      <span className="block truncate">{item.sku_name}</span>
+                    </td>
                     <td className="px-3 py-2 text-md leading-7 text-brown-700">
                       {item.deadline_at}
                     </td>

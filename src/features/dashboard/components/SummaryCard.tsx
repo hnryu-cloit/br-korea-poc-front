@@ -1,5 +1,4 @@
 import { Send } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import { InfoPopover } from "@/commons/components/info/InfoPopover";
 import { FIELD_CAPTIONS } from "@/commons/constants/field-captions";
@@ -10,7 +9,6 @@ export function SummaryCard({
   icon,
   title,
   captionKey,
-  pathname,
   domain,
   recommendedQuestions,
   children,
@@ -33,12 +31,6 @@ export function SummaryCard({
           <p className="text-[18px] leading-[1.66] font-bold tracking-[-0.02em] text-brown-700">
             AI 추천 질문
           </p>
-          <Link
-            to={pathname}
-            className="inline-flex h-8 shrink-0 items-center justify-center rounded-[4px] border border-pink-500 px-3 text-[14px] font-bold text-pink-500"
-          >
-            질문 더보기
-          </Link>
         </div>
 
         <div className="mt-3 space-y-2">
