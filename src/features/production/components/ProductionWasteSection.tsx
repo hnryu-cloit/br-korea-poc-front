@@ -54,7 +54,14 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
             <thead>
               <tr className="border-b border-[#DADADA] bg-[#FFD9C780]">
                 <th className="px-4 py-2.5 text-[14px] font-bold text-[#653819] text-left">
-                  품목명
+                  <span className="inline-flex items-center gap-1">
+                    <span>품목명</span>
+                    <InfoPopover
+                      caption={FIELD_CAPTIONS["production:waste_item_name"]}
+                      side="bottom"
+                      align="start"
+                    />
+                  </span>
                 </th>
                 <th className="px-6 py-2.5 text-[14px] font-bold text-[#653819] text-right">
                   <span className="inline-flex items-center justify-end gap-1">

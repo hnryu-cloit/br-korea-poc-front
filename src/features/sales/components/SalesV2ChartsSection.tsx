@@ -39,8 +39,7 @@ const PALETTE = [
 ];
 const PROFIT_PALETTE = ["#76CA9B", "#ED8CC2"];
 
-const DIVERSITY_SHARE_THRESHOLD = 0.05;
-const DIVERSITY_TARGET_COUNT = 10;
+const DIVERSITY_SCORE_PER_MENU = 17;
 
 const fmtWon = (v: number) =>
   v >= 10_000 ? `${Math.round(v / 10_000).toLocaleString()}만` : v.toLocaleString();
@@ -198,23 +197,21 @@ export const SalesV2ChartsSection = ({
         ]
       : [];
 
+  const coreRevenue = summary?.core_revenue ?? 0;
+  const coreNetRevenue = summary?.core_net_revenue ?? 0;
+  const coreProfit = summary?.core_estimated_profit ?? 0;
   const netRatio =
-    todayRevenue > 0
-      ? Math.min(100, Math.round(((summary?.today_net_revenue ?? 0) / todayRevenue) * 100))
-      : 0;
+    coreRevenue > 0 ? Math.min(100, Math.round((coreNetRevenue / coreRevenue) * 100)) : 0;
   const profitRatio =
-    todayRevenue > 0 ? Math.min(100, Math.round((todayProfit / todayRevenue) * 100)) : 0;
-  const marginScore = Math.min(100, Math.round((summary?.avg_margin_rate ?? 0) * 100));
-  const totalProductSales = allProducts.reduce((sum, item) => sum + (item.sales ?? 0), 0);
-  const diversityCount =
-    totalProductSales > 0
-      ? allProducts.filter(
-          (item) => (item.sales ?? 0) / totalProductSales >= DIVERSITY_SHARE_THRESHOLD,
-        ).length
-      : 0;
-  const diversityScore = Math.min(100, Math.round((diversityCount / DIVERSITY_TARGET_COUNT) * 100));
-  const ticketIndex = Math.max(0, Math.min(100, Math.round(summary?.avg_ticket_index ?? 0)));
-  const ticketSize = Math.round(summary?.avg_ticket_size ?? 0);
+    coreRevenue > 0 ? Math.min(100, Math.round((coreProfit / coreRevenue) * 100)) : 0;
+  const marginScore = Math.min(100, Math.round((summary?.core_margin_rate ?? 0) * 100));
+  const diversityCount = Math.max(0, Math.round(summary?.core_menu_count ?? 0));
+  const diversityScore = Math.min(100, diversityCount * DIVERSITY_SCORE_PER_MENU);
+  const ticketIndex = Math.max(
+    0,
+    Math.min(100, Math.round(summary?.core_avg_ticket_index ?? summary?.avg_ticket_index ?? 0)),
+  );
+  const ticketSize = Math.round(summary?.core_avg_ticket_size ?? summary?.avg_ticket_size ?? 0);
 
   const indicatorRows = [
     {
@@ -244,7 +241,7 @@ export const SalesV2ChartsSection = ({
     {
       subject: "평균 객단가",
       score: ticketIndex,
-      displayValue: `${ticketSize.toLocaleString()}원`,
+      displayValue: `${ticketIndex}%`,
       captionKey: "sales:avg_ticket_index",
     },
   ];
@@ -470,7 +467,7 @@ export const SalesV2ChartsSection = ({
             />
             <Tooltip
               formatter={(value, _name, payload) => [
-                payload?.payload?.displayValue ?? `${Number(value ?? 0).toFixed(1)}점`,
+                payload?.payload?.displayValue ?? `${Number(value ?? 0).toFixed(1)}%`,
                 payload?.payload?.subject ?? "지표",
               ]}
               contentStyle={customTooltipStyle}

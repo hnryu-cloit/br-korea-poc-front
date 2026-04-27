@@ -27,6 +27,8 @@ export const orderingQueryKeys = {
     [...ORDERING_QUERY_ROOT, "selection-summary", params ?? {}] as const,
   history: (params?: OrderingHistoryParams) =>
     [...ORDERING_QUERY_ROOT, "history", params ?? {}] as const,
+  historyCharts: (params?: OrderingHistoryParams) =>
+    [...ORDERING_QUERY_ROOT, "history-charts", params ?? {}] as const,
   historyInsights: (params?: OrderingHistoryParams) =>
     [...ORDERING_QUERY_ROOT, "history-insights", params ?? {}] as const,
 };

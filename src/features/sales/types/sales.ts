@@ -333,6 +333,13 @@ export interface SalesSummaryResponse {
   avg_ticket_size: number;
   avg_ticket_index: number;
   estimated_today_profit: number;
+  core_revenue: number;
+  core_net_revenue: number;
+  core_margin_rate: number;
+  core_avg_ticket_size: number;
+  core_avg_ticket_index: number;
+  core_estimated_profit: number;
+  core_menu_count: number;
 }
 
 export type SalesPrompt = SalesPromptItem;

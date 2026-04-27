@@ -226,6 +226,22 @@ export interface OrderingHistoryInsightsResponse {
   confidence?: number | null;
 }
 
+export interface OrderingHistoryDailyTrendPoint {
+  dlv_dt: string;
+  ord_qty: number;
+  confrm_qty: number;
+}
+
+export interface OrderingHistoryManualCountPoint {
+  dlv_dt: string;
+  manual_count: number;
+}
+
+export interface OrderingHistoryChartsResponse {
+  daily_trend: OrderingHistoryDailyTrendPoint[];
+  manual_by_day: OrderingHistoryManualCountPoint[];
+}
+
 // GET /api/ordering/selections/summary
 export interface OrderingSelectionSummaryParams {
   store_id?: string; // 매장 필터

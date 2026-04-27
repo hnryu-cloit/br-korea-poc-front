@@ -12,10 +12,15 @@ import {
   YAxis,
 } from "recharts";
 
-import type { OrderingChangedItem, OrderingHistoryItem } from "@/features/ordering/types/ordering";
+import type {
+  OrderingChangedItem,
+  OrderingHistoryDailyTrendPoint,
+  OrderingHistoryManualCountPoint,
+} from "@/features/ordering/types/ordering";
 
 type Props = {
-  items: OrderingHistoryItem[];
+  dailyTrend: OrderingHistoryDailyTrendPoint[];
+  manualByDay: OrderingHistoryManualCountPoint[];
   topChangedItems: OrderingChangedItem[];
   isLoading: boolean;
   dateFrom?: string;
@@ -92,75 +97,72 @@ function enumerateDateKeys(dateFrom?: string, dateTo?: string): string[] {
 }
 
 export function OrderingHistoryChartsSection({
-  items,
+  dailyTrend,
+  manualByDay,
   topChangedItems,
   isLoading,
   dateFrom,
   dateTo,
 }: Props) {
   const rangeDateKeys = enumerateDateKeys(dateFrom, dateTo);
-  // 날짜별 발주량/확정량 집계
-  const dailyMap = new Map<string, { 발주량: number; 확정량: number }>();
-  for (const item of items) {
-    const day = normalizeDateKey(item.dlv_dt);
-    if (!day) continue;
-    const prev = dailyMap.get(day) ?? { 발주량: 0, 확정량: 0 };
-    dailyMap.set(day, {
-      발주량: prev.발주량 + (item.ord_qty ?? 0),
-      확정량: prev.확정량 + (item.confrm_qty ?? 0),
-    });
-  }
-  const dailyTrend =
+  const dailyMap = new Map(
+    dailyTrend
+      .map((item) => {
+        const day = normalizeDateKey(item.dlv_dt);
+        return day
+          ? [
+              day,
+              {
+                발주량: item.ord_qty ?? 0,
+                확정량: item.confrm_qty ?? 0,
+              },
+            ]
+          : null;
+      })
+      .filter((entry): entry is [string, { 발주량: number; 확정량: number }] => entry !== null),
+  );
+  const manualMap = new Map(
+    manualByDay
+      .map((item) => {
+        const day = normalizeDateKey(item.dlv_dt);
+        return day ? [day, { 수동: item.manual_count ?? 0 }] : null;
+      })
+      .filter((entry): entry is [string, { 수동: number }] => entry !== null),
+  );
+
+  const dailyTrendData =
     rangeDateKeys.length > 0
-      ? rangeDateKeys.map((day) => {
-          const daily = dailyMap.get(day) ?? { 발주량: 0, 확정량: 0 };
-          return { day, ...daily };
-        })
+      ? rangeDateKeys.map((day) => ({ day, ...(dailyMap.get(day) ?? { 발주량: 0, 확정량: 0 }) }))
       : Array.from(dailyMap.entries())
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([day, v]) => ({ day, ...v }));
+          .map(([day, value]) => ({ day, ...value }));
 
-  // 날짜별 수동 건수
-  const typeMap = new Map<string, { 수동: number }>();
-  for (const item of items) {
-    const day = normalizeDateKey(item.dlv_dt);
-    if (!day) continue;
-    const prev = typeMap.get(day) ?? { 수동: 0 };
-    typeMap.set(day, {
-      수동: prev.수동 + (item.is_auto ? 0 : 1),
-    });
-  }
-  const typeByDay =
+  const manualByDayData =
     rangeDateKeys.length > 0
-      ? rangeDateKeys.map((day) => {
-          const type = typeMap.get(day) ?? { 수동: 0 };
-          return { day, ...type };
-        })
-      : Array.from(typeMap.entries())
+      ? rangeDateKeys.map((day) => ({ day, ...(manualMap.get(day) ?? { 수동: 0 }) }))
+      : Array.from(manualMap.entries())
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([day, v]) => ({ day, ...v }));
+          .map(([day, value]) => ({ day, ...value }));
 
-  // 주요 변동 품목 변화율
   const changedBar = topChangedItems.map((item) => ({
-    name: item.item_nm.length > 9 ? item.item_nm.slice(0, 9) + "…" : item.item_nm,
+    name: item.item_nm.length > 9 ? `${item.item_nm.slice(0, 9)}..` : item.item_nm,
     변화율: Math.round(item.change_ratio * 100),
   }));
 
   return (
     <section className="grid gap-4 xl:grid-cols-2">
-      {/* 차트 1: 날짜별 발주량 vs 확정량 (전체 폭) */}
       <ChartCard
         title="날짜별 발주량 / 확정량 추이"
-        subtitle="납품일 기준 집계"
+        subtitle="조회 기간 전체 집계"
         className="xl:col-span-2"
       >
         {isLoading ? (
           <Loading />
-        ) : dailyTrend.length === 0 ? (
+        ) : dailyTrendData.length === 0 ? (
           <Empty />
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={dailyTrend} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
+            <AreaChart data={dailyTrendData} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradOrd" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.6} />
@@ -175,10 +177,7 @@ export function OrderingHistoryChartsSection({
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} interval={0} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} />
               <Tooltip
-                formatter={(value, name) => [
-                  `${Number(value ?? 0).toLocaleString()}개`,
-                  String(name),
-                ]}
+                formatter={(value, name) => [`${Number(value ?? 0).toLocaleString()}개`, String(name)]}
                 contentStyle={TooltipStyle}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
@@ -205,15 +204,14 @@ export function OrderingHistoryChartsSection({
         )}
       </ChartCard>
 
-      {/* 차트 2: 날짜별 수동 건수 */}
-      <ChartCard title="날짜별 수동 발주 건수" subtitle="">
+      <ChartCard title="날짜별 수동 발주 건수">
         {isLoading ? (
           <Loading />
-        ) : typeByDay.length === 0 ? (
+        ) : manualByDayData.length === 0 ? (
           <Empty />
         ) : (
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={typeByDay} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
+            <BarChart data={manualByDayData} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} interval={0} />
               <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} allowDecimals={false} />
@@ -221,14 +219,13 @@ export function OrderingHistoryChartsSection({
                 formatter={(value, name) => [`${Number(value ?? 0)}건`, String(name)]}
                 contentStyle={TooltipStyle}
               />
-              <Bar dataKey="수동" stackId="s" fill="#ED8CC280" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="수동" fill="#ED8CC280" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
       </ChartCard>
 
-      {/* 차트 3: 주요 변동 품목 변화율 */}
-      <ChartCard title="주요 변동 품목 변화율" subtitle="평균 대비 최근 발주량 변화 (%)">
+      <ChartCard title="주요 변동 품목 변화율" subtitle="조회 기간 기준 최근 발주량 변화 (%)">
         {isLoading ? (
           <Loading />
         ) : changedBar.length === 0 ? (
@@ -243,7 +240,7 @@ export function OrderingHistoryChartsSection({
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
               <XAxis
                 type="number"
-                tickFormatter={(v: number) => `${v > 0 ? "+" : ""}${v}%`}
+                tickFormatter={(value: number) => `${value > 0 ? "+" : ""}${value}%`}
                 tick={{ fontSize: 10, fill: "#94a3b8" }}
               />
               <YAxis
@@ -260,8 +257,8 @@ export function OrderingHistoryChartsSection({
                 contentStyle={TooltipStyle}
               />
               <Bar dataKey="변화율" radius={[0, 6, 6, 0]}>
-                {changedBar.map((entry, i) => (
-                  <Cell key={i} fill={entry.변화율 >= 0 ? "#FF8D57B2" : "#2d6bff"} />
+                {changedBar.map((entry, index) => (
+                  <Cell key={index} fill={entry.변화율 >= 0 ? "#FF8D57B2" : "#2d6bff"} />
                 ))}
               </Bar>
             </BarChart>

@@ -9,6 +9,7 @@ import type {
   OrderingContextResponse,
   OrderingDeadlineParams,
   OrderingDeadlineResponse,
+  OrderingHistoryChartsResponse,
   OrderingHistoryParams,
   OrderingHistoryInsightsResponse,
   OrderingHistoryResponse,
@@ -103,6 +104,14 @@ export const getOrderingHistoryInsights = async (params?: OrderingHistoryParams)
   const response = await axiosInstance.get<OrderingHistoryInsightsResponse>(
     "/api/ordering/history/insights",
     { params: { ...params, limit: params?.limit ?? 200 } },
+  );
+  return response.data;
+};
+
+export const getOrderingHistoryCharts = async (params?: OrderingHistoryParams) => {
+  const response = await axiosInstance.get<OrderingHistoryChartsResponse>(
+    "/api/ordering/history/charts",
+    { params },
   );
   return response.data;
 };

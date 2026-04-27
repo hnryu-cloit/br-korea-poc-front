@@ -10,6 +10,7 @@ import {
   OrderingHistoryInsightsSkeleton,
   OrderingHistoryTableSkeleton,
 } from "@/features/ordering/components/OrderingSkeletons";
+import { useGetOrderingHistoryChartsQuery } from "@/features/ordering/queries/useGetOrderingHistoryChartsQuery";
 import { useGetOrderingHistoryInsightsQuery } from "@/features/ordering/queries/useGetOrderingHistoryInsightsQuery";
 import { useGetOrderingHistoryQuery } from "@/features/ordering/queries/useGetOrderingHistoryQuery";
 import { useDemoSession } from "@/features/session/hooks/useDemoSession";
@@ -46,8 +47,6 @@ function OrderingHistoryScreenContent({ referenceDateTime }: { referenceDateTime
   const historyChartParams = useMemo(
     () => ({
       store_id: user.storeId,
-      page: 1,
-      page_size: 100,
       date_from: appliedFilters.dateFrom || undefined,
       date_to: appliedFilters.dateTo || undefined,
       item_nm: appliedFilters.itemName || undefined,
@@ -67,7 +66,7 @@ function OrderingHistoryScreenContent({ referenceDateTime }: { referenceDateTime
   );
 
   const historyQuery = useGetOrderingHistoryQuery(historyParams);
-  const historyChartQuery = useGetOrderingHistoryQuery(historyChartParams);
+  const historyChartQuery = useGetOrderingHistoryChartsQuery(historyChartParams);
   const insightsQuery = useGetOrderingHistoryInsightsQuery(insightsParams);
   const chartsLoading =
     (historyChartQuery.isLoading && !historyChartQuery.data) ||
@@ -103,7 +102,8 @@ function OrderingHistoryScreenContent({ referenceDateTime }: { referenceDateTime
         <OrderingHistoryChartsSkeleton />
       ) : (
         <OrderingHistoryChartsSection
-          items={historyChartQuery.data?.items ?? []}
+          dailyTrend={historyChartQuery.data?.daily_trend ?? []}
+          manualByDay={historyChartQuery.data?.manual_by_day ?? []}
           topChangedItems={insightsQuery.data?.top_changed_items ?? []}
           isLoading={false}
           dateFrom={appliedFilters.dateFrom}
