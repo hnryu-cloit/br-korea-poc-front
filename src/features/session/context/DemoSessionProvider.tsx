@@ -66,9 +66,9 @@ function loadInitialReferenceDateTime(): string {
   );
 }
 
-function ReferenceDateQueryInvalidator() {
+function SessionQueryInvalidator() {
   const queryClient = useQueryClient();
-  const { referenceDateTime } = useDemoSession();
+  const { referenceDateTime, user } = useDemoSession();
   const hasMountedRef = useRef(false);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ function ReferenceDateQueryInvalidator() {
     for (const queryKey of invalidationRoots) {
       queryClient.invalidateQueries({ queryKey });
     }
-  }, [queryClient, referenceDateTime]);
+  }, [queryClient, referenceDateTime, user.storeId]);
 
   return null;
 }
@@ -140,7 +140,7 @@ export function DemoSessionProvider({ children }: PropsWithChildren) {
 
   return (
     <DemoSessionContext.Provider value={value}>
-      <ReferenceDateQueryInvalidator />
+      <SessionQueryInvalidator />
       {children}
     </DemoSessionContext.Provider>
   );

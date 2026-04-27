@@ -1,6 +1,8 @@
 // GET /api/ordering/options
 export interface OrderingOptionsParams {
   notification_entry?: boolean; // 알림에서 진입했는지 여부
+  store_id?: string; // 조회 대상 매장 ID
+  business_date?: string; // 기준 영업일
 }
 
 export interface OrderingOptionItemLine {
@@ -52,6 +54,7 @@ export interface OrderingOptionsResponse {
 // GET /api/ordering/active-campaigns
 export interface OrderingActiveCampaignsParams {
   reference_date?: string; // YYYY-MM-DD
+  store_id?: string; // 조회 대상 매장 ID
   limit?: number;
 }
 
