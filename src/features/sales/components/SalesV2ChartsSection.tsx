@@ -508,7 +508,7 @@ export const SalesV2ChartsSection = ({
           <EmptyPlaceholder />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={180} className="bg-white">
+            <ResponsiveContainer width="100%" height={80} className="bg-white">
               <Treemap
                 data={treemapData}
                 dataKey="size"
