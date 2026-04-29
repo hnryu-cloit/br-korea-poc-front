@@ -396,9 +396,9 @@ function ChatEmptyState({
         <div className="rounded-xl bg-[#FFF9F4] px-4 py-3">
           <p className="text-sm font-semibold text-[#41352E]">조회 결과 없음</p>
           <p className="mt-1 text-sm leading-6 text-[#653819]">
-            조건에 해당하는 데이터를 찾지 못했어요.
+            해당 조건에 맞는 데이터가 0건이에요.
             <br />
-            기간, 상품, 지표 조건을 바꿔 다시 질문해 주세요.
+            자세한 적용 조건과 SQL은 아래 ‘근거 보기'·‘처리 기준 보기'에서 확인해 주세요.
           </p>
         </div>
 

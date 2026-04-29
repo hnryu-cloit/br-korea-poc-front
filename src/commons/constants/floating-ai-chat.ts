@@ -38,12 +38,12 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
     ],
   },
   "/production/waste-loss": {
-    title: "생산 관리 해설",
-    subtitle: "지금 당장 만들어야 할 메뉴와 우선순위를 정리합니다.",
+    title: "폐기·로스 해설",
+    subtitle: "오늘 폐기 위험 품목과 손실 규모를 점검합니다.",
     quickActions: [
-      { label: "뭐부터 만들어?", prompt: "지금 당장 뭐부터 만들어야 해?" },
-      { label: "품절되면 얼마야?", prompt: "지금 품절되면 얼마 날리는 거야?" },
-      { label: "언제 만들어?", prompt: "오늘 생산 타이밍을 언제로 잡는 게 좋아?" },
+      { label: "폐기 많은 품목", prompt: "요즘 폐기 많이 나오는 품목 알려줘" },
+      { label: "폐기 원인", prompt: "폐기가 많은 품목의 공통 원인이 뭐야?" },
+      { label: "이번 달 손실", prompt: "이번 달 폐기 손실이 매출 대비 얼마야?" },
     ],
   },
   "/production/inventory-diagnosis": {
