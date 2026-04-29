@@ -8,10 +8,12 @@ export const useGetSalesPromptsQuery = (params?: GetSalesPromptsRequest) =>
   useQuery({
     queryKey: salesQueryKeys.prompts(params),
     queryFn: () => getSalesPrompts(params),
-    staleTime: 30_000,
-    gcTime: 5 * 60_000,
+    staleTime: 30 * 60_000,
+    gcTime: 60 * 60_000,
+    refetchInterval: 30 * 60_000,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
-    refetchInterval: 45_000,
+    refetchOnReconnect: false,
     retry: 1,
     retryDelay: 800,
   });

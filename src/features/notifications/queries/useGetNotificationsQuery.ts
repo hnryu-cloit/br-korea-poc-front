@@ -7,8 +7,9 @@ export const useGetNotificationsQuery = () =>
   useQuery({
     queryKey: notificationQueryKeys.list(),
     queryFn: getNotifications,
-    refetchInterval: 30_000,
-    staleTime: 30_000,
-    refetchOnMount: false,
+    staleTime: 30 * 60_000,
+    refetchInterval: 30 * 60_000,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
