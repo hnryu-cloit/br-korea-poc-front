@@ -7,16 +7,16 @@ export const floatingAiChatRouteGuides: Record<string, FloatingAiChatRouteGuide>
     quickActions: [
       { label: "품절 위험", prompt: "지금 가장 먼저 대응해야 할 품절 위험을 알려줘" },
       { label: "주문 검토", prompt: "주문 마감 전에 꼭 봐야 할 포인트를 정리해줘" },
-      { label: "분석 요약", prompt: "오늘 매출 분석에서 바로 실행할 인사이트를 알려줘" },
+      { label: "매출 분석 요약", prompt: "오늘 매출 분석에서 바로 실행할 인사이트를 알려줘" },
     ],
   },
   "/analytics": {
-    title: "질의형 분석 해설",
-    subtitle: "SQL/API 우선 처리 경로와 LLM 호출 최소화 구조를 설명합니다.",
+    title: "매출 현황 해설",
+    subtitle: "최근 매출 흐름과 바로 챙겨야 할 포인트를 정리합니다.",
     quickActions: [
-      { label: "라우팅 설명", prompt: "이 질의가 왜 SQL 우선 처리되는지 설명해줘" },
-      { label: "토큰 절감", prompt: "LLM 토큰 사용량을 줄이는 방법을 알려줘" },
-      { label: "분석 구조", prompt: "RAG 출처 응답 구조를 짧게 설명해줘" },
+      { label: "오늘 매출", prompt: "오늘 매출 잘 나오고 있어?" },
+      { label: "어제 대비 오늘 매출", prompt: "어제 매출 대비 오늘 어떻게 가고 있어?" },
+      { label: "월말 예측 매출", prompt: "이번 달 이 페이스면 얼마 남아?" },
     ],
   },
   "/production": {

@@ -65,31 +65,30 @@ function createEmptyAnswer(requestContext: FloatingAiChatRequestContext) {
 
 function createSuggestionList(
   prompts: Array<{ label?: string; prompt: string }>,
-  fallbackQuickActions: FloatingAiChatSuggestion[],
+  shuffleNonce: number = 0,
 ): FloatingAiChatSuggestion[] {
-  const primary = prompts
+  const normalized = prompts
     .map((item) => ({
       label: item.label?.trim() || item.prompt.trim(),
       prompt: item.prompt.trim(),
     }))
     .filter((item) => item.prompt.length > 0);
 
-  const fallback = fallbackQuickActions
-    .map((item) => ({ label: item.label.trim() || item.prompt.trim(), prompt: item.prompt.trim() }))
-    .filter((item) => item.prompt.length > 0);
+  const dedupedPrompts = dedupeStrings(normalized.map((item) => item.prompt));
+  const pool = dedupedPrompts
+    .map((prompt) => normalized.find((item) => item.prompt === prompt))
+    .filter((item): item is FloatingAiChatSuggestion => Boolean(item));
 
-  const deduped = dedupeStrings([
-    ...primary.map((item) => item.prompt),
-    ...fallback.map((item) => item.prompt),
-  ]);
-  return deduped
-    .map(
-      (prompt) =>
-        primary.find((item) => item.prompt === prompt) ??
-        fallback.find((item) => item.prompt === prompt),
-    )
-    .filter((item): item is FloatingAiChatSuggestion => Boolean(item))
-    .slice(0, 4);
+  if (shuffleNonce > 0 && pool.length > 1) {
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 4);
+  }
+
+  return pool.slice(0, 4);
 }
 
 export function FloatingAiChat() {
@@ -137,9 +136,12 @@ export function FloatingAiChat() {
     [activeCardContextKey, domain, location.pathname, referenceDateTime, user.storeName],
   );
 
+  const [suggestionShuffleNonce, setSuggestionShuffleNonce] = useState(0);
+
   const suggestedPrompts = useMemo(
-    () => createSuggestionList(salesPromptsQuery.data ?? [], guide.quickActions),
-    [guide.quickActions, salesPromptsQuery.data],
+    () =>
+      createSuggestionList(salesPromptsQuery.data ?? [], suggestionShuffleNonce),
+    [salesPromptsQuery.data, suggestionShuffleNonce],
   );
 
   const [messages, setMessages] = useState<FloatingAiChatConversationItem[]>(() => []);
@@ -155,9 +157,12 @@ export function FloatingAiChat() {
   }, [sessionKey]);
 
   useEffect(() => {
-    if (isOpen) return;
-    historyRef.current = [];
-    setMessages([]);
+    if (!isOpen) {
+      historyRef.current = [];
+      setMessages([]);
+      return;
+    }
+    setSuggestionShuffleNonce((n) => n + 1);
   }, [isOpen]);
 
   const send = useCallback(
