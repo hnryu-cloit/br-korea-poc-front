@@ -60,10 +60,15 @@ function loadInitialReferenceDateTime(): string {
   if (typeof window === "undefined") {
     return sessionDefaults.referenceDateTime;
   }
-  return (
-    window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME) ??
-    sessionDefaults.referenceDateTime
+  const stored = window.localStorage.getItem(SESSION_KEYS.REFERENCE_DATETIME);
+  if (stored) {
+    return stored;
+  }
+  window.localStorage.setItem(
+    SESSION_KEYS.REFERENCE_DATETIME,
+    sessionDefaults.referenceDateTime,
   );
+  return sessionDefaults.referenceDateTime;
 }
 
 function SessionQueryInvalidator() {
