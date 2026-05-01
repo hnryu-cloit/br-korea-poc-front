@@ -5,7 +5,7 @@ import { getSessionReferenceDateTime, getSessionRole, getSessionStoreId } from "
 import { emitSessionExpired } from "@/commons/utils/session-expiry";
 import type { CommonError } from "@/services/type";
 
-const DEFAULT_API_BASE_URL = "http://localhost:6002";
+const DEFAULT_API_BASE_URL = "";
 const LOGIN_PATH = import.meta.env.VITE_LOGIN_PATH || "/";
 const AUTH_EXCLUDED_URLS: string[] = [];
 
