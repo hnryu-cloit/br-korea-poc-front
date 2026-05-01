@@ -59,7 +59,7 @@ export function ProductionWasteSection({ data, isLoading, onChangePage, errorMes
                     <InfoPopover
                       caption={FIELD_CAPTIONS["production:waste_item_name"]}
                       side="bottom"
-                      align="start"
+                      align="left"
                     />
                   </span>
                 </th>
